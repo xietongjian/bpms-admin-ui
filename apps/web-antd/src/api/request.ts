@@ -72,8 +72,8 @@ function createRequestClient(baseURL: string) {
     fulfilled: (response) => {
       const { data: responseData, status } = response;
 
-      const { code, data, message: msg } = responseData;
-      if (status >= 200 && status < 400 && code === 0) {
+      const { code, data, msg } = responseData;
+      if (status >= 200 && status < 400 && code === '100') {
         return data;
       }
       throw new Error(`Error ${status}: ${msg}`);
