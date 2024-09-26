@@ -17,7 +17,7 @@ async function generateAccessible(
   options: GenerateMenuAndRoutesOptions,
 ) {
   const { router } = options;
-debugger;
+
   options.routes = cloneDeep(options.routes);
   // 生成路由
   const accessibleRoutes = await generateRoutes(mode, options);
