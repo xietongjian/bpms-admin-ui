@@ -7,7 +7,6 @@ import { requestClient } from '#/api/request';
  */
 export async function getAllMenusApi() {
   return requestClient.get<RouteRecordStringComponent[]>('/flow/main/getLoginModules').then(res => {
-    debugger;
     const menuTree = genMenuTree(res);
     return Promise.resolve(menuTree);
   });
@@ -15,7 +14,6 @@ export async function getAllMenusApi() {
 
 
 function genMenuTree(menus){
-  debugger;
   menus.filter(item => item.path !== '/analysis').forEach(item => {
     const sn = item.sn;
     item.path = item.url;
