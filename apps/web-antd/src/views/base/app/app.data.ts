@@ -104,28 +104,22 @@ export const searchFormSchema: FormSchema[] = [
 
 export const formSchema: FormSchema[] = [
   {
-    // 组件需要在 #/adapter.ts内注册，并加上类型
-    component: 'Input',
-    // 对应组件的参数
-    componentProps: {
-      placeholder: '请输入用户名',
-    },
-    // 字段名
-    fieldName: 'username',
-    // 界面显示的label
-    label: '字符串',
-  },
-  {
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    // show: false,
+    dependencies: {
+      show: false,
+      triggerFields: []
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
     rules: 'required',
     component: 'Input',
+    componentProps: {
+      placeholder: '请输入用户名',
+    },
     /*rules: [
       {
         required: true,
@@ -243,7 +237,15 @@ export const formSchema: FormSchema[] = [
   {
     label: '备注',
     fieldName: 'note',
-    component: 'InputTextArea',
+    component: 'Textarea',
+    componentProps: {
+      // autosize: true,
+      autoSize: {
+        minRows: 4,
+        maxRows: 8,
+      },
+      rows: 4
+    }
 /*    componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -260,7 +262,6 @@ export const formSchema: FormSchema[] = [
   },
 ];
 
-/*
 export const secretKeyFormSchema: FormSchema[] = [
   {
     field: 'id',
@@ -283,4 +284,3 @@ export const secretKeyFormSchema: FormSchema[] = [
     colProps,
   },
 ];
-*/

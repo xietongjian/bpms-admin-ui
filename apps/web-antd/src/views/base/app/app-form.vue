@@ -1,17 +1,18 @@
 <script lang="ts" setup>
-import { useVbenModal } from '@vben/common-ui';
-import { message } from 'ant-design-vue';
+import {useVbenModal} from '@vben/common-ui';
+import {message} from 'ant-design-vue';
 import dayjs from 'dayjs';
-import { formSchema } from './app.data';
-import { useVbenForm } from '#/adapter';
+import {formSchema} from './app.data';
+import {useVbenForm} from '#/adapter';
+import {saveOrUpdate} from '#/api/base/app';
 
 const [Modal, modalApi] = useVbenModal({
   draggable: true,
   onCancel() {
     modalApi.close();
   },
-  onConfirm() {
-    message.info('onConfirm');
+  async onConfirm() {
+    baseFormApi.submitForm();
   },
 });
 
@@ -20,7 +21,7 @@ const [BaseForm, baseFormApi] = useVbenForm({
   commonConfig: {
     // 所有表单项
     componentProps: {
-      class: 'w-full',
+      // class: 'w-full',
     },
   },
   showDefaultActions: false,
@@ -31,17 +32,18 @@ const [BaseForm, baseFormApi] = useVbenForm({
   layout: 'horizontal',
   schema: formSchema,
   // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个
-  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+  wrapperClass: 'grid-cols-1',
 });
 
-function onSubmit(values: Record<string, any>) {
-  message.success({
-    content: `form values: ${JSON.stringify(values)}`,
-  });
+async function onSubmit(values: Record<string, any>) {
+  const {valid} = await baseFormApi.validate();
+  if(valid){
+    saveOrUpdate(values);
+  }
 }
 </script>
 <template>
-  <Modal class="w-[900px]" >
-    <BaseForm />
+  <Modal class="w-[600px]">
+    <BaseForm/>
   </Modal>
 </template>

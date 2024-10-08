@@ -22,7 +22,7 @@ enum Api {
  * @param params
  */
 export async function getAll(params?: any) {
-  return requestClient.get<any>(Api.GetAll, {params});
+  return requestClient.post<any>(Api.GetAll, {...params});
 }
 
 /**
@@ -45,22 +45,17 @@ export async function getAppListByPage(params: any) {
     delete entity['pageSize'];
   }
   const queryParam = { query, entity };
-  return requestClient.post<any>(Api.PageList, {params: queryParam});
+  return requestClient.post<any>(Api.PageList, queryParam);
+}
+
+export async function saveOrUpdate(params: any) {
+  debugger;
+  return requestClient.post<any>(Api.SaveOrUpdate, params);
 }
 
 /*
 
 
-export const getAppListByPage = (params: any) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { query, entity };
-  return defHttp.post({ url: Api.PageList, params: queryParam });
-};
 
 export const saveOrUpdate = (params: any) => defHttp.post({ url: Api.SaveOrUpdate, params });
 
