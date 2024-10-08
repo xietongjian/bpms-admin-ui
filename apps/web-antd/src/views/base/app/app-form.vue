@@ -11,6 +11,14 @@ const [Modal, modalApi] = useVbenModal({
   onCancel() {
     modalApi.close();
   },
+  onOpenChange(isOpen: boolean) {
+    if (isOpen) {
+      const values = modalApi.getData<Record<string, any>>();
+      if (values) {
+        baseFormApi.setValues(values);
+      }
+    }
+  },
   async onConfirm() {
     baseFormApi.submitForm();
   },
@@ -38,7 +46,10 @@ const [BaseForm, baseFormApi] = useVbenForm({
 async function onSubmit(values: Record<string, any>) {
   const {valid} = await baseFormApi.validate();
   if(valid){
-    saveOrUpdate(values);
+    const {msg} = await saveOrUpdate(values);
+    debugger;
+    message.success(msg);
+    modalApi.close();
   }
 }
 </script>

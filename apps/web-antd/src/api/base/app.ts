@@ -38,18 +38,10 @@ export async function deleteByIds(params: Array<string>) {
  * @param params
  */
 export async function getAppListByPage(params: any) {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { query, entity };
-  return requestClient.post<any>(Api.PageList, queryParam);
+  return requestClient.post<any>(Api.PageList, params);
 }
 
 export async function saveOrUpdate(params: any) {
-  debugger;
   return requestClient.post<any>(Api.SaveOrUpdate, params);
 }
 

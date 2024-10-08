@@ -1,19 +1,20 @@
 <script lang="ts" setup>
 import type { VbenFormProps, VxeGridProps } from '#/adapter';
-
 import { Page, useVbenModal } from '@vben/common-ui';
-
 import { Button, Card, message } from 'ant-design-vue';
-
 import { useVbenVxeGrid } from '#/adapter';
 import {getAppListByPage} from '#/api/base/app';
 import AppForm from './app-form.vue';
 
-const [AppModal, dragModalApi] = useVbenModal({
+const [AppModal, modalApi] = useVbenModal({
   connectedComponent: AppForm,
   centered: true,
+  onOpenChange(isOpen: boolean) {
+    if (!isOpen) {
+      gridApi.reload();
+    }
+  },
 });
-
 
 interface RowType {
   category: string;
@@ -53,6 +54,13 @@ const gridOptions: VxeGridProps<RowType> = {
     { field: 'platformEnabled', title: '推送状态', width: 100  },
     { field: 'orderNo', title: '排序', width: 100  },
     { field: 'note', title: '备注' },
+    {
+      field: 'action',
+      fixed: 'right',
+      slots: { default: 'action' },
+      title: '操作',
+      width: 120,
+    },
   ],
   height: 'auto',
   keepSource: true,
@@ -63,9 +71,11 @@ const gridOptions: VxeGridProps<RowType> = {
     ajax: {
       query: async ({ page }, formValues) => {
         return await getAppListByPage({
-          pageNum: page.currentPage,
-          pageSize: page.pageSize,
-          ...formValues,
+          query:{
+            pageNum: page.currentPage,
+            pageSize: page.pageSize,
+          },
+          entity: formValues || {},
         }).then(res => {
           res.items = res.rows;
           return Promise.resolve(res);
@@ -77,10 +87,18 @@ const gridOptions: VxeGridProps<RowType> = {
 
 const [Grid, gridApi] = useVbenVxeGrid({ formOptions, gridOptions });
 
-function openDragModal() {
-  dragModalApi.open();
-  dragModalApi.setState({
-    title: '新建应用'
+function handleAdd() {
+  modalApi.setData({});
+  modalApi.open();
+  modalApi.setState({
+    title: '新建'
+  });
+}
+function handleEdit(record: any) {
+  modalApi.setData(record);
+  modalApi.open();
+  modalApi.setState({
+    title: '修改'
   });
 }
 
@@ -90,9 +108,12 @@ function openDragModal() {
   <Page auto-content-height>
     <Grid>
       <template #toolbar-tools>
-        <Button type="primary" @click="openDragModal">
+        <Button type="primary" @click="handleAdd">
           新建
         </Button>
+      </template>
+      <template #action="{row}">
+        <Button type="link" @click="handleEdit(row)">编辑</Button>
       </template>
     </Grid>
   </Page>

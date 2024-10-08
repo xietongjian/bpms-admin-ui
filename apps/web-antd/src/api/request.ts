@@ -76,6 +76,7 @@ function createRequestClient(baseURL: string) {
 
       const { code, data, msg } = responseData;
       if (status >= 200 && status < 400 && code === '100') {
+        debugger;
         return data;
       }
       throw new Error(`Error ${status}: ${msg}`);
