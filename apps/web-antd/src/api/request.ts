@@ -72,11 +72,16 @@ function createRequestClient(baseURL: string) {
   // response数据解构
   client.addResponseInterceptor<HttpResponse>({
     fulfilled: (response) => {
-      const { data: responseData, status } = response;
+      const { data: responseData, status, config } = response;
+
+      // 不进行任何处理，直接返回
+      // 用于页面代码可能需要直接获取code，data，message这些信息时开启
+      if (config.noTransformResponse) {
+        return responseData;
+      }
 
       const { code, data, msg } = responseData;
       if (status >= 200 && status < 400 && code === '100') {
-        debugger;
         return data;
       }
       throw new Error(`Error ${status}: ${msg}`);

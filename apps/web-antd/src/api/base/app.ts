@@ -1,12 +1,12 @@
 import { requestClient } from '#/api/request';
 
 enum Api {
+  CheckEntityExist = '/flow/base/app/checkEntityExist',
+  Delete = '/flow/base/app/delete',
   GetAll = '/flow/base/app/getApps',
   PageList = '/flow/base/app/getPagerModel',
-  SaveOrUpdate = '/flow/base/app/saveOrUpdate',
-  Delete = '/flow/base/app/delete',
-  CheckEntityExist = '/flow/base/app/checkEntityExist',
   RefreshSecretKey = '/flow/base/app/refreshSecretKey',
+  SaveOrUpdate = '/flow/base/app/saveOrUpdate',
 }
 // export const getAll = (params?: any) => {
 //   return defHttp.post({ url: Api.GetAll, params }).then((res: any) => {
@@ -22,7 +22,7 @@ enum Api {
  * @param params
  */
 export async function getAll(params?: any) {
-  return requestClient.post<any>(Api.GetAll, {...params});
+  return requestClient.post<any>(Api.GetAll, { ...params });
 }
 
 /**
@@ -30,7 +30,7 @@ export async function getAll(params?: any) {
  * @param params
  */
 export async function deleteByIds(params: Array<string>) {
-  return requestClient.get<any>(Api.Delete, {params});
+  return requestClient.get<any>(Api.Delete, { params });
 }
 
 /**
@@ -42,13 +42,12 @@ export async function getAppListByPage(params: any) {
 }
 
 export async function saveOrUpdate(params: any) {
-  return requestClient.post<any>(Api.SaveOrUpdate, params);
+  return requestClient.post<any>(Api.SaveOrUpdate, params, {
+    noTransformResponse: true,
+  });
 }
 
 /*
-
-
-
 export const saveOrUpdate = (params: any) => defHttp.post({ url: Api.SaveOrUpdate, params });
 
 export const refreshSecretKey = (params: string) =>
