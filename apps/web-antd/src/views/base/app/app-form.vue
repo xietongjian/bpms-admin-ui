@@ -3,7 +3,7 @@ import {useVbenModal} from '@vben/common-ui';
 import {message} from 'ant-design-vue';
 import dayjs from 'dayjs';
 import {formSchema} from './app.data';
-import {useVbenForm} from '#/adapter';
+import { useVbenForm } from '#/adapter/form';
 import {saveOrUpdate} from '#/api/base/app';
 
 const [Modal, modalApi] = useVbenModal({

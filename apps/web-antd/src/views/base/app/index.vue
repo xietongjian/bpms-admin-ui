@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import type { VbenFormProps, VxeGridProps } from '#/adapter';
+import type { VxeGridListeners, VxeGridProps } from '#/adapter/vxe-table';
+import { useVbenForm } from '#/adapter/form';
+
 import { Page, useVbenModal } from '@vben/common-ui';
 import { Button, Card, message } from 'ant-design-vue';
-import { useVbenVxeGrid } from '#/adapter';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {getAppListByPage} from '#/api/base/app';
 import AppForm from './app-form.vue';
 
