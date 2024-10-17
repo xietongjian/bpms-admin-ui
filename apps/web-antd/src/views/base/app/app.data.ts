@@ -109,7 +109,7 @@ export const formSchema: FormSchema[] = [
     component: 'Input',
     dependencies: {
       show: false,
-      triggerFields: []
+      triggerFields: ['name']
     }
   },
   {

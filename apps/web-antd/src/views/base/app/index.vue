@@ -1,12 +1,15 @@
 <script lang="ts" setup>
 import type { VxeGridListeners, VxeGridProps } from '#/adapter/vxe-table';
-import { useVbenForm } from '#/adapter/form';
-
+import type {
+    VbenFormSchema as FormSchema,
+    VbenFormProps,
+} from '@vben/common-ui';
 import { Page, useVbenModal } from '@vben/common-ui';
-import { Button, Card, message } from 'ant-design-vue';
+import {Button, Card, message, Tag} from 'ant-design-vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {getAppListByPage} from '#/api/base/app';
 import AppForm from './app-form.vue';
+import { AccessControl, useAccess } from '@vben/access';
 
 const [AppModal, modalApi] = useVbenModal({
   connectedComponent: AppForm,
@@ -32,6 +35,10 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
+  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  resetButtonOptions:{
+    show: false,
+  },
   schema: [
     {
       component: 'Input',
@@ -49,13 +56,14 @@ const gridOptions: VxeGridProps<RowType> = {
   columns: [
     { title: '序号', type: 'seq', width: 50 },
     { field: 'name',  align: 'left', title: '名称'},
-    { field: 'sn', title: '标识' },
-    { field: 'url', title: 'URL' },
-    { field: 'indexUrl', title: '首页地址' },
-    { field: 'status', title: '状态', width: 100  },
-    { field: 'platformEnabled', title: '推送状态', width: 100  },
-    { field: 'orderNo', title: '排序', width: 100  },
-    { field: 'note', title: '备注' },
+    { field: 'sn', align: 'left', title: '标识' },
+    { field: 'url', align: 'left', title: 'URL' },
+    { field: 'indexUrl', align: 'left', title: '首页地址' },
+    { field: 'status', title: '状态', slots: { default: 'status' }, width: 100  },
+
+    { field: 'platformEnabled', title: '开启平台推送', slots: { default: 'platformEnabled' }, width: 100  },
+    { field: 'orderNo', align: 'right', title: '排序', width: 100  },
+    { field: 'note', align: 'left', title: '备注' },
     {
       field: 'action',
       fixed: 'right',
@@ -67,6 +75,7 @@ const gridOptions: VxeGridProps<RowType> = {
   height: 'auto',
   keepSource: true,
   border: false,
+  stripe: true,
   pagerConfig: {
   },
   proxyConfig: {
@@ -109,13 +118,28 @@ function handleEdit(record: any) {
 <template>
   <Page auto-content-height>
     <Grid>
-      <template #toolbar-tools>
+      <template #toolbar-actions>
+        <AccessControl :codes="['App:1']" type="code">
+          <Button class="mr-2" @click="handleAdd" type="primary">新建</Button>
+        </AccessControl>
+      </template>
+<!--      <template #toolbar-tools>
         <Button type="primary" @click="handleAdd">
           新建
         </Button>
-      </template>
+      </template>-->
       <template #action="{row}">
         <Button type="link" @click="handleEdit(row)">编辑</Button>
+      </template>
+
+      <template #status="{ row }">
+        <Tag v-if="row.status===1" color="success">启用</Tag>
+        <Tag v-else>禁用</Tag>
+      </template>
+
+      <template #platformEnabled="{ row }">
+        <Tag v-if="row.platformEnabled===1" color="success">开启</Tag>
+        <Tag v-else>关闭</Tag>
       </template>
     </Grid>
   </Page>

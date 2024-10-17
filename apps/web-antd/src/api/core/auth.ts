@@ -47,5 +47,20 @@ export async function logoutApi() {
  * 获取用户权限码
  */
 export async function getAccessCodesApi() {
-  return requestClient.get<string[]>('/flow/main/getPermissions');
+  return requestClient.get<string[]>('/flow/main/getPermissions').then(res => {
+    debugger;
+    const result = [];
+    if(res){
+      for(let key in res){
+        let values = res[key];
+        if(values){
+          for(let item  in values){
+            result.push(key+':'+item);
+          }
+        }
+      }
+    }
+
+    return Promise.resolve(result);
+  });
 }
