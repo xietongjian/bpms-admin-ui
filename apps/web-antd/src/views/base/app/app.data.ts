@@ -1,15 +1,27 @@
-import type {
-  VbenFormSchema as FormSchema,
-} from '@vben/common-ui';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 
-// import { h } from 'vue';
-// import { Tag } from 'ant-design-vue';
-// import Icon from '@/components/Icon/Icon.vue';
-// import { OrderNoDefaultEnum, RemarkDefaultEnum } from '@/enums/constantEnum';
 
-const colProps = {
-  span: 24,
-};
+export const listColumns = [
+    { title: '序号', type: 'seq', width: 50 },
+    { field: 'image',  align: 'center', title: '图标'},
+    { field: 'name',  align: 'left', title: '名称'},
+    { field: 'sn', align: 'left', title: '标识' },
+    { field: 'url', align: 'left', title: 'URL' },
+    { field: 'indexUrl', align: 'left', title: '首页地址' },
+    { field: 'status', title: '状态', slots: { default: 'status' }, width: 100 },
+
+    { field: 'platformEnabled', title: '开启平台推送', slots: { default: 'platformEnabled' }, width: 100 },
+    { field: 'orderNo', align: 'right', title: '排序', width: 100 },
+    { field: 'note', align: 'left', title: '备注' },
+    {
+        field: 'action',
+        fixed: 'right',
+        slots: { default: 'action' },
+        title: '操作',
+        width: 120,
+    },
+];
+
 /*
 export const columns: BasicColumn[] = [
   {
@@ -82,205 +94,189 @@ export const columns: BasicColumn[] = [
 ];
 */
 
-/*
 export const searchFormSchema: FormSchema[] = [
-  {
-    field: 'keyword',
-    label: '关键字',
-    component: 'Input',
-    componentProps: {
-      placeholder: '请输入名称/标识',
+    {
+        component: 'Input',
+        fieldName: 'keyword',
+        label: '关键字',
+        componentProps: {
+            placeholder: '请输入关键字',
+            allowClear: true,
+        }
     },
-    labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
-  },
 ];
-*/
 
 export const formSchema: FormSchema[] = [
-  {
-    fieldName: 'id',
-    label: 'ID',
-    component: 'Input',
-    dependencies: {
-      show: false,
-      triggerFields: ['name']
-    }
-  },
-  {
-    fieldName: 'name',
-    label: '名称',
-    rules: 'required',
-    component: 'Input',
-    componentProps: {
-      placeholder: '请输入用户名',
+    {
+        fieldName: 'id',
+        label: 'ID',
+        component: 'Input',
+        dependencies: {
+            show: false,
+            triggerFields: ['name']
+        }
     },
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 32,
-        message: '字符长度不能大于32！',
-      },
-    ],*/
-    colProps,
-  },
-  {
-    fieldName: 'sn',
-    label: '标识',
-    rules: 'required',
-    component: 'Input',
-    colProps,
-  },
-  {
-    fieldName: 'url',
-    label: '系统URL',
-    rules: 'required',
-    component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '系统URL不能为空！',
-      },
-      {
-        pattern: new RegExp('[a-zA-z]+://[^\\s]*'),
-        type: 'string',
-        message: '请输入正确的URL地址！',
-      },
-      {
-        max: 40,
-        message: '字符长度不能大于40！',
-      },
-    ],*/
-    colProps,
-  },
-  {
-    fieldName: 'indexUrl',
-    label: '首页URL',
-    rules: 'required',
-    component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '首页URL不能为空！',
-      },
-      {
-        pattern: new RegExp('^\\/(\\w+\\/?)+(\\.?\\w+)?$'),
-        type: 'string',
-        message: '请输入正确的URL地址！！',
-      },
-      {
-        max: 128,
-        message: '字符长度不能大于128！',
-      },
-    ],*/
-    colProps,
-  },
-/*  {
-    field: 'image',
-    label: '图标',
-    required: false,
-    component: 'IconPicker',
-    colProps,
-  },*/
-/*  {
-    field: 'orderNo',
-    label: '排序号',
-    helpMessage: '数值越小越靠前！',
-    required: false,
-    component: 'InputNumber',
-    defaultValue: OrderNoDefaultEnum.VALUE,
-    componentProps: {
-      min: OrderNoDefaultEnum.MIN,
-      max: OrderNoDefaultEnum.MAX,
+    {
+        fieldName: 'name',
+        label: '名称',
+        rules: 'required',
+        component: 'Input',
+        componentProps: {
+            placeholder: '请输入用户名',
+        },
+        /*rules: [
+          {
+            required: true,
+            whitespace: true,
+            message: '名称不能为空！',
+          },
+          {
+            max: 32,
+            message: '字符长度不能大于32！',
+          },
+        ],*/
     },
-  },*/
-  {
-    fieldName: 'status',
-    label: '状态',
-    // required: false,
-    component: 'Switch',
-    defaultValue: 1,
-    componentProps: {
-      checkedValue: 1,
-      unCheckedValue: 0,
-      checkedChildren: '启用',
-      unCheckedChildren: '禁用',
+    {
+        fieldName: 'sn',
+        label: '标识',
+        rules: 'required',
+        component: 'Input',
     },
-    colProps,
-  },
-  {
-    fieldName: 'platformEnabled',
-    label: '是否推送',
-    // helpMessage: '是否推送消息至第三方平台！',
-    required: false,
-    component: 'Switch',
-    defaultValue: 0,
-    componentProps: {
-      checkedValue: 1,
-      unCheckedValue: 0,
-      checkedChildren: '推送',
-      unCheckedChildren: '不推送',
+    {
+        fieldName: 'url',
+        label: '系统URL',
+        rules: 'required',
+        component: 'Input',
+        /*rules: [
+          {
+            required: true,
+            whitespace: true,
+            message: '系统URL不能为空！',
+          },
+          {
+            pattern: new RegExp('[a-zA-z]+://[^\\s]*'),
+            type: 'string',
+            message: '请输入正确的URL地址！',
+          },
+          {
+            max: 40,
+            message: '字符长度不能大于40！',
+          },
+        ],*/
     },
-    colProps: { span: 24 },
-  },
-  {
-    label: '备注',
-    fieldName: 'note',
-    component: 'Textarea',
-    componentProps: {
-      // autosize: true,
-      autoSize: {
-        minRows: 4,
-        maxRows: 8,
-      },
-      rows: 4
-    }
-/*    componentProps: {
-      autoSize: {
-        minRows: RemarkDefaultEnum.MIN_ROWS,
-        maxRows: RemarkDefaultEnum.MAX_ROWS,
-      },
-    },*/
-    /*rules: [
-      {
-        max: 500,
-        message: '字符长度不能大于500！',
-      },
-    ],*/
-    // colProps,
-  },
+    {
+        fieldName: 'indexUrl',
+        label: '首页URL',
+        rules: 'required',
+        component: 'Input',
+        /*rules: [
+          {
+            required: true,
+            whitespace: true,
+            message: '首页URL不能为空！',
+          },
+          {
+            pattern: new RegExp('^\\/(\\w+\\/?)+(\\.?\\w+)?$'),
+            type: 'string',
+            message: '请输入正确的URL地址！！',
+          },
+          {
+            max: 128,
+            message: '字符长度不能大于128！',
+          },
+        ],*/
+    },
+    /*  {
+        field: 'image',
+        label: '图标',
+        required: false,
+        component: 'IconPicker',
+      },*/
+    /*  {
+        field: 'orderNo',
+        label: '排序号',
+        helpMessage: '数值越小越靠前！',
+        required: false,
+        component: 'InputNumber',
+        defaultValue: OrderNoDefaultEnum.VALUE,
+        componentProps: {
+          min: OrderNoDefaultEnum.MIN,
+          max: OrderNoDefaultEnum.MAX,
+        },
+      },*/
+    {
+        fieldName: 'status',
+        label: '状态',
+        // required: false,
+        component: 'Switch',
+        defaultValue: 1,
+        componentProps: {
+            checkedValue: 1,
+            unCheckedValue: 0,
+            checkedChildren: '启用',
+            unCheckedChildren: '禁用',
+        },
+    },
+    {
+        fieldName: 'platformEnabled',
+        label: '是否推送',
+        // helpMessage: '是否推送消息至第三方平台！',
+        required: false,
+        component: 'Switch',
+        defaultValue: 0,
+        componentProps: {
+            checkedValue: 1,
+            unCheckedValue: 0,
+            checkedChildren: '推送',
+            unCheckedChildren: '不推送',
+        },
+        colProps: {span: 24},
+    },
+    {
+        label: '备注',
+        fieldName: 'note',
+        component: 'Textarea',
+        componentProps: {
+            // autosize: true,
+            autoSize: {
+                minRows: 4,
+                maxRows: 8,
+            },
+            rows: 4
+        }
+        /*    componentProps: {
+              autoSize: {
+                minRows: RemarkDefaultEnum.MIN_ROWS,
+                maxRows: RemarkDefaultEnum.MAX_ROWS,
+              },
+            },*/
+        /*rules: [
+          {
+            max: 500,
+            message: '字符长度不能大于500！',
+          },
+        ],*/
+        // colProps,
+    },
 ];
 
 export const secretKeyFormSchema: FormSchema[] = [
-  {
-    field: 'id',
-    label: 'ID',
-    component: 'Input',
-    show: false,
-  },
-  {
-    field: 'sn',
-    label: '标识（appKey）',
-    // component: 'Input',
-    slot: 'snSlot',
-    colProps,
-  },
-  {
-    label: '密钥（appSecretKey）',
-    field: 'secretKey',
-    // component: 'InputTextArea',
-    slot: 'secretKeySlot',
-    colProps,
-  },
+    {
+        field: 'id',
+        label: 'ID',
+        component: 'Input',
+        show: false,
+    },
+    {
+        field: 'sn',
+        label: '标识（appKey）',
+        // component: 'Input',
+        slot: 'snSlot',
+    },
+    {
+        label: '密钥（appSecretKey）',
+        field: 'secretKey',
+        // component: 'InputTextArea',
+        slot: 'secretKeySlot',
+    },
 ];

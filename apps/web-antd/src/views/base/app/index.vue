@@ -10,6 +10,7 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {getAppListByPage} from '#/api/base/app';
 import AppForm from './app-form.vue';
 import { AccessControl, useAccess } from '@vben/access';
+import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 
 const [AppModal, modalApi] = useVbenModal({
   connectedComponent: AppForm,
@@ -32,6 +33,7 @@ interface RowType {
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
+  submitOnEnter: true,
   commonConfig: {
     labelWidth: 60,
   },
@@ -39,13 +41,7 @@ const formOptions: VbenFormProps = {
   resetButtonOptions:{
     show: false,
   },
-  schema: [
-    {
-      component: 'Input',
-      fieldName: 'keyword',
-      label: '关键字',
-    },
-  ],
+  schema: searchFormSchema,
 };
 
 const gridOptions: VxeGridProps<RowType> = {
@@ -53,30 +49,14 @@ const gridOptions: VxeGridProps<RowType> = {
     highlight: true,
     labelField: 'name',
   },
-  columns: [
-    { title: '序号', type: 'seq', width: 50 },
-    { field: 'name',  align: 'left', title: '名称'},
-    { field: 'sn', align: 'left', title: '标识' },
-    { field: 'url', align: 'left', title: 'URL' },
-    { field: 'indexUrl', align: 'left', title: '首页地址' },
-    { field: 'status', title: '状态', slots: { default: 'status' }, width: 100  },
-
-    { field: 'platformEnabled', title: '开启平台推送', slots: { default: 'platformEnabled' }, width: 100  },
-    { field: 'orderNo', align: 'right', title: '排序', width: 100  },
-    { field: 'note', align: 'left', title: '备注' },
-    {
-      field: 'action',
-      fixed: 'right',
-      slots: { default: 'action' },
-      title: '操作',
-      width: 120,
-    },
-  ],
+  columns: listColumns,
+  columnConfig: {resizable: true},
   height: 'auto',
   keepSource: true,
   border: false,
   stripe: true,
   pagerConfig: {
+    autoHidden: true,
   },
   proxyConfig: {
     ajax: {
