@@ -5,12 +5,13 @@ import type {
     VbenFormProps,
 } from '@vben/common-ui';
 import { Page, useVbenModal } from '@vben/common-ui';
-import {Button, Card, message, Tag} from 'ant-design-vue';
+import {Button, Card, Image, message, Tag} from 'ant-design-vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {getAppListByPage} from '#/api/base/app';
 import AppForm from './app-form.vue';
 import { AccessControl, useAccess } from '@vben/access';
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
+import {PerEnum} from "#/enums/perEnum";
 
 const [AppModal, modalApi] = useVbenModal({
   connectedComponent: AppForm,
@@ -99,26 +100,33 @@ function handleEdit(record: any) {
   <Page auto-content-height>
     <Grid>
       <template #toolbar-actions>
-        <AccessControl :codes="['App:1']" type="code">
+<!--        <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
           <Button class="mr-2" @click="handleAdd" type="primary">新建</Button>
+        </AccessControl>-->
+      </template>
+      <template #toolbar-tools>
+        <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
+          <Button type="primary" @click="handleAdd">新建</Button>
         </AccessControl>
       </template>
-<!--      <template #toolbar-tools>
-        <Button type="primary" @click="handleAdd">
-          新建
-        </Button>
-      </template>-->
+
       <template #action="{row}">
-        <Button type="link" @click="handleEdit(row)">编辑</Button>
+        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
+          <Button type="link" @click="handleEdit(row)">编辑</Button>
+        </AccessControl>
+      </template>
+
+      <template #image="{ row }">
+        <Image :src="row.image" height="30" width="30" />
       </template>
 
       <template #status="{ row }">
-        <Tag v-if="row.status===1" color="success">启用</Tag>
-        <Tag v-else>禁用</Tag>
+        <Tag v-if="row.status===1" color="green">启用</Tag>
+        <Tag v-else color="red">禁用</Tag>
       </template>
 
       <template #platformEnabled="{ row }">
-        <Tag v-if="row.platformEnabled===1" color="success">开启</Tag>
+        <Tag v-if="row.platformEnabled===1" color="green">开启</Tag>
         <Tag v-else>关闭</Tag>
       </template>
     </Grid>

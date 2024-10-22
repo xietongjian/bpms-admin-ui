@@ -1,22 +1,30 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {z} from "@vben/common-ui";
+import {FormValidPatternEnum} from "#/enums/commonEnum";
 
 
 export const listColumns = [
-    { title: '序号', type: 'seq', width: 50 },
-    { field: 'image',  align: 'center', title: '图标'},
-    { field: 'name',  align: 'left', title: '名称'},
-    { field: 'sn', align: 'left', title: '标识' },
-    { field: 'url', align: 'left', title: 'URL' },
-    { field: 'indexUrl', align: 'left', title: '首页地址' },
-    { field: 'status', title: '状态', slots: { default: 'status' }, width: 100 },
+    {title: '序号', type: 'seq', width: 50},
+    {
+        field: 'image',
+        align: 'center',
+        title: '图标',
+        slots: {default: 'image'}
+    },
 
-    { field: 'platformEnabled', title: '开启平台推送', slots: { default: 'platformEnabled' }, width: 100 },
-    { field: 'orderNo', align: 'right', title: '排序', width: 100 },
-    { field: 'note', align: 'left', title: '备注' },
+    {field: 'name', align: 'left', title: '名称', showOverflow: true},
+    {field: 'sn', align: 'left', title: '标识', showOverflow: true},
+    {field: 'url', align: 'left', title: 'URL'},
+    {field: 'indexUrl', align: 'left', title: '首页地址', showHeaderOverflow: true},
+    {field: 'status', title: '状态', slots: {default: 'status'}, width: 100},
+
+    {field: 'platformEnabled', title: '开启平台推送', slots: {default: 'platformEnabled'}, width: 100, showHeaderOverflow: true},
+    {field: 'orderNo', align: 'right', title: '排序', width: 100},
+    {field: 'note', align: 'left', title: '备注'},
     {
         field: 'action',
         fixed: 'right',
-        slots: { default: 'action' },
+        slots: {default: 'action'},
         title: '操作',
         width: 120,
     },
@@ -119,11 +127,14 @@ export const formSchema: FormSchema[] = [
     {
         fieldName: 'name',
         label: '名称',
-        rules: 'required',
         component: 'Input',
         componentProps: {
             placeholder: '请输入用户名',
         },
+        rules: z
+            .string()
+            .trim()
+            .min(1, "名称不能为空").max(64, "系统名称不能大于64个字符")
         /*rules: [
           {
             required: true,

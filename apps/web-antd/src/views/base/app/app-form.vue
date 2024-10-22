@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import {useVbenModal} from '@vben/common-ui';
+import {useVbenModal, z} from '@vben/common-ui';
 import {message} from 'ant-design-vue';
 import dayjs from 'dayjs';
 import {formSchema} from './app.data';
-import { useVbenForm } from '#/adapter/form';
-import {saveOrUpdate} from '#/api/base/app';
+import {useVbenForm} from '#/adapter/form';
+import {saveOrUpdate, checkEntityExist} from '#/api/base/app';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
 
 const [Modal, modalApi] = useVbenModal({
   draggable: true,
@@ -19,8 +20,11 @@ const [Modal, modalApi] = useVbenModal({
       }
     }
   },
-  async onConfirm() {
-    baseFormApi.submitForm();
+  onConfirm() {
+    modalApi.setState({loading: true, confirmLoading: true});
+    console.log('onconfirm....');
+    // await baseFormApi.submitForm();
+    onSubmit();
   },
 });
 
@@ -34,7 +38,7 @@ const [BaseForm, baseFormApi] = useVbenForm({
   },
   showDefaultActions: false,
   // 提交函数
-  handleSubmit: onSubmit,
+  // handleSubmit: onSubmit,
   // 垂直布局，label和input在不同行，值为vertical
   // 水平布局，label和input在同一行
   layout: 'horizontal',
@@ -43,14 +47,46 @@ const [BaseForm, baseFormApi] = useVbenForm({
   wrapperClass: 'grid-cols-1',
 });
 
-async function onSubmit(values: Record<string, any>) {
+baseFormApi.updateSchema([{
+  fieldName: 'sn',
+  rules: z
+    .string()
+    .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
+    .refine(
+      async () => {
+        const values = await baseFormApi.getValues();
+        // 假设这是一个异步函数，模拟检查用户名是否已存在
+        return await checkEntityExist({
+          id: values.id,
+          field: 'sn',
+          fieldValue: values.sn,
+          fieldName: '系统标识',
+        });
+      },
+      {
+        message: '系统标识已存在',
+      },
+    ),
+}]);
+
+async function onSubmit() {
   const {valid} = await baseFormApi.validate();
-  if(valid){
-    const {msg} = await saveOrUpdate(values);
-    debugger;
-    message.success(msg);
-    modalApi.close();
+  if (valid) {
+    try {
+      const values = await baseFormApi.getValues();
+      const {msg, success} = await saveOrUpdate(values);
+      modalApi.setState({loading: false, confirmLoading: false});
+      if (success) {
+        message.success(msg);
+        modalApi.close();
+      } else {
+        message.error(msg);
+      }
+    } catch (e) {
+      message.error(e);
+    }
   }
+  modalApi.setState({loading: false, confirmLoading: false});
 }
 </script>
 <template>

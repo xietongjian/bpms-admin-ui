@@ -46,6 +46,10 @@ export async function saveOrUpdate(params: any) {
     noTransformResponse: true,
   });
 }
+export async function checkEntityExist(params: any) {
+  return requestClient.post<any>(Api.CheckEntityExist, params);
+}
+
 
 /*
 export const saveOrUpdate = (params: any) => defHttp.post({ url: Api.SaveOrUpdate, params });
