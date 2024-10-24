@@ -17,6 +17,7 @@ const [Modal, modalApi] = useVbenModal({
       const values = modalApi.getData<Record<string, any>>();
       if (values) {
         baseFormApi.setValues(values);
+        modalApi.setState({loading: false, confirmLoading: false});
       }
     }
   },
@@ -56,12 +57,18 @@ baseFormApi.updateSchema([{
       async () => {
         const values = await baseFormApi.getValues();
         // 假设这是一个异步函数，模拟检查用户名是否已存在
-        return await checkEntityExist({
-          id: values.id,
-          field: 'sn',
-          fieldValue: values.sn,
-          fieldName: '系统标识',
-        });
+        let result = false;
+        try {
+          result = await checkEntityExist({
+            id: values.id,
+            field: 'sn',
+            fieldValue: values.sn,
+            fieldName: '系统标识',
+          });
+        } catch (e) {
+          console.error(e);
+        }
+        return result;
       },
       {
         message: '系统标识已存在',

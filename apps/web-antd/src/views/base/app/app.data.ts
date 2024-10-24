@@ -121,7 +121,7 @@ export const formSchema: FormSchema[] = [
         component: 'Input',
         dependencies: {
             show: false,
-            triggerFields: ['name']
+            triggerFields: ["id"]
         }
     },
     {
