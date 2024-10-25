@@ -134,7 +134,9 @@ export const formSchema: FormSchema[] = [
         rules: z
             .string()
             .trim()
-            .min(1, "名称不能为空").max(64, "系统名称不能大于64个字符")
+            .min(0, "名称不能为空")
+            .min(1, "名称不能为空")
+            .max(64, "系统名称不能大于64个字符")
         /*rules: [
           {
             required: true,
@@ -178,8 +180,11 @@ export const formSchema: FormSchema[] = [
     {
         fieldName: 'indexUrl',
         label: '首页URL',
-        rules: 'required',
         component: 'Input',
+        required: false,
+        rules: z
+            .string()
+            .regex(new RegExp('^\\/(\\w+\\/?)+(\\.?\\w+)?$'), "URL格式不正确！"),
         /*rules: [
           {
             required: true,
@@ -197,28 +202,22 @@ export const formSchema: FormSchema[] = [
           },
         ],*/
     },
-    /*  {
-        field: 'image',
-        label: '图标',
-        required: false,
-        component: 'IconPicker',
-      },*/
-    /*  {
-        field: 'orderNo',
+    {
+        fieldName: 'orderNo',
         label: '排序号',
-        helpMessage: '数值越小越靠前！',
-        required: false,
+        help: '数值越小越靠前！',
         component: 'InputNumber',
-        defaultValue: OrderNoDefaultEnum.VALUE,
+        defaultValue: 100,
         componentProps: {
-          min: OrderNoDefaultEnum.MIN,
-          max: OrderNoDefaultEnum.MAX,
+            min: 0,
+            max: 999999,
+            class: 'w-1/2'
         },
-      },*/
+
+    },
     {
         fieldName: 'status',
         label: '状态',
-        // required: false,
         component: 'Switch',
         defaultValue: 1,
         componentProps: {
@@ -231,8 +230,7 @@ export const formSchema: FormSchema[] = [
     {
         fieldName: 'platformEnabled',
         label: '是否推送',
-        // helpMessage: '是否推送消息至第三方平台！',
-        required: false,
+        help: '是否推送消息至第三方平台！',
         component: 'Switch',
         defaultValue: 0,
         componentProps: {
@@ -241,7 +239,6 @@ export const formSchema: FormSchema[] = [
             checkedChildren: '推送',
             unCheckedChildren: '不推送',
         },
-        colProps: {span: 24},
     },
     {
         label: '备注',
@@ -254,20 +251,8 @@ export const formSchema: FormSchema[] = [
                 maxRows: 8,
             },
             rows: 4
-        }
-        /*    componentProps: {
-              autoSize: {
-                minRows: RemarkDefaultEnum.MIN_ROWS,
-                maxRows: RemarkDefaultEnum.MAX_ROWS,
-              },
-            },*/
-        /*rules: [
-          {
-            max: 500,
-            message: '字符长度不能大于500！',
-          },
-        ],*/
-        // colProps,
+        },
+        rules: z.string().max(500, "字符长度不能大于500！"),
     },
 ];
 

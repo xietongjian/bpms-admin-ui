@@ -98,7 +98,7 @@ function handleEdit(record: any) {
 
 <template>
   <Page auto-content-height>
-    <Grid>
+    <Grid table-title="列表">
       <template #toolbar-actions>
 <!--        <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
           <Button class="mr-2" @click="handleAdd" type="primary">新建</Button>

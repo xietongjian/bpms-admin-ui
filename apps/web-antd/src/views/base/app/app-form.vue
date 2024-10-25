@@ -22,10 +22,9 @@ const [Modal, modalApi] = useVbenModal({
     }
   },
   onConfirm() {
-    modalApi.setState({loading: true, confirmLoading: true});
     console.log('onconfirm....');
     // await baseFormApi.submitForm();
-    onSubmit();
+    handleSubmit();
   },
 });
 
@@ -76,13 +75,13 @@ baseFormApi.updateSchema([{
     ),
 }]);
 
-async function onSubmit() {
+async function handleSubmit() {
+  modalApi.setState({loading: true, confirmLoading: true});
   const {valid} = await baseFormApi.validate();
   if (valid) {
     try {
       const values = await baseFormApi.getValues();
       const {msg, success} = await saveOrUpdate(values);
-      modalApi.setState({loading: false, confirmLoading: false});
       if (success) {
         message.success(msg);
         modalApi.close();
@@ -91,6 +90,8 @@ async function onSubmit() {
       }
     } catch (e) {
       message.error(e);
+    } finally {
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
   modalApi.setState({loading: false, confirmLoading: false});
