@@ -129,12 +129,11 @@ export const formSchema: FormSchema[] = [
         label: '名称',
         component: 'Input',
         componentProps: {
-            placeholder: '请输入用户名',
+            placeholder: '请输入应用名',
         },
         rules: z
             .string()
             .trim()
-            .min(0, "名称不能为空")
             .min(1, "名称不能为空")
             .max(64, "系统名称不能大于64个字符")
         /*rules: [
@@ -154,12 +153,18 @@ export const formSchema: FormSchema[] = [
         label: '标识',
         rules: 'required',
         component: 'Input',
+        componentProps: {
+            placeholder: '请输入英文或数字'
+        },
     },
     {
         fieldName: 'url',
         label: '系统URL',
         rules: 'required',
         component: 'Input',
+        componentProps: {
+            placeholder: '请输入系统URL'
+        },
         /*rules: [
           {
             required: true,
@@ -181,26 +186,15 @@ export const formSchema: FormSchema[] = [
         fieldName: 'indexUrl',
         label: '首页URL',
         component: 'Input',
-        required: false,
+        help: '例如：/index.html',
+        componentProps: {
+            placeholder: '如：/index.html'
+        },
         rules: z
             .string()
-            .regex(new RegExp('^\\/(\\w+\\/?)+(\\.?\\w+)?$'), "URL格式不正确！"),
-        /*rules: [
-          {
-            required: true,
-            whitespace: true,
-            message: '首页URL不能为空！',
-          },
-          {
-            pattern: new RegExp('^\\/(\\w+\\/?)+(\\.?\\w+)?$'),
-            type: 'string',
-            message: '请输入正确的URL地址！！',
-          },
-          {
-            max: 128,
-            message: '字符长度不能大于128！',
-          },
-        ],*/
+            .min(1, "首页URL不能为空")
+            .max(128, "字符长度不能大于128")
+            .regex(new RegExp('^\\/(\\w+\\/?)+(\\.?\\w+)?$'), "请输入正确的URL地址"),
     },
     {
         fieldName: 'orderNo',
@@ -213,7 +207,10 @@ export const formSchema: FormSchema[] = [
             max: 999999,
             class: 'w-1/2'
         },
-
+        rules: z
+            .number()
+            .int("请输入数字")
+            .min(0, "排序号不能为空")
     },
     {
         fieldName: 'status',
@@ -252,7 +249,7 @@ export const formSchema: FormSchema[] = [
             },
             rows: 4
         },
-        rules: z.string().max(500, "字符长度不能大于500！"),
+        rules: z.string().max(500, "字符长度不能大于500！").optional(),
     },
 ];
 

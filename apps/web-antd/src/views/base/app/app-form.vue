@@ -7,6 +7,10 @@ import {useVbenForm} from '#/adapter/form';
 import {saveOrUpdate, checkEntityExist} from '#/api/base/app';
 import {FormValidPatternEnum} from "#/enums/commonEnum";
 
+const emit = defineEmits<{
+  onSuccess: [void];
+}>();
+
 const [Modal, modalApi] = useVbenModal({
   draggable: true,
   onCancel() {
@@ -51,6 +55,8 @@ baseFormApi.updateSchema([{
   fieldName: 'sn',
   rules: z
     .string()
+    .min(1)
+    .max(100, '最多输入100个字符')
     .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
     .refine(
       async () => {
@@ -61,7 +67,7 @@ baseFormApi.updateSchema([{
           result = await checkEntityExist({
             id: values.id,
             field: 'sn',
-            fieldValue: values.sn,
+            fieldValue: values.sn || '',
             fieldName: '系统标识',
           });
         } catch (e) {
@@ -85,6 +91,7 @@ async function handleSubmit() {
       if (success) {
         message.success(msg);
         modalApi.close();
+        emit('onSuccess');
       } else {
         message.error(msg);
       }

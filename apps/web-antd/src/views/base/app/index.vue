@@ -1,35 +1,33 @@
 <script lang="ts" setup>
-import type { VxeGridListeners, VxeGridProps } from '#/adapter/vxe-table';
+import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {
-    VbenFormSchema as FormSchema,
-    VbenFormProps,
+  VbenFormSchema as FormSchema,
+  VbenFormProps,
 } from '@vben/common-ui';
-import { Page, useVbenModal } from '@vben/common-ui';
-import {Button, Card, Image, message, Tag} from 'ant-design-vue';
-import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import {Page, useVbenModal} from '@vben/common-ui';
+import {Button, Image, Tag} from 'ant-design-vue';
+import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {getAppListByPage} from '#/api/base/app';
 import AppForm from './app-form.vue';
-import { AccessControl, useAccess } from '@vben/access';
+import {AccessControl} from '@vben/access';
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import {PerEnum} from "#/enums/perEnum";
 
 const [AppModal, modalApi] = useVbenModal({
   connectedComponent: AppForm,
   centered: true,
-  onOpenChange(isOpen: boolean) {
-    if (!isOpen) {
-      gridApi.reload();
-    }
-  },
 });
 
 interface RowType {
-  category: string;
-  color: string;
   id: string;
-  price: string;
-  productName: string;
-  releaseDate: string;
+  name: string;
+  sn: string;
+  url: string;
+  indexUrl: string;
+  orderNo: number;
+  status: 1 | 0;
+  platformEnabled: 1 | 0;
+  note: string;
 }
 
 const formOptions: VbenFormProps = {
@@ -39,7 +37,7 @@ const formOptions: VbenFormProps = {
     labelWidth: 60,
   },
   actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
-  resetButtonOptions:{
+  resetButtonOptions: {
     show: false,
   },
   schema: searchFormSchema,
@@ -61,9 +59,9 @@ const gridOptions: VxeGridProps<RowType> = {
   },
   proxyConfig: {
     ajax: {
-      query: async ({ page }, formValues) => {
+      query: async ({page}, formValues) => {
         return await getAppListByPage({
-          query:{
+          query: {
             pageNum: page.currentPage,
             pageSize: page.pageSize,
           },
@@ -77,7 +75,7 @@ const gridOptions: VxeGridProps<RowType> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({ formOptions, gridOptions });
+const [Grid, gridApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 function handleAdd() {
   modalApi.setData({});
@@ -86,6 +84,7 @@ function handleAdd() {
     title: '新建'
   });
 }
+
 function handleEdit(record: any) {
   modalApi.setData(record);
   modalApi.open();
@@ -99,11 +98,6 @@ function handleEdit(record: any) {
 <template>
   <Page auto-content-height>
     <Grid table-title="列表">
-      <template #toolbar-actions>
-<!--        <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
-          <Button class="mr-2" @click="handleAdd" type="primary">新建</Button>
-        </AccessControl>-->
-      </template>
       <template #toolbar-tools>
         <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
           <Button type="primary" @click="handleAdd">新建</Button>
@@ -117,7 +111,7 @@ function handleEdit(record: any) {
       </template>
 
       <template #image="{ row }">
-        <Image :src="row.image" height="30" width="30" />
+        <Image :src="row.image" height="30" width="30"/>
       </template>
 
       <template #status="{ row }">
@@ -130,6 +124,6 @@ function handleEdit(record: any) {
         <Tag v-else>关闭</Tag>
       </template>
     </Grid>
+    <AppModal @onSuccess="gridApi.reload()"/>
   </Page>
-  <AppModal />
 </template>
