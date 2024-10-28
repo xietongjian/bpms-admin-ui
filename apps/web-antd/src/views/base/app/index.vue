@@ -1,20 +1,17 @@
 <script lang="ts" setup>
 import type {VxeGridProps} from '#/adapter/vxe-table';
-import type {
-  VbenFormSchema as FormSchema,
-  VbenFormProps,
-} from '@vben/common-ui';
+import type {VbenFormProps} from '@vben/common-ui';
 import {Page, useVbenModal} from '@vben/common-ui';
 import {Button, Image, Tag} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {getAppListByPage} from '#/api/base/app';
-import AppForm from './app-form.vue';
+import AppInputModal from './AppInputModal.vue';
 import {AccessControl} from '@vben/access';
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import {PerEnum} from "#/enums/perEnum";
 
 const [AppModal, modalApi] = useVbenModal({
-  connectedComponent: AppForm,
+  connectedComponent: AppInputModal,
   centered: true,
 });
 
