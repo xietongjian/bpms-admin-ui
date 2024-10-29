@@ -9,6 +9,12 @@ import AppInputModal from './AppInputModal.vue';
 import {AccessControl} from '@vben/access';
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import {PerEnum} from "#/enums/perEnum";
+import {
+  EditSquareOutlineSharp,
+  EditSquareRounded,
+  EditTwotone,
+  SquareEditOutline
+} from '@vben/icons';
 
 const [AppModal, modalApi] = useVbenModal({
   connectedComponent: AppInputModal,
@@ -51,9 +57,6 @@ const gridOptions: VxeGridProps<RowType> = {
   keepSource: true,
   border: false,
   stripe: true,
-  pagerConfig: {
-    autoHidden: true,
-  },
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
@@ -103,7 +106,15 @@ function handleEdit(record: any) {
 
       <template #action="{row}">
         <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Button type="link" @click="handleEdit(row)">编辑</Button>
+          <Button type="link" @click="handleEdit(row)">
+            <template #icon>
+<!--              <EditSquareOutlineSharp />
+              <EditSquareRounded />
+              <EditTwotone />-->
+<!--              <SquareEditOutline />-->
+              <EditTwotone />
+            </template>
+          </Button>
         </AccessControl>
       </template>
 
