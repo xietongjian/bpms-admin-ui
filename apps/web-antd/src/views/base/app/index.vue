@@ -2,23 +2,30 @@
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {Page, useVbenModal} from '@vben/common-ui';
-import {Button, Image, Tag} from 'ant-design-vue';
+import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import {getAppListByPage} from '#/api/base/app';
+import {deleteByIds, getAppListByPage} from '#/api/base/app';
 import AppInputModal from './AppInputModal.vue';
+import AppSecretKeyModal from './AppSecretKeyModal.vue';
 import {AccessControl} from '@vben/access';
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import {PerEnum} from "#/enums/perEnum";
 import {
-  EditSquareOutlineSharp,
-  EditSquareRounded,
-  EditTwotone,
-  SquareEditOutline
+  SquareEditOutline,
+  DeleteOutline,
+  CloudSecurityOutline,
+  QuestionMarkCircleOutline,
 } from '@vben/icons';
 
 const [AppModal, modalApi] = useVbenModal({
   connectedComponent: AppInputModal,
   centered: true,
+});
+
+const [SecretKeyModal, secretKeyModalApi] = useVbenModal({
+  connectedComponent: AppSecretKeyModal,
+  centered: true,
+  showConfirmButton	: false,
 });
 
 interface RowType {
@@ -93,6 +100,28 @@ function handleEdit(record: any) {
   });
 }
 
+function handleViewSecretKey(record: any) {
+  secretKeyModalApi.setData(record);
+  secretKeyModalApi.open();
+  secretKeyModalApi.setState({
+    title: '查看密钥',
+  });
+}
+
+async function handleDelete(record: any) {
+  try {
+    const result = await deleteByIds([record.id]);
+    const {success, msg} = result;
+    if (success) {
+      message.success(msg);
+      await gridApi.reload();
+    } else{
+      message.error(msg);
+    }
+  } catch (e) {
+    message.error(e.message);
+  }
+}
 </script>
 
 <template>
@@ -106,15 +135,41 @@ function handleEdit(record: any) {
 
       <template #action="{row}">
         <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Button type="link" @click="handleEdit(row)">
-            <template #icon>
-<!--              <EditSquareOutlineSharp />
-              <EditSquareRounded />
-              <EditTwotone />-->
-<!--              <SquareEditOutline />-->
-              <EditTwotone />
+          <Tooltip title="编辑">
+            <Button type="link" @click="handleEdit(row)">
+              <template #icon>
+                <SquareEditOutline class="size-4 mx-auto"/>
+              </template>
+            </Button>
+          </Tooltip>
+        </AccessControl>
+
+        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
+          <Tooltip title="密钥">
+            <Button type="link" @click="handleViewSecretKey(row)">
+              <template #icon>
+                <CloudSecurityOutline class="size-4 mx-auto"/>
+              </template>
+            </Button>
+          </Tooltip>
+        </AccessControl>
+
+        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
+          <Popconfirm @confirm="handleDelete(row)" :ok-button-props="{danger: true}">
+            <template #title >
+              <div class="w-32">
+                确定要删除吗？
+              </div>
             </template>
-          </Button>
+            <template #icon>
+              <QuestionMarkCircleOutline class="text-red-500 size-6"/>
+            </template>
+            <Button type="link" danger>
+              <template #icon>
+                <DeleteOutline class="size-4 mx-auto"/>
+              </template>
+            </Button>
+          </Popconfirm>
         </AccessControl>
       </template>
 
@@ -133,5 +188,6 @@ function handleEdit(record: any) {
       </template>
     </Grid>
     <AppModal @onSuccess="gridApi.reload()"/>
+    <SecretKeyModal @onSuccess="gridApi.reload()"/>
   </Page>
 </template>

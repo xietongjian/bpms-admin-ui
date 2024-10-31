@@ -27,10 +27,10 @@ export async function getAll(params?: any) {
 
 /**
  * 批量删除应用
- * @param params
+ * @param data
  */
-export async function deleteByIds(params: Array<string>) {
-  return requestClient.get<any>(Api.Delete, { params });
+export async function deleteByIds(data: Array<string>) {
+  return requestClient.post<any>(Api.Delete, data, { noTransformResponse: true });
 }
 
 /**
@@ -48,6 +48,14 @@ export async function saveOrUpdate(params: any) {
 }
 export async function checkEntityExist(params: any) {
   return requestClient.post<any>(Api.CheckEntityExist, params);
+}
+
+/**
+ * 更新应用密钥
+ * @param params
+ */
+export async function refreshSecretKey (params: string) {
+  return requestClient.post<string>(Api.RefreshSecretKey + '/' + params, {}, {noTransformResponse: true});
 }
 
 

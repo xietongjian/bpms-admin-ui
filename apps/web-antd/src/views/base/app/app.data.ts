@@ -3,7 +3,9 @@ import {z} from "@vben/common-ui";
 import {FormValidPatternEnum} from "#/enums/commonEnum";
 import {checkEntityExist} from "#/api/base/app";
 
-
+/**
+ * 列表
+ */
 export const listColumns = [
   {title: '序号', type: 'seq', width: 50},
   {
@@ -37,78 +39,9 @@ export const listColumns = [
   },
 ];
 
-/*
-export const columns: BasicColumn[] = [
-  {
-    title: '图标',
-    dataIndex: 'image',
-    width: 60,
-    customRender: ({ record }) => {
-      return h(Icon, { icon: record.image });
-    },
-  },
-  {
-    title: '名称',
-    width: 200,
-    dataIndex: 'name',
-    align: 'left',
-    resizable: true,
-  },
-  {
-    title: '标识',
-    dataIndex: 'sn',
-    width: 150,
-    align: 'left',
-  },
-  {
-    title: 'URL',
-    dataIndex: 'url',
-    align: 'left',
-  },
-  {
-    title: '首页',
-    dataIndex: 'indexUrl',
-    width: 100,
-    align: 'left',
-  },
-  {
-    title: '状态',
-    dataIndex: 'status',
-    width: 80,
-    customRender: ({ record }) => {
-      const status = record.status;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '启用' : '停用';
-      return h(Tag, { color: color }, () => text);
-    },
-  },
-  {
-    title: '推送状态',
-    dataIndex: 'platformEnabled',
-    width: 100,
-    customRender: ({ record }) => {
-      const platformEnabled = record.platformEnabled;
-      const enable = ~~platformEnabled === 0;
-      const color = enable ? 'green' : 'blue';
-      const text = enable ? '不推送' : '推送';
-      return h(Tag, { color: color }, () => text);
-    },
-  },
-  {
-    title: '排序',
-    dataIndex: 'orderNo',
-    width: 80,
-    align: 'right',
-  },
-  {
-    title: '备注',
-    dataIndex: 'note',
-    align: 'left',
-  },
-];
-*/
-
+/**
+ * 搜索条件
+ */
 export const searchFormSchema: FormSchema[] = [
   {
     component: 'Input',
@@ -121,6 +54,9 @@ export const searchFormSchema: FormSchema[] = [
   },
 ];
 
+/**
+ * 表单信息
+ */
 export const formSchema: FormSchema[] = [
   {
     fieldName: 'id',
@@ -285,23 +221,35 @@ export const formSchema: FormSchema[] = [
   },
 ];
 
+/**
+ * 更新密钥
+ */
 export const secretKeyFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["id"]
+    }
   },
   {
-    field: 'sn',
+    fieldName: 'sn',
     label: '标识（appKey）',
-    // component: 'Input',
-    slot: 'snSlot',
+    component: 'Input',
   },
   {
     label: '密钥（appSecretKey）',
-    field: 'secretKey',
-    // component: 'InputTextArea',
-    slot: 'secretKeySlot',
+    fieldName: 'secretKey',
+    component: 'Textarea',
+    componentProps: {
+      readonly: true
+    }
+  },
+  {
+    label: '',
+    fieldName: 'ctrl',
+    component: 'Input',
   },
 ];
