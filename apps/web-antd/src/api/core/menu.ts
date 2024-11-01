@@ -46,7 +46,7 @@ function genMenuTree(menus){
     meta: {
       affixTab: true,
       icon: 'lucide:area-chart',
-      title: 'bbbb',
+      title: '主页',
     }
   });
 
