@@ -4,8 +4,7 @@ import type {
 } from '@vben/types';
 
 import { generateAccessible } from '@vben/access';
-import { overridesPreferences as preferences } from '../preferences';
-
+import { preferences } from '@vben/preferences';
 
 import { message } from 'ant-design-vue';
 
