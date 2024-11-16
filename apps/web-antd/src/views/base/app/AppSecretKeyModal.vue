@@ -6,10 +6,14 @@ import {useVbenForm} from '#/adapter/form';
 import {refreshSecretKey} from '#/api/base/app';
 import {QuestionMarkCircleOutline} from '@vben/icons';
 import {ref, unref} from "vue";
+import { useClipboard } from '@vueuse/core';
 
 const emit = defineEmits<{
   onSuccess: [void];
 }>();
+
+const { copy, text } = useClipboard({ legacy: true });
+
 
 // 用于判断用户是否操作过数据
 const dataChanged = ref(false);
@@ -70,6 +74,12 @@ async function refreshSecretKeyHandle() {
   } finally {
     modalApi.setState({loading: false});
   }
+}
+
+async function handleCopy() {
+  const values = await baseFormApi.getValues();
+
+  copy(values);
 }
 
 </script>
