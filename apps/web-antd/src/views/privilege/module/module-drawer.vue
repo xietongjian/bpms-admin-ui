@@ -1,20 +1,15 @@
 <script lang="ts" setup>
 import type {VxeGridProps} from '#/adapter/vxe-table';
-import {ref, unref, nextTick} from 'vue';
 import type {VbenFormProps} from '@vben/common-ui';
 import {Page, useVbenModal} from '@vben/common-ui';
-import {Button, Tree, Image, Tag, Tooltip, Popconfirm, message, Card} from 'ant-design-vue';
+import {Button, Space, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {deleteByIds, getAppListByPage} from '#/api/base/app';
-import { getCategories } from '#/api/base/category';
-// import AppInputModal from './AppInputModal.vue';
-// import AppSecretKeyModal from './AppSecretKeyModal.vue';
+import AppInputModal from './AppInputModal.vue';
+import AppSecretKeyModal from './AppSecretKeyModal.vue';
 import {AccessControl} from '@vben/access';
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import {PerEnum} from "#/enums/perEnum";
-import { listToTree } from '#/utils/helper/treeHelper';
-
-
 import {
   SquareEditOutline,
   DeleteOutline,
@@ -22,11 +17,17 @@ import {
   QuestionMarkCircleOutline,
 } from '@vben/icons';
 
-// const [AppModal, modalApi] = useVbenModal({
-//   connectedComponent: null,//AppInputModal,
-//   centered: true,
-// });
-const categoryTreeRef = ref(null);
+const [AppModal, modalApi] = useVbenModal({
+  connectedComponent: AppInputModal,
+  centered: true,
+});
+
+const [SecretKeyModal, secretKeyModalApi] = useVbenModal({
+  connectedComponent: AppSecretKeyModal,
+  centered: true,
+  showConfirmButton	: false,
+});
+
 interface RowType {
   id: string;
   name: string;
@@ -81,34 +82,50 @@ const gridOptions: VxeGridProps<RowType> = {
   },
 };
 
-fetch();
-
-async function fetch() {
-  getCategories().then(res => {
-    const tempTreeData = listToTree(res);
-
-    tempTreeData.unshift({
-      code: "draftList",
-      name: "我的草稿",
-      pid: "",
-    });
-    tempTreeData.unshift({
-      code: "myCommonlyList",
-      name: "常用流程",
-      pid: "",
-    });
-    treeData.value = tempTreeData;
-    nextTick(() => {
-      // 加载后展开节层级
-      if(unref(treeData).length < 10){
-        //unref(categoryTreeRef)?.filterByLevel(1);
+const [BasicTable, tableApi] = useVbenVxeGrid({
+  formOptions,
+  gridOptions,
+  gridEvents: {
+    cellDblclick: (e: any) => {
+      const { row = {} } = e;
+      if (!row?.children) {
+        return;
       }
-    });
-  }).finally(()=>{
-    // treeLoading.value = false;
+      const isExpanded = row?.expand;
+      tableApi.grid.setTreeExpand(row, !isExpanded);
+      row.expand = !isExpanded;
+    },
+    // 需要监听使用箭头展开的情况 否则展开/折叠的数据不一致
+    toggleTreeExpand: (e: any) => {
+      const { row = {}, expanded } = e;
+      row.expand = expanded;
+    },
+  },
+});
+
+function handleAdd() {
+  modalApi.setData({});
+  modalApi.open();
+  modalApi.setState({
+    title: '新建'
   });
 }
-const [Grid, gridApi] = useVbenVxeGrid({formOptions, gridOptions});
+
+function handleEdit(record: any) {
+  modalApi.setData(record);
+  modalApi.open();
+  modalApi.setState({
+    title: '修改'
+  });
+}
+
+function handleViewSecretKey(record: any) {
+  secretKeyModalApi.setData(record);
+  secretKeyModalApi.open();
+  secretKeyModalApi.setState({
+    title: '查看密钥',
+  });
+}
 
 async function handleDelete(record: any) {
   try {
@@ -124,60 +141,17 @@ async function handleDelete(record: any) {
     message.error(e.message);
   }
 }
-
-const treeData = ref([]);
-
-function handleSelect(keys: string, e) {
-  const node = e.selectedNodes[0];
-  if(node){
-    currentCategory.value = node;
-  }else{
-    currentCategory.value = {};
-  }
-  pager.value.pageNum = 1;
-  pagination.current = 1;
-  searchTxt.value = '';
-  fetchModelByPage();
-}
-
 </script>
 
 <template>
-  <Page content-class="flex flex-row gap-4 h-full" auto-content-height>
-    <Card size="small" class="w-1/4 h-full" title="流程分类"
-          body-style="padding: 4px;">
-      <template #extra>
-      </template>
-      <Tree
-        ref="categoryTreeRef"
-        block-node
-        :tree-data="treeData"
-        @select="handleSelect"
-        :fieldNames="{title: 'name', key: 'code'}"
-      />
-    </Card>
-
-    <Card size="small" class="flex-1" title="基础示例">
-      <template #extra>
-      </template>
-      <div>
-        aaaa
-      </div>
-    </Card>
-<!--
-    <div class="flex">
-      <div class="w-400">
-        aaaa
-      </div>
-      <div class="flex-1">
-        bbb
-      </div>
-    </div>-->
-<!--    <Grid table-title="列表">
+  <Page auto-content-height>
+    <BasicTable table-title="菜单列表" table-title-help="双击展开/收起子菜单">
       <template #toolbar-tools>
-        <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
-          <Button type="primary" @click="handleAdd">新建</Button>
-        </AccessControl>
+        <Space>
+          <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
+            <Button type="primary" @click="handleAdd">新建</Button>
+          </AccessControl>
+        </Space>
       </template>
 
       <template #action="{row}">
@@ -233,7 +207,8 @@ function handleSelect(keys: string, e) {
         <Tag v-if="row.platformEnabled===1" color="green">开启</Tag>
         <Tag v-else>关闭</Tag>
       </template>
-    </Grid>-->
-<!--    <AppModal @onSuccess="gridApi.reload()"/>-->
+    </BasicTable>
+    <AppModal @onSuccess="gridApi.reload()"/>
+    <SecretKeyModal @onSuccess="gridApi.reload()"/>
   </Page>
 </template>

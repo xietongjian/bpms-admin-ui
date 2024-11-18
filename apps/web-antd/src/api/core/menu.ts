@@ -1,6 +1,7 @@
 import type { RouteRecordStringComponent } from '@vben/types';
 
 import { requestClient } from '#/api/request';
+import {listToTree, forEach} from "#/utils/helper/treeHelper";
 
 /**
  * 获取用户所有菜单
@@ -52,27 +53,14 @@ function genMenuTree(menus){
 
   const menuTree = listToTree(menus);
 
+  // 如果是中间层级的目录，则去除component属性
+  forEach(menuTree, (node) => {
+    if(node.children && node.children.length > 0 && !!node.pid){
+      delete node.component;
+    }
+  })
+
   console.log(menuTree);
   return menuTree;
 }
 
-
-
-export function listToTree<T = any>(list: any[], config): T[] {
-  const conf = {  id: 'id',
-    children: 'children',
-    pid: 'pid'};
-  const nodeMap = new Map();
-  const result: T[] = [];
-  const { id, children, pid } = conf;
-
-  for (const node of list) {
-    node[children] = node[children] || [];
-    nodeMap.set(node[id], node);
-  }
-  for (const node of list) {
-    const parent = nodeMap.get(node[pid]);
-    (parent ? parent[children] : result).push(node);
-  }
-  return result;
-}

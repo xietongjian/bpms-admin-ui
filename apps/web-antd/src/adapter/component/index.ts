@@ -10,6 +10,7 @@ import { h } from 'vue';
 
 import { globalShareState } from '@vben/common-ui';
 import { $t } from '@vben/locales';
+import PersonalSelector from './form/personal-selector/index.vue';
 
 import {
   AutoComplete,
@@ -70,6 +71,7 @@ export type ComponentType =
   | 'TimePicker'
   | 'TreeSelect'
   | 'Upload'
+  | 'PersonalSelector'
   | BaseFormComponentType;
 
 async function initComponentAdapter() {
@@ -78,6 +80,10 @@ async function initComponentAdapter() {
     // Button: () =>
     // import('xxx').then((res) => res.Button),
 
+    PersonalSelector: (props, {attrs, slots}) => {
+      return h(PersonalSelector, {...props, attrs}, slots);
+      // import('./form/personal-selector/index.vue').then((res) => res.PersonalSelector)
+    },
     AutoComplete,
     Checkbox,
     CheckboxGroup,
