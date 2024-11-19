@@ -83,6 +83,6 @@ export function useWatermark() {
   return {
     destroyWatermark,
     updateWatermark,
-    watermark,
+    watermark: readonly(watermark),
   };
 }
