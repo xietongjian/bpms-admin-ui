@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
-import {Page, useVbenModal, useVbenDrawer} from '@vben/common-ui';
-import {Button, Space, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
+import {Page, useVbenModal} from '@vben/common-ui';
+import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {deleteByIds, getAppListByPage} from '#/api/base/app';
-import moduleDrawer from './module-drawer.vue';
+import { getModules } from '#/api/privilege/module';
+// import AppInputModal from './AppInputModal.vue';
+// import AppSecretKeyModal from './AppSecretKeyModal.vue';
 import {AccessControl} from '@vben/access';
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import {PerEnum} from "#/enums/perEnum";
@@ -16,14 +18,16 @@ import {
   QuestionMarkCircleOutline,
 } from '@vben/icons';
 
-const [AppModal, modalApi] = useVbenModal({
-  connectedComponent: AppInputModal,
-  centered: true,
-});
-
-const [MenuDrawer, drawerApi] = useVbenDrawer({
-  connectedComponent: moduleDrawer,
-});
+// const [AppModal, modalApi] = useVbenModal({
+//   connectedComponent: AppInputModal,
+//   centered: true,
+// });
+//
+// const [SecretKeyModal, secretKeyModalApi] = useVbenModal({
+//   connectedComponent: AppSecretKeyModal,
+//   centered: true,
+//   showConfirmButton	: false,
+// });
 
 interface RowType {
   id: string;
@@ -61,17 +65,20 @@ const gridOptions: VxeGridProps<RowType> = {
   keepSource: true,
   border: false,
   stripe: true,
+  pagerConfig: {
+    enabled: false,
+  },
+  treeConfig: {
+    parentField: 'pid',
+    rowField: 'id',
+    transform: true,
+  },
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
-        return await getAppListByPage({
-          query: {
-            pageNum: page.currentPage,
-            pageSize: page.pageSize,
-          },
+        return await getModules({
           entity: formValues || {},
         }).then(res => {
-          res.items = res.rows;
           return Promise.resolve(res);
         });
       },
@@ -79,26 +86,7 @@ const gridOptions: VxeGridProps<RowType> = {
   },
 };
 
-const [BasicTable, tableApi] = useVbenVxeGrid({
-  formOptions,
-  gridOptions,
-  gridEvents: {
-    cellDblclick: (e: any) => {
-      const { row = {} } = e;
-      if (!row?.children) {
-        return;
-      }
-      const isExpanded = row?.expand;
-      tableApi.grid.setTreeExpand(row, !isExpanded);
-      row.expand = !isExpanded;
-    },
-    // 需要监听使用箭头展开的情况 否则展开/折叠的数据不一致
-    toggleTreeExpand: (e: any) => {
-      const { row = {}, expanded } = e;
-      row.expand = expanded;
-    },
-  },
-});
+const [Grid, gridApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 function handleAdd() {
   modalApi.setData({});
@@ -142,13 +130,11 @@ async function handleDelete(record: any) {
 
 <template>
   <Page auto-content-height>
-    <BasicTable table-title="菜单列表" table-title-help="双击展开/收起子菜单">
+    <Grid table-title="列表">
       <template #toolbar-tools>
-        <Space>
-          <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
-            <Button type="primary" @click="handleAdd">新建</Button>
-          </AccessControl>
-        </Space>
+        <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
+          <Button type="primary" @click="handleAdd">新建</Button>
+        </AccessControl>
       </template>
 
       <template #action="{row}">
@@ -204,7 +190,7 @@ async function handleDelete(record: any) {
         <Tag v-if="row.platformEnabled===1" color="green">开启</Tag>
         <Tag v-else>关闭</Tag>
       </template>
-    </BasicTable>
+    </Grid>
     <AppModal @onSuccess="gridApi.reload()"/>
     <SecretKeyModal @onSuccess="gridApi.reload()"/>
   </Page>
