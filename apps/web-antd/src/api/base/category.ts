@@ -1,14 +1,14 @@
 import { requestClient } from '#/api/request';
 
 enum Api {
-  GetCategories = '/flow/base/category/getCategories',
+  GetFlowCategories = '/flow/base/category/getCategories',
   SaveOrUpdate = '/flow/base/category/saveOrUpdate',
   Delete = '/flow/base/category/delete',
   CheckEntityExist = '/flow/base/category/checkEntityExist',
 }
 
-export async function getCategories (params?: any){
-  return requestClient.post<any>(Api.GetCategories, { ...params });
+export async function getFlowCategories (params?: any){
+  return requestClient.post<any>(Api.GetFlowCategories, { ...params });
 }
 /*
 

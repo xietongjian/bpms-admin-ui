@@ -7,7 +7,11 @@ import { defineOverridesPreferences } from '@vben/preferences';
  */
 export const overridesPreferences = defineOverridesPreferences({
   // overrides
+  navigation: {
+    "styleType": "plain"
+  },
   app: {
+    layout: "mixed-nav",
     accessMode: 'backend',
     name: import.meta.env.VITE_APP_TITLE,
   },
