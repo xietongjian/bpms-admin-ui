@@ -1,35 +1,29 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
-
-import { h } from 'vue';
-import { Tag } from 'ant-design-vue';
-import Icon from '@/components/Icon/Icon.vue';
-import { OrderNoDefaultEnum } from '@/enums/constantEnum';
+import type { VxeGridProps } from '#/adapter/vxe-table';
 
 const colProps = {
   span: 24,
 };
-export const columns: BasicColumn[] = [
+export const listColumns: VxeGridProps['columns'] = [
   {
     title: '菜单名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
     width: 300,
     resizable: true,
-    customRender: ({ record }) => {
-      return h('span', {}, [h(Icon, { icon: record.image }), h('span', record.name)]);
-      // return h(Icon, { icon: record.image });
-    },
+    treeNode: true,
+    slots: {default: 'name'}
+
   },
   {
     title: 'URL',
-    dataIndex: 'url',
+    field: 'url',
     align: 'left',
     width: 180,
   },
   {
     resizable: true,
     title: '标识',
-    dataIndex: 'sn',
+    field: 'sn',
     align: 'left',
     width: 120,
   },
@@ -37,67 +31,57 @@ export const columns: BasicColumn[] = [
     resizable: true,
     width: 200,
     title: '组件',
-    dataIndex: 'component',
+    field: 'component',
     align: 'left',
   },
   {
     title: '状态',
-    dataIndex: 'status',
+    field: 'status',
     width: 60,
-    customRender: ({ record }) => {
-      const status = record.status;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '启用' : '停用';
-      return h(Tag, { color: color }, () => text);
-    },
+    slots: {default: 'status'}
   },
   {
     title: '菜单类型',
-    dataIndex: 'showStatus',
+    field: 'showStatus',
     width: 100,
-    customRender: ({ record }) => {
-      const status = record.showStatus;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'gray';
-      const text = enable ? '显示' : '隐藏';
-      return h(Tag, { color: color }, () => text);
-    },
+    slots: {default: 'showStatus'}
   },
   {
     title: '权限值',
-    dataIndex: 'pvs',
+    field: 'pvs',
     align: 'left',
     width: 300,
     resizable: true,
+    slots: {default: 'pvs'}
   },
   {
     title: '排序',
-    dataIndex: 'orderNo',
+    field: 'orderNo',
     width: 60,
     align: 'right',
   },
-];
-
-export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
-    label: '关键字',
-    component: 'Input',
-    componentProps: {
-      placeholder: '请输入名称/标识',
-    },
-    labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
+    field: 'action',
+    fixed: 'right',
+    slots: { default: 'action' },
+    title: '操作',
+    width: 120,
   },
 ];
 
-export const formSchema: FormSchema[] = [
+export const searchFormSchema: any[] = [
+  {
+    component: 'Input',
+    fieldName: 'keyword',
+    label: '关键字',
+    componentProps: {
+      placeholder: '请输入关键字',
+      allowClear: true,
+    }
+  },
+];
+
+export const formSchema: any[] = [
   {
     field: 'id',
     label: 'ID',
@@ -221,11 +205,11 @@ export const formSchema: FormSchema[] = [
     label: '排序号',
     helpMessage: '数值越小越靠前！',
     component: 'InputNumber',
-    defaultValue: OrderNoDefaultEnum.VALUE,
-    componentProps: {
-      min: OrderNoDefaultEnum.MIN,
-      max: OrderNoDefaultEnum.MAX,
-    },
+    // defaultValue: OrderNoDefaultEnum.VALUE,
+    // componentProps: {
+    //   min: OrderNoDefaultEnum.MIN,
+    //   max: OrderNoDefaultEnum.MAX,
+    // },
   },
   {
     field: 'status',
@@ -257,7 +241,7 @@ export const formSchema: FormSchema[] = [
   },
 ];
 
-export const pValueFormSchema: FormSchema[] = [
+export const pValueFormSchema: any[] = [
   {
     field: 'id',
     label: 'ID',

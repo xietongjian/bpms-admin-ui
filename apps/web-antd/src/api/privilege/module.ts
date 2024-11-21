@@ -10,20 +10,7 @@ enum Api {
 }
 
 export const getModules = (params?: any) => {
-  const result = requestClient.post<any>(Api.ModuleList, { params });
-  return Promise.resolve(result).then((res: any) => {
-    const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
-    forEach(
-      treeData,
-      (node) => {
-        if (node.children.length === 0) {
-          delete node.children;
-        }
-      },
-      { id: 'id', children: 'children', pid: 'pid' },
-    );
-    return treeData;
-  });
+  return requestClient.post<any>(Api.ModuleList, params);
 };
 
 export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate,{ params });

@@ -1,16 +1,19 @@
 <script lang="ts" setup>
+import {nextTick} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {Page, useVbenModal} from '@vben/common-ui';
 import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import {deleteByIds, getAppListByPage} from '#/api/base/app';
+// import {deleteByIds, getAppListByPage} from '#/api/base/app';
 import { getModules } from '#/api/privilege/module';
 // import AppInputModal from './AppInputModal.vue';
 // import AppSecretKeyModal from './AppSecretKeyModal.vue';
 import {AccessControl} from '@vben/access';
-import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
+import {listColumns, searchFormSchema} from "#/views/privilege/module/module.data";
 import {PerEnum} from "#/enums/perEnum";
+import { IconifyIcon } from '@vben/icons';
+
 import {
   SquareEditOutline,
   DeleteOutline,
@@ -54,19 +57,21 @@ const formOptions: VbenFormProps = {
   schema: searchFormSchema,
 };
 
-const gridOptions: VxeGridProps<RowType> = {
-  checkboxConfig: {
+const gridOptions: VxeGridProps = {
+  /*checkboxConfig: {
     highlight: true,
     labelField: 'name',
-  },
+  },*/
   columns: listColumns,
   columnConfig: {resizable: true},
   height: 'auto',
   keepSource: true,
   border: false,
-  stripe: true,
   pagerConfig: {
     enabled: false,
+  },
+  rowConfig: {
+    keyField: 'id',
   },
   treeConfig: {
     parentField: 'pid',
@@ -76,10 +81,15 @@ const gridOptions: VxeGridProps<RowType> = {
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
-        return await getModules({
-          entity: formValues || {},
-        }).then(res => {
-          return Promise.resolve(res);
+        const resp = await getModules({
+          ...formValues,
+        })
+        return { items: resp };
+      },
+      // 默认请求接口后展开全部 不需要可以删除这段
+      querySuccess: () => {
+        nextTick(() => {
+          expandAll();
         });
       },
     },
@@ -88,42 +98,46 @@ const gridOptions: VxeGridProps<RowType> = {
 
 const [Grid, gridApi] = useVbenVxeGrid({formOptions, gridOptions});
 
+function expandAll() {
+  gridApi.grid?.setAllTreeExpand(true);
+}
+
 function handleAdd() {
-  modalApi.setData({});
+  /*modalApi.setData({});
   modalApi.open();
   modalApi.setState({
     title: '新建'
-  });
+  });*/
 }
 
 function handleEdit(record: any) {
-  modalApi.setData(record);
+  /*modalApi.setData(record);
   modalApi.open();
   modalApi.setState({
     title: '修改'
-  });
+  });*/
 }
 
 function handleViewSecretKey(record: any) {
-  secretKeyModalApi.setData(record);
+  /*secretKeyModalApi.setData(record);
   secretKeyModalApi.open();
   secretKeyModalApi.setState({
     title: '查看密钥',
-  });
+  });*/
 }
 
 async function handleDelete(record: any) {
   try {
-    const result = await deleteByIds([record.id]);
+    /*const result = await deleteByIds([record.id]);
     const {success, msg} = result;
     if (success) {
       message.success(msg);
       await gridApi.reload();
     } else{
       message.error(msg);
-    }
+    }*/
   } catch (e) {
-    message.error(e.message);
+    message.error(e);
   }
 }
 </script>
@@ -159,7 +173,7 @@ async function handleDelete(record: any) {
         </AccessControl>
 
         <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Popconfirm @confirm="handleDelete(row)" :ok-button-props="{danger: true}">
+          <Popconfirm placement="left" title="确定要删除吗？" @confirm="handleDelete(row)" :ok-button-props="{danger: true}">
             <template #title >
               <div class="w-32">
                 确定要删除吗？
@@ -177,8 +191,16 @@ async function handleDelete(record: any) {
         </AccessControl>
       </template>
 
-      <template #image="{ row }">
-        <Image :src="row.image" height="30" width="30"/>
+      <template #name="{ row }">
+        <div class="flex flex-row items-center gap-1">
+          <IconifyIcon :icon="row.image || 'ant-design:ellipsis-outlined'" class="size-5" height="20" width="20"/>
+          <span>{{row.name}}</span>
+        </div>
+      </template>
+      <template #pvs="{ row }">
+        <div class="flex flex-row items-center gap-1">
+          <Tag v-for="item in row.pvs" :key="item.id" color="green">{{item.name}}</Tag>
+        </div>
       </template>
 
       <template #status="{ row }">
@@ -186,12 +208,12 @@ async function handleDelete(record: any) {
         <Tag v-else color="red">禁用</Tag>
       </template>
 
-      <template #platformEnabled="{ row }">
-        <Tag v-if="row.platformEnabled===1" color="green">开启</Tag>
+      <template #showStatus="{ row }">
+        <Tag v-if="row.showStatus===1" color="green">开启</Tag>
         <Tag v-else>关闭</Tag>
       </template>
     </Grid>
-    <AppModal @onSuccess="gridApi.reload()"/>
-    <SecretKeyModal @onSuccess="gridApi.reload()"/>
+<!--    <AppModal @onSuccess="gridApi.reload()"/>
+    <SecretKeyModal @onSuccess="gridApi.reload()"/>-->
   </Page>
 </template>
