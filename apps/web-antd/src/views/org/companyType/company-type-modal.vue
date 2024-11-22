@@ -5,24 +5,72 @@
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref, defineEmits } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, Rule, useForm } from '@/components/Form/index';
-  import { formSchema } from './module.data';
-  import { saveOrUpdate, checkEntityExist } from '#/api/privilege/module';
-  import { CheckExistParams } from '#/api/model/baseModel';
-  import { FormValidPatternEnum } from '@/enums/constantEnum';
+  import { formSchema } from './companyType.data';
+  import { saveOrUpdate, checkEntityExist } from '#/api/org/companyType';
+  import { FormValidPatternEnum } from '#/enums/constantEnum';
+  import {useVbenForm} from "#/adapter/form";
+  import {useVbenModal} from '@vben/common-ui';
+
+  import {message} from 'ant-design-vue';
 
   const emit = defineEmits(['success', 'register']);
 
   const isUpdate = ref(true);
 
-  const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      labelWidth: 100,
+    },
+    schema: formSchema(),
+    showDefaultActions: false,
+  });
+
+  const [BasicModal, modalApi] = useVbenModal({
+    fullscreenButton: false,
+    onCancel: handleCancel,
+    onConfirm: handleConfirm,
+    onOpenChange: async (isOpen) => {
+      if (!isOpen) {
+        return null;
+      }
+      modalApi.modalLoading(true);
+      const { id } = modalApi.getData() as { id?: number | string };
+      isUpdate.value = !!id;
+      if (isUpdate.value && id) {
+        const record = await dictTypeInfo(id);
+        await formApi.setValues(record);
+      }
+      modalApi.modalLoading(false);
+    },
+  });
+
+  /*const [BasicModal, modalApi] = useVbenModal({
+    fullscreenButton: false,
+    onCancel: handleCancel,
+    onConfirm: handleConfirm,
+    onOpenChange: async (isOpen) => {
+      if (!isOpen) {
+        return null;
+      }
+      modalApi.modalLoading(true);
+      const { id } = modalApi.getData() as { id?: number | string };
+      isUpdate.value = !!id;
+      if (isUpdate.value && id) {
+        const record = await dictTypeInfo(id);
+        await formApi.setValues(record);
+      }
+      modalApi.modalLoading(false);
+    },
+  });*/
+
+
+ /* const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
     schemas: formSchema,
     showActionButtonGroup: false,
-  });
+  });*/
 
-  const getBaseDynamicRules = (params: CheckExistParams) => {
+  /*const getBaseDynamicRules = (params: any) => {
     return [
       {
         trigger: 'blur',
@@ -50,9 +98,9 @@
         },
       },
     ] as Rule[];
-  };
+  };*/
 
-  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+  /*const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     await resetFields();
     setModalProps({ confirmLoading: false });
     isUpdate.value = !!data?.isUpdate;
@@ -60,41 +108,40 @@
 
     await updateSchema([
       {
-        field: 'sn',
+        field: 'code',
         dynamicRules: () => {
           return [
             {
               required: true,
               whitespace: true,
-              message: '标识不能为空！',
+              message: '编码不能为空！',
             },
             {
-              trigger: ['change', 'blur'],
               pattern: new RegExp(FormValidPatternEnum.SN),
               type: 'string',
               message: '请输入英文或数字！',
             },
             {
-              trigger: ['change', 'blur'],
               max: 64,
               message: '字符长度不能大于64！',
             },
             ...getBaseDynamicRules({
               id: (unref(isUpdate) && formData && formData.id) || '',
-              field: 'sn',
+              field: 'code',
               fieldValue: '',
-              fieldName: '标识',
+              fieldName: '编码',
             }),
           ];
         },
       },
     ]);
+
     if (unref(isUpdate)) {
       setFieldsValue({
         ...formData,
       });
     }
-  });
+  });*/
 
   const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 

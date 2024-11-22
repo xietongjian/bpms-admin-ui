@@ -6,9 +6,9 @@
 <script lang="ts" setup>
   import { ref, computed, unref, defineEmits } from 'vue';
   import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, Rule, useForm } from '@/components/Form/index';
-  import { formSchema } from './module.data';
-  import { saveOrUpdate, checkEntityExist } from '#/api/privilege/module';
+  import { BasicForm, Rule, useForm } from '@/components/Form';
+  import { formSchema } from './jobGrade.data';
+  import { saveOrUpdate, checkEntityExist } from '#/api/org/jobGrade';
   import { CheckExistParams } from '#/api/model/baseModel';
   import { FormValidPatternEnum } from '@/enums/constantEnum';
 
@@ -16,7 +16,7 @@
 
   const isUpdate = ref(true);
 
-  const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
+  const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
     schemas: formSchema,
     showActionButtonGroup: false,
@@ -60,7 +60,7 @@
 
     await updateSchema([
       {
-        field: 'sn',
+        field: 'code',
         dynamicRules: () => {
           return [
             {
@@ -69,19 +69,17 @@
               message: '标识不能为空！',
             },
             {
-              trigger: ['change', 'blur'],
               pattern: new RegExp(FormValidPatternEnum.SN),
               type: 'string',
               message: '请输入英文或数字！',
             },
             {
-              trigger: ['change', 'blur'],
-              max: 64,
-              message: '字符长度不能大于64！',
+              max: 40,
+              message: '字符长度不能大于40！',
             },
             ...getBaseDynamicRules({
               id: (unref(isUpdate) && formData && formData.id) || '',
-              field: 'sn',
+              field: 'code',
               fieldValue: '',
               fieldName: '标识',
             }),
@@ -91,7 +89,7 @@
     ]);
     if (unref(isUpdate)) {
       setFieldsValue({
-        ...formData,
+        ...data.record,
       });
     }
   });

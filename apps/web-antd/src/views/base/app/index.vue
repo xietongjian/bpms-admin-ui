@@ -74,7 +74,6 @@ const gridOptions: VxeGridProps<RowType> = {
           },
           entity: formValues || {},
         }).then(res => {
-          res.items = res.rows;
           return Promise.resolve(res);
         });
       },
@@ -82,7 +81,7 @@ const gridOptions: VxeGridProps<RowType> = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({formOptions, gridOptions});
+const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 function handleAdd() {
   modalApi.setData({});
@@ -114,7 +113,7 @@ async function handleDelete(record: any) {
     const {success, msg} = result;
     if (success) {
       message.success(msg);
-      await gridApi.reload();
+      await tableApi.reload();
     } else{
       message.error(msg);
     }
@@ -126,7 +125,7 @@ async function handleDelete(record: any) {
 
 <template>
   <Page auto-content-height>
-    <Grid table-title="列表">
+    <BasicTable table-title="列表">
       <template #toolbar-tools>
         <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
           <Button type="primary" @click="handleAdd">新建</Button>
@@ -186,8 +185,8 @@ async function handleDelete(record: any) {
         <Tag v-if="row.platformEnabled===1" color="green">开启</Tag>
         <Tag v-else>关闭</Tag>
       </template>
-    </Grid>
-    <AppModal @onSuccess="gridApi.reload()"/>
-    <SecretKeyModal @onSuccess="gridApi.reload()"/>
+    </BasicTable>
+    <AppModal @onSuccess="tableApi.reload()"/>
+    <SecretKeyModal @onSuccess="tableApi.reload()"/>
   </Page>
 </template>

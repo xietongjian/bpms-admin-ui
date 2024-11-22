@@ -84,7 +84,7 @@ const gridOptions: VxeGridProps = {
         const resp = await getModules({
           ...formValues,
         })
-        return { items: resp };
+        return resp;
       },
       // 默认请求接口后展开全部 不需要可以删除这段
       querySuccess: () => {

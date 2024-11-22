@@ -30,10 +30,10 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { BasicForm, useForm } from '@/components/Form';
   import { secretKeyFormSchema } from './app.data';
-  import { refreshSecretKey } from '@/api/base/app';
+  import { refreshSecretKey } from '#/api/base/app';
   import { QuestionCircleOutlined } from '@ant-design/icons-vue';
   import { copyText } from '@/utils/copyTextToClipboard';
-  import { useMessage } from '@/hooks/web/useMessage';
+  import { message } from 'ant-design-vue';
   import { Button, Input, Space, Popconfirm } from 'ant-design-vue';
 
   const { TextArea } = Input;
@@ -41,7 +41,6 @@
   const isUpdate = ref(true);
   const valueRef = ref('');
 
-  const { createMessage } = useMessage();
 
   const [registerForm, { resetFields, setFieldsValue }] = useForm({
     labelWidth: 150,
