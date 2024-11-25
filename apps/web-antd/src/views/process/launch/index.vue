@@ -165,7 +165,7 @@ function handleSelect(keys: string, e) {
 
 <template>
   <Page content-class="flex flex-row gap-4 h-full" auto-content-height>
-    <div class="w-[260px] h-full overflow-x-hidden p-4 bg-white">
+    <div class="w-[260px] h-full overflow-x-hidden p-4 bg-card">
       <Tree
         v-bind="$attrs"
         v-if="treeData.length > 0"
@@ -202,7 +202,7 @@ function handleSelect(keys: string, e) {
     </div>
 
     <div class="flex-1 h-full p-0 flex flex-col gap-4">
-      <div class="h-[50px] w-full flex flex-row flex-center p-4 bg-white">
+      <div class="h-[50px] w-full flex flex-row flex-center p-4 bg-card">
         <div class="w-[300px]">
           <h1 style="font-size: 16px;">流程名称（共{{ pager.total }}条）</h1>
         </div>
@@ -216,7 +216,7 @@ function handleSelect(keys: string, e) {
           />
         </div>
       </div>
-      <div class="flex-1 overflow-x-hidden overflow-y-auto h-full p-4 bg-white">
+      <div class="flex-1 overflow-x-hidden overflow-y-auto h-full p-4 bg-card">
         <Spin v-if="showModel" :spinning="dataListLoading" >
           <div >
             <template v-if="modelList && Object.keys(modelList).length > 0">

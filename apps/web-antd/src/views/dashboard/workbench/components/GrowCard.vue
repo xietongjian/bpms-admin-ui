@@ -18,7 +18,7 @@
       </Card>
     </template>
   </div>
-  <div v-else class="w-full text-center bg-white">
+  <div v-else class="w-full text-center bg-card">
     <Empty />
   </div>
 </template>
