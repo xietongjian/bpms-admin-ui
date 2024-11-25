@@ -8,7 +8,7 @@ import { getGroupListByPage, deleteByIds } from '#/api/privilege/group';
 
 
 import groupModal from './group-modal.vue';
-// import AppSecretKeyModal from './AppSecretKeyModal.vue';
+// import AppSecretKeyModal from './app-secret-key-modal.vue';
 import {AccessControl} from '@vben/access';
 import {columns, searchFormSchema} from "./group.data";
 

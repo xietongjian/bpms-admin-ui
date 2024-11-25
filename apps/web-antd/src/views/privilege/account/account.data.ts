@@ -57,7 +57,7 @@ export const columns: VxeGridProps['columns'] = [
   },
 ];
 
-export const searchFormSchema: FormSchema[] = [
+export const searchFormSchema: FormSchemaGetter = () => [
   {
     field: 'keyword',
     label: '关键字',
@@ -75,7 +75,7 @@ export const searchFormSchema: FormSchema[] = [
   },
 ];
 
-export const accountFormSchema: FormSchema[] = [
+export const accountFormSchema: FormSchemaGetter = () => [
   {
     field: 'id',
     label: 'ID',
@@ -174,7 +174,7 @@ export const accountFormSchema: FormSchema[] = [
   },
 ];
 
-export const passwordFormSchema: FormSchema[] = [
+export const passwordFormSchema: FormSchemaGetter = () => [
   {
     field: 'id',
     label: 'ID',
@@ -246,7 +246,7 @@ export const passwordFormSchema: FormSchema[] = [
   },
 ];
 
-export const setGroupFormSchema: FormSchema[] = [
+export const setGroupFormSchema: FormSchemaGetter = () => [
   {
     field: 'id',
     label: 'ID',

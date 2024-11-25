@@ -7,7 +7,7 @@ import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import { getAccountPageList, deleteByIds } from '#/api/privilege/account';
 
 import accountModal from './account-modal.vue';
-// import AppSecretKeyModal from './AppSecretKeyModal.vue';
+// import AppSecretKeyModal from './app-secret-key-modal.vue';
 import {AccessControl} from '@vben/access';
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import {PerEnum} from "#/enums/perEnum";

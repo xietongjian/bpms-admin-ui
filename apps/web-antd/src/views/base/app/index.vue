@@ -5,8 +5,8 @@ import {Page, useVbenModal} from '@vben/common-ui';
 import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {deleteByIds, getAppListByPage} from '#/api/base/app';
-import AppInputModal from './AppInputModal.vue';
-import AppSecretKeyModal from './AppSecretKeyModal.vue';
+import appModal from './app-modal.vue';
+import appSecretKeyModal from './app-secret-key-modal.vue';
 import {AccessControl} from '@vben/access';
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import {PerEnum} from "#/enums/perEnum";
@@ -18,12 +18,12 @@ import {
 } from '@vben/icons';
 
 const [AppModal, modalApi] = useVbenModal({
-  connectedComponent: AppInputModal,
+  connectedComponent: appModal,
   centered: true,
 });
 
-const [SecretKeyModal, secretKeyModalApi] = useVbenModal({
-  connectedComponent: AppSecretKeyModal,
+const [AppSecretKeyModal, secretKeyModalApi] = useVbenModal({
+  connectedComponent: appSecretKeyModal,
   centered: true,
   showConfirmButton	: false,
 });
@@ -50,7 +50,7 @@ const formOptions: VbenFormProps = {
   resetButtonOptions: {
     show: false,
   },
-  schema: searchFormSchema,
+  schema: searchFormSchema(),
 };
 
 const gridOptions: VxeGridProps<RowType> = {
@@ -187,6 +187,6 @@ async function handleDelete(record: any) {
       </template>
     </BasicTable>
     <AppModal @onSuccess="tableApi.reload()"/>
-    <SecretKeyModal @onSuccess="tableApi.reload()"/>
+    <AppSecretKeyModal @onSuccess="tableApi.reload()"/>
   </Page>
 </template>

@@ -8,8 +8,6 @@
   import companyTypeModal from './company-type-modal.vue';
   import { message } from 'ant-design-vue';
   import type {VbenFormProps} from '@vben/common-ui';
-  import {listColumns} from "#/views/base/app/app.data";
-  import {getAppListByPage} from "#/api/base/app";
   import {Page, useVbenModal} from '@vben/common-ui';
 
 

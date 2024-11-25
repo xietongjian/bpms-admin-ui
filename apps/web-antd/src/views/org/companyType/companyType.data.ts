@@ -2,11 +2,12 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
+import {FormSchemaGetter} from "#/adapter/form";
 
 export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
     width: 300,
     resizable: true,
@@ -14,7 +15,7 @@ export const columns: VxeGridProps['columns'] = [
   },
   {
     title: '编码',
-    dataIndex: 'code',
+    field: 'code',
     align: 'left',
     width: 100,
     resizable: true,
@@ -22,25 +23,25 @@ export const columns: VxeGridProps['columns'] = [
 
   {
     title: '排序',
-    dataIndex: 'orderNo',
+    field: 'orderNo',
     align: 'right',
     width: 80,
   },
   {
     title: '创建时间',
-    dataIndex: 'createTime',
+    field: 'createTime',
     width: 180,
   },
   {
     title: '描述',
-    dataIndex: 'descr',
+    field: 'descr',
     align: 'left',
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -56,9 +57,9 @@ export const searchFormSchema: FormSchema[] = [
   },
 ];
 
-export const formSchema: FormSchema[] = [
+export const formSchema: FormSchemaGetter = () => [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
     show: false,
@@ -67,14 +68,14 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    field: 'pid',
+    fieldName: 'pid',
     label: 'pid',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
     required: true,
     component: 'Input',
@@ -94,7 +95,7 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    field: 'code',
+    fieldName: 'code',
     label: '编码',
     required: true,
     component: 'Input',
@@ -103,7 +104,7 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    field: 'orderNo',
+    fieldName: 'orderNo',
     label: '排序号',
     helpMessage: '数值越小越靠前！',
     required: false,
@@ -115,7 +116,7 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    field: 'descr',
+    fieldName: 'descr',
     label: '描述',
     required: false,
     component: 'InputTextArea',
