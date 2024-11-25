@@ -123,10 +123,10 @@
         </template>
       </List>
     </p>
-    <ProcessFormModal
+<!--    <ProcessFormModal
         @register="registerProcessFormModal"
         @visible-change="handleProcessFormVisibleChange"
-    />
+    />-->
   </Card>
 </template>
 <script lang="ts" setup>
@@ -139,12 +139,12 @@
     getApplyedTasksPagerModel,
   } from "#/api/process/process";
   // import { useGo } from '@/hooks/web/usePage';
-  import ProcessFormModal from "#/views/flowoperation/processTask/ProcessFormModal.vue";
-  import {useModal} from "#/components/Modal";
+  // import ProcessFormModal from "#/views/flowoperation/processTask/ProcessFormModal.vue";
+  // import {useModal} from "#/components/Modal";
   import {AuditOutlined} from "@ant-design/icons-vue";
 
 
-  const go = useGo();
+  // const go = useGo();
   const ListItem = List.Item;
   const ListItemMeta = List.Item.Meta;
   const todoLoading = ref(true);
@@ -188,10 +188,10 @@
     fetchHaveDownData(1, 0);
   });
 
-  const [
-    registerProcessFormModal,
-    { openModal: openProcessFormModal, setModalProps: setProcessFormModalProps },
-  ] = useModal();
+  // const [
+  //   registerProcessFormModal,
+  //   { openModal: openProcessFormModal, setModalProps: setProcessFormModalProps },
+  // ] = useModal();
 
   function handleProcessFormVisibleChange(visible) {
     if (!visible) {
@@ -218,11 +218,11 @@
 
   function handleToMore() {
     if(activeKey.value === 'todo'){
-      go({ name: 'Todo'});
+      // go({ name: 'Todo'});
     } else if(activeKey.value === 'haveDown'){
-      go({ name: 'HaveDown'});
+      // go({ name: 'HaveDown'});
     } else if(activeKey.value === 'launched'){
-      go({ name: 'Launched'});
+      // go({ name: 'Launched'});
     }
   }
 

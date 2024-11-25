@@ -53,21 +53,29 @@
 <script lang="ts" setup>
   import { ref, defineProps } from 'vue';
   import { Tag, Popover, Spin, Descriptions, Avatar, Space } from 'ant-design-vue';
-  import { propTypes } from '#/utils/propTypes';
   import { getByCodes } from '#/api/org/personal';
   import { UserOutlined, ManOutlined, WomanOutlined } from '@ant-design/icons-vue';
-  import { usePersonalStoreWithOut } from '#/store/modules/personal';
+  import { usePersonalStoreWithOut } from '#/store/personal';
 
   const personalStore = usePersonalStoreWithOut();
   const DescriptionsItem = Descriptions.Item;
 
   const props = defineProps({
     // 人员工号
-    no: propTypes.string.def(''),
+    no: {
+        type: String,
+        default: '',
+    },
     // 人员姓名
-    name: propTypes.string.def(''),
+    name: {
+        type: String,
+        default: '',
+    },
     // 标签颜色
-    tagColor: propTypes.string.def('default'),
+    tagColor: {
+        type: String,
+        default: 'default',
+    },
   });
 
   const empBaseInfo = ref({});

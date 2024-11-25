@@ -1,3 +1,98 @@
+<script lang="ts" setup>
+import { onUnmounted, ref, watchEffect, onMounted } from 'vue';
+import { VbenCountToAnimator } from '@vben/common-ui';
+import { IconifyIcon } from '@vben/icons';
+
+import { Card, Empty } from 'ant-design-vue';
+// import { useRequest } from '@vben/hooks';
+import { countProcInstTask } from '#/api/report/flowCount';
+
+const loading = ref(false);
+// const state = reactive({
+//   server: 'ws://'+location.host+'/webSocket/admin',
+//   sendValue: '',
+//   // recordList: [] as { id: number; time: number; res: string }[],
+// });
+const countData = ref();
+// const { status, data, send, close, open } = useWebSocket(state.server, {
+//   autoReconnect: true,
+//   heartbeat: true
+// });
+
+watchEffect(() => {
+  /*if (data.value) {
+  try {
+    // const res = genCountData(JSON.parse(data.value));
+    // countData.value = res;
+  } catch (error) {
+    console.error("接收数据格式错误")
+  }
+}*/
+});
+
+function genCountData(res) {
+  const countData: any = [];
+  for (let itm in res) {
+    switch (itm) {
+      case 'countRunProcInst':
+        countData.push({
+          path: '/flowoperation/processInst',
+          title: '运行的流程实例',
+          icon: 'ant-design:bars-outlined',
+          value: res[itm],
+          color: 'green',
+        });
+        break;
+      case 'countHisProcInst':
+        countData.push({
+          path: '/flowoperation/processInst',
+          title: '历史流程实例',
+          icon: 'total-sales|svg',
+          value: res[itm],
+          color: 'green',
+        });
+        break;
+      case 'countAppingTask':
+        countData.push({
+          path: '/flowoperation/processTask',
+          title: '当前任务总数',
+          icon: 'download-count|svg',
+          value: res[itm],
+          color: 'green',
+        });
+        break;
+      case 'countApplyedTask':
+        countData.push({
+          path: '/flowoperation/processTask',
+          title: '历史任务数',
+          icon: 'transaction|svg',
+          value: res[itm],
+          color: 'green',
+        });
+        break;
+    }
+  }
+  return countData;
+}
+
+async function getProcInstTaskCount() {
+  countProcInstTask().then((res) => {
+    countData.value = res;
+  });
+}
+
+onMounted(() => {
+  getProcInstTaskCount();
+});
+
+/*useRequest(getProcInstTaskCount, {
+  pollingInterval: 10000,
+  pollingWhenHidden: false,
+});*/
+
+const growCardList = countData;
+</script>
+
 <template>
   <div v-if="growCardList" class="grid grid-cols-2 gap-4">
     <template v-for="(item, index) in growCardList" :key="item.title">
@@ -22,97 +117,3 @@
     <Empty />
   </div>
 </template>
-<script lang="ts" setup>
-  import { onUnmounted, ref, watchEffect, onMounted } from 'vue';
-  import { VbenCountToAnimator } from '@vben/common-ui';
-  import { IconifyIcon } from '@vben/icons';
-
-  import { Card, Empty } from 'ant-design-vue';
-  // import { useRequest } from '@vben/hooks';
-  import { countProcInstTask } from '#/api/report/flowCount';
-
-  const loading = ref(false);
-  // const state = reactive({
-  //   server: 'ws://'+location.host+'/webSocket/admin',
-  //   sendValue: '',
-  //   // recordList: [] as { id: number; time: number; res: string }[],
-  // });
-  const countData = ref();
-  // const { status, data, send, close, open } = useWebSocket(state.server, {
-  //   autoReconnect: true,
-  //   heartbeat: true
-  // });
-
-  watchEffect(() => {
-    /*if (data.value) {
-    try {
-      // const res = genCountData(JSON.parse(data.value));
-      // countData.value = res;
-    } catch (error) {
-      console.error("接收数据格式错误")
-    }
-  }*/
-  });
-
-  function genCountData(res) {
-    const countData: any = [];
-    for (let itm in res) {
-      switch (itm) {
-        case 'countRunProcInst':
-          countData.push({
-            path: '/flowoperation/processInst',
-            title: '运行的流程实例',
-            icon: 'ant-design:bars-outlined',
-            value: res[itm],
-            color: 'green',
-          });
-          break;
-        case 'countHisProcInst':
-          countData.push({
-            path: '/flowoperation/processInst',
-            title: '历史流程实例',
-            icon: 'total-sales|svg',
-            value: res[itm],
-            color: 'green',
-          });
-          break;
-        case 'countAppingTask':
-          countData.push({
-            path: '/flowoperation/processTask',
-            title: '当前任务总数',
-            icon: 'download-count|svg',
-            value: res[itm],
-            color: 'green',
-          });
-          break;
-        case 'countApplyedTask':
-          countData.push({
-            path: '/flowoperation/processTask',
-            title: '历史任务数',
-            icon: 'transaction|svg',
-            value: res[itm],
-            color: 'green',
-          });
-          break;
-      }
-    }
-    return countData;
-  }
-
-  async function getProcInstTaskCount() {
-    countProcInstTask().then((res) => {
-      countData.value = res;
-    });
-  }
-
-  onMounted(() => {
-    getProcInstTaskCount();
-  });
-
-  /*useRequest(getProcInstTaskCount, {
-    pollingInterval: 10000,
-    pollingWhenHidden: false,
-  });*/
-
-  const growCardList = countData;
-</script>
