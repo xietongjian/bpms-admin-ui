@@ -6,6 +6,8 @@ import {Page, useVbenModal} from '@vben/common-ui';
 import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 // import {deleteByIds, getAppListByPage} from '#/api/base/app';
+import type { Recordable } from '@vben/types';
+
 import { getModules } from '#/api/privilege/module';
 // import AppInputModal from './app-modal.vue';
 // import AppSecretKeyModal from './app-secret-key-modal.vue';
@@ -110,7 +112,7 @@ function handleAdd() {
   });*/
 }
 
-function handleEdit(record: any) {
+function handleEdit(record: Recordable) {
   /*modalApi.setData(record);
   modalApi.open();
   modalApi.setState({
@@ -118,7 +120,7 @@ function handleEdit(record: any) {
   });*/
 }
 
-function handleViewSecretKey(record: any) {
+function handleViewSecretKey(record: Recordable) {
   /*secretKeyModalApi.setData(record);
   secretKeyModalApi.open();
   secretKeyModalApi.setState({
@@ -126,7 +128,7 @@ function handleViewSecretKey(record: any) {
   });*/
 }
 
-async function handleDelete(record: any) {
+async function handleDelete(record: Recordable) {
   try {
     /*const result = await deleteByIds([record.id]);
     const {success, msg} = result;

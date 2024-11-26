@@ -5,6 +5,7 @@ import {Page, useVbenModal, type VbenFormProps} from '@vben/common-ui';
 import {deleteByIds, getCompanies} from '#/api/org/company';
 import {columns, searchFormSchema} from './company.data';
 import companyModal from './company-modal.vue';
+import type { Recordable } from '@vben/types';
 
 
 const [CompanyModal, modalApi] = useVbenModal({

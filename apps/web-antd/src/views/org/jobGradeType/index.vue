@@ -43,6 +43,7 @@
   import { columns, searchFormSchema } from './jobGradeType.data';
   import JobGradeTypeModal from './JobGradeTypeModal.vue';
   import { getJobGradeTypes, deleteById } from '#/api/org/jobGradeType';
+  import type { Recordable } from '@vben/types';
 
   const [registerModal, { openModal }] = useModal();
   const [registerTable, { reload }] = useTable({

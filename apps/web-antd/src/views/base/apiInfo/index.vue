@@ -1,0 +1,276 @@
+<template>
+  <Page auto-content-height>
+    <div class="p-4 h-full">
+      <SplitPane>
+        <template #left>
+          <BasicTree
+            :loading="treeLoading"
+            title="接口分类"
+            treeWrapperClassName="h-[calc(100%-35px)] overflow-auto h-full"
+            :clickRowToExpand="false"
+            :treeData="apiCategoryTreeData"
+            @select="handleSelect"
+            ref="basicTreeRef"
+            :field-names="{title: 'name'}"
+            :actionList="treeActionList"
+          >
+            <template #headerTitle >
+              <Row align="middle" class="w-full">
+                <Col span="12">
+                  接口分类
+                </Col>
+                <Col span="12" class="text-right">
+                  <Button size="small" @click="handleCreateCategory" type="primary">新增分类</Button>
+                </Col>
+              </Row>
+            </template>
+          </BasicTree>
+        </template>
+        <template #main>
+          <BasicTable @register="registerTable" class="!p-0">
+            <template #toolbar>
+              <Authority :value="'App:' + PerEnum.ADD">
+                <a-button type="primary" @click="handleCreate">新增</a-button>
+              </Authority>
+            </template>
+            <template #bodyCell="{ column, record }">
+              <template v-if="column.key === 'categoryId'">
+                {{ apiCategoryDataMap[record.categoryId]?.name || '-' }}
+              </template>
+              <template v-if="column.key === 'action'">
+                <TableAction
+                  :actions="[
+                    {
+                      auth: 'App:' + PerEnum.UPDATE,
+                      tooltip: '修改',
+                      icon: 'clarity:note-edit-line',
+                      onClick: handleEdit.bind(null, record),
+                    },
+                    {
+                      auth: 'App:' + PerEnum.DELETE,
+                      tooltip: '删除',
+                      icon: 'ant-design:delete-outlined',
+                      color: 'error',
+                      popConfirm: {
+                        placement: 'left',
+                        title: '是否确认删除',
+                        confirm: handleDeleteApiInfo.bind(null, record),
+                      },
+                    },
+                  ]"
+                />
+              </template>
+            </template>
+          </BasicTable>
+        </template>
+      </SplitPane>
+    </div>
+    <ApiInfoDrawer @register="registerApiInfoDrawer" @success="handleSuccess" />
+    <ApiCategoryModal @register="registerApiCategoryModal" @success="handleCategorySuccess"/>
+  </Page>
+</template>
+<script lang="ts" setup>
+import {nextTick, ref, h, unref} from 'vue';
+import {getApiInfoListByPage, getApiCategoryListData, deleteApiCategoryById, deleteApiInfoById} from '@/api/base/apiInfo';
+import {PageWrapper} from '@/components/Page';
+
+import SplitPane from '@/views/components/splitPane/index.vue';
+import {BasicTree, TreeActionItem, TreeItem} from "@/components/Tree";
+import {listToTree} from "@/utils/helper/treeHelper";
+import {useLoading} from '@/components/Loading';
+import {PerEnum} from "@/enums/perEnum";
+import {BasicTable, TableAction, useTable} from "@/components/Table";
+import {Authority} from "@/components/Authority";
+import {columns, searchFormSchema} from "@/views/base/apiInfo/apiInfo.data";
+import {useModal} from "@/components/Modal";
+import ApiInfoDrawer from "@/views/base/apiInfo/ApiInfoDrawer.vue";
+import ApiCategoryModal from "@/views/base/apiInfo/ApiCategoryModal.vue";
+import {useDrawer} from '@/components/Drawer';
+import {DeleteOutlined, PlusOutlined, EditOutlined} from "@ant-design/icons-vue";
+import {Popconfirm, Button, Row, Col, message, Tooltip} from "ant-design-vue";
+import { useMessage } from '@/hooks/web/useMessage';
+import {Page, useVbenModal, useVbenDrawer} from '@vben/common-ui';
+
+const treeLoading = ref(true);
+const [openFullLoading, closeFullLoading] = useLoading({
+  tip: '加载中...',
+});
+const { createMessage } = useMessage();
+
+const [registerApiInfoDrawer, {openDrawer: openApiInfoDrawer, setDrawerProps: setApiInfoDrawerProps}] = useDrawer();
+
+const [BaseDrawer, baseDrawerApi] = useVbenDrawer({
+  // 连接抽离的组件
+  connectedComponent: BaseDemo,
+});
+
+
+const apiCategoryDataMap = ref<any>({});
+const apiCategoryTreeData = ref<any[]>([]);
+const [registerApiCategoryModal, {openModal: openApiCategoryModal, setModalProps: setApiCategoryModalProps}] = useModal();
+
+const treeActionList: TreeActionItem[] = [
+  {
+    render: (node) => {
+      return h(Tooltip, {placement: 'top', title:'新建子分类'}, [
+        h(PlusOutlined, {
+          class: 'ml-2',
+          onClick: (e) => {
+            e.stopPropagation();
+            handleCreateCategory(node);
+          },
+        })
+      ]);
+    },
+  },
+  {
+    render: (node) => {
+      return h(Tooltip, {placement: 'top', title:'编辑'}, [
+        h(EditOutlined, {
+          class: 'ml-2',
+          onClick: (e) => {
+            e.stopPropagation();
+            handleUpdateCategory({id: node.id, pid: node.pid, name: node.title, orderNo: node.orderNo});
+          },
+        })
+      ]);
+    },
+  },
+  {
+    render: (node) => {
+      return h(Popconfirm, {
+        title: '确定要删除分类吗？',
+        onConfirm: () => {
+          handleDeleteCategory(node);
+        }
+      }, [
+        h(Tooltip, {placement: 'top', title: '删除'}, [
+          h(DeleteOutlined, {
+            onClick: (e) => {
+              e.stopPropagation();
+            }, class: 'ml-2', style: {color: 'red'}
+          })
+        ])
+      ])
+    },
+  },
+];
+
+const currentNode = ref(undefined);
+const [registerTable, {reload, getForm}] = useTable({
+  title: '列表',
+  api: getApiInfoListByPage,
+  columns,
+  formConfig: {
+    labelWidth: 100,
+    schemas: searchFormSchema,
+    showAdvancedButton: false,
+    showResetButton: false,
+    autoSubmitOnEnter: true,
+  },
+  canColDrag: true,
+  useSearchForm: true,
+  bordered: true,
+  showIndexColumn: true,
+  actionColumn: {
+    width: 140,
+    title: '操作',
+    dataIndex: 'action',
+  },
+});
+
+initApiCategoryTree();
+
+function handleCreateCategory(node: any) {
+  openApiCategoryModal(true, {
+    isUpdate: false,
+    record: {pid: node?.id}
+  });
+  setApiCategoryModalProps({ title: "新增分类", centered: true });
+}
+
+function handleUpdateCategory(node: any) {
+  openApiCategoryModal(true, {
+    isUpdate: true,
+    record: node
+  });
+  setApiCategoryModalProps({ title: "修改分类", centered: true });
+}
+
+async function handleDeleteCategory(node: any) {
+  openFullLoading();
+  try {
+    const {success, msg} = await deleteApiCategoryById(node.id);
+    if(success){
+      createMessage.success(msg);
+      initApiCategoryTree();
+    } else {
+      createMessage.error(msg);
+    }
+
+  } finally {
+    closeFullLoading();
+  }
+}
+
+function handleCreate() {
+  openApiInfoDrawer(true, {
+    isUpdate: false,
+    record: {categoryId: unref(currentNode)?.id}
+  });
+  setApiInfoDrawerProps({ title: `新建接口` });
+}
+
+function handleEdit(record: Recordable) {
+  openApiInfoDrawer(true, {
+    record,
+    isUpdate: true,
+  });
+  setApiInfoDrawerProps({ title: `编辑-${record.name}` });
+}
+
+function handleDeleteApiInfo(record: Recordable) {
+  deleteApiInfoById(record.id).then(() => {
+    reload();
+  });
+}
+
+async function initApiCategoryTree() {
+  treeLoading.value = true;
+  const res = await getApiCategoryListData();
+  const tempCategoryMap = {};
+  res.forEach(item => {
+    tempCategoryMap[item.id] = item;
+    item.title = item.name;
+  })
+  apiCategoryDataMap.value = tempCategoryMap;
+
+  const treeData = listToTree(res);
+  apiCategoryTreeData.value = treeData;
+  treeLoading.value = false;
+}
+
+function handleSuccess() {
+  setTimeout(() => {
+    const {getFieldsValue} = getForm();
+    const values = getFieldsValue();
+    reload({searchInfo: {categoryId: unref(currentNode)?.id, ...values}});
+  }, 200);
+}
+function handleCategorySuccess() {
+  initApiCategoryTree();
+}
+
+async function handleSelect(node: any, e: any) {
+  const selectedNode = e.selectedNodes[0];
+  if (selectedNode) {
+    currentNode.value = selectedNode;
+    const {getFieldsValue} = getForm();
+    const values = getFieldsValue();
+    await reload({searchInfo: {categoryId: selectedNode.id, ...values}});
+  } else {
+    currentNode.value = undefined;
+    await reload();
+  }
+}
+</script>
