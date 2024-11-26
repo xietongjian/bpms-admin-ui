@@ -1,36 +1,49 @@
 <template>
-  <PageWrapper>
-    <div v-loading="loading" class="min-h-screen bg-white p-4 rounded-md">
-      <MarkdownViewer :value="docContent" />
+  <Page content-class="flex flex-row gap-4 h-full" auto-content-height>
+    <div class="min-h-screen w-full bg-card p-4 rounded-md">
+<!--      <MarkdownViewer :value="docContent" />-->
+      <div v-html="docContent"></div>
     </div>
-  </PageWrapper>
+  </Page>
 </template>
 <script lang="ts" setup>
-  import { h, ref, computed } from 'vue';
-  import { PageWrapper } from '@/components/Page';
-  import {getIntegrationDoc} from "@/api/sys/integration";
-  import {MarkdownViewer} from "@/components/Markdown";
-  import {useRoute} from "vue-router";
+  import { ref, unref, onMounted, nextTick } from 'vue';
+  import {getIntegrationDoc} from "#/api/sys/integration";
+  // import {MarkdownViewer} from "@/components/Markdown";
+  import { useRouter } from 'vue-router';
+  import {Page} from '@vben/common-ui';
 
-  const {path} = useRoute();
-
-  const fileName = computed(() => {
-    return path.split('/').pop();
-  });
+  const {currentRoute} = useRouter();
 
   const loading = ref(true);
 
   const docContent = ref('');
 
-  try {
-    loading.value = true;
-    const path = `/docs/integration/${fileName.value}.md`;
-    getIntegrationDoc({path}).then(res => {
-      docContent.value = res.data
-    });
-  } catch (e) {
-    loading.value = false;
-  } finally {
-    loading.value = false;
+  onMounted(async () => {
+    await nextTick();
+    setTimeout(() => {
+      loadDocContent();
+    }, 100);
+  });
+
+  function loadDocContent() {
+    try {
+      loading.value = true;
+      const fileName = unref(currentRoute).path.split('/').pop();
+      const url = `/docs/integration/${fileName}/index.md`;
+      getIntegrationDoc({ url })
+          .then((res: any) => {
+            docContent.value = res.data;
+          })
+          .catch((e) => {
+            console.error(e);
+          })
+          .finally(() => {});
+    } catch (e) {
+      console.error(e);
+      loading.value = false;
+    } finally {
+      loading.value = false;
+    }
   }
 </script>
