@@ -2,31 +2,21 @@
 <script lang="ts" setup>
 import {nextTick, ref, h, unref} from 'vue';
 import {getApiInfoListByPage, getApiCategoryListData, deleteApiCategoryById, deleteApiInfoById} from '@/api/base/apiInfo';
-
-import SplitPane from '@/views/components/splitPane/index.vue';
-import {listToTree} from "@/utils/helper/treeHelper";
-import {useLoading} from '@/components/Loading';
+import type { Recordable } from '@vben/types';
+import {listToTree} from "#/utils/helper/treeHelper";
 import {PerEnum} from "#/enums/perEnum";
 import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
 import {AccessControl} from '@vben/access';
 
-import {Authority} from "@/components/Authority";
-import {columns, searchFormSchema} from "@/views/base/apiInfo/apiInfo.data";
-import {useModal} from "@/components/Modal";
+import {columns, searchFormSchema} from "./apiInfo.data";
 import apiInfoDrawer from "./api-info-drawer.vue";
 import apiCategoryModal from "./api-category-modal.vue";
 import {DeleteOutlined, PlusOutlined, EditOutlined} from "@ant-design/icons-vue";
 import {Popconfirm, Button, Row, Col, message, Tree, Tooltip} from "ant-design-vue";
-import { useMessage } from '@/hooks/web/useMessage';
 import {Page, useVbenModal, useVbenDrawer, VbenFormProps} from '@vben/common-ui';
-import {getCompanies} from "#/api/org/company";
 
 const selectNodeIds = ref([]);
 const treeLoading = ref(true);
-const [openFullLoading, closeFullLoading] = useLoading({
-  tip: '加载中...',
-});
-const { createMessage } = useMessage();
 
 const [registerApiInfoDrawer, {openDrawer: openApiInfoDrawer, setDrawerProps: setApiInfoDrawerProps}] = useDrawer();
 
@@ -90,7 +80,7 @@ const apiCategoryDataMap = ref<any>({});
 const apiCategoryTreeData = ref<any[]>([]);
 const [registerApiCategoryModal, {openModal: openApiCategoryModal, setModalProps: setApiCategoryModalProps}] = useModal();
 
-const treeActionList: TreeActionItem[] = [
+const treeActionList: any[] = [
   {
     render: (node) => {
       return h(Tooltip, {placement: 'top', title:'新建子分类'}, [
@@ -157,18 +147,18 @@ function handleUpdateCategory(node: any) {
 }
 
 async function handleDeleteCategory(node: any) {
-  openFullLoading();
+  //openFullLoading();
   try {
     const {success, msg} = await deleteApiCategoryById(node.id);
     if(success){
-      createMessage.success(msg);
+      message.success(msg);
       initApiCategoryTree();
     } else {
-      createMessage.error(msg);
+      message.error(msg);
     }
 
   } finally {
-    closeFullLoading();
+    // closeFullLoading();
   }
 }
 

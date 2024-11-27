@@ -84,7 +84,6 @@ function createRequestClient(baseURL: string) {
       if (status >= 200 && status < 400 && code === '100') {
         return data;
       }
-      debugger;
       if(code === '401'){
         const authStore = useAuthStore();
         authStore.logout();

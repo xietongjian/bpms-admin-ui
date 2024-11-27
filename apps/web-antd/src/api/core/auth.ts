@@ -19,6 +19,13 @@ export namespace AuthApi {
 }
 
 /**
+ * @description: getVerifyCode
+ */
+export function getVerifyCode() {
+  return requestClient.get<any>(
+    '/flow/verify/getVerifyCode',{});
+}
+/**
  * 登录
  */
 export async function loginApi(data: AuthApi.LoginParams) {
@@ -48,7 +55,6 @@ export async function logoutApi() {
  */
 export async function getAccessCodesApi() {
   return requestClient.get<string[]>('/flow/main/getPermissions').then(res => {
-    debugger;
     const result = [];
     if(res){
       for(let key in res){
