@@ -1,4 +1,5 @@
-import { defHttp } from '@/utils/http/axios';
+import { requestClient } from '#/api/request';
+
 
 enum Api {
   // 流程实例报表统计
@@ -19,48 +20,48 @@ enum Api {
 // 统计某一天最近7天的数据（每天）矩形图
 export function getInstanceCountsForLastNumDays(params) {
   params.num = 7;
-  return defHttp.post<any>({ url: Api.GetInstanceCountsForLastNumDays, params });
+  return requestClient.post<any>(Api.GetInstanceCountsForLastNumDays, params);
 }
 // 统计某一个月的数据（每天）矩形图
 export function getInstanceCountsForOneMonth(params) {
   params.num = 30;
-  return defHttp.post<any>({ url: Api.GetInstanceCountsForOneMonth, params });
+  return requestClient.post<any>(Api.GetInstanceCountsForOneMonth, params);
 }
 // 统计某一个月最近三个月的数据（每个月）饼状图
 export function getInstanceCountsForLastNumMonth(params) {
   params.num = 3;
-  return defHttp.post<any>({ url: Api.GetInstanceCountsForLastNumMonth, params });
+  return requestClient.post<any>(Api.GetInstanceCountsForLastNumMonth, params);
 }
 // 统计某一天24小时的数据（每个小时）线型图
 export function getInstanceCountsFor24Hour(params) {
-  return defHttp.post<any>({ url: Api.GetInstanceCountsFor24Hour, params });
+  return requestClient.post<any>(Api.GetInstanceCountsFor24Hour, params);
 }
 // 统计某一年每个月的数据（每月）饼状图
 export function getInstanceCountsForMonths(params) {
-  return defHttp.post<any>({ url: Api.GetInstanceCountsForMonths, params });
+  return requestClient.post<any>(Api.GetInstanceCountsForMonths, params);
 }
 
 // 流程任务报表统计
 // 统计某一天最近N天的数据（每天）矩形图
 export function getTaskCountsForLastNumDays(params) {
   params.num = 7;
-  return defHttp.post<any>({ url: Api.GetTaskCountsForLastNumDays, params });
+  return requestClient.post<any>(Api.GetTaskCountsForLastNumDays, params);
 }
 // 统计某一个月的数据（每天）矩形图
 export function getTaskCountsForOneMonth(params) {
   params.num = 30;
-  return defHttp.post<any>({ url: Api.GetTaskCountsForOneMonth, params });
+  return requestClient.post<any>(Api.GetTaskCountsForOneMonth, params);
 }
 // 统计某一个月最近三个月的数据（每个月）饼状图
 export function getTaskCountsForLastNumMonth(params) {
   params.num = 3;
-  return defHttp.post<any>({ url: Api.GetTaskCountsForLastNumMonth, params });
+  return requestClient.post<any>(Api.GetTaskCountsForLastNumMonth, params);
 }
 // 统计某一天24小时的数据（每个小时）线型图
 export function getTaskCountsFor24Hour(params) {
-  return defHttp.post<any>({ url: Api.GetTaskCountsFor24Hour, params });
+  return requestClient.post<any>(Api.GetTaskCountsFor24Hour, params);
 }
 // 统计某一年每个月的数据（每月）饼状图
 export function getTaskCountsForMonths(params) {
-  return defHttp.post<any>({ url: Api.GetTaskCountsForMonths, params });
+  return requestClient.post<any>(Api.GetTaskCountsForMonths, params);
 }

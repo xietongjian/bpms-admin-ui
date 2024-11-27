@@ -1,4 +1,5 @@
-import { defHttp } from '@/utils/http/axios';
+import { requestClient } from '#/api/request';
+
 
 enum Api {
   PageList = '/flow/log/sysOperRecord/getPagerModel',
@@ -14,8 +15,8 @@ export const getListByPage = (params: any) => {
     delete entity['dateRange'];
   }
 
-  return defHttp.post({ url: Api.PageList, params: { query, entity } });
+  return requestClient.post(Api.PageList, params);
 };
 
 export const deleteByIds = (params: Array<string>) =>
-  defHttp.post<any>({ url: Api.Delete, params });
+  requestClient.post<any>(Api.Delete, params);

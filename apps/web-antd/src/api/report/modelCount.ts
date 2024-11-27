@@ -1,5 +1,4 @@
-import { defHttp } from '@/utils/http/axios';
-import { BasicPageSearchParams } from '@/api/model/baseModel';
+import { requestClient } from '#/api/request';
 
 enum Api {
   GetModelPagerModel = '/flow/report/model/getModelPagerModel',
@@ -15,6 +14,6 @@ export const getModelPagerModel = (params: any) => {
       entity.deptId = entity.deptId[0].id;
     }
   }
-  const queryParam = { query, entity } as BasicPageSearchParams<any>;
-  return defHttp.post<any>({ url: Api.GetModelPagerModel, params: queryParam });
+  const queryParam = { query, entity };
+  return requestClient.post<any>(Api.GetModelPagerModel, params);
 };

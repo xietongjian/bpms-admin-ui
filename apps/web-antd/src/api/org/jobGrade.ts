@@ -1,7 +1,5 @@
-import { defHttp } from '@/utils/http/axios';
-import { CheckExistParams } from '#/api/model/baseModel';
-import { BatchJobGradeVo, JobGradeInfo, JobGradeParams } from './model/jobGradeModel';
-import { CompanyInfo } from '#/api/org/model/companyModel';
+import { requestClient } from '#/api/request';
+
 import { forEach, listToTree } from '@/utils/helper/treeHelper';
 
 enum Api {
@@ -13,8 +11,8 @@ enum Api {
   CheckEntityExist = '/flow/org/jobGrade/checkEntityExist',
 }
 
-export const getJobGradeTree = (params?: JobGradeParams) => {
-  const result = defHttp.post<CompanyInfo[]>({ url: Api.GetJobGradeTree, params });
+export const getJobGradeTree = (params?: any) => {
+  const result = requestClient.post<any[]>( Api.GetJobGradeTree, params);
   return Promise.resolve(result).then((res: any) => {
     res.forEach((item) => {
       item.key = item.id;
@@ -40,19 +38,19 @@ export const getJobGradeTree = (params?: JobGradeParams) => {
   });
 };
 
-export const getJobGrades = (params: JobGradeParams) => {
-  const result = defHttp.post<JobGradeInfo[]>({ url: Api.GetJobGrades, params });
+export const getJobGrades = (params: any) => {
+  const result = requestClient.post<any[]>(Api.GetJobGrades, params);
   return result;
 };
 
-export const saveOrUpdate = (params?: JobGradeInfo) =>
-  defHttp.post<JobGradeInfo>({ url: Api.SaveOrUpdate, params });
+export const saveOrUpdate = (params?: any) =>
+  requestClient.post<any>(Api.SaveOrUpdate, params);
 
-export const batchSaveJobGradeTypeAndJobGrade = (params?: BatchJobGradeVo) =>
-  defHttp.post<JobGradeInfo>({ url: Api.BatchSaveJobGradeTypeAndJobGrade, params });
+export const batchSaveJobGradeTypeAndJobGrade = (params?: any) =>
+  requestClient.post<any>(Api.BatchSaveJobGradeTypeAndJobGrade, params);
 
-export const checkEntityExist = (params?: CheckExistParams) =>
-  defHttp.post<boolean>({ url: Api.CheckEntityExist, params });
+export const checkEntityExist = (params?: any) =>
+  requestClient.post<boolean>(Api.CheckEntityExist, params);
 
 export const deleteById = (params?: Array<string>) =>
-  defHttp.post<JobGradeInfo>({ url: Api.Delete, params });
+  requestClient.post<any>(Api.Delete, params);

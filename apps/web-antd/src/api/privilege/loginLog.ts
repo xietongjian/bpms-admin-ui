@@ -1,5 +1,4 @@
-import { defHttp } from '@/utils/http/axios';
-import { BasicPageSearchParams } from '@/api/model/baseModel';
+import {requestClient} from '#/api/request';
 
 enum Api {
   LoginLogPageList = '/flow/privilege/loginLog/getPagerModel',
@@ -15,11 +14,11 @@ export const getLoginLogListByPage = (params: any) => {
     delete entity['pageSize'];
   }
 
-  const queryParam = { query, entity } as BasicPageSearchParams<any>;
-  return defHttp.post<any>({ url: Api.LoginLogPageList, params: queryParam });
+  const queryParam = { query, entity };
+  return requestClient.post<any>(Api.LoginLogPageList, params);
 };
 
-export const saveOrUpdate = (params: any) => defHttp.post<any>({ url: Api.SaveOrUpdate, params });
+export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params);
 
 export const deleteByIds = (params: Array<string>) =>
-  defHttp.post<any>({ url: Api.Delete, params });
+  requestClient.post<any>(Api.Delete, params);

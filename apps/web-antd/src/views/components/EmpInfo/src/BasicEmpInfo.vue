@@ -1,3 +1,70 @@
+<script lang="ts" setup>
+import { ref, defineProps } from 'vue';
+import { Tag, Popover, Spin, Descriptions, Avatar, Space } from 'ant-design-vue';
+import { getByCodes } from '#/api/org/personal';
+import { UserOutlined, ManOutlined, WomanOutlined } from '@ant-design/icons-vue';
+import { usePersonalStore } from '#/store/personal';
+
+const { personalRequestCache, getPersonalInfo, setPersonalInfo } = usePersonalStore();
+
+const DescriptionsItem = Descriptions.Item;
+
+const props = defineProps({
+  // 人员工号
+  no: {
+    type: String,
+    default: '',
+  },
+  // 人员姓名
+  name: {
+    type: String,
+    default: '',
+  },
+  // 标签颜色
+  tagColor: {
+    type: String,
+    default: 'default',
+  },
+});
+
+const empBaseInfo = ref({});
+const spinning = ref(false);
+
+function visibleChange(visible) {
+
+  const personal = getPersonalInfo(props.no);
+
+  if (visible) {
+    if (personal) {
+      empBaseInfo.value = personal;
+    } else {
+      if (props.no && !personalRequestCache.has(props.no)) {
+        spinning.value = true;
+        personalRequestCache.set(
+            props.no,
+            getByCodes([props.no])
+                .then((res) => {
+                  if (res && res[0]) {
+                    empBaseInfo.value = res[0];
+                    // 缓存到store 这样就不用重复获取了
+                    // 内部处理了push的逻辑 这里不用push
+                    setPersonalInfo(props.no, res[0]);
+                  }
+                })
+                .finally(() => {
+                  // 移除请求状态缓存
+                  personalRequestCache.delete(props.no);
+                  spinning.value = false;
+                }),
+        );
+      }
+    }
+  } else {
+    spinning.value = false;
+  }
+}
+</script>
+
 <template>
   <Popover
     :z-index="2001"
@@ -10,7 +77,7 @@
       <Spin :spinning="spinning">
         <div class="emp-info-container">
           <Descriptions size="small" :column="1">
-            <DescriptionsItem label="" style="text-align: center" class="emp-header-box">
+            <DescriptionsItem label="" style="text-align: center" class="emp-header-box text-center">
               <Avatar
                 v-if="empBaseInfo.headImg"
                 :src="empBaseInfo.headImg"
@@ -50,62 +117,7 @@
     <slot> - </slot>
   </span>
 </template>
-<script lang="ts" setup>
-  import { ref, defineProps } from 'vue';
-  import { Tag, Popover, Spin, Descriptions, Avatar, Space } from 'ant-design-vue';
-  import { getByCodes } from '#/api/org/personal';
-  import { UserOutlined, ManOutlined, WomanOutlined } from '@ant-design/icons-vue';
-  import { usePersonalStoreWithOut } from '#/store/personal';
 
-  const personalStore = usePersonalStoreWithOut();
-  const DescriptionsItem = Descriptions.Item;
-
-  const props = defineProps({
-    // 人员工号
-    no: {
-        type: String,
-        default: '',
-    },
-    // 人员姓名
-    name: {
-        type: String,
-        default: '',
-    },
-    // 标签颜色
-    tagColor: {
-        type: String,
-        default: 'default',
-    },
-  });
-
-  const empBaseInfo = ref({});
-  const spinning = ref(false);
-
-  function visibleChange(visible) {
-    const getPersonal = personalStore.getPersonalMap[props.no];
-    if (visible) {
-      if (getPersonal) {
-        empBaseInfo.value = getPersonal;
-      } else {
-        if (props.no) {
-          spinning.value = true;
-          getByCodes([props.no])
-            .then((res) => {
-              if (res && res[0]) {
-                empBaseInfo.value = res[0];
-                personalStore.setPersonal(res[0]);
-              }
-            })
-            .finally(() => {
-              spinning.value = false;
-            });
-        }
-      }
-    } else {
-      spinning.value = false;
-    }
-  }
-</script>
 
 <style lang="less">
   .emp-info-container {

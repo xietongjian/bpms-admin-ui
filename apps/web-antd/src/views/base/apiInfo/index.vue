@@ -1,96 +1,27 @@
-<template>
-  <Page auto-content-height>
-    <div class="p-4 h-full">
-      <SplitPane>
-        <template #left>
-          <BasicTree
-            :loading="treeLoading"
-            title="接口分类"
-            treeWrapperClassName="h-[calc(100%-35px)] overflow-auto h-full"
-            :clickRowToExpand="false"
-            :treeData="apiCategoryTreeData"
-            @select="handleSelect"
-            ref="basicTreeRef"
-            :field-names="{title: 'name'}"
-            :actionList="treeActionList"
-          >
-            <template #headerTitle >
-              <Row align="middle" class="w-full">
-                <Col span="12">
-                  接口分类
-                </Col>
-                <Col span="12" class="text-right">
-                  <Button size="small" @click="handleCreateCategory" type="primary">新增分类</Button>
-                </Col>
-              </Row>
-            </template>
-          </BasicTree>
-        </template>
-        <template #main>
-          <BasicTable @register="registerTable" class="!p-0">
-            <template #toolbar>
-              <Authority :value="'App:' + PerEnum.ADD">
-                <a-button type="primary" @click="handleCreate">新增</a-button>
-              </Authority>
-            </template>
-            <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'categoryId'">
-                {{ apiCategoryDataMap[record.categoryId]?.name || '-' }}
-              </template>
-              <template v-if="column.key === 'action'">
-                <TableAction
-                  :actions="[
-                    {
-                      auth: 'App:' + PerEnum.UPDATE,
-                      tooltip: '修改',
-                      icon: 'clarity:note-edit-line',
-                      onClick: handleEdit.bind(null, record),
-                    },
-                    {
-                      auth: 'App:' + PerEnum.DELETE,
-                      tooltip: '删除',
-                      icon: 'ant-design:delete-outlined',
-                      color: 'error',
-                      popConfirm: {
-                        placement: 'left',
-                        title: '是否确认删除',
-                        confirm: handleDeleteApiInfo.bind(null, record),
-                      },
-                    },
-                  ]"
-                />
-              </template>
-            </template>
-          </BasicTable>
-        </template>
-      </SplitPane>
-    </div>
-    <ApiInfoDrawer @register="registerApiInfoDrawer" @success="handleSuccess" />
-    <ApiCategoryModal @register="registerApiCategoryModal" @success="handleCategorySuccess"/>
-  </Page>
-</template>
+
 <script lang="ts" setup>
 import {nextTick, ref, h, unref} from 'vue';
 import {getApiInfoListByPage, getApiCategoryListData, deleteApiCategoryById, deleteApiInfoById} from '@/api/base/apiInfo';
-import {PageWrapper} from '@/components/Page';
 
 import SplitPane from '@/views/components/splitPane/index.vue';
-import {BasicTree, TreeActionItem, TreeItem} from "@/components/Tree";
 import {listToTree} from "@/utils/helper/treeHelper";
 import {useLoading} from '@/components/Loading';
-import {PerEnum} from "@/enums/perEnum";
-import {BasicTable, TableAction, useTable} from "@/components/Table";
+import {PerEnum} from "#/enums/perEnum";
+import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
+import {AccessControl} from '@vben/access';
+
 import {Authority} from "@/components/Authority";
 import {columns, searchFormSchema} from "@/views/base/apiInfo/apiInfo.data";
 import {useModal} from "@/components/Modal";
-import ApiInfoDrawer from "@/views/base/apiInfo/ApiInfoDrawer.vue";
-import ApiCategoryModal from "@/views/base/apiInfo/ApiCategoryModal.vue";
-import {useDrawer} from '@/components/Drawer';
+import apiInfoDrawer from "./api-info-drawer.vue";
+import apiCategoryModal from "./api-category-modal.vue";
 import {DeleteOutlined, PlusOutlined, EditOutlined} from "@ant-design/icons-vue";
-import {Popconfirm, Button, Row, Col, message, Tooltip} from "ant-design-vue";
+import {Popconfirm, Button, Row, Col, message, Tree, Tooltip} from "ant-design-vue";
 import { useMessage } from '@/hooks/web/useMessage';
-import {Page, useVbenModal, useVbenDrawer} from '@vben/common-ui';
+import {Page, useVbenModal, useVbenDrawer, VbenFormProps} from '@vben/common-ui';
+import {getCompanies} from "#/api/org/company";
 
+const selectNodeIds = ref([]);
 const treeLoading = ref(true);
 const [openFullLoading, closeFullLoading] = useLoading({
   tip: '加载中...',
@@ -99,11 +30,61 @@ const { createMessage } = useMessage();
 
 const [registerApiInfoDrawer, {openDrawer: openApiInfoDrawer, setDrawerProps: setApiInfoDrawerProps}] = useDrawer();
 
-const [BaseDrawer, baseDrawerApi] = useVbenDrawer({
+const [ApiInfoDrawer, baseDrawerApi] = useVbenDrawer({
   // 连接抽离的组件
-  connectedComponent: BaseDemo,
+  connectedComponent: apiInfoDrawer,
+});
+const [ApiCategoryModal, baseModalApi] = useVbenModal({
+  // 连接抽离的组件
+  connectedComponent: apiCategoryModal,
 });
 
+const formOptions: VbenFormProps = {
+  showCollapseButton: false,
+  submitOnEnter: true,
+  commonConfig: {
+    labelWidth: 60,
+  },
+  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  resetButtonOptions: {
+    show: false,
+  },
+  schema: searchFormSchema,
+};
+
+const gridOptions: VxeGridProps<any> = {
+  checkboxConfig: {
+    highlight: true,
+    labelField: 'name',
+  },
+  columns,
+  columnConfig: {resizable: true},
+  pagerConfig: {
+    enabled: true,
+  },
+  rowConfig: {
+    keyField: 'id',
+  },
+  height: 'auto',
+  keepSource: true,
+  border: false,
+  stripe: true,
+  proxyConfig: {
+    ajax: {
+      query: async ({page}, formValues) => {
+        return await getApiInfoListByPage({
+          query: {
+            pageNum: page.currentPage,
+            pageSize: page.pageSize,
+          },
+          entity: formValues || {},
+        });
+      },
+    },
+  },
+};
+
+const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 const apiCategoryDataMap = ref<any>({});
 const apiCategoryTreeData = ref<any[]>([]);
@@ -157,28 +138,6 @@ const treeActionList: TreeActionItem[] = [
 ];
 
 const currentNode = ref(undefined);
-const [registerTable, {reload, getForm}] = useTable({
-  title: '列表',
-  api: getApiInfoListByPage,
-  columns,
-  formConfig: {
-    labelWidth: 100,
-    schemas: searchFormSchema,
-    showAdvancedButton: false,
-    showResetButton: false,
-    autoSubmitOnEnter: true,
-  },
-  canColDrag: true,
-  useSearchForm: true,
-  bordered: true,
-  showIndexColumn: true,
-  actionColumn: {
-    width: 140,
-    title: '操作',
-    dataIndex: 'action',
-  },
-});
-
 initApiCategoryTree();
 
 function handleCreateCategory(node: any) {
@@ -274,3 +233,77 @@ async function handleSelect(node: any, e: any) {
   }
 }
 </script>
+
+<template>
+  <Page auto-content-height>
+    <div class="p-4 h-full">
+      <SplitPane>
+        <template #left>
+          <Tree
+              v-bind="$attrs"
+              v-if="apiCategoryTreeData.length > 0"
+              v-model:selected-keys="selectNodeIds"
+              :class="$attrs.class"
+              :field-names="{ title: 'title', key: 'key' }"
+              :show-line="{ showLeafIcon: false }"
+              :tree-data="apiCategoryTreeData"
+              block-node
+              :virtual="false"
+              default-expand-all
+              @select="handleSelect"
+          >
+            <template #headerTitle >
+              <Row align="middle" class="w-full">
+                <Col span="12">
+                  接口分类
+                </Col>
+                <Col span="12" class="text-right">
+                  <Button size="small" @click="handleCreateCategory" type="primary">新增分类</Button>
+                </Col>
+              </Row>
+            </template>
+          </Tree>
+        </template>
+        <template #main>
+          <BasicTable @register="registerTable" class="!p-0">
+            <template #toolbar>
+              <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
+                <a-button type="primary" @click="handleCreate">新增</a-button>
+              </AccessControl>
+            </template>
+            <template #bodyCell="{ column, record }">
+              <template v-if="column.key === 'categoryId'">
+                {{ apiCategoryDataMap[record.categoryId]?.name || '-' }}
+              </template>
+              <template v-if="column.key === 'action'">
+                <TableAction
+                  :actions="[
+                    {
+                      auth: 'App:' + PerEnum.UPDATE,
+                      tooltip: '修改',
+                      icon: 'clarity:note-edit-line',
+                      onClick: handleEdit.bind(null, record),
+                    },
+                    {
+                      auth: 'App:' + PerEnum.DELETE,
+                      tooltip: '删除',
+                      icon: 'ant-design:delete-outlined',
+                      color: 'error',
+                      popConfirm: {
+                        placement: 'left',
+                        title: '是否确认删除',
+                        confirm: handleDeleteApiInfo.bind(null, record),
+                      },
+                    },
+                  ]"
+                />
+              </template>
+            </template>
+          </BasicTable>
+        </template>
+      </SplitPane>
+    </div>
+    <ApiInfoDrawer @register="registerApiInfoDrawer" @success="handleSuccess" />
+    <ApiCategoryModal @register="registerApiCategoryModal" @success="handleCategorySuccess"/>
+  </Page>
+</template>

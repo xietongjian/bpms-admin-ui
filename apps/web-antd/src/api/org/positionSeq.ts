@@ -1,7 +1,5 @@
-import { defHttp } from '@/utils/http/axios';
-import { CheckExistParams } from '#/api/model/baseModel';
-import { PositionSeqInfo, PositionSeqParams } from './model/positionSeqModel';
-import { forEach, listToTree } from '@/utils/helper/treeHelper';
+import { requestClient } from '#/api/request';
+import { forEach, listToTree } from '#/utils/helper/treeHelper';
 
 enum Api {
   GetPositionSeqs = '/flow/org/positionSeq/getPositionSeqs',
@@ -10,8 +8,8 @@ enum Api {
   CheckEntityExist = '/flow/org/positionSeq/checkEntityExist',
 }
 
-export const getPositionSeqs = (params?: PositionSeqParams) => {
-  const result = defHttp.post<any>({ url: Api.GetPositionSeqs, params });
+export const getPositionSeqs = (params?: any) => {
+  const result = requestClient.post<any>(Api.GetPositionSeqs, params );
   return Promise.resolve(result).then((res: any) => {
     res.forEach((item) => {
       item.key = item.id;
@@ -32,11 +30,11 @@ export const getPositionSeqs = (params?: PositionSeqParams) => {
   });
 };
 
-export const saveOrUpdate = (params?: PositionSeqInfo) =>
-  defHttp.post<PositionSeqInfo>({ url: Api.SaveOrUpdate, params });
+export const saveOrUpdate = (params: any) =>
+  requestClient.post<any>(Api.SaveOrUpdate, params);
 
-export const checkEntityExist = (params?: CheckExistParams) =>
-  defHttp.post<boolean>({ url: Api.CheckEntityExist, params });
+export const checkEntityExist = (params: any) =>
+  requestClient.post<boolean>(Api.CheckEntityExist, params);
 
-export const deleteByIds = (params?: Array<string>) =>
-  defHttp.post<PositionSeqInfo>({ url: Api.Delete, params });
+export const deleteByIds = (params: Array<string>) =>
+  requestClient.post<any>(Api.Delete, params);

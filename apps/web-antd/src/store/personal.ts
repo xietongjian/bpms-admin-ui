@@ -1,36 +1,47 @@
-import type { Recordable, UserInfo } from '@vben/types';
-
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-
-import { useAccessStore, useUserStore } from '@vben/stores';
+import { reactive } from 'vue';
 
 import { defineStore } from 'pinia';
 
-import { getByCodes } from '#/api/org/personal';
-
 export const usePersonalStore = defineStore('personal', () => {
-  const accessStore = useAccessStore();
-  const personalStore = useUserStore();
 
-  const loginLoading = ref(false);
+  const personalMap = reactive(new Map<string, any>());
 
+  const personalRequestCache = reactive(
+      new Map<string, Promise<any | void>>(),
+  );
 
-  async function fetchPersonalInfo(personalNo: string) {
-    let userInfo: null | UserInfo = null;
-    userInfo = await getByCodes([personalNo]);
-    personalStore.setUserInfo(userInfo);
-    return userInfo;
+  function getPersonalInfo(personalCode: string): any {
+    debugger;
+    if (!personalCode) return null;
+    // 这里拿到的就不可能为空了
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return personalMap.get(personalCode)!;
+  }
+
+  function resetCache() {
+    personalMap.clear();
+  }
+
+  function setPersonalInfo(personalCode: string, personal: any) {
+    if (personalMap.has(personalCode)) {
+      personalMap.get(personalCode);
+    } else {
+      personalMap.set(personalCode, personal);
+    }
   }
 
   function $reset() {
-    loginLoading.value = false;
+    /**
+     * doNothing
+     */
   }
 
   return {
     $reset,
-    personalStore,
-    fetchPersonalInfo,
-    loginLoading,
+    personalMap,
+    personalRequestCache,
+    resetCache,
+    getPersonalInfo,
+    setPersonalInfo,
   };
 });

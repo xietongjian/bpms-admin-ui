@@ -1,8 +1,6 @@
-import { defHttp } from '@/utils/http/axios';
-import { CheckExistParams } from '#/api/model/baseModel';
-import { JobGradeTypeInfo, JobGradeTypeParams } from './model/jobGradeTypeModel';
-import { CategoryInfo, CategoryParams } from '#/api/base/model/categoryModel';
-import { forEach, listToTree } from '@/utils/helper/treeHelper';
+import { requestClient } from '#/api/request';
+
+import { forEach, listToTree } from '#/utils/helper/treeHelper';
 
 enum Api {
   GetJobGradeTypes = '/flow/org/jobGradeType/getJobGradeTypes',
@@ -11,13 +9,13 @@ enum Api {
   CheckEntityExist = '/flow/org/jobGradeType/checkEntityExist',
 }
 
-export const getJobGradeTypes = (params: JobGradeTypeParams) => {
-  const result = defHttp.post<JobGradeTypeInfo>({ url: Api.GetJobGradeTypes, params });
+export const getJobGradeTypes = (params: any) => {
+  const result = requestClient.post<any>(Api.GetJobGradeTypes, params);
   return result;
 };
 
-export const getJobGradeTypesToTree = (params?: CategoryParams) => {
-  const result = defHttp.post<JobGradeTypeInfo>({ url: Api.GetJobGradeTypes, params });
+export const getJobGradeTypesToTree = (params?: any) => {
+  const result = requestClient.post<any>(Api.GetJobGradeTypes, params);
   return Promise.resolve(result).then((res: any) => {
     res.forEach((item) => {
       item.key = item.id;
@@ -38,11 +36,11 @@ export const getJobGradeTypesToTree = (params?: CategoryParams) => {
   });
 };
 
-export const saveOrUpdate = (params?: JobGradeTypeInfo) =>
-  defHttp.post<JobGradeTypeInfo>({ url: Api.SaveOrUpdate, params });
+export const saveOrUpdate = (params?: any) =>
+  requestClient.post<any>(Api.SaveOrUpdate, params);
 
-export const checkEntityExist = (params?: CheckExistParams) =>
-  defHttp.post<boolean>({ url: Api.CheckEntityExist, params });
+export const checkEntityExist = (params?: any) =>
+  requestClient.post<boolean>(Api.CheckEntityExist, params);
 
 export const deleteById = (params?: Array<string>) =>
-  defHttp.post<JobGradeTypeInfo>({ url: Api.Delete, params });
+  requestClient.post<any>(Api.Delete, params);

@@ -1,5 +1,4 @@
 import { requestClient } from '#/api/request';
-import { listToTree, forEach } from '#/utils/helper/treeHelper';
 
 enum Api {
   ModuleList = '/flow/privilege/module/getModules',

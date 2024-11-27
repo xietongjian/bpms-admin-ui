@@ -1,10 +1,5 @@
-import { defHttp } from '@/utils/http/axios';
-import {
-  AclInfo,
-  AclSaveByGroupModuleParam,
-  AclSaveByModuleParam,
-} from '@/api/privilege/model/aclModel';
-import { ModuleInfo, ModuleParams } from '@/api/privilege/model/moduleModel';
+import { requestClient } from '#/api/request';
+
 import { forEach, listToTree } from '@/utils/helper/treeHelper';
 
 enum Api {
@@ -16,9 +11,7 @@ enum Api {
 }
 
 export const getModuleAclsByGroupId = (params: any) => {
-  const result = defHttp.get<ModuleInfo>({
-    url: Api.GetModuleAclsByGroupId + '/' + params.groupId,
-  });
+  const result = requestClient.get<any>(Api.GetModuleAclsByGroupId + '/' + params.groupId);
   return Promise.resolve(result).then((res: any) => {
     const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
     forEach(
@@ -34,20 +27,14 @@ export const getModuleAclsByGroupId = (params: any) => {
   });
 };
 
-export const setAcl = (params: AclSaveByModuleParam) =>
-  defHttp.post<AclInfo>({
-    url: Api.SetAcl + '/' + params.position + '/' + params.checked,
-    params: params.aclInfo,
-  });
+export const setAcl = (params: any) =>
+  requestClient.post<any>(Api.SetAcl + '/' + params.position + '/' + params.checked, params.aclInfo);
 
-export const setAllAcl = (params: AclSaveByModuleParam) =>
-  defHttp.post<AclInfo>({ url: Api.SetAllAcl + `/${params.checked}`, params: params.aclInfo });
+export const setAllAcl = (params: any) =>
+  requestClient.post<any>(Api.SetAllAcl + `/${params.checked}`, params.aclInfo);
 
-export const setAclByModule = (params: AclSaveByModuleParam) =>
-  defHttp.post<AclInfo>({ url: Api.SetAclByModule + '/' + params.checked, params: params.aclInfo });
+export const setAclByModule = (params: any) =>
+  requestClient.post<any>(Api.SetAclByModule + '/' + params.checked, params.aclInfo);
 
-export const setAclModuleList = (params: AclSaveByGroupModuleParam) =>
-  defHttp.post<AclInfo>({
-    url: Api.SetAclModuleList + `/${params.moduleId}/${params.groupId}`,
-    params: params.aclList,
-  });
+export const setAclModuleList = (params: any) =>
+  requestClient.post<any>(Api.SetAclModuleList + `/${params.moduleId}/${params.groupId}`, params.aclList);

@@ -1,6 +1,4 @@
 import {requestClient} from '#/api/request';
-
-
 enum Api {
   PageList = '/flow/privilege/group/getPagerModel',
   GetAllList = '/flow/privilege/group/getAll',

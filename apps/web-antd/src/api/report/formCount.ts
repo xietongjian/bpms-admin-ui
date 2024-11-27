@@ -1,8 +1,7 @@
-import { defHttp } from '@/utils/http/axios';
-import { BasicPageSearchParams } from '@/api/model/baseModel';
-import qs from 'qs';
-import { doDownload } from '@/utils/domUtils';
-import { forEach, listToTree } from '@/utils/helper/treeHelper';
+import { requestClient } from '#/api/request';
+
+import { doDownload } from '#/utils/domUtils';
+import { forEach, listToTree } from '#/utils/helper/treeHelper';
 
 enum Api {
   GetFormTree = '/flow/form/customExcel/getFormTree', // 查询分类+表单树
@@ -13,7 +12,7 @@ enum Api {
 }
 
 export const getFormTree = () => {
-  const result = defHttp.get<any>({ url: Api.GetFormTree });
+  const result = requestClient.get<any>(Api.GetFormTree);
 
   return Promise.resolve(result).then((res: any) => {
     res.forEach((item) => {
@@ -43,15 +42,14 @@ export const exportExcel = (params: any) => {
     params.userNo = params.userNo[0].code;
   }
 
-  return defHttp.get<any>(
-    { url: Api.DownloadFormCount, params, responseType: 'blob' },
-    { isTransformResponse: false },
+  return requestClient.get<any>(Api.DownloadFormCount, params,
+    { responseType: 'blob', isTransformResponse: false },
   );
 };
 
 // 根据表单ID查询表单列
 export const getCustomColumnsByFormId = (params: any) => {
-  return defHttp.get<any>({ url: Api.GetCustomColumnsByFormId + '/' + params.formId });
+  return requestClient.get<any>(Api.GetCustomColumnsByFormId + '/' + params.formId);
 };
 
 // 查询待办，已办 taskFinishFlag： true已办  false待办
@@ -62,8 +60,8 @@ export const getPagerModelCustomData = (params: any) => {
     delete entity['pageNum'];
     delete entity['pageSize'];
   }
-  const queryParam = { query, entity } as BasicPageSearchParams<any>;
-  return defHttp.post<any>({ url: Api.GetPagerModelCustomData, params: queryParam });
+  const queryParam = { query, entity };
+  return requestClient.post<any>(Api.GetPagerModelCustomData, params);
 };
 /*
 // 下载Excel已发
@@ -88,7 +86,8 @@ export const downloadTaskProcessDetail = (params: any) => {
     delete entity['pageNum'];
     delete entity['pageSize'];
   }
-  const comValue = qs.stringify(entity);
+  // FIXME
+  const comValue = '';//qs.stringify(entity);
 
   const downUrl =
     import.meta.env.VITE_GLOB_API_URL + Api.DownloadTaskProcessDetail + '?' + comValue;

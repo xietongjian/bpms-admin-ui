@@ -1,6 +1,5 @@
-import { defHttp } from '@/utils/http/axios';
-import { listToTree, forEach } from '@/utils/helper/treeHelper';
-import { CheckExistParams } from '#/api/model/baseModel';
+import { requestClient } from '#/api/request';
+import { listToTree, forEach } from '#/utils/helper/treeHelper';
 
 enum Api {
   DeptList = '/flow/org/department/getAll',
@@ -11,7 +10,7 @@ enum Api {
 }
 
 export const getDepts = (params: any) => {
-  const result = defHttp.post<any>({ url: Api.DeptList, params });
+  const result = requestClient.post<any>(Api.DeptList, params);
   return Promise.resolve(result).then((res: any) => {
     res.forEach((item) => {
       item.key = item.id;
@@ -33,7 +32,7 @@ export const getDepts = (params: any) => {
 };
 
 export const getOrgTree = () => {
-  const result = defHttp.get<any>({ url: Api.GetOrgTree });
+  const result = requestClient.get<any>(Api.GetOrgTree);
   return Promise.resolve(result).then((res: any) => {
     res.forEach((item) => {
       item.key = item.id;
@@ -59,9 +58,9 @@ export const getOrgTree = () => {
   });
 };
 
-export const saveOrUpdate = (params: any) => defHttp.post({ url: Api.SaveOrUpdate, params });
+export const saveOrUpdate = (params: any) => requestClient.post(Api.SaveOrUpdate, params);
 
-export const deleteByIds = (params: Array<string>) => defHttp.post({ url: Api.Delete, params });
+export const deleteByIds = (params: Array<string>) => requestClient.post(Api.Delete, params);
 
-export const checkEntityExist = (params: CheckExistParams) =>
-  defHttp.post<boolean>({ url: Api.CheckEntityExist, params });
+export const checkEntityExist = (params: any) =>
+  requestClient.post<boolean>(Api.CheckEntityExist, params);

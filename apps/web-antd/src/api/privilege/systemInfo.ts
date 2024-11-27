@@ -1,4 +1,5 @@
-import { defHttp } from '@/utils/http/axios';
+import { requestClient } from '#/api/request';
+
 
 enum Api {
   GetMySystem = '/flow/privilege/userSystem/getAll',
@@ -9,18 +10,18 @@ enum Api {
 }
 
 export const getMySystemList = (params?: any) => {
-  return defHttp.post<any>({ url: Api.GetMySystem, params });
+  return requestClient.post<any>(Api.GetMySystem, params);
 };
 
 export const saveOrUpdateMySystem = (params: any) =>
-  defHttp.post<any>({ url: Api.SaveOrUpdateMySystem, params }, {isTransformResponse: false});
+  requestClient.post<any>(Api.SaveOrUpdateMySystem, params, {isTransformResponse: false});
 
 export const saveUserSystemOrderNo = (params: any) =>
-  defHttp.post<any>({ url: Api.SaveUserSystemOrderNo, params }, {isTransformResponse: false});
+  requestClient.post<any>(Api.SaveUserSystemOrderNo, params, {isTransformResponse: false});
 
 export const deleteMySystemById = (params: any) =>
-  defHttp.post<any>({ url: Api.DeleteMySystemById + '/' + params.id }, {isTransformResponse: false});
+  requestClient.post<any>(Api.DeleteMySystemById + '/' + params.id }, {isTransformResponse: false});
 
 export const getAllSystemList = (params: any) => {
-  return defHttp.post<any>({ url: Api.GetAllSystem, params });
+  return requestClient.post<any>(Api.GetAllSystem, params);
 }

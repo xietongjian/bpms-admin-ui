@@ -1,7 +1,5 @@
 import { requestClient } from '#/api/request';
 
-import { listToTree, forEach } from '#/utils/helper/treeHelper';
-
 enum Api {
   CompanyTypeList = '/flow/org/companyType/getList',
   SaveOrUpdate = '/flow/org/companyType/saveOrUpdate',
@@ -10,17 +8,17 @@ enum Api {
 }
 
 export const getCompanyTypes = (params?: any) => {
-  return requestClient.post<any>({ url: Api.CompanyTypeList, params });
+  return requestClient.post<any>(Api.CompanyTypeList, params);
 };
 
-export const saveOrUpdate = (params?: CompanyTypeInfo) =>
-  requestClient.post<CompanyTypeInfo>({ url: Api.SaveOrUpdate, params });
+export const saveOrUpdate = (params: any) =>
+  requestClient.post<any>(Api.SaveOrUpdate, params);
 
 export const deleteByIds = (params?: Array<string>) =>
-  requestClient.post<CompanyTypeInfo>({ url: Api.Delete, params });
+  requestClient.post<any>(Api.Delete, params);
 
 export const deleteById = (params: any) =>
-  requestClient.post<CompanyTypeInfo>({ url: Api.Delete + '/' + params.id });
+  requestClient.post<any>(Api.Delete + '/' + params.id );
 
-export const checkEntityExist = (params?: CheckExistParams) =>
-  requestClient.post<boolean>({ url: Api.CheckEntityExist, params });
+export const checkEntityExist = (params: any) =>
+  requestClient.post<boolean>(Api.CheckEntityExist, params);

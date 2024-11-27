@@ -73,8 +73,6 @@ const gridOptions: VxeGridProps<RowType> = {
             pageSize: page.pageSize,
           },
           entity: formValues || {},
-        }).then(res => {
-          return Promise.resolve(res);
         });
       },
     },

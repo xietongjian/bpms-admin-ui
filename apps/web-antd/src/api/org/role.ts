@@ -1,15 +1,4 @@
-import {
-  RoleInfo,
-  RolePageListGetResultModel,
-  RolePageParams,
-  PersonalByRoleParams,
-  AddCompanyRoleVo,
-} from './model/roleModel';
-import { BasicPageSearchParams, CheckExistParams } from '#/api/model/baseModel';
-
-import { defHttp } from '@/utils/http/axios';
-import { PersonalInfo } from '#/api/org/model/personalModel';
-import { PersonalRoleParams } from '#/api/org/model/personalRoleModel';
+import { requestClient } from '#/api/request';
 
 enum Api {
   PageList = '/flow/org/prodRole/getPagerModel',
@@ -29,7 +18,7 @@ enum Api {
   GetMatrixRoleList = '/flow/matrix/companyDept/getHeaderList',
 }
 
-export const getRoleListByPage = (params: RolePageParams) => {
+export const getRoleListByPage = (params: any) => {
   const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
   const entity = params;
   const personalId = params.personalId;
@@ -39,11 +28,11 @@ export const getRoleListByPage = (params: RolePageParams) => {
     delete entity['personalId'];
   }
   const url = personalId ? Api.PageListByPersonalId + `?personalId=${personalId}` : Api.PageList;
-  const queryParam = { query, entity } as BasicPageSearchParams<RolePageParams>;
-  return defHttp.post<RolePageListGetResultModel>({ url, params: queryParam });
+  const queryParam = { query, entity };
+  return requestClient.post<any>(params: queryParam);
 };
 
-export const getMatrixRolePageList = (params: RolePageParams) => {
+export const getMatrixRolePageList = (params: any) => {
   const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
   const entity = params;
   if (entity) {
@@ -51,8 +40,8 @@ export const getMatrixRolePageList = (params: RolePageParams) => {
     delete entity['pageSize'];
   }
   const url = Api.GetMatrixRolePageList + '/' + params.type;
-  const queryParam = { query, entity } as BasicPageSearchParams<RolePageParams>;
-  return defHttp.post<RolePageListGetResultModel>({ url, params: queryParam });
+  const queryParam = { query, entity };
+  return requestClient.post<any>(url, params);
 };
 
 /**
@@ -60,12 +49,12 @@ export const getMatrixRolePageList = (params: RolePageParams) => {
  * @param params
  */
 export const getMatrixRoleList = (params: any) => {
-  return defHttp.get<any>({ url: Api.GetMatrixRoleList + '/' + params.roleType });
+  return requestClient.get<any>(Api.GetMatrixRoleList + '/' + params.roleType);
 };
 
 // 获取组织角色 类型（公司、部门）/组织ID
 export const getAllOrgMatrixRole = (params: any) => {
-  //return defHttp.post<any>({ url: Api.GetAllDeptMatrixRole+'/' + params.type + '/' + params.orgId  });
+  //return requestClient.post<any>({ url: Api.GetAllDeptMatrixRole+'/' + params.type + '/' + params.orgId  });
   const data = [
     {
       createTime: '2021-06-19 16:30:59',
@@ -128,40 +117,31 @@ export const getAllOrgMatrixRole = (params: any) => {
   return Promise.resolve(data);
 };
 
-export const getPersonalsByRole = (params: PersonalByRoleParams) => {
-  return defHttp.post<PersonalInfo>({
-    url: Api.GetPersonalsByRole + '/' + params.roleId,
-    params: params.personal,
-  });
+export const getPersonalsByRole = (params: any) => {
+  return requestClient.post<any>(Api.GetPersonalsByRole + '/' + params.roleId, params.personal);
 };
 
-export const saveOrUpdate = (params?: RoleInfo) =>
-  defHttp.post<RoleInfo>({ url: Api.SaveOrUpdate, params });
+export const saveOrUpdate = (params?: any) =>
+  requestClient.post<any>(Api.SaveOrUpdate, params);
 
-export const saveBatch = (params?: AddCompanyRoleVo) =>
-  defHttp.post({ url: Api.SaveBatch, params });
+export const saveBatch = (params: any) =>
+  requestClient.post(Api.SaveBatch, params);
 
-export const addPersonalRoles = (params?: RoleInfo) =>
-  defHttp.post<RoleInfo>({
-    url: Api.AddPersonalRoles + '/' + params.roleId,
-    params: params.personalList,
-  });
+export const addPersonalRoles = (params: any) =>
+  requestClient.post<any>(Api.AddPersonalRoles + '/' + params.roleId, params.personalList);
 
 /**
  * 给角色分配人员
  * @param params
  */
-export const allocationPersonals = (params: PersonalRoleParams) =>
-  defHttp.post<RoleInfo>({
-    url: Api.AllocationPersonals + '/' + params.roleId,
-    params: params.personalList,
-  });
+export const allocationPersonals = (params: any) =>
+  requestClient.post<any>(Api.AllocationPersonals + '/' + params.roleId, params.personalList);
 
 export const deleteByIds = (params: any) =>
-  defHttp.post<RoleInfo>({ url: Api.Delete + '/' + params.id });
+  requestClient.post<any>(Api.Delete + '/' + params.id);
 
-export const deleteRolePersonal = (params?: Array<string>) =>
-  defHttp.post<RoleInfo>({ url: Api.DeleteRolePersonal, params });
+export const deleteRolePersonal = (params: Array<string>) =>
+  requestClient.post<any>(Api.DeleteRolePersonal, params);
 
-export const checkEntityExist = (params?: CheckExistParams) =>
-  defHttp.post<boolean>({ url: Api.CheckEntityExist, params });
+export const checkEntityExist = (params: any) =>
+  requestClient.post<boolean>(Api.CheckEntityExist, params);

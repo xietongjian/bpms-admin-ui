@@ -1,6 +1,6 @@
 <template>
   <div class="api-variable-setting">
-    <VxeBasicTable :loading="true" class="variable-table !py-1 !px-0" ref="tableRef" v-bind="gridOptions">
+    <BasicTable :loading="true" class="variable-table !py-1 !px-0" ref="tableRef" v-bind="gridOptions">
       <template #action="{ row }">
         <TableAction outside :actions="createActions(row)" />
       </template>
@@ -8,7 +8,7 @@
         <Tag v-if="row.required" color="#87d068">是</Tag>
         <Tag v-else>否</Tag>
       </template>
-    </VxeBasicTable>
+    </BasicTable>
 
     <div style="width: 500px; margin: auto">
       <a-button
@@ -26,10 +26,10 @@
 <script lang="ts" setup>
 import { defineComponent, reactive, ref, unref, watch, onMounted, computed, nextTick } from 'vue';
 import { vxeFlowVariableTableColumns } from './apiInfo.data';
-import { Tag } from 'ant-design-vue';
-import { ActionItem, TableAction } from '@/components/Table';
-import { useMessage } from '@/hooks/web/useMessage';
-import { BasicTableProps, VxeBasicTable, VxeGridInstance } from '@/components/VxeTable';
+import { Tag, message } from 'ant-design-vue';
+import {useVbenVxeGrid} from '#/adapter/vxe-table';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormProps} from '@vben/common-ui';
 
 defineComponent({
   name: 'ApiVariableSetting',
@@ -47,9 +47,8 @@ const props = defineProps({
 });
 
 const loadingRef = ref(false);
-const { createMessage } = useMessage();
 
-const tableRef = ref<VxeGridInstance>();
+const tableRef = ref<any>();
 
 vxeFlowVariableTableColumns.forEach(item => {
   if(item.field === 'required'){
@@ -65,7 +64,7 @@ vxeFlowVariableTableColumns.forEach(item => {
   }
 });
 
-const gridOptions = reactive<BasicTableProps>({
+const gridOptions = reactive<any>({
   id: 'VxeTable-' + (new Date().getTime()),
   minHeight: 200,
   maxHeight: 500,
@@ -109,7 +108,7 @@ const gridOptions = reactive<BasicTableProps>({
               return new Error('存在重复的字段标识');
             }
             if (keyMap[item.field]) {
-              createMessage.error({
+              message.error({
                 content: '存在重复的字段标识',
                 style: { marginTop: '40px' },
               });
@@ -122,6 +121,8 @@ const gridOptions = reactive<BasicTableProps>({
     ],
   },
 });
+
+const [BasicTable, tableApi] = useVbenVxeGrid({gridOptions});
 
 onMounted(async () => {
   await nextTick();
@@ -149,7 +150,7 @@ function handleAddRow() {
 }
 
 const createActions = (record) => {
-  const actions: ActionItem[] = [
+  const actions: any[] = [
     {
       label: '删除',
       color: 'error',
@@ -183,7 +184,7 @@ async function handleSubmit() {
       const keyMap = {};
       for (let item of fullData) {
         if (keyMap[item.field]) {
-          createMessage.error({ content: '存在重复的变量标识', style: { marginTop: '40px' } });
+          message.error({ content: '存在重复的变量标识', style: { marginTop: '40px' } });
           gridOptions.loading = false;
 
           return Promise.reject('存在重复的变量标识');
