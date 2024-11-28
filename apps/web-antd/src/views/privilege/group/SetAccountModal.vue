@@ -5,26 +5,60 @@
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref, defineEmits } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, useForm } from '@/components/Form/index';
   import { setAccountFormSchema } from './group.data';
-  import { getAllList } from '@/api/privilege/account';
-  import { addUserGroups } from '@/api/privilege/group';
+  import { getAllList } from '#/api/privilege/account';
+  import { addUserGroups } from '#/api/privilege/group';
+  import {useVbenForm} from "#/adapter/form";
+  import {formSchema} from "#/views/base/app/app.data";
+  import {useVbenModal} from '@vben/common-ui';
 
   const emit = defineEmits(['success', 'register']);
 
   const isUpdate = ref(true);
   const accountOptions = ref<any[]>([]);
 
-  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          baseFormApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await baseFormApi.submitForm();
+      handleSubmit();
+    },
+  });
+
+  const [BaseForm, baseFormApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: formSchema,
+    wrapperClass: 'grid-cols-1',
+  });
+
+  /*const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
     labelWidth: 100,
     schemas: setAccountFormSchema,
     showActionButtonGroup: false,
     actionColOptions: {
       span: 23,
     },
-  });
-  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+  });*/
+  /*const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     resetFields();
 
     setModalProps({
@@ -62,7 +96,7 @@
         users,
       });
     }
-  });
+  });*/
 
   let getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 

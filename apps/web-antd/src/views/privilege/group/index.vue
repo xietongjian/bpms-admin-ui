@@ -10,6 +10,8 @@ import {TableAction} from '#/components/table-action';
 import type {Recordable} from '@vben/types';
 import groupModal from './group-modal.vue';
 import {AccessControl} from '@vben/access';
+import { useAccess } from '@vben/access';
+
 import {columns, searchFormSchema} from "./group.data";
 import SetAclModal from './SetAclModal.vue';
 import SetAccountModal from './SetAccountModal.vue';
@@ -108,7 +110,15 @@ async function handleDelete(record: any) {
     message.error(e.message);
   }
 }
-
+function handleAddUser(record: Recordable) {
+  openSetAccountModal(true, {
+    record,
+    isUpdate: true,
+  });
+  setAccountModalProps({
+    width: 700,
+  });
+}
 function createActions(record: Recordable): any[] {
   let actions: any[] = [
     {
