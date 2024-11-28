@@ -5,61 +5,61 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 export const columns: VxeGridProps['columns'] = [
   {
     title: '头像',
-    dataIndex: 'image',
+    field: 'image',
     width: 80,
     align: 'center',
   },
   {
     title: '用户类型',
-    dataIndex: 'type',
+    field: 'type',
     width: 120,
     align: 'center',
   },
   {
     title: '用户名',
-    dataIndex: 'username',
+    field: 'username',
     width: 120,
     align: 'left',
   },
   {
     title: '姓名',
-    dataIndex: 'realName',
+    field: 'realName',
     width: 120,
     align: 'left',
   },
   {
     title: '工号',
-    dataIndex: 'userNo',
+    field: 'userNo',
     width: 120,
     align: 'left',
   },
   {
     title: '手机',
-    dataIndex: 'mobile',
+    field: 'mobile',
     width: 120,
     align: 'left',
   },
   {
     title: '邮箱',
-    dataIndex: 'email',
+    field: 'email',
     width: 120,
     align: 'left',
   },
   {
     title: '性别',
-    dataIndex: 'sex',
+    field: 'sex',
     width: 60,
   },
   {
     title: '所属组',
-    dataIndex: 'groups',
+    field: 'groups',
     align: 'left',
   },
 ];
 
 export const searchFormSchema: FormSchemaGetter = () => [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -77,13 +77,13 @@ export const searchFormSchema: FormSchemaGetter = () => [
 
 export const accountFormSchema: FormSchemaGetter = () => [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
     show: false,
   },
   {
-    field: 'type',
+    fieldName: 'type',
     label: '用户类型',
     component: 'RadioButtonGroup',
     required: true,
@@ -99,7 +99,7 @@ export const accountFormSchema: FormSchemaGetter = () => [
     },
   },
   {
-    field: 'username',
+    fieldName: 'username',
     label: '用户名',
     component: 'Input',
     required: true,
@@ -108,13 +108,13 @@ export const accountFormSchema: FormSchemaGetter = () => [
     },
   },
   {
-    field: 'realName',
+    fieldName: 'realName',
     label: '用户名',
     component: 'Input',
     show: false,
   },
   {
-    field: 'realNameSelector',
+    fieldName: 'realNameSelector',
     label: '姓名',
     required: true,
     component: 'PersonalSelector',
@@ -123,7 +123,7 @@ export const accountFormSchema: FormSchemaGetter = () => [
     },
   },
   {
-    field: 'headImg',
+    fieldName: 'headImg',
     label: '',
     component: 'Input',
     slot: 'headImg',
@@ -133,7 +133,7 @@ export const accountFormSchema: FormSchemaGetter = () => [
     },
   },
   {
-    field: 'sex',
+    fieldName: 'sex',
     label: '性别',
     component: 'RadioButtonGroup',
     defaultValue: 1,
@@ -146,7 +146,7 @@ export const accountFormSchema: FormSchemaGetter = () => [
     colProps: { span: 10 },
   },
   {
-    field: 'userNo',
+    fieldName: 'userNo',
     label: '工号',
     component: 'Input',
     required: true,
@@ -156,7 +156,7 @@ export const accountFormSchema: FormSchemaGetter = () => [
   },
   {
     label: '手机',
-    field: 'mobile',
+    fieldName: 'mobile',
     component: 'Input',
     required: true,
     colProps: {
@@ -165,7 +165,7 @@ export const accountFormSchema: FormSchemaGetter = () => [
   },
   {
     label: '邮箱',
-    field: 'email',
+    fieldName: 'email',
     component: 'Input',
     required: false,
     colProps: {
@@ -176,19 +176,19 @@ export const accountFormSchema: FormSchemaGetter = () => [
 
 export const passwordFormSchema: FormSchemaGetter = () => [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
     show: false,
   },
   {
-    field: 'passwordNew',
+    fieldName: 'passwordNew',
     label: '密码',
     component: 'StrengthMeter',
     componentProps: {
       placeholder: '密码',
     },
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -204,13 +204,13 @@ export const passwordFormSchema: FormSchemaGetter = () => [
         max: 32,
         message: '长度必需在6-32之间！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },
   },
   {
-    field: 'confirmPassword',
+    fieldName: 'confirmPassword',
     label: '确认密码',
     component: 'InputPassword',
 
@@ -248,14 +248,14 @@ export const passwordFormSchema: FormSchemaGetter = () => [
 
 export const setGroupFormSchema: FormSchemaGetter = () => [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
     show: false,
   },
   {
     label: '选择组',
-    field: 'groups',
+    fieldName: 'groups',
     component: 'Select',
     labelWidth: 50,
     componentProps: {

@@ -5,12 +5,13 @@
 
 import type { BaseFormComponentType } from '@vben/common-ui';
 
+import type { CustomComponentType } from '#/components/form/types';
+
 import type { Component, SetupContext } from 'vue';
 import { h } from 'vue';
 
 import { globalShareState } from '@vben/common-ui';
 import { $t } from '@vben/locales';
-import PersonalSelector from './form/personal-selector/index.vue';
 
 import {
   AutoComplete,
@@ -36,6 +37,8 @@ import {
   TreeSelect,
   Upload,
 } from 'ant-design-vue';
+
+import { registerComponent } from '#/components/form/component-map';
 
 const withDefaultPlaceholder = <T extends Component>(
   component: T,
@@ -71,8 +74,8 @@ export type ComponentType =
   | 'TimePicker'
   | 'TreeSelect'
   | 'Upload'
-  | 'PersonalSelector'
-  | BaseFormComponentType;
+  | BaseFormComponentType
+  | CustomComponentType;
 
 async function initComponentAdapter() {
   const components: Partial<Record<ComponentType, Component>> = {
@@ -80,10 +83,6 @@ async function initComponentAdapter() {
     // Button: () =>
     // import('xxx').then((res) => res.Button),
 
-    PersonalSelector: (props, {attrs, slots}) => {
-      return h(PersonalSelector, {...props, attrs}, slots);
-      // import('./form/personal-selector/index.vue').then((res) => res.PersonalSelector)
-    },
     AutoComplete,
     Checkbox,
     CheckboxGroup,
@@ -113,7 +112,8 @@ async function initComponentAdapter() {
     TreeSelect: withDefaultPlaceholder(TreeSelect, 'select'),
     Upload,
   };
-
+  // 自动注册自定义组件
+  registerComponent(components);
   // 将组件注册到全局共享状态中
   globalShareState.setComponents(components);
 

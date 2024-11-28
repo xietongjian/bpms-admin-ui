@@ -1,8 +1,8 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {z} from "@vben/common-ui";
 import {FormValidPatternEnum} from "#/enums/commonEnum";
 import {checkEntityExist} from "#/api/base/app";
-import {FormSchemaGetter} from "#/adapter/form";
+import { z } from '#/adapter/form';
+
 
 /**
  * 列表
@@ -43,7 +43,7 @@ export const listColumns = [
 /**
  * 搜索条件
  */
-export const searchFormSchema: FormSchemaGetter = () => [
+export const searchFormSchema: FormSchema[] = [
   {
     component: 'Input',
     fieldName: 'keyword',

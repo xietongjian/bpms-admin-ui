@@ -1,6 +1,6 @@
 import type { RouteLocationNormalized, RouteRecordNormalized } from 'vue-router';
 import type { App, Component } from 'vue';
-
+export * from './tool';
 import { intersectionWith, isEqual, mergeWith, unionWith } from 'lodash-es';
 import { unref } from 'vue';
 import { isArray, isObject } from '#/utils/is';
@@ -270,3 +270,4 @@ export function groupBy(array, key) {
     return result;
   }, {});
 }
+

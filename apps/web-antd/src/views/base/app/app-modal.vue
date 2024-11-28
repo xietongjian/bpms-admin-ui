@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import {defineExpose} from 'vue';
 import {useVbenModal} from '@vben/common-ui';
 import {message} from 'ant-design-vue';
 import {formSchema} from './app.data';
@@ -70,6 +71,8 @@ async function handleSubmit() {
   }
   modalApi.setState({loading: false, confirmLoading: false});
 }
+
+defineExpose(modalApi);
 </script>
 <template>
   <Modal class="w-[600px]">

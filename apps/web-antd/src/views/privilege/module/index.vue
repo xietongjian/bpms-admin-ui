@@ -34,17 +34,6 @@ import {
 //   showConfirmButton	: false,
 // });
 
-interface RowType {
-  id: string;
-  name: string;
-  sn: string;
-  url: string;
-  indexUrl: string;
-  orderNo: number;
-  status: 1 | 0;
-  platformEnabled: 1 | 0;
-  note: string;
-}
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,

@@ -5,40 +5,20 @@ import {Page, useVbenModal} from '@vben/common-ui';
 import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {deleteByIds, getAppListByPage} from '#/api/base/app';
-import appModal from './app-modal.vue';
+import AppModal from './app-modal.vue';
 import appSecretKeyModal from './app-secret-key-modal.vue';
 import {AccessControl} from '@vben/access';
+import { TableAction } from '#/components/table-action';
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import {PerEnum} from "#/enums/perEnum";
-import {
-  SquareEditOutline,
-  DeleteOutline,
-  CloudSecurityOutline,
-  QuestionMarkCircleOutline,
-} from '@vben/icons';
 
-const [AppModal, modalApi] = useVbenModal({
-  connectedComponent: appModal,
-  centered: true,
-});
+const appModalRef = ref();
 
 const [AppSecretKeyModal, secretKeyModalApi] = useVbenModal({
   connectedComponent: appSecretKeyModal,
   centered: true,
   showConfirmButton	: false,
 });
-
-interface RowType {
-  id: string;
-  name: string;
-  sn: string;
-  url: string;
-  indexUrl: string;
-  orderNo: number;
-  status: 1 | 0;
-  platformEnabled: 1 | 0;
-  note: string;
-}
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -50,10 +30,10 @@ const formOptions: VbenFormProps = {
   resetButtonOptions: {
     show: false,
   },
-  schema: searchFormSchema(),
+  schema: searchFormSchema,
 };
 
-const gridOptions: VxeGridProps<RowType> = {
+const gridOptions: VxeGridProps<any> = {
   checkboxConfig: {
     highlight: true,
     labelField: 'name',
@@ -82,17 +62,17 @@ const gridOptions: VxeGridProps<RowType> = {
 const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 function handleAdd() {
-  modalApi.setData({});
-  modalApi.open();
-  modalApi.setState({
+  appModalRef.value.setData({});
+  appModalRef.value.open();
+  appModalRef.value.setState({
     title: '新建'
   });
 }
 
 function handleEdit(record: any) {
-  modalApi.setData(record);
-  modalApi.open();
-  modalApi.setState({
+  appModalRef.value.setData(record);
+  appModalRef.value.open();
+  appModalRef.value.setState({
     title: '修改'
   });
 }
@@ -130,46 +110,6 @@ async function handleDelete(record: any) {
         </AccessControl>
       </template>
 
-      <template #action="{row}">
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Tooltip title="编辑">
-            <Button type="link" @click="handleEdit(row)">
-              <template #icon>
-                <SquareEditOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Tooltip>
-        </AccessControl>
-
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Tooltip title="密钥">
-            <Button type="link" @click="handleViewSecretKey(row)">
-              <template #icon>
-                <CloudSecurityOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Tooltip>
-        </AccessControl>
-
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Popconfirm @confirm="handleDelete(row)" :ok-button-props="{danger: true}">
-            <template #title >
-              <div class="w-32">
-                确定要删除吗？
-              </div>
-            </template>
-            <template #icon>
-              <QuestionMarkCircleOutline class="text-red-500 size-6"/>
-            </template>
-            <Button type="link" danger>
-              <template #icon>
-                <DeleteOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Popconfirm>
-        </AccessControl>
-      </template>
-
       <template #image="{ row }">
         <Image :src="row.image" height="30" width="30"/>
       </template>
@@ -183,8 +123,43 @@ async function handleDelete(record: any) {
         <Tag v-if="row.platformEnabled===1" color="green">开启</Tag>
         <Tag v-else>关闭</Tag>
       </template>
+
+      <template #action="{ row }">
+        <TableAction
+          :actions="[
+            {
+              auth: ['App:' + PerEnum.QUERY],
+              tooltip: '查看密钥',
+              icon: 'ant-design:key-outlined',
+              onClick: handleViewSecretKey.bind(null, row),
+            },
+            {
+              label: '',
+              type: 'link',
+              tooltip: '编辑',
+              icon: 'clarity:note-edit-line',
+              size: 'small',
+              auth: ['App:1'],
+              onClick: handleEdit.bind(null, row),
+            },
+            {
+              label: '',
+              icon: 'ant-design:delete-outlined',
+              danger: true,
+              auth: ['App:1'],
+              tooltip: '删除',
+              popConfirm: {
+                title: '确定删除吗？',
+                confirm: handleDelete.bind(null, row),
+                placement: 'left',
+                okButtonProps: {danger: true}
+              },
+            },
+          ]"
+        />
+      </template>
     </BasicTable>
-    <AppModal @onSuccess="tableApi.reload()"/>
+    <AppModal ref="appModalRef" @onSuccess="tableApi.reload()"/>
     <AppSecretKeyModal @onSuccess="tableApi.reload()"/>
   </Page>
 </template>

@@ -119,16 +119,6 @@ async function handleDelete(record: any) {
         </AccessControl>
 
         <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Tooltip title="密钥">
-            <Button type="link" @click="handleViewSecretKey(row)">
-              <template #icon>
-                <CloudSecurityOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Tooltip>
-        </AccessControl>
-
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
           <Popconfirm @confirm="handleDelete(row)" :ok-button-props="{danger: true}">
             <template #title >
               <div class="w-32">
