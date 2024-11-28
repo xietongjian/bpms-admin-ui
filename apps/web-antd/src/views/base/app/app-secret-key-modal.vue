@@ -20,7 +20,7 @@ const dataChanged = ref(false);
 
 const secretKeyIsNull = ref(true);
 
-const [Modal, modalApi] = useVbenModal({
+const [BasicModal, modalApi] = useVbenModal({
   draggable: true,
   onCancel() {
     modalApi.close();
@@ -86,7 +86,7 @@ async function handleCopy() {
 defineExpose(modalApi);
 </script>
 <template>
-  <Modal class="w-[600px]">
+  <BasicModal class="w-[600px]">
     <BaseForm>
       <template #sn="{field, value}">
         {{ value }}
@@ -113,5 +113,5 @@ defineExpose(modalApi);
         </div>
       </template>
     </BaseForm>
-  </Modal>
+  </BasicModal>
 </template>

@@ -1,6 +1,6 @@
 // import { BasicColumn, FormSchema } from '@/components/Table';
 // import Icon from '@/components/Icon/Icon.vue';
-import { type FormSchemaGetter, z } from '#/adapter/form';
+import { type FormSchema, z } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
 import { h } from 'vue';
@@ -140,8 +140,8 @@ export const formSchema: FormSchemaGetter = () => [
 
 export const setAccountFormSchema: FormSchemaGetter = () => [
   {
-    fieldName: 'id',
     label: 'ID',
+    fieldName: 'id',
     component: 'Input',
     show: false,
   },

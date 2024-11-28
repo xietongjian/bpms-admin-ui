@@ -12,6 +12,8 @@ import {AccessControl} from '@vben/access';
 import { TableAction } from '#/components/table-action';
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import {PerEnum} from "#/enums/perEnum";
+import type { Recordable } from '@vben/types';
+const PerPrefix = "App:";
 
 const appModalRef = ref();
 const appSecretKeyModalRef = ref();
@@ -102,7 +104,7 @@ async function handleDelete(record: any) {
   <Page auto-content-height>
     <BasicTable table-title="列表">
       <template #toolbar-tools>
-        <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
+        <AccessControl :codes="[PerPrefix + PerEnum.ADD]" type="code">
           <Button type="primary" @click="handleAdd">新建</Button>
         </AccessControl>
       </template>
@@ -125,7 +127,7 @@ async function handleDelete(record: any) {
         <TableAction
           :actions="[
             {
-              auth: ['App:' + PerEnum.QUERY],
+              auth: [PerPrefix + PerEnum.QUERY],
               tooltip: '查看密钥',
               icon: 'ant-design:key-outlined',
               onClick: handleViewSecretKey.bind(null, row),
@@ -136,14 +138,14 @@ async function handleDelete(record: any) {
               tooltip: '编辑',
               icon: 'clarity:note-edit-line',
               size: 'small',
-              auth: ['App:' + PerEnum.UPDATE],
+              auth: [PerPrefix + PerEnum.UPDATE],
               onClick: handleEdit.bind(null, row),
             },
             {
               label: '',
               icon: 'ant-design:delete-outlined',
               danger: true,
-              auth: ['App:' + PerEnum.UPDATE],
+              auth: [PerPrefix + PerEnum.UPDATE],
               tooltip: '删除',
               popConfirm: {
                 title: '确定删除吗？',

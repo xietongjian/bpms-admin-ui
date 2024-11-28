@@ -5,30 +5,16 @@ import type {VbenFormProps} from '@vben/common-ui';
 import {Page, useVbenModal} from '@vben/common-ui';
 import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
-// import {deleteByIds, getAppListByPage} from '#/api/base/app';
 import type { Recordable } from '@vben/types';
 import { TableAction } from '#/components/table-action';
 
 import { getModules } from '#/api/privilege/module';
-// import AppInputModal from './app-modal.vue';
-// import AppSecretKeyModal from './app-secret-key-modal.vue';
 import {AccessControl} from '@vben/access';
 import {listColumns, searchFormSchema} from "#/views/privilege/module/module.data";
 import {PerEnum} from "#/enums/perEnum";
 import { IconifyIcon } from '@vben/icons';
+
 const PerPrefix = "Module:";
-
-// const [AppModal, modalApi] = useVbenModal({
-//   connectedComponent: AppInputModal,
-//   centered: true,
-// });
-//
-// const [SecretKeyModal, secretKeyModalApi] = useVbenModal({
-//   connectedComponent: AppSecretKeyModal,
-//   centered: true,
-//   showConfirmButton	: false,
-// });
-
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -44,10 +30,6 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeGridProps = {
-  /*checkboxConfig: {
-    highlight: true,
-    labelField: 'name',
-  },*/
   columns: listColumns,
   columnConfig: {resizable: true},
   height: 'auto',
@@ -82,7 +64,7 @@ const gridOptions: VxeGridProps = {
   },
 };
 
-const [Grid, gridApi] = useVbenVxeGrid({formOptions, gridOptions});
+const [BasicTable, gridApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 function expandAll() {
   gridApi.grid?.setAllTreeExpand(true);
@@ -127,8 +109,30 @@ async function handleDelete(record: Recordable) {
   }
 }
 
+function handleCreateChild(record: Recordable, e) {
+  e.stopPropagation();
+  setModalProps({ title: '新增【' + record.name + '】的子菜单' });
+  record = {
+    pid: record.id,
+    status: 1,
+    showStatus: 1,
+  };
+  openModal(true, {
+    record,
+    isUpdate: true,
+  });
+}
+
+function handleEditPValue(record: Recordable, e) {
+  e.stopPropagation();
+  openPvalueModal(true, {
+    record,
+    isUpdate: true,
+  });
+}
+
 function createActions(record: Recordable): any[] {
-  let actions: any[] = [
+  return [
     {
       auth: PerPrefix + PerEnum.ADD,
       tooltip: '添加子菜单',
@@ -161,15 +165,14 @@ function createActions(record: Recordable): any[] {
       },
     },
   ];
-  return actions;
 }
 </script>
 
 <template>
   <Page auto-content-height>
-    <Grid table-title="列表">
+    <BasicTable table-title="列表">
       <template #toolbar-tools>
-        <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
+        <AccessControl :codes="[PerPrefix + PerEnum.ADD]" type="code">
           <Button type="primary" @click="handleAdd">新建</Button>
         </AccessControl>
       </template>
@@ -199,8 +202,8 @@ function createActions(record: Recordable): any[] {
         <Tag v-if="row.showStatus===1" color="green">开启</Tag>
         <Tag v-else>关闭</Tag>
       </template>
-    </Grid>
-<!--    <AppModal @onSuccess="gridApi.reload()"/>
-    <SecretKeyModal @onSuccess="gridApi.reload()"/>-->
+    </BasicTable>
+    <ModuleModal ref="moduleModalRef" @register="registerModal" @success="handleSuccess" />
+    <PValueSettingModal ref="pValueSettingModalRef" @register="registerPValueModal" @success="handleSuccess" />
   </Page>
 </template>

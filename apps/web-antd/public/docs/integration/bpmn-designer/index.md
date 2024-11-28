@@ -16,11 +16,14 @@
 
 ### 前端请求示例
 
-> **URL**：`/api/flow/token/getJwtToken`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#F8CED3;color:#70000D">否</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+```injectedfreemarker
 
+**URL**：`/api/flow/token/getJwtToken`
+**Method**：`POST`
+**需要登录**：<font style="background:#F8CED3;color:#70000D">否</font>
+**需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+
+```
 
 <h3 id="HHKu4">Body参数</h3>
 
@@ -30,8 +33,11 @@
 | `appSecretKey` | String | 是 | 应用私钥 |
 
 
-> 💡 注意，appSn 和 appSecretKey 的值为流程引擎后台生成。
+:::tips
 
+💡 注意，appSn 和 appSecretKey 的值为流程引擎后台生成。
+
+:::
 
 ### 返回参数
 | 名称 | 类型 | 描述 |
@@ -70,12 +76,13 @@
 用于业务系统调用，在流程系统中不存储业务表单的数据，在审批页面渲染表单数据时，需要调用业务系统获取表单数据。一般用于业务表单较复杂、审批时表单数据会根据业务需求而变动的情况。
 
 <h3 id="aRCTz">请求</h3>
+:::tips
++ **URL**：`/api/flow/operate/startProcessInstanceByKey`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
->  **URL**：`/api/flow/operate/startProcessInstanceByKey`
->  **Method**：`POST`
->  **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
->  **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-
+:::
 
 <h3 id="tV98P">Header参数</h3>
 
@@ -98,7 +105,10 @@
 | `deptId` | String | 否 | 发起人部门ID |
 
 
-> 💡 注意，variables 为流程中使用的变量，使用是需要用`form.属性名`，如：在此处传入的变量为param1，在流程中需要用来做条件流转的判断，在流程中配置变量为：${form.param1 == '10000'}
+:::info
+💡 注意，variables 为流程中使用的变量，使用是需要用`form.属性名`，如：在此处传入的变量为param1，在流程中需要用来做条件流转的判断，在流程中配置变量为：${form.param1 == '10000'}
+
+:::
 
 <h3 id="Iljbv">返回参数</h3>
 
@@ -148,11 +158,13 @@
 
 <h3 id="V3hgO">请求</h3>
 
-> **URL**：`/api/flow/bizform/process/startBizFormProcess`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/bizform/process/startBizFormProcess`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="IFgAU">Header参数</h3>
 
@@ -176,8 +188,11 @@
 | `deptId` | String | 否 | 发起人部门ID |
 
 
-> 💡 注意，variables 为流程中使用的变量，使用是需要用`form.属性名`，如：在此处传入的变量为param1，在流程中需要用来做条件流转的判断，在流程中配置变量为：${form.param1 == '10000'}
+:::info
 
+💡 注意，variables 为流程中使用的变量，使用是需要用`form.属性名`，如：在此处传入的变量为param1，在流程中需要用来做条件流转的判断，在流程中配置变量为：${form.param1 == '10000'}
+
+:::
 
 <h3 id="molEU">返回参数</h3>
 
@@ -228,12 +243,14 @@
 
 <h3 id="jglSQ">请求</h3>
 
+:::tips
 
->  **URL**：`/api/flow/form/process/startCustomFormProcess`
-> **Method**：`POST`
->  **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
->  **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **URL**：`/api/flow/form/process/startCustomFormProcess`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="IBq8v">Header参数</h3>
 
@@ -253,7 +270,10 @@
 | `procInstId` | String | 否 | 流程实例id，如果没有流程实例则不用传入，一般在流程被驳回后重新发起时需要传入此参数，和defaultFormDataVo的code属性 |
 
 
-> 💡 注意，makFormDataVo 跟后台设计的表单字段需要一一对应。
+:::info
+💡 注意，makFormDataVo 跟后台设计的表单字段需要一一对应。
+
+:::
 
 <h3 id="yjKEp">返回参数</h3>
 
@@ -296,10 +316,13 @@
 
 <h2 id="THwIm">审批</h2>
 
->  **URL**：`/api/flow/operate/complete`
->  **Method**：`POST`
->  **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
->  **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/operate/complete`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+
+:::
 
 <h3 id="KyhKo">Header参数</h3>
 
@@ -351,13 +374,16 @@
 ```
 
 
+
 <h2 id="RiBd5">拒绝-终止</h2>
 
+:::tips
++ **URL**：`/api/flow/operate/complete`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
->  **URL**：`/api/flow/operate/complete`
->  **Method**：`POST`
->  **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
->  **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::
 
 <h3 id="lKH60">Header参数</h3>
 
@@ -416,10 +442,13 @@
 
 <h2 id="dFxiD">转办</h2>
 
-> **URL**：`/api/flow/operate/turnTask`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/operate/turnTask`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+
+:::
 
 <h3 id="PBMlT">Header参数</h3>
 
@@ -478,11 +507,13 @@
 
 <h2 id="Unino">重新提交-驳回到提交人后重新提交</h2>
 
-> **URL**：`/api/flow/operate/completeByProcessInstanceId/{processInstanceId}`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/operate/completeByProcessInstanceId/{processInstanceId}`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="cv72W">Header参数</h3>
 
@@ -549,11 +580,13 @@
 
 <h2 id="nDpnc">驳回-驳回到指定节点</h2>
 
-> **URL**：`/api/flow/operate/backToStep`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/operate/backToStep`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="axAOr">Header参数</h3>
 
@@ -612,12 +645,13 @@
 
 <h2 id="YN8eu">驳回-驳回到提交人</h2>
 
+:::tips
++ **URL**：`/api/flow/operate/backToSubmitter`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
-> **URL**：`/api/flow/operate/backToSubmitter`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-
+:::
 
 <h3 id="NEdie">Header参数</h3>
 
@@ -672,10 +706,13 @@
 
 <h2 id="Z44e2">前加签-加签审批完后回到我审批</h2>
 
-> **URL**：`/api/flow/operate/beforeAddSign`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/operate/beforeAddSign`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+
+:::
 
 <h3 id="Wz9DU">Header参数</h3>
 
@@ -731,12 +768,16 @@
 ```
 
 
+
 <h2 id="CrLpM">后加签-加签审批完后直接跳转到下一节点</h2>
 
-> **URL**：`/api/flow/operate/afterAddSign`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/operate/afterAddSign`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+
+:::
 
 <h3 id="AQBDm">Header参数</h3>
 
@@ -796,12 +837,13 @@
 <h2 id="rNTK2">签收</h2>
 对于多实例的节点，如有多人同时审批时，签收动作是把多人审批的权限收回到当前审批人上。
 
+:::tips
++ **URL**：`/api/flow/operate/claimTask`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
-> **URL**：`/api/flow/operate/claimTask`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-
+:::
 
 <h3 id="FVzNb">Header参数</h3>
 
@@ -857,10 +899,13 @@
 <h2 id="wOsra">反签收</h2>
 对于多实例的节点，如有多人同时审批时，签收动作是把多人审批的权限收回到当前审批人上。
 
-> **URL**：`/api/flow/operate/unClaimTask`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/operate/unClaimTask`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+
+:::
 
 <h3 id="I9Dzx">Header参数</h3>
 
@@ -916,12 +961,13 @@
 <h1 id="AverT">流程查询</h1>
 <h2 id="UZjpb">查询我的待办任务</h2>
 
+:::info
++ **URL**：`/api/flow/query/getAppingTasksPagerModel`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
-> **URL**：`/api/flow/query/getAppingTasksPagerModel`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-
+:::
 
 <h3 id="kek2B">Header参数</h3>
 
@@ -1041,10 +1087,13 @@ TaskVo
 
 <h2 id="yNpSQ">查询我的待办任务总条数</h2>
 
-> **URL**：`/api/flow/query/getAppingTaskCount`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/query/getAppingTaskCount`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+
+:::
 
 <h3 id="WKuuO">Header参数</h3>
 
@@ -1117,12 +1166,13 @@ TaskVo
 
 <h2 id="UmrSx">查询我的已办任务</h2>
 
+:::info
++ **URL**：`/api/flow/query/getApplyedTasksPagerModel`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
-> **URL**：`/api/flow/query/getApplyedTasksPagerModel`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-
+:::
 
 <h3 id="GZnJC">Header参数</h3>
 
@@ -1252,12 +1302,13 @@ TaskVo
 
 <h2 id="mn4BB">查询我发起的流程</h2>
 
+:::info
++ **URL**：`/api/flow/query/findMyProcessinstancesPagerModel`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
-> **URL**：`/api/flow/query/findMyProcessinstancesPagerModel`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-
+:::
 
 <h3 id="Lmuko">Header参数</h3>
 
@@ -1413,10 +1464,14 @@ TaskVo
 <h4 id="USLlU"></h4>
 <h2 id="CShkw">通过任务id获取可驳回节点列表</h2>
 
-> **URL**：`/api/flow/query/findBackNodesByTaskId`/{taskId}
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/query/findBackNodesByTaskId`/{taskId}
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+
+:::
+
 
 
 <h3 id="zINeR">Header参数</h3>
@@ -1490,11 +1545,13 @@ FlowNodeVo
 <h4 id="llyOE"></h4>
 <h2 id="cYsPR">通过流程实例id获取业务单据数据</h2>
 
-> **URL**：`/api/flow/bizform/process/getBizDataInfoByProcessInstanceId/{processInstanceId}`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/bizform/process/getBizDataInfoByProcessInstanceId/{processInstanceId}`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="DE4vV">Header参数</h3>
 
@@ -1561,12 +1618,13 @@ BizDataInfo
 
 <h2 id="yroN6">通过modelkey和businesskey和procInstId获取自定义表单信息</h2>
 
+:::tips
++ **URL**：`/api/flow/query/getCustomFormInfoVoByModelKeyAndBusinessKey/{modelKey}`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
-> **URL**：`/api/flow/query/getCustomFormInfoVoByModelKeyAndBusinessKey/{modelKey}`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-
+:::
 
 <h3 id="Ib5Ee">Header参数</h3>
 
@@ -1640,12 +1698,13 @@ api/flow/query/loadBpmnXmlByModelKey?modelKey=notice_children_00098
 <h4 id="kNoGT"></h4>
 <h2 id="iPXsX">预览自定义流程图 模拟自定义流程高亮线接口</h2>
 
+:::tips
++ **URL**：`/api/flow/form/process/getCustomFlowSequenceFlows/{modelKey}`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
-> **URL**：`/api/flow/form/process/getCustomFlowSequenceFlows/{modelKey}`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-
+:::
 
 <h3 id="x3Tio">Header参数</h3>
 
@@ -1712,11 +1771,13 @@ api/flow/query/loadBpmnXmlByModelKey?modelKey=notice_children_00098
 
 <h2 id="oanfR"><font style="color:#000000;">分页查询关联流程</font></h2>
 
-> **URL**：`/api/flow/form/process/getPagerModelRelateFlow/{modelKey}`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/form/process/getPagerModelRelateFlow/{modelKey}`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="UZH22">Header参数</h3>
 
@@ -1783,11 +1844,13 @@ api/flow/query/loadBpmnXmlByModelKey?modelKey=notice_children_00098
 
 <h2 id="Ox2gL">通过modekey获取模型对象</h2>
 
-> **URL**：`/api/flow/query/loadBpmnXmlByModelKey/{modelKey}`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/query/loadBpmnXmlByModelKey/{modelKey}`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="rnBUL">Header参数</h3>
 
@@ -1853,11 +1916,13 @@ api/flow/query/loadBpmnXmlByModelKey?modelKey=notice_children_00098
 <h4 id="ih41h"></h4>
 <h2 id="a7ENp">通过modelKey获取模板信息</h2>
 
-> **URL**：/api/flow/query/getProdModelInfoByModelKeyAndProcInstId/{modelKey}
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：/api/flow/query/getProdModelInfoByModelKeyAndProcInstId/{modelKey}
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="ycCpr">Header参数</h3>
 
@@ -1907,10 +1972,13 @@ ProdModelInfo
 
 <h2 id="je95R">查询当前流程的审批记录</h2>
 
-> **URL**：`/api/flow/query/getCommentInfosByProcessInstanceId/{processInstanceId}`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/query/getCommentInfosByProcessInstanceId/{processInstanceId}`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+
+:::
 
 <h3 id="mAWVi">Header参数</h3>
 
@@ -2044,11 +2112,13 @@ CommentInfo
 
 <h2 id="GdlEn">获取模块分页列表</h2>
 
-> **URL**：`/api/flow/query/getPagerModelModelInfo`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::tips
++ **URL**：`/api/flow/query/getPagerModelModelInfo`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="AbiFS">Header参数</h3>
 
@@ -2188,11 +2258,13 @@ ModelInfo
 <h1 id="gh23o">基础数据操作</h1>
 <h2 id="E1eJE">获取所有流程分类列表</h2>
 
-> **URL**：`/api/flow/base/getCategories`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::info
++ **URL**：`/api/flow/base/getCategories`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="uocwL">Header参数</h3>
 
@@ -2297,11 +2369,13 @@ Category
 <h4 id="jGgLE"></h4>
 <h2 id="AfZIh">获取所有应用列表</h2>
 
-> **URL**：`/api/flow/base/getApps`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::info
++ **URL**：`/api/flow/base/getApps`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="Vsfi5">Header参数</h3>
 
@@ -2395,11 +2469,13 @@ Category
 
 <h2 id="n1oud">上传附件</h2>
 
-> **URL**：`/api/flow/base/uploadFile`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::info
++ **URL**：`/api/flow/base/uploadFile`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="m9PmK">Header参数</h3>
 
@@ -2447,11 +2523,13 @@ Category
 
 <h2 id="UmXNw">获取字典列表</h2>
 
-> **URL**：`/api/flow/base/getDictionarys`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::info
++ **URL**：`/api/flow/base/getDictionarys`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="li4PZ">Header参数</h3>
 
@@ -2531,11 +2609,13 @@ Dictionary
 
 <h2 id="gFgbs">获取字典项列表</h2>
 
-> **URL**：`/api/flow/base/getDictionaryItems`
- **Method**：`POST`
- **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
- **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::info
++ **URL**：`/api/flow/base/getDictionaryItems`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="jBpS6">Header参数</h3>
 
@@ -2627,11 +2707,13 @@ DicItem
 <h1 id="UqJ44">组织人员相关</h1>
 <h2 id="g7DUP">得到组织树</h2>
 
-> **URL**：`/api/flow/org/getOrgTree`
- **Method**：`POST`
- **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
- **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::info
++ **URL**：`/api/flow/org/getOrgTree`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="hApjN">Header参数</h3>
 
@@ -3431,11 +3513,13 @@ OrgTreeVo
 
 <h2 id="VnTI2">得到公司树</h2>
 
-> **URL**：`/api/flow/base/getCompanyTree`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::info
++ **URL**：`/api/flow/base/getCompanyTree`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="A5gH4">Header参数</h3>
 
@@ -3719,11 +3803,13 @@ OrgTreeVo
 
 <h2 id="L8Dds">人员选择器列表</h2>
 
-> **URL**：`/api/flow/org/getPagePersonal`
- **Method**：`POST`
- **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
- **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::info
++ **URL**：`/api/flow/org/getPagePersonal`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="RiP0A">Header参数</h3>
 
@@ -3839,11 +3925,13 @@ Personal
 <h4 id="FkSH0"></h4>
 <h2 id="p3EEz">通过工号得到人员数据</h2>
 
-> **URL**：`/api/flow/org/getPersonalByCode`/{code}
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::info
++ **URL**：`/api/flow/org/getPersonalByCode`/{code}
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="D6qyY">Header参数</h3>
 
@@ -3946,11 +4034,13 @@ Personal
 
 <h2 id="pswS1">通过工号List集合得到人员列表数据</h2>
 
-> **URL**：`/api/flow/org/getPersonalByCodes`
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::info
++ **URL**：`/api/flow/org/getPersonalByCodes`
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="jugIo">Header参数</h3>
 
@@ -4098,12 +4188,13 @@ Personal
 <h4 id="xBOYY"></h4>
 <h2 id="CIHwl">同步公司数据</h2>
 
+:::info
++ **URL**：/api/flow/org/insertOrUpdateCompanyList
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
-> **URL**：/api/flow/org/insertOrUpdateCompanyList
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-
+:::
 
 <h3 id="MajZ8">Header参数</h3>
 
@@ -4173,12 +4264,13 @@ SyncCompanyRequest
 
 <h2 id="IoV28">同步部门数据</h2>
 
+:::info
++ **URL**：/api/flow/org/insertOrUpdateDeptList
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
-> **URL**：/api/flow/org/insertOrUpdateDeptList
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-
+:::
 
 <h3 id="KleB5">Header参数</h3>
 
@@ -4246,11 +4338,13 @@ SyncDepartmentRequest
 <h4 id="KiZKZ"></h4>
 <h2 id="hf7RN">同步用户数据</h2>
 
-> **URL**：/api/flow/org/insertOrUpdatePersonalList
-> **Method**：`POST`
-> **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
-> **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
+:::info
++ **URL**：/api/flow/org/insertOrUpdatePersonalList
++ **Method**：`POST`
++ **需要登录**：<font style="background:#DBF1B7;color:#2A4200">是</font>
++ **需要鉴权**：<font style="background:#DBF1B7;color:#2A4200">是</font>
 
+:::
 
 <h3 id="P21i0">Header参数</h3>
 

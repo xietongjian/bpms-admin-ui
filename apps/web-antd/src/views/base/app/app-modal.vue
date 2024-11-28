@@ -10,7 +10,7 @@ const emit = defineEmits<{
   onSuccess: [void];
 }>();
 
-const [Modal, modalApi] = useVbenModal({
+const [BasicModal, modalApi] = useVbenModal({
   draggable: true,
   onCancel() {
     modalApi.close();
@@ -75,7 +75,7 @@ async function handleSubmit() {
 defineExpose(modalApi);
 </script>
 <template>
-  <Modal class="w-[600px]">
+  <BasicModal class="w-[600px]">
     <BaseForm/>
-  </Modal>
+  </BasicModal>
 </template>
