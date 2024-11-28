@@ -2,23 +2,18 @@
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {Page, useVbenModal} from '@vben/common-ui';
-import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
+import {Button, Image, Tag, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import { getGroupListByPage, deleteByIds } from '#/api/privilege/group';
-
-
+import {getGroupListByPage, deleteByIds} from '#/api/privilege/group';
+import {TableAction} from '#/components/table-action';
+import type {Recordable} from '@vben/types';
 import groupModal from './group-modal.vue';
-// import AppSecretKeyModal from './app-secret-key-modal.vue';
 import {AccessControl} from '@vben/access';
 import {columns, searchFormSchema} from "./group.data";
 
 import {PerEnum} from "#/enums/perEnum";
-import {
-  SquareEditOutline,
-  DeleteOutline,
-  CloudSecurityOutline,
-  QuestionMarkCircleOutline,
-} from '@vben/icons';
+
+const PerPrefix = "Group:";
 
 const [GroupModal, modalApi] = useVbenModal({
   connectedComponent: groupModal,
@@ -85,12 +80,47 @@ async function handleDelete(record: any) {
     if (success) {
       message.success(msg);
       await tableApi.reload();
-    } else{
+    } else {
       message.error(msg);
     }
   } catch (e) {
     message.error(e.message);
   }
+}
+
+function createActions(record: Recordable): any[] {
+  let actions: any[] = [
+    {
+      auth: PerPrefix + PerEnum.AUTH,
+      tooltip: '分配权限',
+      icon: 'ant-design:safety',
+      onClick: handleAcl.bind(null, record),
+    },
+    {
+      auth: PerPrefix + PerEnum.AUTH,
+      tooltip: '分配用户',
+      icon: 'ant-design:usergroup-add',
+      onClick: handleAddUser.bind(null, record),
+    },
+    {
+      auth: PerPrefix + PerEnum.UPDATE,
+      tooltip: '修改',
+      icon: 'clarity:note-edit-line',
+      onClick: handleEdit.bind(null, record),
+    },
+    {
+      auth: PerPrefix + PerEnum.DELETE,
+      tooltip: '删除',
+      icon: 'ant-design:delete-outlined',
+      danger: true,
+      popConfirm: {
+        title: '是否确认删除',
+        confirm: handleDelete.bind(null, record),
+        placement: 'left',
+      },
+    },
+  ];
+  return actions;
 }
 </script>
 
@@ -103,44 +133,10 @@ async function handleDelete(record: any) {
         </AccessControl>
       </template>
 
-      <template #action="{row}">
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Tooltip title="编辑">
-            <Button type="link" @click="handleEdit(row)">
-              <template #icon>
-                <SquareEditOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Tooltip>
-        </AccessControl>
-
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Tooltip title="密钥">
-            <Button type="link" @click="handleViewSecretKey(row)">
-              <template #icon>
-                <CloudSecurityOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Tooltip>
-        </AccessControl>
-
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Popconfirm @confirm="handleDelete(row)" :ok-button-props="{danger: true}">
-            <template #title >
-              <div class="w-32">
-                确定要删除吗？
-              </div>
-            </template>
-            <template #icon>
-              <QuestionMarkCircleOutline class="text-red-500 size-6"/>
-            </template>
-            <Button type="link" danger>
-              <template #icon>
-                <DeleteOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Popconfirm>
-        </AccessControl>
+      <template #action="{record}">
+        <TableAction
+            :actions="createActions(record)"
+        />
       </template>
 
       <template #image="{ row }">

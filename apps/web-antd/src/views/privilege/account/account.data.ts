@@ -1,5 +1,5 @@
 // import { BasicColumn, FormSchema } from '@/components/Table';
-import type { FormSchemaGetter } from '#/adapter/form';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
 export const columns: VxeGridProps['columns'] = [
@@ -57,7 +57,7 @@ export const columns: VxeGridProps['columns'] = [
   },
 ];
 
-export const searchFormSchema: FormSchemaGetter = () => [
+export const searchFormSchema = () => [
   {
     fieldName: 'keyword',
     label: '关键字',
@@ -75,7 +75,7 @@ export const searchFormSchema: FormSchemaGetter = () => [
   },
 ];
 
-export const accountFormSchema: FormSchemaGetter = () => [
+export const accountFormSchema = () => [
   {
     fieldName: 'id',
     label: 'ID',
@@ -174,7 +174,7 @@ export const accountFormSchema: FormSchemaGetter = () => [
   },
 ];
 
-export const passwordFormSchema: FormSchemaGetter = () => [
+export const passwordFormSchema = () => [
   {
     fieldName: 'id',
     label: 'ID',
@@ -246,7 +246,7 @@ export const passwordFormSchema: FormSchemaGetter = () => [
   },
 ];
 
-export const setGroupFormSchema: FormSchemaGetter = () => [
+export const setGroupFormSchema = () => [
   {
     fieldName: 'id',
     label: 'ID',

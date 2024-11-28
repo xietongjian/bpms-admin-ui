@@ -7,6 +7,7 @@ import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 // import {deleteByIds, getAppListByPage} from '#/api/base/app';
 import type { Recordable } from '@vben/types';
+import { TableAction } from '#/components/table-action';
 
 import { getModules } from '#/api/privilege/module';
 // import AppInputModal from './app-modal.vue';
@@ -15,13 +16,7 @@ import {AccessControl} from '@vben/access';
 import {listColumns, searchFormSchema} from "#/views/privilege/module/module.data";
 import {PerEnum} from "#/enums/perEnum";
 import { IconifyIcon } from '@vben/icons';
-
-import {
-  SquareEditOutline,
-  DeleteOutline,
-  CloudSecurityOutline,
-  QuestionMarkCircleOutline,
-} from '@vben/icons';
+const PerPrefix = "Module:";
 
 // const [AppModal, modalApi] = useVbenModal({
 //   connectedComponent: AppInputModal,
@@ -131,6 +126,43 @@ async function handleDelete(record: Recordable) {
     message.error(e);
   }
 }
+
+function createActions(record: Recordable): any[] {
+  let actions: any[] = [
+    {
+      auth: PerPrefix + PerEnum.ADD,
+      tooltip: '添加子菜单',
+      icon: 'ant-design:plus-outlined',
+      onClick: handleCreateChild.bind(null, record),
+    },
+    {
+      auth: PerPrefix + PerEnum.AUTH,
+      tooltip: '设置权限值',
+      icon: 'ant-design:setting-outlined',
+      onClick: handleEditPValue.bind(null, record),
+    },
+    {
+      auth: PerPrefix + PerEnum.UPDATE,
+      tooltip: '修改',
+      icon: 'clarity:note-edit-line',
+      onClick: handleEdit.bind(null, record),
+    },
+    {
+      auth: PerPrefix + PerEnum.DELETE,
+      tooltip: '删除',
+      icon: 'ant-design:delete-outlined',
+      color: 'error',
+      onClick: (e) => {
+        e.stopPropagation();
+      },
+      popConfirm: {
+        title: '是否确认删除',
+        confirm: handleDelete.bind(null, record),
+      },
+    },
+  ];
+  return actions;
+}
 </script>
 
 <template>
@@ -142,44 +174,8 @@ async function handleDelete(record: Recordable) {
         </AccessControl>
       </template>
 
-      <template #action="{row}">
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Tooltip title="编辑">
-            <Button type="link" @click="handleEdit(row)">
-              <template #icon>
-                <SquareEditOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Tooltip>
-        </AccessControl>
-
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Tooltip title="密钥">
-            <Button type="link" @click="handleViewSecretKey(row)">
-              <template #icon>
-                <CloudSecurityOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Tooltip>
-        </AccessControl>
-
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Popconfirm placement="left" title="确定要删除吗？" @confirm="handleDelete(row)" :ok-button-props="{danger: true}">
-            <template #title >
-              <div class="w-32">
-                确定要删除吗？
-              </div>
-            </template>
-            <template #icon>
-              <QuestionMarkCircleOutline class="text-red-500 size-6"/>
-            </template>
-            <Button type="link" danger>
-              <template #icon>
-                <DeleteOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Popconfirm>
-        </AccessControl>
+      <template #action="{record}">
+        <TableAction :actions="createActions(record)" />
       </template>
 
       <template #name="{ row }">

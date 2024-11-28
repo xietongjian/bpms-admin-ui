@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import {ref} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {Page, useVbenModal} from '@vben/common-ui';
@@ -6,19 +7,14 @@ import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {deleteByIds, getAppListByPage} from '#/api/base/app';
 import AppModal from './app-modal.vue';
-import appSecretKeyModal from './app-secret-key-modal.vue';
+import AppSecretKeyModal from './app-secret-key-modal.vue';
 import {AccessControl} from '@vben/access';
 import { TableAction } from '#/components/table-action';
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import {PerEnum} from "#/enums/perEnum";
 
 const appModalRef = ref();
-
-const [AppSecretKeyModal, secretKeyModalApi] = useVbenModal({
-  connectedComponent: appSecretKeyModal,
-  centered: true,
-  showConfirmButton	: false,
-});
+const appSecretKeyModalRef = ref();
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -78,9 +74,10 @@ function handleEdit(record: any) {
 }
 
 function handleViewSecretKey(record: any) {
-  secretKeyModalApi.setData(record);
-  secretKeyModalApi.open();
-  secretKeyModalApi.setState({
+  debugger;
+  appSecretKeyModalRef.value.setData(record);
+  appSecretKeyModalRef.value.open();
+  appSecretKeyModalRef.value.setState({
     title: '查看密钥',
   });
 }
@@ -139,14 +136,14 @@ async function handleDelete(record: any) {
               tooltip: '编辑',
               icon: 'clarity:note-edit-line',
               size: 'small',
-              auth: ['App:1'],
+              auth: ['App:' + PerEnum.UPDATE],
               onClick: handleEdit.bind(null, row),
             },
             {
               label: '',
               icon: 'ant-design:delete-outlined',
               danger: true,
-              auth: ['App:1'],
+              auth: ['App:' + PerEnum.UPDATE],
               tooltip: '删除',
               popConfirm: {
                 title: '确定删除吗？',
@@ -160,6 +157,6 @@ async function handleDelete(record: any) {
       </template>
     </BasicTable>
     <AppModal ref="appModalRef" @onSuccess="tableApi.reload()"/>
-    <AppSecretKeyModal @onSuccess="tableApi.reload()"/>
+    <AppSecretKeyModal ref="appSecretKeyModalRef" @onSuccess="tableApi.reload()"/>
   </Page>
 </template>

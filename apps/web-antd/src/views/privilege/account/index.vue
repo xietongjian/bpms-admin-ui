@@ -108,6 +108,7 @@ async function handleDelete(record: any) {
       </template>
 
       <template #action="{row}">
+
         <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
           <Tooltip title="编辑">
             <Button type="link" @click="handleEdit(row)">

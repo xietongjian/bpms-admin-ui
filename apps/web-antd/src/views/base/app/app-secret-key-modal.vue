@@ -5,14 +5,14 @@ import {secretKeyFormSchema} from './app.data';
 import {useVbenForm} from '#/adapter/form';
 import {refreshSecretKey} from '#/api/base/app';
 import {QuestionMarkCircleOutline} from '@vben/icons';
-import {ref, unref} from "vue";
-import { useClipboard } from '@vueuse/core';
+import {ref, unref, defineExpose} from "vue";
+import {useClipboard} from '@vueuse/core';
 
 const emit = defineEmits<{
   onSuccess: [void];
 }>();
 
-const { copy, text } = useClipboard({ legacy: true });
+const {copy, text} = useClipboard({legacy: true});
 
 
 // 用于判断用户是否操作过数据
@@ -25,6 +25,7 @@ const [Modal, modalApi] = useVbenModal({
   onCancel() {
     modalApi.close();
   },
+  showConfirmButton: false,
   onOpenChange(isOpen: boolean) {
     if (isOpen) {
       dataChanged.value = false;
@@ -78,10 +79,11 @@ async function refreshSecretKeyHandle() {
 
 async function handleCopy() {
   const values = await baseFormApi.getValues();
-
-  copy(values);
+  await copy(values.secretKey);
+  message.success("已复制到剪切板！");
 }
 
+defineExpose(modalApi);
 </script>
 <template>
   <Modal class="w-[600px]">
@@ -93,20 +95,20 @@ async function handleCopy() {
       <template #ctrl="slotProps">
         <div class="">
           <Space class="mt-2">
-            <Button v-if="secretKeyIsNull" @click="refreshSecretKeyHandle()"> 生成密钥 </Button>
+            <Button v-if="secretKeyIsNull" @click="refreshSecretKeyHandle()"> 生成密钥</Button>
             <Popconfirm
-              v-else
-              title="确定要重新生成秘钥吗？"
-              @confirm="refreshSecretKeyHandle()"
-              :ok-button-props="{danger: true}"
+                v-else
+                title="确定要重新生成秘钥吗？"
+                @confirm="refreshSecretKeyHandle()"
+                :ok-button-props="{danger: true}"
             >
               <template #icon>
                 <QuestionMarkCircleOutline class="text-red-500 size-6"/>
               </template>
-              <Button danger > 更新密钥 </Button>
+              <Button danger> 更新密钥</Button>
             </Popconfirm>
 
-            <Button type="primary" @click="handleCopy"> 复制 </Button>
+            <Button type="primary" @click="handleCopy()"> 复制</Button>
           </Space>
         </div>
       </template>
