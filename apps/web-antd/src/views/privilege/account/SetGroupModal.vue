@@ -5,16 +5,19 @@
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref, defineEmits } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, useForm } from '@/components/Form/index';
+  // import { BasicModal, useModalInner } from '@/components/Modal';
+  import {useVbenModal} from '@vben/common-ui';
   import { setGroupFormSchema } from './account.data';
-  import { allocationRoles } from '@/api/privilege/account';
-  import { getAllList } from '@/api/privilege/group';
+  import { allocationRoles } from '#/api/privilege/account';
+  import { getAllList } from '#/api/privilege/group';
+  import {useVbenForm} from "#/adapter/form";
+  import {formSchema} from "#/views/base/app/app.data";
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(true);
   const title = ref('设置组');
 
+/*
   const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
     labelWidth: 100,
     schemas: setGroupFormSchema,
@@ -23,7 +26,50 @@
       span: 23,
     },
   });
-  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+*/
+
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          baseFormApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await baseFormApi.submitForm();
+      handleSubmit();
+    },
+  });
+
+  const [BaseForm, baseFormApi] = useVbenForm({
+    // 所有表单项共用，可单独在表单内覆盖
+    commonConfig: {
+      // 所有表单项
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    // 提交函数
+    // handleSubmit: onSubmit,
+    // 垂直布局，label和input在不同行，值为vertical
+    // 水平布局，label和input在同一行
+    layout: 'horizontal',
+    schema: setGroupFormSchema,
+    // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个
+    wrapperClass: 'grid-cols-1',
+  });
+
+
+  /*const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     resetFields();
 
     setModalProps({
@@ -58,7 +104,7 @@
       });
     }
   });
-
+*/
   let getTitle = computed(() => (!unref(isUpdate) ? '新增' : title.value));
 
   async function handleSubmit() {

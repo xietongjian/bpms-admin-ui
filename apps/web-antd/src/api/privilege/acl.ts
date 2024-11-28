@@ -1,6 +1,6 @@
 import { requestClient } from '#/api/request';
 
-import { forEach, listToTree } from '@/utils/helper/treeHelper';
+import { forEach, listToTree } from '#/utils/helper/treeHelper';
 
 enum Api {
   SetAcl = '/flow/privilege/acl/setAcl',

@@ -41,14 +41,17 @@
 </template>
 <script lang="ts" setup>
   import { ref, unref } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicTable, useTable } from '@/components/Table';
-  import { aclColumns } from './group.data';
+  import type {VxeGridProps} from '#/adapter/vxe-table';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import {aclColumns, columns, searchFormSchema} from './group.data';
   import AclCheckboxGroup from './AclCheckboxGroup.vue';
+  import {useVbenVxeGrid} from '#/adapter/vxe-table';
 
   import { Checkbox } from 'ant-design-vue';
-  import { getModuleAclsByGroupId, setAllAcl } from '@/api/privilege/acl';
-  import { forEach } from '@/utils/helper/treeHelper';
+  import { getModuleAclsByGroupId, setAllAcl } from '#/api/privilege/acl';
+  import { forEach } from '#/utils/helper/treeHelper';
+  import {getGroupListByPage} from "#/api/privilege/group";
+  import {useVbenModal} from "@vben/common-ui";
 
   const dataSource = ref<any[]>([]);
   const aclsTableLoading = ref<boolean>(true);
@@ -56,7 +59,28 @@
   const checkAllBox = ref<boolean>(false);
   const aclObj = ref({});
 
-  const [registerTable, { setTableData, expandAll }] = useTable({
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          baseFormApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await baseFormApi.submitForm();
+      handleSubmit();
+    },
+  });
+
+  /*const [registerTable, { setTableData, expandAll }] = useTable({
     title: '',
     size: 'small',
     dataSource: dataSource,
@@ -71,20 +95,54 @@
     bordered: false,
     showIndexColumn: false,
     pagination: false,
-  });
+  });*/
 
-  const [registerModal] = useModalInner(async (data) => {
-    aclObj.value = data.record;
-    aclsTableLoading.value = true;
-    getModuleAclsByGroupId({ groupId: unref(aclObj).id }).then((res) => {
-      ctrlCheckAllBox(res);
-      dataSource.value = res;
-      aclsTableLoading.value = false;
-      setTimeout(() => {
-        expandAll();
-      });
-    });
-  });
+
+  const formOptions: VbenFormProps = {
+    showCollapseButton: false,
+    submitOnEnter: true,
+    commonConfig: {
+      labelWidth: 60,
+    },
+    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+    resetButtonOptions: {
+      show: false,
+    },
+    schema: searchFormSchema(),
+  };
+
+  const gridOptions: VxeGridProps<any> = {
+    columns,
+    columnConfig: {resizable: true},
+    height: 'auto',
+    keepSource: true,
+    border: false,
+    stripe: true,
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          return getModuleAclsByGroupId({ groupId: unref(aclObj).id }).then((res) => {
+            ctrlCheckAllBox(res);
+            dataSource.value = res;
+            aclsTableLoading.value = false;
+            return res
+            /*setTimeout(() => {
+              expandAll();
+            });*/
+          });
+          /*return getGroupListByPage({
+            query: {
+              pageNum: page.currentPage,
+              pageSize: page.pageSize,
+            },
+            entity: formValues || {},
+          });*/
+        },
+      },
+    },
+  };
+
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
   function ctrlCheckAllBox(treeData) {
     let allSize = 0;

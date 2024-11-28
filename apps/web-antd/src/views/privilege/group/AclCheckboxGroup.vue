@@ -15,17 +15,28 @@
 </template>
 <script lang="ts" setup>
   import { ref, defineProps, defineEmits } from 'vue';
-  import { propTypes } from '@/utils/propTypes';
   import { Checkbox, Spin } from 'ant-design-vue';
-  import { setAclByModule, setAclModuleList } from '@/api/privilege/acl';
+  import { setAclByModule, setAclModuleList } from '#/api/privilege/acl';
 
   const CheckboxGroup = Checkbox.Group;
 
   const props = defineProps({
-    checkboxList: propTypes.arrayOf(propTypes.object).def([]),
-    groupId: propTypes.string.def(''),
-    moduleSn: propTypes.string.def(''),
-    moduleId: propTypes.string.def(''),
+    checkboxList: {
+      type: Array,
+      default: []
+    },
+    groupId: {
+      type: String,
+      default: ''
+    },
+    moduleSn: {
+      type: String,
+      default: ''
+    },
+    moduleId: {
+      type: String,
+      default: ''
+    },
   });
 
   const emit = defineEmits(['changeCheckAllStatus', '']);

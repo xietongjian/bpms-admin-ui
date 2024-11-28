@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import {ref} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {Page, useVbenModal} from '@vben/common-ui';
@@ -10,10 +11,14 @@ import type {Recordable} from '@vben/types';
 import groupModal from './group-modal.vue';
 import {AccessControl} from '@vben/access';
 import {columns, searchFormSchema} from "./group.data";
+import SetAclModal from './SetAclModal.vue';
+import SetAccountModal from './SetAccountModal.vue';
 
 import {PerEnum} from "#/enums/perEnum";
 
 const PerPrefix = "Group:";
+const setAccountModalRef = ref();
+const setAclModalRef = ref();
 
 const [GroupModal, modalApi] = useVbenModal({
   connectedComponent: groupModal,
@@ -70,6 +75,22 @@ function handleEdit(record: any) {
   modalApi.open();
   modalApi.setState({
     title: '修改'
+  });
+}
+
+
+function handleAcl(record: Recordable) {
+  openSetAclModal(true, {
+    record,
+    isUpdate: true,
+  });
+  setModalProps({
+    title: '给组【' + record.name + '(' + record.sn + ')】设置权限',
+    width: 900,
+    showOkBtn: false,
+    cancelText: '关闭',
+    centered: true,
+    minHeight: 400,
   });
 }
 
@@ -158,6 +179,8 @@ function createActions(record: Recordable): any[] {
       </template>
     </BasicTable>
     <GroupModal @onSuccess="tableApi.reload()"/>
+    <SetAccountModal ref="setAccountModalRef" @register="registerSetAccountModal" @success="handleSetAccountSuccess" />
+    <SetAclModal ref="setAclModalRef" @register="registerSetAclModal" />
   </Page>
 </template>
 
