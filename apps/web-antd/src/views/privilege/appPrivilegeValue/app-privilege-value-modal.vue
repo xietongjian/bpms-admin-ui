@@ -1,23 +1,24 @@
 <script lang="ts" setup>
 import {computed, defineEmits, ref, unref} from 'vue';
-import {BasicForm, useForm} from '@/components/Form/index';
 import {saveOrUpdate} from '#/api/privilege/appPrivilegeValue';
 import {useVbenModal} from '@vben/common-ui';
 import {useVbenForm} from "#/adapter/form";
-import {formSchema} from './app.data';
+import {formSchema} from './appPrivilegeValue.data';
 
 const emit = defineEmits(['success', 'register']);
 
   const isUpdate = ref(true);
 
+/*
   const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
     schemas: formSchema,
     showActionButtonGroup: false,
   });
+*/
 
 
-  const [BaseForm, formApi] = useVbenForm({
+  const [BasicForm, formApi] = useVbenForm({
     // 所有表单项共用，可单独在表单内覆盖
     commonConfig: {
       // 所有表单项
@@ -26,13 +27,8 @@ const emit = defineEmits(['success', 'register']);
       },
     },
     showDefaultActions: false,
-    // 提交函数
-    // handleSubmit: onSubmit,
-    // 垂直布局，label和input在不同行，值为vertical
-    // 水平布局，label和input在同一行
     layout: 'horizontal',
     schema: formSchema,
-    // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个
     wrapperClass: 'grid-cols-1',
   });
 

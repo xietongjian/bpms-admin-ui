@@ -1,8 +1,8 @@
 <template>
-  <CollapseContainer title="基本设置" :canExpand="false">
+  <Collapse title="基本设置" :canExpand="false">
     <Row :gutter="24">
       <Col :span="14">
-        <BasicForm @register="register" />
+        <BasicForm />
       </Col>
 <!--      <Col :span="10">
         <div class="change-avatar">
@@ -19,36 +19,34 @@
       </Col>-->
     </Row>
 <!--    <a-button type="primary" @click="handleSubmit"> 更新基本信息 </a-button>-->
-  </CollapseContainer>
+  </Collapse>
 </template>
 <script lang="ts" setup>
-  import { CollapseContainer } from '@/components/Container';
-  import { CropperAvatar } from '@/components/Cropper';
-  import { BasicForm, useForm } from '@/components/Form';
-  import { Col, Row } from 'ant-design-vue';
+  // import { CropperAvatar } from '@/components/Cropper';
+  import { Col, Row, Collapse, message } from 'ant-design-vue';
   import { computed, onMounted } from 'vue';
+  import {useVbenForm} from '@vben/common-ui';
 
-  import { useMessage } from '@/hooks/web/useMessage';
 
   // import { accountInfoApi } from '@/api/demo/account';
-  import { uploadApi } from '@/api/sys/upload';
-  import headerImg from '@/assets/images/header.jpg';
-  import { useUserStore } from '@/store/modules/user';
+  import { uploadApi } from '#/api/sys/upload';
+  // import headerImg from '#/assets/images/header.jpg';
   import { baseSetschemas } from './data';
-  import {getUserInfo} from "@/api/sys/user";
+  import {getUserInfoApi} from "#/api/core/user";
+  import { useUserStore } from '@vben/stores';
 
-  const { createMessage } = useMessage();
   const userStore = useUserStore();
 
-  const [register, { setFieldsValue }] = useForm({
-    labelWidth: 120,
-    schemas: baseSetschemas,
-    showActionButtonGroup: false,
+  const [BasicForm, formApi] = useVbenForm({
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: baseSetschemas,
+    wrapperClass: 'grid-cols-1',
   });
 
   onMounted(async () => {
-    const data = await getUserInfo();
-    setFieldsValue(data);
+    const data = await getUserInfoApi();
+    await formApi.setValues(data);
   });
 
   const avatar = computed(() => {
@@ -65,7 +63,7 @@
   }
 
   function handleSubmit() {
-    createMessage.success('更新成功！');
+    message.success('更新成功！');
   }
 </script>
 

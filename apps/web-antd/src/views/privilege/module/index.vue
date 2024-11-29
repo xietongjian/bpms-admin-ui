@@ -3,19 +3,20 @@ import {nextTick} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {Page, useVbenModal} from '@vben/common-ui';
-import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
+import {Button, Image, Space, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import type { Recordable } from '@vben/types';
 import { TableAction } from '#/components/table-action';
 
 import { getModules } from '#/api/privilege/module';
-import {AccessControl} from '@vben/access';
+import { useAccess } from '@vben/access';
+
 import {listColumns, searchFormSchema} from "#/views/privilege/module/module.data";
 import {PerEnum} from "#/enums/perEnum";
 import { IconifyIcon } from '@vben/icons';
 
 const PerPrefix = "Module:";
-
+const {hasAccessByCodes} = useAccess();
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
   submitOnEnter: true,
@@ -134,25 +135,25 @@ function handleEditPValue(record: Recordable, e) {
 function createActions(record: Recordable): any[] {
   return [
     {
-      auth: PerPrefix + PerEnum.ADD,
+      auth: [PerPrefix + PerEnum.ADD],
       tooltip: '添加子菜单',
       icon: 'ant-design:plus-outlined',
       onClick: handleCreateChild.bind(null, record),
     },
     {
-      auth: PerPrefix + PerEnum.AUTH,
+      auth: [PerPrefix + PerEnum.AUTH],
       tooltip: '设置权限值',
       icon: 'ant-design:setting-outlined',
       onClick: handleEditPValue.bind(null, record),
     },
     {
-      auth: PerPrefix + PerEnum.UPDATE,
+      auth: [PerPrefix + PerEnum.UPDATE],
       tooltip: '修改',
       icon: 'clarity:note-edit-line',
       onClick: handleEdit.bind(null, record),
     },
     {
-      auth: PerPrefix + PerEnum.DELETE,
+      auth: [PerPrefix + PerEnum.DELETE],
       tooltip: '删除',
       icon: 'ant-design:delete-outlined',
       color: 'error',
@@ -172,9 +173,9 @@ function createActions(record: Recordable): any[] {
   <Page auto-content-height>
     <BasicTable table-title="列表">
       <template #toolbar-tools>
-        <AccessControl :codes="[PerPrefix + PerEnum.ADD]" type="code">
-          <Button type="primary" @click="handleAdd">新建</Button>
-        </AccessControl>
+        <Space>
+          <Button v-if="hasAccessByCodes[PerPrefix + PerEnum.ADD]" type="primary" @click="handleAdd">新建</Button>
+        </Space>
       </template>
 
       <template #action="{record}">

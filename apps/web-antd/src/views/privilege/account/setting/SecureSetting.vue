@@ -1,5 +1,5 @@
 <template>
-  <CollapseContainer title="安全设置" :canExpand="false">
+  <Collapse title="安全设置" :canExpand="false">
     <List>
       <template v-for="item in secureSettingList" :key="item.key">
         <ListItem>
@@ -10,9 +10,7 @@
                 class="float-right mt-10px mr-30px text-blue-500 text-font-normal cursor-pointer"
                 v-if="item.extra"
               >
-                <Authority :value="'AccountSetting:' + PerEnum.UPDATE">
-                  <span @click="handleChangePassword">{{ item.extra }}</span>
-                </Authority>
+                <span v-if="hasAccessByCodes[PerPrefix + PerEnum.UPDATE]" @click="handleChangePassword">{{ item.extra }}</span>
               </div>
             </template>
             <template #description>
@@ -22,30 +20,31 @@
         </ListItem>
       </template>
     </List>
-    <PasswordModal @register="registerPasswordModal" @success="handlePasswordSuccess" />
+    <PasswordModal ref="passwordModalRef" @success="handlePasswordSuccess" />
 
-  </CollapseContainer>
+  </Collapse>
 </template>
 <script lang="ts" setup>
-  import { CollapseContainer } from '@/components/Container';
-  import { List } from 'ant-design-vue';
+  import { List, Collapse } from 'ant-design-vue';
+  import { ref } from 'vue';
   import { secureSettingList } from './data';
   import PasswordModal from './PasswordModal.vue';
-  import {useModal} from "@/components/Modal";
-  import {useUserStore} from "@/store/modules/user";
-  import {PerEnum} from "@/enums/perEnum";
-  import {Authority} from "@/components/Authority";
+  import {useVbenModal} from "@vben/common-ui";
+  import {useUserStore} from "@vben/stores";
+  import {PerEnum} from "#/enums/perEnum";
+  import {useAccess} from '@vben/access';
+
+  const PerPrefix = 'AccountSetting:';
+
+  const {hasAccessByCodes} = useAccess();
 
   const userStore = useUserStore();
-  const [registerPasswordModal, { openModal: openPasswordModal }] = useModal();
-
+  const passwordModalRef = ref();
   const ListItem = List.Item;
   const ListItemMeta = List.Item.Meta;
 
   const handleChangePassword = () => {
-    openPasswordModal(true, {
-      isUpdate: true,
-    });
+    passwordModalRef.value.open();
   }
 
   function handlePasswordSuccess() {

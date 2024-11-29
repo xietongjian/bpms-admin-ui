@@ -3,13 +3,12 @@ import {ref} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {Page, useVbenModal} from '@vben/common-ui';
-import {Button, Image, Tag, message} from 'ant-design-vue';
+import {Button, Space, Image, Tag, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {getGroupListByPage, deleteByIds} from '#/api/privilege/group';
 import {TableAction} from '#/components/table-action';
 import type {Recordable} from '@vben/types';
 import groupModal from './group-modal.vue';
-import {AccessControl} from '@vben/access';
 import { useAccess } from '@vben/access';
 
 import {columns, searchFormSchema} from "./group.data";
@@ -21,6 +20,7 @@ import {PerEnum} from "#/enums/perEnum";
 const PerPrefix = "Group:";
 const setAccountModalRef = ref();
 const setAclModalRef = ref();
+const { hasAccessByCodes } = useAccess();
 
 const [GroupModal, modalApi] = useVbenModal({
   connectedComponent: groupModal,
@@ -120,27 +120,27 @@ function handleAddUser(record: Recordable) {
   });
 }
 function createActions(record: Recordable): any[] {
-  let actions: any[] = [
+  return [
     {
-      auth: PerPrefix + PerEnum.AUTH,
+      auth: [PerPrefix + PerEnum.AUTH],
       tooltip: '分配权限',
       icon: 'ant-design:safety',
       onClick: handleAcl.bind(null, record),
     },
     {
-      auth: PerPrefix + PerEnum.AUTH,
+      auth: [PerPrefix + PerEnum.AUTH],
       tooltip: '分配用户',
       icon: 'ant-design:usergroup-add',
       onClick: handleAddUser.bind(null, record),
     },
     {
-      auth: PerPrefix + PerEnum.UPDATE,
+      auth: [PerPrefix + PerEnum.UPDATE],
       tooltip: '修改',
       icon: 'clarity:note-edit-line',
       onClick: handleEdit.bind(null, record),
     },
     {
-      auth: PerPrefix + PerEnum.DELETE,
+      auth: [PerPrefix + PerEnum.DELETE],
       tooltip: '删除',
       icon: 'ant-design:delete-outlined',
       danger: true,
@@ -151,7 +151,11 @@ function createActions(record: Recordable): any[] {
       },
     },
   ];
-  return actions;
+}
+function handleSetAccountSuccess() {
+  setTimeout(() => {
+    reload();
+  }, 200);
 }
 </script>
 
@@ -159,9 +163,9 @@ function createActions(record: Recordable): any[] {
   <Page auto-content-height>
     <BasicTable table-title="列表">
       <template #toolbar-tools>
-        <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
-          <Button type="primary" @click="handleAdd">新建</Button>
-        </AccessControl>
+        <Space>
+          <Button v-if="hasAccessByCodes[PerPrefix + PerEnum.ADD]" type="primary" @click="handleAdd">新建</Button>
+        </Space>
       </template>
 
       <template #action="{record}">
@@ -189,8 +193,8 @@ function createActions(record: Recordable): any[] {
       </template>
     </BasicTable>
     <GroupModal @onSuccess="tableApi.reload()"/>
-    <SetAccountModal ref="setAccountModalRef" @register="registerSetAccountModal" @success="handleSetAccountSuccess" />
-    <SetAclModal ref="setAclModalRef" @register="registerSetAclModal" />
+    <SetAccountModal ref="setAccountModalRef" @success="handleSetAccountSuccess" />
+    <SetAclModal ref="setAclModalRef" />
   </Page>
 </template>
 

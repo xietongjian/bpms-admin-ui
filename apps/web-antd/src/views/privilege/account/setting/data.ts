@@ -1,4 +1,4 @@
-import { FormSchema } from '@/components/Form';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 
 export interface ListItem {
   key: string;
@@ -36,31 +36,31 @@ export const settingList = [
 // 基础设置 form
 export const baseSetschemas: FormSchema[] = [
   {
-    field: 'realName',
+    fieldName: 'realName',
     component: 'Input',
     label: '姓名',
     colProps: { span: 18 },
   },
 /*  {
-    field: 'introduction',
+    fieldName: 'introduction',
     component: 'InputTextArea',
     label: '个人简介',
     colProps: { span: 18 },
   },*/
   {
-    field: 'tel',
+    fieldName: 'tel',
     component: 'Input',
     label: '联系电话',
     colProps: { span: 18 },
   },
   {
-    field: 'email',
+    fieldName: 'email',
     component: 'Input',
     label: '邮箱',
     colProps: { span: 18 },
   },
   {
-    field: 'address',
+    fieldName: 'address',
     component: 'Input',
     label: '所在地区',
     colProps: { span: 18 },
@@ -152,7 +152,7 @@ export const msgNotifyList: ListItem[] = [
 
 export const passwordFormSchema: FormSchema[] = [
   {
-    field: 'oldPassword',
+    fieldName: 'oldPassword',
     label: '当前密码',
     component: 'StrengthMeter',
     componentProps: {
@@ -180,7 +180,7 @@ export const passwordFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'passwordNew',
+    fieldName: 'passwordNew',
     label: '新密码',
     component: 'StrengthMeter',
     componentProps: {
@@ -208,7 +208,7 @@ export const passwordFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'confirmPassword',
+    fieldName: 'confirmPassword',
     label: '确认密码',
     component: 'InputPassword',
 

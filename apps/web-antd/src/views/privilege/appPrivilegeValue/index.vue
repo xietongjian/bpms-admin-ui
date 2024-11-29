@@ -1,14 +1,15 @@
 
 <script lang="ts" setup>
 import { ref, defineOptions } from 'vue';
-
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormProps} from '@vben/common-ui';
 import { getAppPrivilegeValues, deleteByIds } from '#/api/privilege/appPrivilegeValue';
 import { PerEnum } from '#/enums/perEnum';
 import type { Recordable } from '@vben/types';
 import { columns } from './appPrivilegeValue.data';
 import AppPrivilegeValueModal from './app-privilege-value-modal.vue';
 import { TableAction } from '#/components/table-action';
-import {useVbenVxeGrid, VxeGridProps} from "#/adapter/vxe-table";
+import {useVbenVxeGrid} from "#/adapter/vxe-table";
 import {Page} from "@vben/common-ui";
 import { useAccess } from '@vben/access';
 
@@ -68,13 +69,13 @@ function handleSuccess() {
 function createActions(record: Recordable) {
   return [
     {
-      auth: PerPrefix + PerEnum.UPDATE,
+      auth: [PerPrefix + PerEnum.UPDATE],
       tooltip: '修改',
       icon: 'clarity:note-edit-line',
       onClick: handleEdit.bind(null, record),
     },
     {
-      auth: PerPrefix + PerEnum.DELETE,
+      auth: [PerPrefix + PerEnum.DELETE],
       tooltip: '删除',
       icon: 'ant-design:delete-outlined',
       color: 'error',
