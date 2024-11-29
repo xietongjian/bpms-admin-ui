@@ -12,6 +12,7 @@ import { TableAction } from '#/components/table-action';
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
 import {Page} from "@vben/common-ui";
 import { useAccess } from '@vben/access';
+import {Button} from 'ant-design-vue';
 
 const PerPrefix = "AppPrivilegeValue:";
 const appPrivilegeValueModalRef = ref();
@@ -91,13 +92,12 @@ function createActions(record: Recordable) {
 <template>
   <Page auto-content-height>
     <BasicTable >
-      <template #toolbar>
-        <a-button v-if="hasAccessByCodes[PerPrefix + PerEnum.ADD]" type="primary" @click="handleCreate"> 新增 </a-button>
+      <template #toolbar-tools>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增 </Button>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction :actions="createActions(record)" />
-        </template>
+
+      <template #action="{ row }">
+        <TableAction :actions="createActions(row)" />
       </template>
     </BasicTable>
 

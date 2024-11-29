@@ -2,12 +2,13 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {FormValidPatternEnum} from "#/enums/commonEnum";
 import {checkEntityExist} from "#/api/base/app";
 import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
 
 
 /**
  * 列表
  */
-export const listColumns = [
+export const listColumns: VxeGridProps['columns'] = [
   {title: '序号', type: 'seq', width: 50},
   {
     field: 'image',

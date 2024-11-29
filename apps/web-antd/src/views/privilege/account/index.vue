@@ -1,23 +1,28 @@
 <script lang="ts" setup>
+import {ref} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {Page, useVbenModal} from '@vben/common-ui';
-import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
+import {Button, Image, Tag, Space, Avatar, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import { getAccountPageList, deleteByIds } from '#/api/privilege/account';
+import {getAccountPageList, deleteByIds} from '#/api/privilege/account';
+import type {Recordable} from '@vben/types';
+import {columns, searchFormSchema} from './account.data';
+import {UserOutlined} from '@ant-design/icons-vue';
 
 import accountModal from './account-modal.vue';
-// import AppSecretKeyModal from './app-secret-key-modal.vue';
-import {AccessControl} from '@vben/access';
-import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
-import {PerEnum} from "#/enums/perEnum";
-import {
-  SquareEditOutline,
-  DeleteOutline,
-  CloudSecurityOutline,
-  QuestionMarkCircleOutline,
-} from '@vben/icons';
+import PasswordModal from './PasswordModal.vue';
+import SetGroupModal from './SetGroupModal.vue';
 
+// import AppSecretKeyModal from './app-secret-key-modal.vue';
+import {useAccess} from '@vben/access';
+import {PerEnum} from "#/enums/perEnum";
+import {TableAction} from '#/components/table-action';
+
+const passwordModalRef = ref();
+const setGroupModalRef = ref();
+const {hasAccessByCodes} = useAccess();
+const PerPrefix = 'Account:';
 const [AccountModal, modalApi] = useVbenModal({
   connectedComponent: accountModal,
   centered: true,
@@ -41,7 +46,7 @@ const gridOptions: VxeGridProps<any> = {
     highlight: true,
     labelField: 'name',
   },
-  columns: listColumns,
+  columns,
   columnConfig: {resizable: true},
   height: 'auto',
   keepSource: true,
@@ -89,12 +94,80 @@ async function handleDelete(record: any) {
     if (success) {
       message.success(msg);
       await tableApi.reload();
-    } else{
+    } else {
       message.error(msg);
     }
   } catch (e) {
     message.error(e.message);
   }
+}
+
+function createActions(record: any) {
+  return [
+    {
+      auth: [PerPrefix + PerEnum.AUTH],
+      tooltip: '分配组',
+      icon: 'ant-design:usergroup-add',
+      onClick: handleSetGroup.bind(null, record),
+    },
+    {
+      auth: [PerPrefix + PerEnum.UPDATE],
+      tooltip: '设置密码',
+      icon: 'ant-design:setting-outlined',
+      onClick: handleSetPassword.bind(null, record),
+    },
+    {
+      auth: [PerPrefix + PerEnum.UPDATE],
+      tooltip: '修改',
+      icon: 'clarity:note-edit-line',
+      onClick: handleEdit.bind(null, record),
+    },
+    {
+      auth: [PerPrefix + PerEnum.DELETE],
+      tooltip: '删除',
+      icon: 'ant-design:delete-outlined',
+      color: 'error',
+      popConfirm: {
+        title: '是否确认删除',
+        confirm: handleDelete.bind(null, record),
+        placement: 'left',
+      },
+    },
+  ];
+}
+
+function handleSetPassword(record: Recordable) {
+  passwordModalRef.value.open();
+  passwordModalRef.value.setData(record);
+}
+
+function handleSetGroup(record: Recordable) {
+  setGroupModalRef.value.open();
+  setGroupModalRef.value.setData(record);
+/*  openSetGroupModal(true, {
+    record,
+    isUpdate: true,
+  });*/
+}
+
+function handlePasswordSuccess() {
+  // reload();
+  tableApi.reload();
+}
+
+function handleSetGroupSuccess() {
+  handlePasswordSuccess();
+}
+
+function previewImageHandle(headImg) {
+  if (headImg) {
+    previewImage.value = headImg;
+    previewImageVisible.value = true;
+  }
+}
+
+function previewImageVisibleChange(visible, prevVisible) {
+  previewImageVisible.value = visible;
 }
 </script>
 
@@ -102,57 +175,40 @@ async function handleDelete(record: any) {
   <Page auto-content-height>
     <BasicTable table-title="列表">
       <template #toolbar-tools>
-        <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
-          <Button type="primary" @click="handleAdd">新建</Button>
-        </AccessControl>
+        <Button v-if="hasAccessByCodes[PerPrefix+PerEnum.ADD]" type="primary" @click="handleAdd">新建</Button>
+      </template>
+      <template #image="{ row }">
+        <Avatar :src="row.image" @click="previewImageHandle(row.image)">
+          <template #icon>
+            <UserOutlined/>
+          </template>
+        </Avatar>
+      </template>
+
+      <template #groups="{ row }">
+        <Space>
+          <Tag color="green" v-for="item in row.groups">
+            {{ item.name }}
+          </Tag>
+        </Space>
+      </template>
+      <template #sex="{ row }">
+        <Tag v-if="~~row.sex === 1" color="#10AEFF">男</Tag>
+        <Tag v-else color="#FB7373">女</Tag>
+      </template>
+      <template #type="{ row }">
+        <Tag v-if="~~row.type === 1" color="#10AEFF">管理员</Tag>
+        <Tag v-else>普通用户</Tag>
       </template>
 
       <template #action="{row}">
-
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Tooltip title="编辑">
-            <Button type="link" @click="handleEdit(row)">
-              <template #icon>
-                <SquareEditOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Tooltip>
-        </AccessControl>
-
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Popconfirm @confirm="handleDelete(row)" :ok-button-props="{danger: true}">
-            <template #title >
-              <div class="w-32">
-                确定要删除吗？
-              </div>
-            </template>
-            <template #icon>
-              <QuestionMarkCircleOutline class="text-red-500 size-6"/>
-            </template>
-            <Button type="link" danger>
-              <template #icon>
-                <DeleteOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Popconfirm>
-        </AccessControl>
+        <TableAction :actions="createActions(row)"/>
       </template>
 
-      <template #image="{ row }">
-        <Image :src="row.image" class="w-[20px] h-[20px]" :height="40" :width="40"/>
-      </template>
-
-      <template #status="{ row }">
-        <Tag v-if="row.status===1" color="green">启用</Tag>
-        <Tag v-else color="red">禁用</Tag>
-      </template>
-
-      <template #platformEnabled="{ row }">
-        <Tag v-if="row.platformEnabled===1" color="green">开启</Tag>
-        <Tag v-else>关闭</Tag>
-      </template>
     </BasicTable>
     <AccountModal @onSuccess="tableApi.reload()"/>
+    <PasswordModal ref="passwordModalRef" @register="registerPasswordModal" @success="handlePasswordSuccess"/>
+    <SetGroupModal ref="setGroupModalRef" @register="registerSetGroupModal" @success="handleSetGroupSuccess"/>
   </Page>
 </template>
 

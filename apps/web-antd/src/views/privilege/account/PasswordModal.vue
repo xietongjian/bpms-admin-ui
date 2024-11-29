@@ -5,17 +5,16 @@
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, useForm } from '@/components/Form/index';
-  import { passwordFormSchema } from './account.data';
-  import { setPassword } from '@/api/privilege/account';
-  import { useMessage } from '@/hooks/web/useMessage';
 
-  const { createMessage } = useMessage();
+  import {useVbenModal} from '@vben/common-ui';
+  import { passwordFormSchema } from './account.data';
+  import { setPassword } from '#/api/privilege/account';
+  import { message } from 'ant-design-vue';
+  import {useVbenForm} from '#/adapter/form';
 
   const isUpdate = ref(true);
 
-  const [registerForm, { setFieldsValue, resetFields, validate }] = useForm({
+  const [BasicForm, baseFormApi] = useVbenForm({
     labelWidth: 100,
     schemas: passwordFormSchema,
     showActionButtonGroup: false,
@@ -24,7 +23,27 @@
     },
   });
 
-  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          baseFormApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await baseFormApi.submitForm();
+      handleSubmit();
+    },
+  });
+
+  /*const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     resetFields();
     setModalProps({
       confirmLoading: false,
@@ -37,7 +56,7 @@
         ...data.record,
       });
     }
-  });
+  });*/
 
   const getTitle = computed(() => (!unref(isUpdate) ? '新增账号' : '设置密码'));
 
@@ -52,13 +71,14 @@
         data: { success, msg },
       } = await setPassword(values);
       if (success) {
-        createMessage.success(msg);
+        message.success(msg);
         closeModal();
       } else {
-        createMessage.error(msg);
+        message.error(msg);
       }
     } finally {
       setModalProps({ confirmLoading: false });
     }
   }
+  defineExpose(modalApi)
 </script>

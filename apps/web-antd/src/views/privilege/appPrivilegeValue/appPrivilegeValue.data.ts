@@ -24,6 +24,16 @@ export const columns: BasicColumn[] = [
     width: 400,
     align: 'left',
   },
+  {
+    title: '操作',
+    field: 'action',
+    width: 400,
+    align: 'left',
+    fixed: 'right',
+    slots: {
+      default: 'action',
+    }
+  },
 ];
 
 export const formSchema: FormSchema[] = [

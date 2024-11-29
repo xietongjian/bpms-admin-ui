@@ -124,4 +124,6 @@
       setModalProps({ confirmLoading: false });
     }
   }
+
+  defineExpose(modalApi)
 </script>

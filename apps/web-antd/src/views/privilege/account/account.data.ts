@@ -1,6 +1,6 @@
 // import { BasicColumn, FormSchema } from '@/components/Table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type {VxeGridProps} from '#/adapter/vxe-table';
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -8,12 +8,14 @@ export const columns: VxeGridProps['columns'] = [
     field: 'image',
     width: 80,
     align: 'center',
+    slots: {default: 'image'},
   },
   {
     title: '用户类型',
     field: 'type',
     width: 120,
     align: 'center',
+    slots: {default: 'type'},
   },
   {
     title: '用户名',
@@ -54,10 +56,18 @@ export const columns: VxeGridProps['columns'] = [
     title: '所属组',
     field: 'groups',
     align: 'left',
+    slots: {default: 'groups'},
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
-export const searchFormSchema = () => [
+export const searchFormSchema: FormSchema[] = [
   {
     fieldName: 'keyword',
     label: '关键字',
@@ -68,14 +78,14 @@ export const searchFormSchema = () => [
     labelWidth: 60,
     colProps: {
       span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
+      lg: {span: 6, offset: 0},
+      sm: {span: 10, offset: 0},
+      xs: {span: 16, offset: 0},
     },
   },
 ];
 
-export const accountFormSchema = () => [
+export const accountFormSchema: FormSchema = [
   {
     fieldName: 'id',
     label: 'ID',
@@ -90,8 +100,8 @@ export const accountFormSchema = () => [
     defaultValue: 0,
     componentProps: {
       options: [
-        { label: '普通用户', value: 0 },
-        { label: '管理员', value: 1 },
+        {label: '普通用户', value: 0},
+        {label: '管理员', value: 1},
       ],
     },
     colProps: {
@@ -139,11 +149,11 @@ export const accountFormSchema = () => [
     defaultValue: 1,
     componentProps: {
       options: [
-        { label: '男', value: 1 },
-        { label: '女', value: 0 },
+        {label: '男', value: 1},
+        {label: '女', value: 0},
       ],
     },
-    colProps: { span: 10 },
+    colProps: {span: 10},
   },
   {
     fieldName: 'userNo',
@@ -174,7 +184,7 @@ export const accountFormSchema = () => [
   },
 ];
 
-export const passwordFormSchema = () => [
+export const passwordFormSchema: FormSchema = [
   {
     fieldName: 'id',
     label: 'ID',
@@ -214,7 +224,7 @@ export const passwordFormSchema = () => [
     label: '确认密码',
     component: 'InputPassword',
 
-    dynamicRules: ({ values }) => {
+    dynamicRules: ({values}) => {
       return [
         {
           required: true,
