@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper dense contentFullHeight fixedHeight class="h-full">
+  <Page auto-content-height>
     <div class="p-4 h-full">
       <SplitPane>
         <template #left>
@@ -83,175 +83,193 @@
     </div>
     <RoleModal @register="registerModal" @success="handleSuccess" />
     <OrgSelectorModal @register="registerOrgModal" @change="handleSettingOrgSuccess" />
-  </PageWrapper>
+  </Page>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
   import { PerEnum } from '#/enums/perEnum';
   import {AccessControl} from '@vben/access';
   import { defineComponent, ref, unref } from 'vue';
   import { Input, Tag, Space, Badge, Popover, Affix, Divider } from 'ant-design-vue';
   import { SettingOutlined } from '@ant-design/icons-vue';
-  import {useVbenVxeGrid} from '#/adapter/vxe-table';
+  import {useVbenVxeGrid, VxeGridProps} from '#/adapter/vxe-table';
   import { getRoleListByPage, deleteByIds, saveBatch } from '#/api/org/role';
-  import { PageWrapper } from '@/components/Page';
-  import CompanyTree from '@/views/components/leftTree/CompanyTree.vue';
+  // import { PageWrapper } from '@/components/Page';
+  import {Page, useVbenModal, type VbenFormProps} from '@vben/common-ui';
+  // import CompanyTree from '@/views/components/leftTree/CompanyTree.vue';
   import { message } from 'ant-design-vue';
-  import { useModal } from '@/components/Modal';
+  // import { useModal } from '@/components/Modal';
   import RoleModal from './RoleModal.vue';
-  import OrgSelectorModal from '@/components/Selector/src/OrgSelectorModal.vue';
+  // import OrgSelectorModal from '@/components/Selector/src/OrgSelectorModal.vue';
 
   import { columns, searchFormSchema } from './role.data';
-  import { OrgSelectType } from '@/components/Selector/src/types';
-  import SplitPane from '@/views/components/splitPane/index.vue';
+  import {getCompanies} from "#/api/org/company";
+  // import { OrgSelectType } from '@/components/Selector/src/types';
+  // import SplitPane from '@/views/components/splitPane/index.vue';
 
+  const [registerModal, { openModal }] = useModal();
+  // 人员选择弹窗
+  const [registerOrgModal, { openModal: openOrgSelector, setModalProps: setOrgModalProps }] =
+    useModal();
 
-  export default defineComponent({
-    name: 'RoleManagement',
-    components: {
-      Popover,
-      Badge,
-      Divider,
-      BasicTable,
-      PageWrapper,
-      CompanyTree,
-      RoleModal,
-      OrgSelectorModal,
-      TableAction,
-      Input,
-      Tag,
-      Affix,
-      Space,
-      Search: Input.Search,
-      SettingOutlined,
-      SplitPane,
-      Authority,
+  const currentRole = ref<Recordable>({});
+  const currentNode = ref<Recordable>({});
+
+  const [registerTable, { reload, setProps }] = useTable({
+    title: '列表',
+    api: getRoleListByPage,
+    columns,
+    formConfig: {
+      labelWidth: 120,
+      schemas: searchFormSchema,
+      showAdvancedButton: false,
+      showResetButton: false,
+      autoSubmitOnEnter: true,
     },
-    setup() {
-      const [registerModal, { openModal }] = useModal();
-      // 人员选择弹窗
-      const [registerOrgModal, { openModal: openOrgSelector, setModalProps: setOrgModalProps }] =
-        useModal();
-
-      const currentRole = ref<Recordable>({});
-      const currentNode = ref<Recordable>({});
-
-      const [registerTable, { reload, setProps }] = useTable({
-        title: '列表',
-        api: getRoleListByPage,
-        columns,
-        formConfig: {
-          labelWidth: 120,
-          schemas: searchFormSchema,
-          showAdvancedButton: false,
-          showResetButton: false,
-          autoSubmitOnEnter: true,
-        },
-        size: 'small',
-        useSearchForm: true,
-        showIndexColumn: false,
-        bordered: true,
-        rowKey: 'id',
-        searchInfo: { roleType: 0 },
-        actionColumn: {
-          width: 120,
-          title: '操作',
-          dataIndex: 'action',
-        },
-      });
-
-      function handleCreate() {
-        const companyId = currentNode.value.id;
-        openModal(true, {
-          record: { companyId: companyId },
-          isUpdate: false,
-        });
-      }
-
-      function handleEdit(record: Recordable) {
-        openModal(true, {
-          record,
-          isUpdate: true,
-        });
-      }
-
-      // 人员选择弹窗
-      function handleSettingCompany(record: Recordable) {
-        const selectedList =
-          record.companies &&
-          record.companies.map((item) => {
-            return { id: item.id, shortName: item.cname };
-          });
-        // 加载已选择的数据
-        currentRole.value = record;
-        openOrgSelector(true, {
-          selectorProps: {
-            multiple: true,
-            selectType: OrgSelectType.COMPANY,
-            selectedList: selectedList,
-          },
-        });
-        let title = `选择公司`;
-
-        setOrgModalProps({
-          title,
-          bodyStyle: { padding: '0px', margin: '0px' },
-          width: 850,
-          height: 450,
-          showOkBtn: true,
-          showCancelBtn: true,
-        });
-      }
-
-      function handleDelete(record: Recordable) {
-        if (record.children && record.children.length > 0) {
-          createMessage.warning('有子节点，不能删除！');
-          return;
-        }
-        deleteByIds({ id: record.id }).then((res) => {
-          reload();
-        });
-      }
-
-      function handleSuccess() {
-        setTimeout(() => {
-          reload();
-        }, 200);
-      }
-
-      // 人员选择后回调
-      function handleSettingOrgSuccess(items: any[]) {
-        const companyIds = items.map((item) => {
-          return item.id;
-        });
-        const data = { roleId: unref(currentRole).id, companyIds: companyIds };
-
-        saveBatch(data).then((res) => {
-          reload();
-        });
-      }
-
-      function handleSelect(node: any) {
-        currentNode.value = node;
-        const searchInfo = { searchInfo: { roleType: 0, companyId: node ? node.id : '' } };
-        setProps(searchInfo);
-        reload(searchInfo);
-      }
-
-      return {
-        registerTable,
-        registerModal,
-        registerOrgModal,
-        handleSettingCompany,
-        handleCreate,
-        handleEdit,
-        handleDelete,
-        handleSuccess,
-        handleSettingOrgSuccess,
-        handleSelect,
-        PerEnum,
-      };
+    size: 'small',
+    useSearchForm: true,
+    showIndexColumn: false,
+    bordered: true,
+    rowKey: 'id',
+    searchInfo: { roleType: 0 },
+    actionColumn: {
+      width: 120,
+      title: '操作',
+      dataIndex: 'action',
     },
   });
+
+
+  const formOptions: VbenFormProps = {
+    showCollapseButton: false,
+    submitOnEnter: true,
+    commonConfig: {
+      labelWidth: 60,
+    },
+    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+    resetButtonOptions: {
+      show: false,
+    },
+    schema: searchFormSchema,
+  };
+
+  const gridOptions: VxeGridProps<any> = {
+    checkboxConfig: {
+      highlight: true,
+      labelField: 'name',
+    },
+    columns,
+    columnConfig: {resizable: true},
+    pagerConfig: {
+      enabled: false,
+    },
+    rowConfig: {
+      keyField: 'id',
+    },
+    treeConfig: {
+      parentField: 'pid',
+      rowField: 'id',
+      transform: true,
+    },
+    height: 'auto',
+    keepSource: true,
+    border: false,
+    stripe: true,
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          return await getRoleListByPage({
+            query: {
+              pageNum: page.currentPage,
+              pageSize: page.pageSize,
+            },
+            entity: formValues || {},
+          });
+        },
+      },
+    },
+  };
+
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+
+
+  function handleCreate() {
+    const companyId = currentNode.value.id;
+    openModal(true, {
+      record: { companyId: companyId },
+      isUpdate: false,
+    });
+  }
+
+  function handleEdit(record: Recordable) {
+    openModal(true, {
+      record,
+      isUpdate: true,
+    });
+  }
+
+  // 人员选择弹窗
+  function handleSettingCompany(record: Recordable) {
+    const selectedList =
+      record.companies &&
+      record.companies.map((item) => {
+        return { id: item.id, shortName: item.cname };
+      });
+    // 加载已选择的数据
+    currentRole.value = record;
+    openOrgSelector(true, {
+      selectorProps: {
+        multiple: true,
+        selectType: OrgSelectType.COMPANY,
+        selectedList: selectedList,
+      },
+    });
+    let title = `选择公司`;
+
+    setOrgModalProps({
+      title,
+      bodyStyle: { padding: '0px', margin: '0px' },
+      width: 850,
+      height: 450,
+      showOkBtn: true,
+      showCancelBtn: true,
+    });
+  }
+
+  function handleDelete(record: Recordable) {
+    if (record.children && record.children.length > 0) {
+      createMessage.warning('有子节点，不能删除！');
+      return;
+    }
+    deleteByIds({ id: record.id }).then((res) => {
+      reload();
+    });
+  }
+
+  function handleSuccess() {
+    setTimeout(() => {
+      reload();
+    }, 200);
+  }
+
+  // 人员选择后回调
+  function handleSettingOrgSuccess(items: any[]) {
+    const companyIds = items.map((item) => {
+      return item.id;
+    });
+    const data = { roleId: unref(currentRole).id, companyIds: companyIds };
+
+    saveBatch(data).then((res) => {
+      reload();
+    });
+  }
+
+  function handleSelect(node: any) {
+    currentNode.value = node;
+    const searchInfo = { searchInfo: { roleType: 0, companyId: node ? node.id : '' } };
+    setProps(searchInfo);
+    reload(searchInfo);
+  }
+
 </script>
 
 <style lang="less">

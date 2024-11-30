@@ -5,12 +5,10 @@
 </template>
 <script lang="ts" setup>
 import {computed, defineEmits, ref, unref} from 'vue';
-import {BasicModal, useModalInner} from '@/components/Modal';
+// import {BasicModal, useModalInner} from '@/components/Modal';
 import {passwordFormSchema} from './data';
 import {restSetPassword} from "#/api/sys/user";
-import {useVbenForm} from '@vben/common-ui'
-
-const {createMessage} = useMessage();
+import {useVbenForm, useVbenModal} from '@vben/common-ui'
 
 const emit = defineEmits(['success'])
 
@@ -23,15 +21,31 @@ const [BasicForm, formApi] = useVbenForm({
   wrapperClass: 'grid-cols-1',
 });
 
-const [registerForm, {setFieldsValue, resetFields, validate}] = useForm({
+/*const [registerForm, {setFieldsValue, resetFields, validate}] = useForm({
   labelWidth: 100,
   schemas: passwordFormSchema,
   showActionButtonGroup: false,
   actionColOptions: {
     span: 23,
   },
-});
+});*/
 
+
+const [basicModal, modalApi] = useVbenModal({
+  draggable: true,
+  onCancel() {
+    modalApi.close();
+  },
+  onOpenChange(isOpen: boolean) {
+    if (isOpen) {
+    }
+  },
+  onConfirm() {
+    // await baseFormApi.submitForm();
+    handleSubmit();
+  },
+});
+/*
 const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
   resetFields();
   setModalProps({
@@ -46,6 +60,7 @@ const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) 
     });
   }
 });
+*/
 
 const getTitle = computed(() => (!unref(isUpdate) ? '新增账号' : '设置密码'));
 

@@ -158,7 +158,7 @@ export const passwordFormSchema: FormSchema[] = [
     componentProps: {
       placeholder: '当前密码',
     },
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -174,7 +174,7 @@ export const passwordFormSchema: FormSchema[] = [
         max: 32,
         message: '长度必需在6-32之间！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },
@@ -186,7 +186,7 @@ export const passwordFormSchema: FormSchema[] = [
     componentProps: {
       placeholder: '新密码',
     },
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -202,7 +202,7 @@ export const passwordFormSchema: FormSchema[] = [
         max: 32,
         message: '长度必需在6-32之间！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },

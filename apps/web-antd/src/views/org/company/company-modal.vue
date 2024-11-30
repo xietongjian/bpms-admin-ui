@@ -20,7 +20,7 @@
     commonConfig: {
       labelWidth: 100,
     },
-    schema: formSchema(),
+    schema: formSchema,
     showDefaultActions: false,
   });
 

@@ -1,12 +1,18 @@
 <script lang="ts" setup>
 import {PerEnum} from '#/enums/perEnum';
-import {useVbenVxeGrid, VxeGridProps} from '#/adapter/vxe-table';
+import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {Page, useVbenModal, type VbenFormProps} from '@vben/common-ui';
 import {deleteByIds, getCompanies} from '#/api/org/company';
 import {columns, searchFormSchema} from './company.data';
 import companyModal from './company-modal.vue';
 import type { Recordable } from '@vben/types';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import {useAccess} from "@vben/access";
+import { TableAction } from '#/components/table-action';
+import {Button} from "ant-design-vue";
 
+const PerPrefix = 'Company:';
+const {hasAccessByCodes}  = useAccess();
 
 const [CompanyModal, modalApi] = useVbenModal({
   connectedComponent: companyModal,
@@ -109,50 +115,51 @@ function handleSuccess() {
     reload();
   }, 200);
 }
+
+function createActions(record: Recordable) {
+  return [
+    {
+      auth: [PerPrefix + PerEnum.ADD],
+      tooltip: '添加子公司',
+      icon: 'ant-design:plus-outlined',
+      onClick: handleCreateChild.bind(null, record),
+    },
+    {
+      auth: [PerPrefix + PerEnum.UPDATE],
+      tooltip: '修改',
+      icon: 'clarity:note-edit-line',
+      onClick: handleEdit.bind(null, record),
+    },
+    {
+      auth: [PerPrefix + PerEnum.DELETE],
+      tooltip: '删除',
+      icon: 'ant-design:delete-outlined',
+      color: 'error',
+      danger: true,
+      onClick: (e) => {
+        e.stopPropagation();
+      },
+      popConfirm: {
+        title: '是否确认删除',
+        confirm: handleDelete.bind(null, record),
+        placement: 'left',
+      },
+    },
+  ];
+}
 </script>
 
 
 <template>
   <Page auto-content-height>
     <BasicTable >
-      <template #toolbar>
-        <Authority :value="'Company:' + PerEnum.ADD">
-          <a-button type="primary" @click="handleCreate"> 新增</a-button>
-        </Authority>
+      <template #toolbar-tools>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-              :actions="[
-              {
-                auth: 'Company:' + PerEnum.ADD,
-                tooltip: '添加子公司',
-                icon: 'ant-design:plus-outlined',
-                onClick: handleCreateChild.bind(null, record),
-              },
-              {
-                auth: 'Company:' + PerEnum.UPDATE,
-                tooltip: '修改',
-                icon: 'clarity:note-edit-line',
-                onClick: handleEdit.bind(null, record),
-              },
-              {
-                auth: 'Company:' + PerEnum.DELETE,
-                tooltip: '删除',
-                icon: 'ant-design:delete-outlined',
-                color: 'error',
-                onClick: (e) => {
-                  e.stopPropagation();
-                },
-                popConfirm: {
-                  title: '是否确认删除',
-                  confirm: handleDelete.bind(null, record),
-                  placement: 'left',
-                },
-              },
-            ]"
-          />
-        </template>
+      <template #action="{ row }">
+        <TableAction
+          :actions="createActions(row)"
+        />
       </template>
     </BasicTable>
     <CompanyModal @success="handleSuccess"/>

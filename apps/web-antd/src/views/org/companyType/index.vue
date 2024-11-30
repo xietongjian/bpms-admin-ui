@@ -3,19 +3,17 @@
   import {AccessControl} from '@vben/access';
   import type {VxeGridProps} from '#/adapter/vxe-table';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
+  import {Button} from "ant-design-vue";
   import { getCompanyTypes, deleteById } from '#/api/org/companyType';
   import { columns, searchFormSchema } from './companyType.data';
-  import companyTypeModal from './company-type-modal.vue';
+  import CompanyTypeModal from './company-type-modal.vue';
   import { message } from 'ant-design-vue';
   import type {VbenFormProps} from '@vben/common-ui';
   import {Page, useVbenModal} from '@vben/common-ui';
+  import {useAccess} from "@vben/access";
 
-
-  const [CompanyTypeModal, modalApi] = useVbenModal({
-    connectedComponent: companyTypeModal,
-    centered: true,
-  });
-
+  const PerPrefix = 'CompanyType:';
+  const {hasAccessByCodes}  = useAccess();
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
     submitOnEnter: true,
@@ -110,16 +108,49 @@
       reload();
     }, 200);
   }
+
+  function createActions(record: Recordable) {
+    return [
+      {
+        auth: [PerPrefix + PerEnum.ADD],
+        tooltip: '添加子分类',
+        icon: 'ant-design:plus-outlined',
+        onClick: handleCreateChild.bind(null, record),
+      },
+      {
+        auth: [PerPrefix + PerEnum.UPDATE],
+        tooltip: '修改',
+        icon: 'clarity:note-edit-line',
+        onClick: handleEdit.bind(null, record),
+      },
+      {
+        auth: [PerPrefix + PerEnum.DELETE],
+        tooltip: '删除',
+        icon: 'ant-design:delete-outlined',
+        color: 'error',
+        onClick: (e) => {
+          e.stopPropagation();
+        },
+        popConfirm: {
+          title: '是否确认删除',
+          confirm: handleDelete.bind(null, record),
+          placement: 'left',
+        },
+      },
+    ];
+  }
 </script>
 
 <template>
   <Page auto-content-height>
     <BasicTable table-title="列表">
-<!--      <template #toolbar>
-        <Authority :value="'CompanyType:' + PerEnum.ADD">
-          <a-button type="primary" @click="handleCreate"> 新增</a-button>
-        </Authority>
+      <template #toolbar-tools>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
       </template>
+      <template #action="{ row }">
+        <TableAction :actions="createActions(row)" />
+      </template>
+      <!--
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <TableAction

@@ -16,14 +16,16 @@ const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
     labelWidth: 100,
   },
-  schema: formSchema(),
+  schema: formSchema,
   showDefaultActions: false,
 });
 
 const [BasicModal, modalApi] = useVbenModal({
   fullscreenButton: false,
-  onCancel: handleCancel,
-  onConfirm: handleConfirm,
+  onCancel(){
+
+  },
+  onConfirm() {},
   onOpenChange: async (isOpen) => {
     if (!isOpen) {
       return null;

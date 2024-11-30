@@ -1,7 +1,9 @@
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
-import { type FormSchemaGetter, z } from '#/adapter/form';
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+
 
 import { getCompanyTypes } from '#/api/org/companyType';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
@@ -9,10 +11,10 @@ import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
 let companyTypeTreeData = [];
 const companyTypeObj = {};
 
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '全称',
-    dataIndex: 'cname',
+    field: 'cname',
     align: 'left',
     minWidth: 300,
     width: 300,
@@ -20,7 +22,7 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '编码',
-    dataIndex: 'code',
+    field: 'code',
     align: 'left',
     width: 100,
     resizable: true,
@@ -28,14 +30,14 @@ export const columns: BasicColumn[] = [
 
   {
     title: '简称',
-    dataIndex: 'shortName',
+    field: 'shortName',
     align: 'left',
     width: 180,
     resizable: true,
   },
   {
     title: '类型',
-    dataIndex: 'typeId',
+    field: 'typeId',
     align: 'left',
     width: 180,
     customRender: ({ record }) => {
@@ -45,7 +47,7 @@ export const columns: BasicColumn[] = [
 
   {
     title: '状态',
-    dataIndex: 'status',
+    field: 'status',
     width: 80,
     customRender: ({ record }) => {
       const status = record.status;
@@ -57,20 +59,27 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '排序',
-    dataIndex: 'orderNo',
+    field: 'orderNo',
     align: 'right',
     width: 80,
   },
   {
     title: '创建时间',
-    dataIndex: 'createTime',
+    field: 'createTime',
     width: 180,
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
-export const searchFormSchema: FormSchema[] = [
+export const searchFormSchema: VxeGridProps['columns'] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -87,7 +96,7 @@ export const searchFormSchema: FormSchema[] = [
 ];
 
 
-export const modalSchema: FormSchemaGetter = () => [
+export const modalSchema =  [
   {
     component: 'Input',
     dependencies: {
@@ -101,7 +110,7 @@ export const modalSchema: FormSchemaGetter = () => [
     component: 'Input',
     fieldName: 'dictName',
     label: '字典名称',
-    rules: 'required',
+    // rules: 'required',
   },
   {
     component: 'Input',
@@ -121,7 +130,7 @@ export const modalSchema: FormSchemaGetter = () => [
 ];
 
 
-export const formSchema: FormSchemaGetter = () => [
+export const formSchema = [
   {
     field: 'id',
     label: 'ID',
@@ -140,7 +149,7 @@ export const formSchema: FormSchemaGetter = () => [
     label: '全称',
     required: true,
     component: 'Input',
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -150,7 +159,7 @@ export const formSchema: FormSchemaGetter = () => [
         max: 64,
         message: '字符长度不能大于64！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },
@@ -160,7 +169,7 @@ export const formSchema: FormSchemaGetter = () => [
     label: '简称',
     required: false,
     component: 'Input',
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -170,7 +179,7 @@ export const formSchema: FormSchemaGetter = () => [
         max: 64,
         message: '字符长度不能大于64！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },
@@ -236,12 +245,12 @@ export const formSchema: FormSchemaGetter = () => [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    rules: [
+    /*rules: [
       {
         max: 200,
         message: '字符长度不能大于64！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },

@@ -148,7 +148,6 @@ function onSearch() {
 }
 
 function handleSelect(keys: string, e) {
-  debugger;
   const node = e.selectedNodes[0];
   if (node) {
     currentCategory.value = node;
@@ -165,39 +164,31 @@ function handleSelect(keys: string, e) {
 
 <template>
   <Page content-class="flex flex-row gap-4 h-full" auto-content-height>
-    <div class="w-[260px] h-full overflow-x-hidden p-4 bg-card">
-      <Tree
-        v-bind="$attrs"
-        v-if="treeData.length > 0"
-        v-model:selected-keys="selectNodeId"
-        :class="$attrs.class"
-        :field-names="{ title: 'title', key: 'key' }"
-        :show-line="{ showLeafIcon: false }"
-        :tree-data="treeData"
-        block-node
-        :virtual="false"
-        default-expand-all
-        @select="handleSelect"
-      >
-<!--        <template #title="{ label }">
-          <span v-if="label.indexOf(searchValue) > -1">
-            {{ label.substring(0, label.indexOf(searchValue)) }}
-            <span style="color: #f50">{{ searchValue }}</span>
-            {{
-              label.substring(
-                label.indexOf(searchValue) + searchValue.length,
-              )
-            }}
-          </span>
-          <span v-else>{{ label }}</span>
-        </template>-->
-      </Tree>
-      <!-- 仅本人数据权限 可以考虑直接不显示 -->
-      <div v-else class="mt-5">
-        <Empty
-          :image="Empty.PRESENTED_IMAGE_SIMPLE"
-          description="无数据"
-        />
+    <div class="w-[260px] h-full bg-card flex flex-col">
+      <div class="h-[50px] w-full flex-center p-4 border-b border-solid border-gray-200">
+        <h1 style="font-size: 16px;">流程分类</h1>
+      </div>
+      <div class="flex-1 h-full overflow-y-auto overflow-x-hidden pt-2 pb-2">
+        <Tree
+          v-bind="$attrs"
+          v-if="treeData.length > 0"
+          v-model:selected-keys="selectNodeId"
+          :class="$attrs.class"
+          :field-names="{ title: 'title', key: 'key' }"
+          :show-line="false"
+          :tree-data="treeData"
+          block-node
+          :virtual="false"
+          default-expand-all
+          @select="handleSelect"
+        >
+        </Tree>
+        <div v-else class="mt-5">
+          <Empty
+            :image="Empty.PRESENTED_IMAGE_SIMPLE"
+            description="无数据"
+          />
+        </div>
       </div>
     </div>
 

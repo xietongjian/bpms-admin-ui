@@ -1,8 +1,7 @@
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
-
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
-import {FormSchemaGetter} from "#/adapter/form";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -57,7 +56,7 @@ export const searchFormSchema: FormSchema[] = [
   },
 ];
 
-export const formSchema: FormSchemaGetter = () => [
+export const formSchema : FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
@@ -79,7 +78,7 @@ export const formSchema: FormSchemaGetter = () => [
     label: '名称',
     required: true,
     component: 'Input',
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -89,7 +88,7 @@ export const formSchema: FormSchemaGetter = () => [
         max: 64,
         message: '字符长度不能大于64！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },
@@ -126,12 +125,12 @@ export const formSchema: FormSchemaGetter = () => [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    rules: [
+   /* rules: [
       {
         max: 200,
         message: '字符长度不能大于64！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },
