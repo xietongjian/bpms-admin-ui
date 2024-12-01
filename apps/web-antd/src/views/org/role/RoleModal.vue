@@ -1,18 +1,13 @@
-<template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
-  </BasicModal>
-</template>
 <script lang="ts" setup>
   import { defineComponent,defineExpose, defineEmits, ref, computed, unref } from 'vue';
   // import { BasicModal, useModalInner } from '@/components/Modal';
   // import { BasicForm, Rule, useForm } from '@/components/Form/index';
   import { roleFormSchema } from './role.data';
+  import {useVbenModal} from '@vben/common-ui';
   import { saveOrUpdate, checkEntityExist } from '#/api/org/role';
   import { getCompanies } from '#/api/org/company';
   import { FormValidPatternEnum } from '#/enums/constantEnum';
   import {useVbenForm} from "#/adapter/form";
-  import {formSchema} from "#/views/org/company/company.data";
 
   const emit = defineEmits(['success'])
   const isUpdate = ref(true);
@@ -25,6 +20,7 @@
     showDefaultActions: false,
   });
 
+/*
   const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
     labelWidth: 100,
     schemas: roleFormSchema,
@@ -33,8 +29,42 @@
       span: 23,
     },
   });
+*/
 
-  const getBaseDynamicRules = (params: CheckExistParams) => {
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          baseFormApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await baseFormApi.submitForm();
+      handleSubmit();
+    },
+  });
+
+
+  const [BaseForm, baseFormApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: roleFormSchema,
+    wrapperClass: 'grid-cols-1',
+  });
+
+  const getBaseDynamicRules = (params: any) => {
     return [
       {
         trigger: 'blur',
@@ -64,7 +94,7 @@
     ] as Rule[];
   };
 
-  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+  /*const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     await resetFields();
     setModalProps({ confirmLoading: false });
     isUpdate.value = !!data?.isUpdate;
@@ -103,7 +133,7 @@
       ...formData,
     });
   });
-
+*/
   const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 
   async function handleSubmit() {
@@ -121,3 +151,9 @@
     }
   }
 </script>
+
+<template>
+  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
+    <BasicForm @register="registerForm" />
+  </BasicModal>
+</template>

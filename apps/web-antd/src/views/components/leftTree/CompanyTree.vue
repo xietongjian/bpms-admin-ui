@@ -1,37 +1,42 @@
 <template>
   <div class="company-tree bg-white overflow-hidden" v-loading="treeLoading">
-    <BasicTree
-      title="公司"
-      toolbar
-      search
-      treeWrapperClassName="h-[calc(100%-35px)] overflow-auto"
-      :clickRowToExpand="false"
-      :treeData="treeData"
+    <Tree
+      ref="treeRef"
+      v-bind="$attrs"
+      v-if="treeData.length > 0"
+      :class="$attrs.class"
+      :field-names="{ title: 'title', key: 'key' }"
+      :show-line="false"
+      :tree-data="treeData"
+      block-node
+      :virtual="false"
+      default-expand-all
       @select="handleSelect"
-      ref="basicTreeRef"
-    />
+    >
+    </Tree>
   </div>
 </template>
 <script lang="ts" setup>
   import { onMounted, ref, unref, nextTick, defineEmits } from 'vue';
   import { getCompanies } from '#/api/org/company';
   import { findNode } from '#/utils/helper/treeHelper';
+  import {Tree} from "ant-design-vue";
 
   const emit = defineEmits(['select']);
 
-  const treeData = ref<TreeItem[]>([]);
+  const treeData = ref<any[]>([]);
   const treeLoading = ref<boolean>(false);
-  const basicTreeRef = ref<Nullable<TreeActionType>>(null);
+  const treeRef = ref(null);
 
   async function fetch() {
     treeLoading.value = true;
     getCompanies()
       .then((res) => {
-        treeData.value = res as unknown as TreeItem[];
+        treeData.value = res||[];
         nextTick(() => {
           // 加载后展开节层级
           if (unref(treeData).length < 10) {
-            unref(basicTreeRef)?.filterByLevel(1);
+            // unref(basicTreeRef)?.filterByLevel(1);
           }
         });
       })

@@ -1,10 +1,14 @@
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '@/enums/constantEnum';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
 
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
     width: 300,
     minWidth: 300,
@@ -12,40 +16,40 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '编码',
-    dataIndex: 'code',
+    field: 'code',
     width: 120,
     align: 'left',
     resizable: true,
   },
   {
     title: '部门领导',
-    dataIndex: 'leaderName',
+    field: 'leaderName',
     width: 100,
     align: 'center',
   },
   {
     title: '分管领导',
-    dataIndex: 'superiorName',
+    field: 'superiorName',
     width: 100,
     align: 'center',
   },
   {
     title: '所属公司',
-    dataIndex: 'companyName',
+    field: 'companyName',
     width: 120,
     align: 'left',
     resizable: true,
   },
   {
     title: '创建时间',
-    dataIndex: 'createTime',
+    field: 'createTime',
     width: 180,
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -63,25 +67,25 @@ export const searchFormSchema: FormSchema[] = [
 
 export const deptFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'pid',
+    fieldName: 'pid',
     label: 'pid',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
     component: 'Input',
     required: true,
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -91,13 +95,13 @@ export const deptFormSchema: FormSchema[] = [
         max: 100,
         message: '字符长度不能大于100！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },
   },
   {
-    field: 'code',
+    fieldName: 'code',
     label: '编码',
     component: 'Input',
     required: true,
@@ -106,7 +110,7 @@ export const deptFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'leaderPersonal',
+    fieldName: 'leaderPersonal',
     label: '部门领导',
     component: 'PersonalSelector',
     componentProps: {
@@ -118,13 +122,13 @@ export const deptFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'leaderName',
+    fieldName: 'leaderName',
     label: '部门领导',
     component: 'Input',
     show: false,
   },
   {
-    field: 'superiorPersonal',
+    fieldName: 'superiorPersonal',
     label: '分管领导',
     component: 'PersonalSelector',
     componentProps: {
@@ -136,13 +140,13 @@ export const deptFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'superiorName',
+    fieldName: 'superiorName',
     label: '分管领导',
     component: 'Input',
     show: false,
   },
   {
-    field: 'companyId',
+    fieldName: 'companyId',
     label: '所属公司',
     component: 'TreeSelect',
     componentProps: {
@@ -155,7 +159,7 @@ export const deptFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'orderNo',
+    fieldName: 'orderNo',
     label: '排序号',
     helpMessage: '数值越小越靠前！',
     required: false,
@@ -168,7 +172,7 @@ export const deptFormSchema: FormSchema[] = [
   },
   {
     label: '备注',
-    field: 'note',
+    fieldName: 'note',
     component: 'InputTextArea',
     componentProps: {
       autoSize: {
@@ -176,12 +180,12 @@ export const deptFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    rules: [
+    /*rules: [
       {
         max: 256,
         message: '字符长度不能大于256！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },

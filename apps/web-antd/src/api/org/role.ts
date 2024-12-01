@@ -29,7 +29,7 @@ export const getRoleListByPage = (params: any) => {
   }
   const url = personalId ? Api.PageListByPersonalId + `?personalId=${personalId}` : Api.PageList;
   const queryParam = { query, entity };
-  return requestClient.post<any>(params: queryParam);
+  return requestClient.post<any>(url, params);
 };
 
 export const getMatrixRolePageList = (params: any) => {

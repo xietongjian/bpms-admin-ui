@@ -1,19 +1,25 @@
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
-import { OrderNoDefaultEnum } from '@/enums/constantEnum';
+import { OrderNoDefaultEnum } from '#/enums/constantEnum';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import {checkEntityExist} from "#/api/base/app";
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
 
-export const columns: BasicColumn[] = [
+
+export const columns: VxeGridProps['columns'] = [
   {
     title: '岗位名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
     width: 300,
     resizable: true,
   },
   {
     title: '编码',
-    dataIndex: 'code',
+    field: 'code',
     align: 'left',
     width: 200,
     resizable: true,
@@ -21,13 +27,13 @@ export const columns: BasicColumn[] = [
 
   {
     title: '排序编号',
-    dataIndex: 'orderNo',
+    field: 'orderNo',
     width: 100,
     align: 'right',
   },
   {
     title: '状态',
-    dataIndex: 'status',
+    field: 'status',
     width: 80,
     customRender: ({ record }) => {
       const status = record.status;
@@ -39,7 +45,7 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '成立日期',
-    dataIndex: 'startDate',
+    field: 'startDate',
     width: 100,
     align: 'left',
   },
@@ -47,7 +53,7 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -65,19 +71,19 @@ export const searchFormSchema: FormSchema[] = [
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '岗位名称',
     required: true,
     component: 'Input',
     show: true,
-    rules: [
+   /* rules: [
       {
         required: true,
         whitespace: true,
@@ -87,13 +93,13 @@ export const formSchema: FormSchema[] = [
         max: 80,
         message: '字符长度不能大于80！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },
   },
   {
-    field: 'code',
+    fieldName: 'code',
     label: '编码',
     required: true,
     component: 'Input',
@@ -103,14 +109,14 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    field: 'positionSeqId',
+    fieldName: 'positionSeqId',
     label: '岗位序列ID',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'positionSeqCode',
+    fieldName: 'positionSeqCode',
     label: '岗位序列编码',
     required: false,
     component: 'Input',
@@ -118,7 +124,7 @@ export const formSchema: FormSchema[] = [
   },
 
   {
-    field: 'startDate',
+    fieldName: 'startDate',
     label: '成立日期',
     required: false,
     component: 'DatePicker',
@@ -131,7 +137,7 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    field: 'orderNo',
+    fieldName: 'orderNo',
     label: '排序编号',
     helpMessage: '数值越小越靠前！',
     required: false,
@@ -144,7 +150,7 @@ export const formSchema: FormSchema[] = [
     show: true,
   },
   {
-    field: 'status',
+    fieldName: 'status',
     label: '状态',
     required: false,
     component: 'Switch',

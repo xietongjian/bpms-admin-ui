@@ -1,42 +1,43 @@
-import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '@/enums/constantEnum';
+import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns']  = [
   {
     title: '名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
     width: 300,
     resizable: true,
   },
   {
     title: '编码',
-    dataIndex: 'sn',
+    field: 'sn',
     align: 'left',
     width: 200,
     resizable: true,
   },
   {
     title: '类型',
-    dataIndex: 'type',
+    field: 'type',
     width: 120,
   },
   {
     title: '排序号',
-    dataIndex: 'orderNo',
+    field: 'orderNo',
     width: 80,
     align: 'right',
   },
   {
     title: '修改时间',
-    dataIndex: 'updateTime',
+    field: 'updateTime',
     width: 180,
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -54,14 +55,14 @@ export const searchFormSchema: FormSchema[] = [
 
 export const roleFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'type',
+    fieldName: 'type',
     label: '类型',
     component: 'RadioButtonGroup',
     required: true,
@@ -77,11 +78,11 @@ export const roleFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
     component: 'Input',
     required: true,
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -91,13 +92,13 @@ export const roleFormSchema: FormSchema[] = [
         max: 64,
         message: '字符长度不能大于64！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },
   },
   {
-    field: 'sn',
+    fieldName: 'sn',
     label: '编码',
     component: 'Input',
     required: true,
@@ -106,14 +107,14 @@ export const roleFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'companyId',
+    fieldName: 'companyId',
     label: '所属公司',
     component: 'Input',
     required: false,
     show: false,
   },
   {
-    field: 'orderNo',
+    fieldName: 'orderNo',
     label: '排序号',
     helpMessage: '数值越小越靠前！',
     required: false,
@@ -126,7 +127,7 @@ export const roleFormSchema: FormSchema[] = [
   },
   {
     label: '备注',
-    field: 'note',
+    fieldName: 'note',
     component: 'InputTextArea',
     componentProps: {
       autoSize: {
@@ -134,12 +135,12 @@ export const roleFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    rules: [
+    /*rules: [
       {
         max: 1024,
         message: '字符长度不能大于1024！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },

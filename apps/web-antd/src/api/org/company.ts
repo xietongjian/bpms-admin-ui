@@ -10,7 +10,7 @@ enum Api {
 }
 
 export const getCompanies = (params?: any) => {
-  const result = requestClient.post<any>(Api.CompanyList, params);
+  const result = requestClient.post<any>(Api.CompanyList, params||{});
   return Promise.resolve(result).then((res: any) => {
     res.forEach((item) => {
       item.key = item.id;

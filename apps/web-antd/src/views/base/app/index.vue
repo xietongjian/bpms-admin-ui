@@ -8,14 +8,14 @@ import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {deleteByIds, getAppListByPage} from '#/api/base/app';
 import AppModal from './app-modal.vue';
 import AppSecretKeyModal from './app-secret-key-modal.vue';
-import {AccessControl} from '@vben/access';
+import {useAccess} from '@vben/access';
 import { TableAction } from '#/components/table-action';
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import {PerEnum} from "#/enums/perEnum";
-
 import type { Recordable } from '@vben/types';
-const PerPrefix = "App:";
 
+const PerPrefix = "App:";
+const {hasAccessByCodes} = useAccess();
 const appModalRef = ref();
 const appSecretKeyModalRef = ref();
 
@@ -77,7 +77,6 @@ function handleEdit(record: any) {
 }
 
 function handleViewSecretKey(record: any) {
-  debugger;
   appSecretKeyModalRef.value.setData(record);
   appSecretKeyModalRef.value.open();
   appSecretKeyModalRef.value.setState({
@@ -137,9 +136,7 @@ function createActions(row: Recordable) {
   <Page auto-content-height>
     <BasicTable table-title="列表">
       <template #toolbar-tools>
-        <AccessControl :codes="[PerPrefix + PerEnum.ADD]" type="code">
-          <Button type="primary" @click="handleAdd">新建</Button>
-        </AccessControl>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleAdd">新建</Button>
       </template>
 
       <template #image="{ row }">

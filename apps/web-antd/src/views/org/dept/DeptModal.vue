@@ -1,32 +1,62 @@
-<template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
-  </BasicModal>
-</template>
 <script lang="ts" setup>
   import { ref, computed, unref, defineEmits } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, Rule, useForm } from '@/components/Form/index';
+  // import { BasicModal, useModalInner } from '@/components/Modal';
+  // import { BasicForm, Rule, useForm } from '@/components/Form/index';
   import { deptFormSchema } from './dept.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/org/dept';
   import { getCompanies } from '#/api/org/company';
-  import { CheckExistParams } from '#/api/model/baseModel';
-  import { FormValidPatternEnum } from '@/enums/constantEnum';
+  // import { CheckExistParams } from '#/api/model/baseModel';
+  import { FormValidPatternEnum } from '#/enums/constantEnum';
+  import {useVbenForm} from "#/adapter/form";
+  import {roleFormSchema} from "#/views/org/role/role.data";
+  import {useVbenModal} from '@vben/common-ui';
 
   const emit = defineEmits(['success', 'register']);
 
   const isUpdate = ref(true);
 
-  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
+ /* const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
     labelWidth: 100,
     schemas: deptFormSchema,
     showActionButtonGroup: false,
     actionColOptions: {
       span: 23,
     },
+  });*/
+
+
+  const [BaseForm, baseFormApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: deptFormSchema,
+    wrapperClass: 'grid-cols-1',
   });
 
-  const getBaseDynamicRules = (params: CheckExistParams) => {
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          baseFormApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await baseFormApi.submitForm();
+      handleSubmit();
+    },
+  });
+  const getBaseDynamicRules = (params: any) => {
     return [
       {
         trigger: 'blur',
@@ -56,7 +86,7 @@
     ] as Rule[];
   };
 
-  const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(
+  /*const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(
     async (data) => {
       await resetFields();
       setModalProps({ confirmLoading: true });
@@ -130,7 +160,7 @@
         }
       }
     },
-  );
+  );*/
 
   const getTitle = computed(() => (!unref(isUpdate) ? '新增部门' : '修改部门'));
 
@@ -160,3 +190,8 @@
     }
   }
 </script>
+<template>
+  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
+    <BasicForm @register="registerForm" />
+  </BasicModal>
+</template>

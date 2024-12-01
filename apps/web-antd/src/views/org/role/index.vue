@@ -1,21 +1,20 @@
 <template>
   <Page auto-content-height>
-    <div class="p-4 h-full">
-      <SplitPane>
-        <template #left>
-          <CompanyTree class="h-full" @select="handleSelect" />
-        </template>
-        <template #main>
-          <BasicTable @register="registerTable" class="!pt-0 !pl-0 !pr-0 !pb-0">
-            <template #toolbar>
-              <Authority :value="'Role:' + PerEnum.ADD">
-                <a-button type="primary" @click="handleCreate">新增</a-button>
-              </Authority>
-            </template>
-            <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'action'">
-                <TableAction
-                  :actions="[
+    <div class="flex flex-row gap-2 h-full">
+      <div class="w-[260px] h-full bg-card flex flex-col">
+        <CompanyTree class="h-full" @select="handleSelect" />
+      </div>
+      <div class="flex-1 h-full">
+        <BasicTable @register="registerTable" >
+          <template #toolbar>
+            <Authority :value="'Role:' + PerEnum.ADD">
+              <a-button type="primary" @click="handleCreate">新增</a-button>
+            </Authority>
+          </template>
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'action'">
+              <TableAction
+                :actions="[
                     {
                       auth: 'Role:' + PerEnum.UPDATE,
                       tooltip: '配置所属公司',
@@ -43,43 +42,43 @@
                       },
                     },
                   ]"
-                />
-              </template>
-
-              <template v-else-if="column.key === 'companies'">
-                <div v-if="record.companies && record.companies.length > 0">
-                  <Popover title="所属公司" placement="left" class="companies-details">
-                    <template #content>
-                      <div class="role-companies">
-                        <div class="mb-2" v-if="record.companies.length > 0">
-                          <Divider class="split-line" orientation="left" />
-                          <Tag
-                            color="blue"
-                            class="company-item"
-                            v-for="company in record.companies"
-                          >
-                            {{ company.cname }}
-                          </Tag>
-                        </div>
-                      </div>
-                    </template>
-                    <div class="companies-handle">
-                      <Space>
-                        <!-- <Tag>所属公司</Tag>-->
-                        <Badge
-                          :count="record.companies.length"
-                          :number-style="{ backgroundColor: '#52c41a' }"
-                        />
-                      </Space>
-                    </div>
-                  </Popover>
-                </div>
-                <div v-else>未设置</div>
-              </template>
+              />
             </template>
-          </BasicTable>
-        </template>
-      </SplitPane>
+
+            <template v-else-if="column.key === 'companies'">
+              <div v-if="record.companies && record.companies.length > 0">
+                <Popover title="所属公司" placement="left" class="companies-details">
+                  <template #content>
+                    <div class="role-companies">
+                      <div class="mb-2" v-if="record.companies.length > 0">
+                        <Divider class="split-line" orientation="left" />
+                        <Tag
+                          color="blue"
+                          class="company-item"
+                          v-for="company in record.companies"
+                        >
+                          {{ company.cname }}
+                        </Tag>
+                      </div>
+                    </div>
+                  </template>
+                  <div class="companies-handle">
+                    <Space>
+                      <!-- <Tag>所属公司</Tag>-->
+                      <Badge
+                        :count="record.companies.length"
+                        :number-style="{ backgroundColor: '#52c41a' }"
+                      />
+                    </Space>
+                  </div>
+                </Popover>
+              </div>
+              <div v-else>未设置</div>
+            </template>
+          </template>
+        </BasicTable>
+
+      </div>
     </div>
     <RoleModal @register="registerModal" @success="handleSuccess" />
     <OrgSelectorModal @register="registerOrgModal" @change="handleSettingOrgSuccess" />
@@ -87,15 +86,18 @@
 </template>
 <script lang="ts" setup>
   import { PerEnum } from '#/enums/perEnum';
-  import {AccessControl} from '@vben/access';
+  import {useAccess} from '@vben/access';
+  import type{Recordable} from '@vben/types';
   import { defineComponent, ref, unref } from 'vue';
   import { Input, Tag, Space, Badge, Popover, Affix, Divider } from 'ant-design-vue';
   import { SettingOutlined } from '@ant-design/icons-vue';
-  import {useVbenVxeGrid, VxeGridProps} from '#/adapter/vxe-table';
+  import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
   import { getRoleListByPage, deleteByIds, saveBatch } from '#/api/org/role';
+  import type {VbenFormProps} from '@vben/common-ui';
+
   // import { PageWrapper } from '@/components/Page';
-  import {Page, useVbenModal, type VbenFormProps} from '@vben/common-ui';
-  // import CompanyTree from '@/views/components/leftTree/CompanyTree.vue';
+  import {Page, useVbenModal} from '@vben/common-ui';
+  import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';
   import { message } from 'ant-design-vue';
   // import { useModal } from '@/components/Modal';
   import RoleModal from './RoleModal.vue';
@@ -106,15 +108,18 @@
   // import { OrgSelectType } from '@/components/Selector/src/types';
   // import SplitPane from '@/views/components/splitPane/index.vue';
 
-  const [registerModal, { openModal }] = useModal();
+  // const [registerModal, { openModal }] = useModal();
   // 人员选择弹窗
-  const [registerOrgModal, { openModal: openOrgSelector, setModalProps: setOrgModalProps }] =
-    useModal();
+  // const [registerOrgModal, { openModal: openOrgSelector, setModalProps: setOrgModalProps }] =
+  //   useModal();
 
   const currentRole = ref<Recordable>({});
   const currentNode = ref<Recordable>({});
 
-  const [registerTable, { reload, setProps }] = useTable({
+  const PerPrefix = 'Role:';
+  const {hasAccessByCodes} = useAccess();
+
+  /*const [registerTable, { reload, setProps }] = useTable({
     title: '列表',
     api: getRoleListByPage,
     columns,
@@ -136,7 +141,7 @@
       title: '操作',
       dataIndex: 'action',
     },
-  });
+  });*/
 
 
   const formOptions: VbenFormProps = {
@@ -159,16 +164,8 @@
     },
     columns,
     columnConfig: {resizable: true},
-    pagerConfig: {
-      enabled: false,
-    },
     rowConfig: {
       keyField: 'id',
-    },
-    treeConfig: {
-      parentField: 'pid',
-      rowField: 'id',
-      transform: true,
     },
     height: 'auto',
     keepSource: true,

@@ -4,19 +4,20 @@
   import { ref, unref } from 'vue';
   import type { Recordable } from '@vben/types';
 
-  import {useVbenVxeGrid, VxeGridProps} from '#/adapter/vxe-table';
+  import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
   import { deleteByIds, getDepts } from '#/api/org/dept';
-  import CompanyTree from '@/views/components/leftTree/CompanyTree.vue';
+  import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';
   import { message } from 'ant-design-vue';
-  import { useModal } from '@/components/Modal';
+  // import { useModal } from '@/components/Modal';
   import DeptModal from './DeptModal.vue';
-  import SplitPane from '@/views/components/splitPane/index.vue';
+  // import SplitPane from '@/views/components/splitPane/index.vue';
   import { columns, searchFormSchema } from './dept.data';
   import { EmpInfo } from '#/views/components/EmpInfo';
-  import {Page, VbenFormProps} from "@vben/common-ui";
+  import {Page } from "@vben/common-ui";
+  import type {VbenFormProps} from '@vben/common-ui';
 
 
-  const [registerModal, { openModal, setModalProps }] = useModal();
+  // const [registerModal, { openModal, setModalProps }] = useModal();
   const currentNode = ref<Recordable>({});
 
 
@@ -37,6 +38,14 @@
     checkboxConfig: {
       highlight: true,
       labelField: 'name',
+    },
+    pagerConfig: {
+      enabled: false,
+    },
+    treeConfig: {
+      parentField: 'pid',
+      rowField: 'id',
+      transform: true,
     },
     columns,
     columnConfig: {resizable: true},
@@ -118,23 +127,22 @@
 
 <template>
   <Page auto-content-height>
-    <div class="p-4 h-full">
-      <SplitPane>
-        <template #left>
-          <CompanyTree style="height: 100%" @select="handleSelect" />
-        </template>
-        <template #main>
-          <BasicTable @register="registerTable" class="!pt-0 !pl-0 !pr-0 !pb-0">
-            <template #toolbar>
-              <Authority :value="'Department:' + PerEnum.ADD">
-                <a-button type="primary" @click="handleCreate">新增</a-button>
-              </Authority>
-            </template>
-            <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'action'">
-                <TableAction
-                    :stopButtonPropagation="true"
-                    :actions="[
+    <div class="flex flex-row gap-2 h-full">
+      <div class="w-[260px] h-full bg-card flex flex-col">
+        <CompanyTree style="height: 100%" @select="handleSelect" />
+      </div>
+      <div class="flex-1 h-full">
+        <BasicTable @register="registerTable" class="!pt-0 !pl-0 !pr-0 !pb-0">
+          <template #toolbar>
+            <Authority :value="'Department:' + PerEnum.ADD">
+              <a-button type="primary" @click="handleCreate">新增</a-button>
+            </Authority>
+          </template>
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'action'">
+              <TableAction
+                  :stopButtonPropagation="true"
+                  :actions="[
                     {
                       auth: 'Department:' + PerEnum.ADD,
                       tooltip: '添加子部门',
@@ -159,20 +167,19 @@
                       },
                     },
                   ]"
-                />
-              </template>
-
-              <template v-else-if="column.key === 'superiorName'">
-                <EmpInfo :no="record.superiorCode" :name="record.superiorName" />
-              </template>
-
-              <template v-else-if="column.key === 'leaderName'">
-                <EmpInfo :no="record.leaderCode" :name="record.leaderName" />
-              </template>
+              />
             </template>
-          </BasicTable>
-        </template>
-      </SplitPane>
+
+            <template v-else-if="column.key === 'superiorName'">
+              <EmpInfo :no="record.superiorCode" :name="record.superiorName" />
+            </template>
+
+            <template v-else-if="column.key === 'leaderName'">
+              <EmpInfo :no="record.leaderCode" :name="record.leaderName" />
+            </template>
+          </template>
+        </BasicTable>
+      </div>
     </div>
     <DeptModal @register="registerModal" @success="handleSuccess" />
   </Page>

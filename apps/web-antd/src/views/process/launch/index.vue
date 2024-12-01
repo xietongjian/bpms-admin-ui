@@ -207,9 +207,9 @@ function handleSelect(keys: string, e) {
           />
         </div>
       </div>
-      <div class="flex-1 overflow-x-hidden overflow-y-auto h-full p-4 bg-card">
+      <div class="flex-1 overflow-x-hidden overflow-y-auto !p-4 bg-card m">
         <Spin v-if="showModel" :spinning="dataListLoading" >
-          <div >
+          <div class="m-h-[500px]">
             <template v-if="modelList && Object.keys(modelList).length > 0">
               <div v-for="(values, key) of modelList" :key="key">
                 <Divider orientation="left" orientation-margin="0px">
