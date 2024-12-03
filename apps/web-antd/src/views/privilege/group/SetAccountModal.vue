@@ -4,7 +4,7 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits } from 'vue';
+  import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
   import { setAccountFormSchema } from './group.data';
   import { getAllList } from '#/api/privilege/account';
   import { addUserGroups } from '#/api/privilege/group';
@@ -27,7 +27,7 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          baseFormApi.setValues(values);
+          formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -38,7 +38,7 @@
     },
   });
 
-  const [BaseForm, baseFormApi] = useVbenForm({
+  const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
       componentProps: {
         // class: 'w-full',
@@ -118,4 +118,6 @@
       setModalProps({ confirmLoading: false });
     }
   }
+
+  defineExpose(modalApi)
 </script>

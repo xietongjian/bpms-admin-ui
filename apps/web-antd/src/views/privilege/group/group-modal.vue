@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import {defineExpose, defineEmits} from 'vue';
 import {useVbenModal} from '@vben/common-ui';
 import {message} from 'ant-design-vue';
 import {formSchema} from './group.data';
@@ -38,13 +39,8 @@ const [BasicForm, baseFormApi] = useVbenForm({
     },
   },
   showDefaultActions: false,
-  // 提交函数
-  // handleSubmit: onSubmit,
-  // 垂直布局，label和input在不同行，值为vertical
-  // 水平布局，label和input在同一行
   layout: 'horizontal',
-  schema: formSchema(),
-  // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个
+  schema: formSchema,
   wrapperClass: 'grid-cols-1',
 });
 
@@ -70,6 +66,8 @@ async function handleSubmit() {
   }
   modalApi.setState({loading: false, confirmLoading: false});
 }
+
+defineExpose(modalApi)
 </script>
 <template>
   <BasicModal class="w-[600px]">

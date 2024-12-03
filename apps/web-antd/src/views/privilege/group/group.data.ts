@@ -1,9 +1,9 @@
 // import { BasicColumn, FormSchema } from '@/components/Table';
 // import Icon from '@/components/Icon/Icon.vue';
-import { type FormSchema, z } from '#/adapter/form';
-import type { VxeGridProps } from '#/adapter/vxe-table';
-
 import { h } from 'vue';
+import { type FormSchema, z } from '#/adapter/form';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import type { VxeGridProps } from '#/adapter/vxe-table';
 import { RemarkDefaultEnum } from '#/enums/constantEnum';
 
 export const columns: VxeGridProps['columns'] = [
@@ -67,7 +67,7 @@ export const aclColumns: VxeGridProps['columns'] = [
   },
 ];
 
-export const searchFormSchema: FormSchemaGetter = () => [
+export const searchFormSchema: FormSchema[] = [
   {
     component: 'Input',
     fieldName: 'keyword',
@@ -86,7 +86,7 @@ export const searchFormSchema: FormSchemaGetter = () => [
     },*/
 ];
 
-export const formSchema: FormSchemaGetter = () => [
+export const formSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
@@ -101,17 +101,13 @@ export const formSchema: FormSchemaGetter = () => [
     label: '名称',
     required: true,
     component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 64,
-        message: '字符长度不能大于64！',
-      },
-    ],*/
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(64, "字符长度不能大于64")
   },
   {
     fieldName: 'sn',
@@ -129,6 +125,9 @@ export const formSchema: FormSchemaGetter = () => [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
+    rules: z
+        .string()
+        .max(1024, "字符长度不能大于1024！")
     /*rules: [
       {
         max: 1024,
@@ -138,7 +137,7 @@ export const formSchema: FormSchemaGetter = () => [
   },
 ];
 
-export const setAccountFormSchema: FormSchemaGetter = () => [
+export const setAccountFormSchema: FormSchema[] = [
   {
     label: 'ID',
     fieldName: 'id',

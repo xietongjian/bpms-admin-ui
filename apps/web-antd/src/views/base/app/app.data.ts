@@ -104,7 +104,6 @@ export const formSchema: FormSchema[] = [
           .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
           .refine(
             async (e) => {
-              // 假设这是一个异步函数，模拟检查用户名是否已存在
               let result = false;
               try {
                 result = await checkEntityExist({

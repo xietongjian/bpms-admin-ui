@@ -10,7 +10,7 @@ import type {Recordable} from '@vben/types';
 import {columns, searchFormSchema} from './account.data';
 import {UserOutlined} from '@ant-design/icons-vue';
 
-import accountModal from './account-modal.vue';
+import AccountModal from './account-modal.vue';
 import PasswordModal from './PasswordModal.vue';
 import SetGroupModal from './SetGroupModal.vue';
 
@@ -21,12 +21,10 @@ import {TableAction} from '#/components/table-action';
 
 const passwordModalRef = ref();
 const setGroupModalRef = ref();
+const accountModalRef = ref();
 const {hasAccessByCodes} = useAccess();
 const PerPrefix = 'Account:';
-const [AccountModal, modalApi] = useVbenModal({
-  connectedComponent: accountModal,
-  centered: true,
-});
+
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -206,7 +204,7 @@ function previewImageVisibleChange(visible, prevVisible) {
       </template>
 
     </BasicTable>
-    <AccountModal @onSuccess="tableApi.reload()"/>
+    <AccountModal ref="accountModalRef" @onSuccess="tableApi.reload()"/>
     <PasswordModal ref="passwordModalRef" @register="registerPasswordModal" @success="handlePasswordSuccess"/>
     <SetGroupModal ref="setGroupModalRef" @register="registerSetGroupModal" @success="handleSetGroupSuccess"/>
   </Page>

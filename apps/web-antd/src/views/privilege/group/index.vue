@@ -8,7 +8,7 @@ import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {getGroupListByPage, deleteByIds} from '#/api/privilege/group';
 import {TableAction} from '#/components/table-action';
 import type {Recordable} from '@vben/types';
-import groupModal from './group-modal.vue';
+import GroupModal from './group-modal.vue';
 import { useAccess } from '@vben/access';
 
 import {columns, searchFormSchema} from "./group.data";
@@ -20,12 +20,8 @@ import {PerEnum} from "#/enums/perEnum";
 const PerPrefix = "Group:";
 const setAccountModalRef = ref();
 const setAclModalRef = ref();
+const groupModalRef = ref();
 const { hasAccessByCodes } = useAccess();
-
-const [GroupModal, modalApi] = useVbenModal({
-  connectedComponent: groupModal,
-  centered: true,
-});
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -65,17 +61,17 @@ const gridOptions: VxeGridProps<any> = {
 const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 function handleAdd() {
-  modalApi.setData({});
-  modalApi.open();
-  modalApi.setState({
+  groupModalRef.value.setData({});
+  groupModalRef.value.open();
+  groupModalRef.value.setState({
     title: '新建'
   });
 }
 
 function handleEdit(record: any) {
-  modalApi.setData(record);
-  modalApi.open();
-  modalApi.setState({
+  groupModalRef.value.setData(record);
+  groupModalRef.value.open();
+  groupModalRef.value.setState({
     title: '修改'
   });
 }
@@ -192,7 +188,7 @@ function handleSetAccountSuccess() {
         <Tag v-else>-</Tag>
       </template>
     </BasicTable>
-    <GroupModal @onSuccess="tableApi.reload()"/>
+    <GroupModal ref="groupModalRef" @onSuccess="tableApi.reload()"/>
     <SetAccountModal ref="setAccountModalRef" @success="handleSetAccountSuccess" />
     <SetAclModal ref="setAclModalRef" />
   </Page>
