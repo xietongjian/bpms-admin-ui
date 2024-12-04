@@ -11,8 +11,9 @@ enum Api {
 }
 
 export const getModuleAclsByGroupId = (params: any) => {
-  const result = requestClient.get<any>(Api.GetModuleAclsByGroupId + '/' + params.groupId);
-  return Promise.resolve(result).then((res: any) => {
+  return requestClient.get<any>(Api.GetModuleAclsByGroupId + '/' + params.groupId);
+
+  /*return Promise.resolve(result).then((res: any) => {
     const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
     forEach(
       treeData,
@@ -24,7 +25,7 @@ export const getModuleAclsByGroupId = (params: any) => {
       { id: 'id', children: 'children', pid: 'pid' },
     );
     return treeData;
-  });
+  });*/
 };
 
 export const setAcl = (params: any) =>

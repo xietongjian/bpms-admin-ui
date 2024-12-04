@@ -33,7 +33,7 @@ const formOptions: VbenFormProps = {
   resetButtonOptions: {
     show: false,
   },
-  schema: searchFormSchema(),
+  schema: searchFormSchema,
 };
 
 const gridOptions: VxeGridProps<any> = {
@@ -61,7 +61,7 @@ const gridOptions: VxeGridProps<any> = {
 const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 function handleAdd() {
-  groupModalRef.value.setData({});
+  //groupModalRef.value.setData({});
   groupModalRef.value.open();
   groupModalRef.value.setState({
     title: '新建'
@@ -69,6 +69,7 @@ function handleAdd() {
 }
 
 function handleEdit(record: any) {
+  debugger;
   groupModalRef.value.setData(record);
   groupModalRef.value.open();
   groupModalRef.value.setState({
@@ -78,7 +79,13 @@ function handleEdit(record: any) {
 
 
 function handleAcl(record: Recordable) {
-  openSetAclModal(true, {
+  setAclModalRef.value.setData(record);
+  setAclModalRef.value.open();
+  setAclModalRef.value.setState({
+    title: `给组【${ record.name }(${ record.sn })】设置权限`
+  });
+
+  /*openSetAclModal(true, {
     record,
     isUpdate: true,
   });
@@ -89,7 +96,7 @@ function handleAcl(record: Recordable) {
     cancelText: '关闭',
     centered: true,
     minHeight: 400,
-  });
+  });*/
 }
 
 async function handleDelete(record: any) {
@@ -160,13 +167,13 @@ function handleSetAccountSuccess() {
     <BasicTable table-title="列表">
       <template #toolbar-tools>
         <Space>
-          <Button v-if="hasAccessByCodes[PerPrefix + PerEnum.ADD]" type="primary" @click="handleAdd">新建</Button>
+          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleAdd">新建</Button>
         </Space>
       </template>
 
-      <template #action="{record}">
+      <template #action="{ row }">
         <TableAction
-            :actions="createActions(record)"
+            :actions="createActions(row)"
         />
       </template>
 

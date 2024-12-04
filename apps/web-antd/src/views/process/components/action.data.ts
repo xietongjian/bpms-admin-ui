@@ -84,12 +84,12 @@ export const approveActionFormSchema: FormSchema[] = [
     label: '审批意见',
     colProps,
     component: 'InputTextArea',
-    rules: [
+    /*rules: [
       {
         max: 256,
         message: '字符长度不能大于256！',
       },
-    ],
+    ],*/
     componentProps: {
       autoSize: {
         minRows: 2,
@@ -119,12 +119,12 @@ export const fetchBackMessageFormSchema: FormSchema[] = [
     label: '审批意见',
     colProps,
     component: 'InputTextArea',
-    rules: [
+    /*rules: [
       {
         max: 256,
         message: '字符长度不能大于256！',
       },
-    ],
+    ],*/
     componentProps: {
       autoSize: {
         minRows: 2,
@@ -163,12 +163,12 @@ export const approveBackToStepFormSchema: FormSchema[] = [
     component: 'InputTextArea',
     required: true,
     colProps,
-    rules: [
+    /*rules: [
       {
         max: 256,
         message: '字符长度不能大于256！',
       },
-    ],
+    ],*/
     componentProps: {
       autoSize: {
         minRows: 2,
@@ -201,7 +201,7 @@ export const approveMsgSchemas: FormSchema[] = [
       },
       resizable: false,
     },
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -211,7 +211,7 @@ export const approveMsgSchemas: FormSchema[] = [
         max: 4000,
         message: '字符长度不能大于4000！',
       },
-    ],
+    ],*/
     labelWidth: 0,
     colProps: {
       span: 24,

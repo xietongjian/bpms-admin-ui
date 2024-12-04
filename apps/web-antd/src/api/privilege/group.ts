@@ -16,7 +16,8 @@ export const getAllList = (params?: any) => {
   return requestClient.post<any>(Api.GetAllList, params);
 };
 
-export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params);
+export const saveOrUpdate = (params: any) =>
+    requestClient.post<any>(Api.SaveOrUpdate, params, {noTransformResponse: true });
 
 export const addUserGroups = (params: any) => {
   return requestClient.post<any>(Api.AddUserGroups + '/' + params.groupId, params.users);

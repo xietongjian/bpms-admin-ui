@@ -93,9 +93,11 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: '',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'code',
@@ -113,17 +115,10 @@ export const formSchema: FormSchema[] = [
     required: true,
     component: 'Input',
     show: true,
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 80,
-        message: '字符长度不能大于80！',
-      },
-    ],*/
+    rules: z
+        .string({required_error: '名称不能为空！'})
+        .min(1, {message: '名称不能为空！'})
+        .max(80, {message: '字符长度不能大于80！'}),
     colProps: {
       span: 24,
     },
@@ -169,12 +164,11 @@ export const formSchema: FormSchema[] = [
       },
     },
     show: true,
-    /*rules: [
-      {
-        max: 255,
-        message: '字符长度不能大于255！',
-      },
-    ],*/
+    rules: z
+        .string()
+        .max(1024, "字符长度不能大于1024！")
+        .nullish()
+        .optional(),
     colProps: {
       span: 24,
     },

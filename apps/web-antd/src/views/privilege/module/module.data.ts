@@ -111,7 +111,7 @@ export const formSchema: any[] = [
     label: '名称',
     required: true,
     component: 'Input',
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -121,7 +121,7 @@ export const formSchema: any[] = [
         max: 32,
         message: '字符长度不能大于32！',
       },
-    ],
+    ],*/
     colProps,
   },
   {
@@ -136,7 +136,7 @@ export const formSchema: any[] = [
     field: 'url',
     label: 'URL',
     component: 'Input',
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -151,7 +151,7 @@ export const formSchema: any[] = [
         max: 128,
         message: '字符长度不能大于128！',
       },
-    ],
+    ],*/
     dynamicDisabled: ({values})=> !!values.id,
     colProps,
   },
@@ -159,7 +159,7 @@ export const formSchema: any[] = [
     field: 'component',
     label: '组件地址',
     component: 'Input',
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -174,7 +174,7 @@ export const formSchema: any[] = [
         max: 128,
         message: '字符长度不能大于128！',
       },
-    ],
+    ],*/
     dynamicDisabled: ({values})=> !!values.id,
     colProps,
   },
@@ -183,7 +183,7 @@ export const formSchema: any[] = [
     label: '跳转地址',
     helpMessage: '目录菜单跳转地址！',
     component: 'Input',
-    rules: [
+    /*rules: [
       {
         required: false,
         whitespace: true,
@@ -198,7 +198,7 @@ export const formSchema: any[] = [
         max: 128,
         message: '字符长度不能大于128！',
       },
-    ],
+    ],*/
     colProps,
   },
   {

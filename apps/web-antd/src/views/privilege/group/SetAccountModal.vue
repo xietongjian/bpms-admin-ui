@@ -9,7 +9,6 @@
   import { getAllList } from '#/api/privilege/account';
   import { addUserGroups } from '#/api/privilege/group';
   import {useVbenForm} from "#/adapter/form";
-  import {formSchema} from "#/views/base/app/app.data";
   import {useVbenModal} from '@vben/common-ui';
 
   const emit = defineEmits(['success', 'register']);
@@ -46,7 +45,7 @@
     },
     showDefaultActions: false,
     layout: 'horizontal',
-    schema: formSchema,
+    schema: setAccountFormSchema,
     wrapperClass: 'grid-cols-1',
   });
 

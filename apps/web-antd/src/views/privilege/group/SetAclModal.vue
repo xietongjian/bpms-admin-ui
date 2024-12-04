@@ -1,49 +1,47 @@
 <template>
-  <BasicModal
+  <BasicModal class="w-[1000px] min-w-[900px] min-h-[600px]"
     v-bind="$attrs"
     @register="registerModal"
     :bodyStyle="{ padding: '1px' }"
     wrapClassName="acl-modal "
   >
-    <BasicTable @register="registerTable">
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'pvs'">
+    <div class="h-full">
+      <BasicTable @register="registerTable">
+        <template #pvs="{row}">
           <AclCheckboxGroup
-            @change-check-all-status="handleChangeCheckAllStatus"
-            :checkboxList="
-              record.pvs.map((item) => {
-                return { label: item.name, value: item.position, checked: item.flag };
-              })
-            "
-            :groupId="aclObj.id"
-            :moduleSn="record.sn"
-            :moduleId="record.id"
+              @change-check-all-status="handleChangeCheckAllStatus"
+              :checkboxList="
+                row.pvs.map((item) => {
+                  return { label: item.name, value: item.position, checked: item.flag };
+                })
+              "
+              :groupId="aclObj.id"
+              :moduleSn="row.sn"
+              :moduleId="row.id"
           />
         </template>
-      </template>
-      <template #headerCell="{ column }">
-        <template v-if="column.key === 'pvs'">
-          <div style="text-align: center">
-            <span style="float: left">
+        <template #pvsHeader="{column}">
+          <div class="text-center" style="text-align: center">
+            <span class="float-start">
               <Checkbox
-                v-model:checked="checkAllBox"
-                :indeterminate="indeterminate"
-                @click="checkAll"
-                >全选</Checkbox
+                  v-model:checked="checkAllBox"
+                  :indeterminate="indeterminate"
+                  @click="checkAll"
+              >全选</Checkbox
               >
             </span>
             <span> 操作权限 </span>
           </div>
         </template>
-      </template>
-    </BasicTable>
+      </BasicTable>
+    </div>
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, unref } from 'vue';
+  import { ref, unref, defineExpose } from 'vue';
   import type {VxeGridProps} from '#/adapter/vxe-table';
   import type {VbenFormProps} from '@vben/common-ui';
-  import {aclColumns, columns, searchFormSchema} from './group.data';
+  import {aclColumns} from './group.data';
   import AclCheckboxGroup from './AclCheckboxGroup.vue';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
 
@@ -62,6 +60,7 @@
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
+    showConfirmButton: false,
     onCancel() {
       modalApi.close();
     },
@@ -69,7 +68,7 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          baseFormApi.setValues(values);
+          // baseFormApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -97,27 +96,27 @@
     pagination: false,
   });*/
 
-
-  const formOptions: VbenFormProps = {
-    showCollapseButton: false,
-    submitOnEnter: true,
-    commonConfig: {
-      labelWidth: 60,
-    },
-    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
-    resetButtonOptions: {
-      show: false,
-    },
-    schema: searchFormSchema(),
-  };
-
   const gridOptions: VxeGridProps<any> = {
-    columns,
+    columns: aclColumns,
     columnConfig: {resizable: true},
+    minHeight: '500px',
     height: 'auto',
+    pagerConfig: {
+      enabled: false,
+    },
+    rowConfig: {
+      keyField: 'id',
+    },
+    treeConfig: {
+      parentField: 'pid',
+      rowField: 'id',
+      transform: true,
+      expandAll: true,
+    },
     keepSource: true,
     border: false,
     stripe: true,
+
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
@@ -142,7 +141,7 @@
     },
   };
 
-  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+  const [BasicTable, tableApi] = useVbenVxeGrid({gridOptions});
 
   function ctrlCheckAllBox(treeData) {
     let allSize = 0;
@@ -199,6 +198,7 @@
         aclsTableLoading.value = false;
       });
   };
+  defineExpose(modalApi);
 </script>
 <style lang="less">
   .acl-modal {

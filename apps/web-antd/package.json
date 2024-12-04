@@ -28,6 +28,7 @@
   "dependencies": {
     "lodash-es": "^4.17.21",
     "@ant-design/icons-vue": "^7.0.1",
+    "@tanstack/vue-query": "catalog:",
     "@vben/access": "workspace:*",
     "@vben/common-ui": "workspace:*",
     "@vben/constants": "workspace:*",

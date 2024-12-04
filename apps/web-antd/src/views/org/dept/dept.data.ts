@@ -69,33 +69,29 @@ export const deptFormSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'pid',
     label: 'pid',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
     component: 'Input',
-    required: true,
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 100,
-        message: '字符长度不能大于100！',
-      },
-    ],*/
+    rules: z
+        .string({required_error: '名称不能为空！'})
+        .min(1, {message: '名称不能为空！'})
+        .max(100, {message: '字符长度不能大于100！'}),
     colProps: {
       span: 24,
     },
@@ -104,10 +100,10 @@ export const deptFormSchema: FormSchema[] = [
     fieldName: 'code',
     label: '编码',
     component: 'Input',
-    required: true,
-    colProps: {
-      span: 24,
-    },
+    rules: z
+        .string({required_error: '编码不能为空！'})
+        .min(1, {message: '编码不能为空！'})
+        .max(100, {message: '字符长度不能大于100！'}),
   },
   {
     fieldName: 'leaderPersonal',
@@ -116,7 +112,6 @@ export const deptFormSchema: FormSchema[] = [
     componentProps: {
       multiple: false,
     },
-    required: false,
     colProps: {
       span: 24,
     },

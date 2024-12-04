@@ -1,6 +1,7 @@
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import { z } from '#/adapter/form';
 
 export const columns: VxeGridProps['columns']  = [
   {
@@ -60,6 +61,10 @@ export const roleFormSchema: FormSchema[] = [
     required: false,
     component: 'Input',
     show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'type',
@@ -81,18 +86,10 @@ export const roleFormSchema: FormSchema[] = [
     fieldName: 'name',
     label: '名称',
     component: 'Input',
-    required: true,
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '编码不能为空！',
-      },
-      {
-        max: 64,
-        message: '字符长度不能大于64！',
-      },
-    ],*/
+    rules: z
+        .string({required_error: '编码不能为空！'})
+        .min(1, {message: '编码不能为空！'})
+        .max(64, {message: '字符长度不能大于64！'}),
     colProps: {
       span: 24,
     },
@@ -135,6 +132,11 @@ export const roleFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
+    rules: z
+        .string()
+        .max(1024, "字符长度不能大于1024！")
+        .nullish()
+        .optional(),
     /*rules: [
       {
         max: 1024,

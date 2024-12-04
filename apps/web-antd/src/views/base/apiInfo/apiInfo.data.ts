@@ -112,7 +112,7 @@ export const apiCategoryFormSchema: FormSchema[] = [
     label: '分类名称',
     required: true,
     component: 'Input',
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -122,7 +122,7 @@ export const apiCategoryFormSchema: FormSchema[] = [
         max: 255,
         message: '分类名称长度不能大于255！',
       },
-    ],
+    ],*/
     colProps,
   },
   {
@@ -165,7 +165,7 @@ export const apiInfoFormSchema: FormSchema[] = [
     label: '接口名称',
     required: true,
     component: 'Input',
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -175,7 +175,7 @@ export const apiInfoFormSchema: FormSchema[] = [
         max: 255,
         message: '名称长度不能大于255！',
       },
-    ],
+    ],*/
     colProps,
   },
   {

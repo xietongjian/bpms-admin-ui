@@ -1,6 +1,7 @@
 // import { BasicColumn, FormSchema } from '@/components/Table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
+import {z} from "@vben/common-ui";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -198,6 +199,13 @@ export const passwordFormSchema: FormSchema = [
     componentProps: {
       placeholder: '密码',
     },
+    rules: z
+      .string({
+        required_error: '密码不能为空！'
+      })
+      .min(6, "长度必需在6-32之间！")
+      .max(32, "长度必需在6-32之间！")
+      .regex(new RegExp('[^\\u4e00-\\u9fa5]+'), "密码不能输入汉字！"),
     /*rules: [
       {
         required: true,
@@ -223,7 +231,20 @@ export const passwordFormSchema: FormSchema = [
     fieldName: 'confirmPassword',
     label: '确认密码',
     component: 'InputPassword',
+    dependencies: {
+      rules(values) {
+        const { passwordNew, confirmPassword } = values;
+        return z
+          .string({
+            required_error: "确认密码不能为空"
+          })
+          .min(1, "长度必需在6-32之间！")
+          .max(32, '长度必需在6-32之间！')
+          .refine(() => {
 
+          }, "两次输入的密码不一致!");
+      }
+    },
     dynamicRules: ({values}) => {
       return [
         {

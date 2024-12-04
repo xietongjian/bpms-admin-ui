@@ -122,7 +122,7 @@ export const personalFormSchema: FormSchema[] = [
     colProps: {
       span: 9,
     },
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -132,7 +132,7 @@ export const personalFormSchema: FormSchema[] = [
         max: 20,
         message: '字符长度不能大于20！',
       },
-    ],
+    ],*/
   },
   {
     field: 'code',
@@ -224,7 +224,7 @@ export const personalFormSchema: FormSchema[] = [
     colProps: {
       span: 9,
     },
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -239,7 +239,7 @@ export const personalFormSchema: FormSchema[] = [
         max: 11,
         message: '字符长度不能大于11！',
       },
-    ],
+    ],*/
   },
   {
     label: '邮箱',
@@ -248,7 +248,7 @@ export const personalFormSchema: FormSchema[] = [
     colProps: {
       span: 9,
     },
-    rules: [
+    /*rules: [
       {
         pattern: new RegExp('^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$'),
         type: 'string',
@@ -258,7 +258,7 @@ export const personalFormSchema: FormSchema[] = [
         max: 256,
         message: '字符长度不能大于256！',
       },
-    ],
+    ],*/
   },
   {
     field: 'status',
@@ -282,12 +282,12 @@ export const personalFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    rules: [
+    /*rules: [
       {
         max: 400,
         message: '字符长度不能大于400！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },

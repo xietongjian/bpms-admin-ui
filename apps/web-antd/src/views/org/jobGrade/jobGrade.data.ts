@@ -1,46 +1,48 @@
-import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import { OrderNoDefaultEnum } from '@/enums/constantEnum';
+import { OrderNoDefaultEnum } from '#/enums/constantEnum';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import { z } from '#/adapter/form';
 
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
     width: 300,
     resizable: true,
   },
   {
     title: '编码',
-    dataIndex: 'code',
+    field: 'code',
     align: 'left',
   },
   {
     title: '排序号',
-    dataIndex: 'orderNo',
+    field: 'orderNo',
     width: 100,
     align: 'right',
   },
   /*{
     title: '创建人',
-    dataIndex: 'creator',
+    field: 'creator',
     width: 100,
     align: 'left',
   },
   {
     title: '创建时间',
-    dataIndex: 'createTime',
+    field: 'createTime',
     width: 100,
     align: 'left',
   },
   {
     title: '修改人',
-    dataIndex: 'updator',
+    field: 'updator',
     width: 100,
     align: 'left',
   },
   {
     title: '修改时间',
-    dataIndex: 'updateTime',
+    field: 'updateTime',
     width: 100,
     align: 'left',
   }*/
@@ -48,7 +50,7 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -66,59 +68,48 @@ export const searchFormSchema: FormSchema[] = [
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["id"]
+    }
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
-    required: true,
     component: 'Input',
-    show: true,
-    rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 80,
-        message: '字符长度不能大于80！',
-      },
-    ],
-    colProps: {
-      span: 24,
-    },
+    rules: z
+        .string({
+          required_error: '名称不能为空！'
+        })
+        .min(1, {message: '名称不能为空！'})
+        .max(80, {message: '字符长度不能大于80！'}),
+
   },
   {
-    field: 'code',
+    fieldName: 'code',
     label: '编码',
-    required: true,
     component: 'Input',
-    show: true,
-    colProps: {
-      span: 24,
-    },
+    rules: 'required',
   },
   {
-    field: 'typeId',
+    fieldName: 'typeId',
     label: '类型ID',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'typeCode',
+    fieldName: 'typeCode',
     label: '类别编码',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'orderNo',
+    fieldName: 'orderNo',
     label: '排序号',
     helpMessage: '数值越小越靠前！',
     required: false,

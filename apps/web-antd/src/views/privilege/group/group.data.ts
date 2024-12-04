@@ -1,7 +1,7 @@
 // import { BasicColumn, FormSchema } from '@/components/Table';
 // import Icon from '@/components/Icon/Icon.vue';
 import { h } from 'vue';
-import { type FormSchema, z } from '#/adapter/form';
+import { z } from '#/adapter/form';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { RemarkDefaultEnum } from '#/enums/constantEnum';
@@ -44,6 +44,7 @@ export const aclColumns: VxeGridProps['columns'] = [
     title: '菜单名称',
     field: 'name',
     align: 'left',
+    treeNode: true,
     width: 250,
     /*customRender: ({ record }) => {
       return h('span', { title: record.name + '[' + record.sn + ']' }, [
@@ -55,6 +56,7 @@ export const aclColumns: VxeGridProps['columns'] = [
   {
     field: 'pvs',
     align: 'left',
+    slots: {default: 'pvs', header: 'pvsHeader'}
     /*customRender: ({ record }) => {
       const pvs = record.pvs;
       const color = 'green';
@@ -99,7 +101,6 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'name',
     label: '名称',
-    required: true,
     component: 'Input',
     rules: z
         .string({
@@ -112,8 +113,8 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'sn',
     label: '标识',
-    required: true,
     component: 'Input',
+    rules: 'required',
   },
   {
     label: '备注',
@@ -125,15 +126,6 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    rules: z
-        .string()
-        .max(1024, "字符长度不能大于1024！")
-    /*rules: [
-      {
-        max: 1024,
-        message: '字符长度不能大于1024！',
-      },
-    ],*/
   },
 ];
 

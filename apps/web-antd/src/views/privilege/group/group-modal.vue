@@ -4,7 +4,7 @@ import {useVbenModal} from '@vben/common-ui';
 import {message} from 'ant-design-vue';
 import {formSchema} from './group.data';
 import {useVbenForm} from '#/adapter/form';
-import {saveOrUpdate} from '#/api/base/app';
+import { saveOrUpdate, checkEntityExist } from '#/api/privilege/group';
 
 const emit = defineEmits<{
   onSuccess: [void];
@@ -18,6 +18,7 @@ const [BasicModal, modalApi] = useVbenModal({
   onOpenChange(isOpen: boolean) {
     if (isOpen) {
       const values = modalApi.getData<Record<string, any>>();
+      debugger;
       if (values) {
         baseFormApi.setValues(values);
         modalApi.setState({loading: false, confirmLoading: false});
