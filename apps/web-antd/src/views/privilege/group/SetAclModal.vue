@@ -1,12 +1,7 @@
 <template>
-  <BasicModal class="w-[1000px] min-w-[900px] min-h-[600px]"
-    v-bind="$attrs"
-    @register="registerModal"
-    :bodyStyle="{ padding: '1px' }"
-    wrapClassName="acl-modal "
-  >
-    <div class="h-full">
-      <BasicTable @register="registerTable">
+  <BasicModal contentClass="overflow-hidden m-0 p-0 pt-2" class="w-[70%] min-w-[500px] min-h-[80%] h-[500px]">
+    <div class="h-full w-full">
+      <BasicTable >
         <template #pvs="{row}">
           <AclCheckboxGroup
               @change-check-all-status="handleChangeCheckAllStatus"
@@ -60,6 +55,7 @@
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
+    centered: true,
     showConfirmButton: false,
     onCancel() {
       modalApi.close();
@@ -68,15 +64,12 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
+          aclObj.value = values;
           // baseFormApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
-    },
-    onConfirm() {
-      // await baseFormApi.submitForm();
-      handleSubmit();
-    },
+    }
   });
 
   /*const [registerTable, { setTableData, expandAll }] = useTable({
@@ -99,7 +92,7 @@
   const gridOptions: VxeGridProps<any> = {
     columns: aclColumns,
     columnConfig: {resizable: true},
-    minHeight: '500px',
+    minHeight: '80%',
     height: 'auto',
     pagerConfig: {
       enabled: false,
@@ -114,7 +107,7 @@
       expandAll: true,
     },
     keepSource: true,
-    border: false,
+    border: 'none',
     stripe: true,
 
     proxyConfig: {
@@ -171,6 +164,7 @@
   }
 
   function handleChangeCheckAllStatus() {
+    // tableApi.reload();
     getModuleAclsByGroupId({ groupId: unref(aclObj).id }).then((res) => {
       ctrlCheckAllBox(res);
     });
@@ -188,11 +182,11 @@
               item.flag = e.target.checked;
             });
         });
-        setTableData(dataSource.value);
+        debugger;
+        tableApi.loadData(dataSource.value);
+        // tableApi.setData(dataSource.value);
         aclsTableLoading.value = false;
-        setTimeout(() => {
-          expandAll();
-        });
+
       })
       .catch(() => {
         aclsTableLoading.value = false;
