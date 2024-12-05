@@ -65,6 +65,14 @@ export const baseSetschemas: FormSchema[] = [
     label: '所在地区',
     colProps: { span: 18 },
   },
+  {
+    fieldName: 'userNo',
+    component: 'OrgSelector',
+    label: '测试组织选择',
+    componentProps: {
+
+    }
+  },
 ];
 
 // 安全设置 list

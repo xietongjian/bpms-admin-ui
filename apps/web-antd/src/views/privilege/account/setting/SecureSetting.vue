@@ -1,5 +1,5 @@
 <template>
-  <Collapse title="安全设置" :canExpand="false">
+  <div class="w-full" title="安全设置" :canExpand="false">
     <List>
       <template v-for="item in secureSettingList" :key="item.key">
         <ListItem>
@@ -22,7 +22,7 @@
     </List>
     <PasswordModal ref="passwordModalRef" @success="handlePasswordSuccess" />
 
-  </Collapse>
+  </div>
 </template>
 <script lang="ts" setup>
   import { List, Collapse } from 'ant-design-vue';

@@ -1,5 +1,5 @@
 <template>
-  <Collapse title="基本设置" :canExpand="false">
+  <div class="w-full" title="基本设置" :canExpand="false">
     <Row :gutter="24">
       <Col :span="14">
         <BasicForm />
@@ -19,7 +19,7 @@
       </Col>-->
     </Row>
 <!--    <a-button type="primary" @click="handleSubmit"> 更新基本信息 </a-button>-->
-  </Collapse>
+  </div>
 </template>
 <script lang="ts" setup>
   // import { CropperAvatar } from '@/components/Cropper';
