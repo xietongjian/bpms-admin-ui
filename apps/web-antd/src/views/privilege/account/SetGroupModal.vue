@@ -9,9 +9,7 @@
   import {useVbenModal} from '@vben/common-ui';
   import { setGroupFormSchema } from './account.data';
   import { allocationRoles } from '#/api/privilege/account';
-  import { getAllList } from '#/api/privilege/group';
   import {useVbenForm} from "#/adapter/form";
-  import {formSchema} from "#/views/base/app/app.data";
 
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(true);
@@ -38,7 +36,8 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          baseFormApi.setValues(values);
+          const groups = values.groups.map(item => item.sn);
+          baseFormApi.setValues({...values, groups: groups});
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -49,7 +48,7 @@
     },
   });
 
-  const [BaseForm, baseFormApi] = useVbenForm({
+  const [BasicForm, baseFormApi] = useVbenForm({
     // 所有表单项共用，可单独在表单内覆盖
     commonConfig: {
       // 所有表单项
@@ -109,19 +108,24 @@
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
-      values.groups = values.groups.map((item) => {
-        return { id: item };
-      });
-      values.userId = values.id;
-      delete values.id;
+      modalApi.setState({confirmLoading: true});
+      const {valid} = await baseFormApi.validate();
 
-      await allocationRoles(values);
-      closeModal();
-      emit('success');
+      if(valid){
+        const values = await baseFormApi.getValues();
+        debugger;
+        values.groups = values.groups.map((item) => {
+          return { id: item };
+        });
+        values.userId = values.id;
+        delete values.id;
+
+        await allocationRoles(values);
+        emit('success');
+      }
+
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({confirmLoading: false});
     }
   }
 

@@ -1,13 +1,13 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal :title="getTitle" @ok="handleSubmit">
+    <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref } from 'vue';
 
   import {useVbenModal} from '@vben/common-ui';
-  import { passwordFormSchema } from './account.data';
+  import {accountFormSchema, passwordFormSchema} from './account.data';
   import { setPassword } from '#/api/privilege/account';
   import { message } from 'ant-design-vue';
   import {useVbenForm} from '#/adapter/form';
@@ -15,12 +15,16 @@
   const isUpdate = ref(true);
 
   const [BasicForm, baseFormApi] = useVbenForm({
-    labelWidth: 100,
     schemas: passwordFormSchema,
-    showActionButtonGroup: false,
-    actionColOptions: {
-      span: 23,
+    commonConfig: {
+      // 所有表单项
+      componentProps: {
+        class: 'w-full',
+      },
     },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    wrapperClass: 'grid-cols-1',
   });
 
   const [BasicModal, modalApi] = useVbenModal({

@@ -70,17 +70,17 @@ const gridOptions: VxeGridProps<any> = {
 const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 function handleAdd() {
-  modalApi.setData({});
-  modalApi.open();
-  modalApi.setState({
+  accountModalRef.value.setData({});
+  accountModalRef.value.open();
+  accountModalRef.value.setState({
     title: '新建'
   });
 }
 
 function handleEdit(record: any) {
-  modalApi.setData(record);
-  modalApi.open();
-  modalApi.setState({
+  accountModalRef.value.setData(record);
+  accountModalRef.value.open();
+  accountModalRef.value.setState({
     title: '修改'
   });
 }
@@ -135,13 +135,13 @@ function createActions(record: any) {
 }
 
 function handleSetPassword(record: Recordable) {
-  passwordModalRef.value.open();
   passwordModalRef.value.setData(record);
+  passwordModalRef.value.open();
 }
 
 function handleSetGroup(record: Recordable) {
-  setGroupModalRef.value.open();
   setGroupModalRef.value.setData(record);
+  setGroupModalRef.value.open();
 /*  openSetGroupModal(true, {
     record,
     isUpdate: true,
@@ -173,7 +173,7 @@ function previewImageVisibleChange(visible, prevVisible) {
   <Page auto-content-height>
     <BasicTable table-title="列表">
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes[PerPrefix+PerEnum.ADD]" type="primary" @click="handleAdd">新建</Button>
+        <Button v-if="hasAccessByCodes([PerPrefix+PerEnum.ADD])" type="primary" @click="handleAdd">新建</Button>
       </template>
       <template #image="{ row }">
         <Avatar :src="row.image" @click="previewImageHandle(row.image)">

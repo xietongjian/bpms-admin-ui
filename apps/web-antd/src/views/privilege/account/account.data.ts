@@ -2,6 +2,7 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {z} from "@vben/common-ui";
+import { getAllList } from '#/api/privilege/group';
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -86,18 +87,20 @@ export const searchFormSchema: FormSchema[] = [
   },
 ];
 
-export const accountFormSchema: FormSchema = [
+export const accountFormSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'type',
     label: '用户类型',
-    component: 'RadioButtonGroup',
-    required: true,
+    component: 'RadioGroup',
     defaultValue: 0,
     componentProps: {
       options: [
@@ -105,33 +108,28 @@ export const accountFormSchema: FormSchema = [
         {label: '管理员', value: 1},
       ],
     },
-    colProps: {
-      span: 16,
-    },
   },
   {
     fieldName: 'username',
     label: '用户名',
     component: 'Input',
-    required: true,
-    colProps: {
-      span: 16,
-    },
+    rules: 'required',
   },
   {
     fieldName: 'realName',
     label: '用户名',
     component: 'Input',
     show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'realNameSelector',
     label: '姓名',
-    required: true,
+    rules: 'required',
     component: 'PersonalSelector',
-    colProps: {
-      span: 16,
-    },
   },
   {
     fieldName: 'headImg',
@@ -146,7 +144,7 @@ export const accountFormSchema: FormSchema = [
   {
     fieldName: 'sex',
     label: '性别',
-    component: 'RadioButtonGroup',
+    component: 'RadioGroup',
     defaultValue: 1,
     componentProps: {
       options: [
@@ -185,27 +183,30 @@ export const accountFormSchema: FormSchema = [
   },
 ];
 
-export const passwordFormSchema: FormSchema = [
+export const passwordFormSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'passwordNew',
     label: '密码',
-    component: 'StrengthMeter',
+    component: 'InputPassword',
     componentProps: {
       placeholder: '密码',
     },
-    rules: z
-      .string({
-        required_error: '密码不能为空！'
-      })
-      .min(6, "长度必需在6-32之间！")
-      .max(32, "长度必需在6-32之间！")
-      .regex(new RegExp('[^\\u4e00-\\u9fa5]+'), "密码不能输入汉字！"),
+    // rules: z
+    //   .string({
+    //     required_error: '密码不能为空！'
+    //   })
+    //   .min(6, "长度必需在6-32之间！")
+    //   .max(32, "长度必需在6-32之间！")
+    //   .regex(new RegExp('[^\\u4e00-\\u9fa5]+'), "密码不能输入汉字！"),
     /*rules: [
       {
         required: true,
@@ -223,9 +224,6 @@ export const passwordFormSchema: FormSchema = [
         message: '长度必需在6-32之间！',
       },
     ],*/
-    colProps: {
-      span: 24,
-    },
   },
   {
     fieldName: 'confirmPassword',
@@ -271,29 +269,32 @@ export const passwordFormSchema: FormSchema = [
         },
       ];
     },
-    colProps: {
-      span: 24,
-    },
   },
 ];
 
-export const setGroupFormSchema = () => [
+export const setGroupFormSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     label: '选择组',
     fieldName: 'groups',
-    component: 'Select',
+    component: 'ApiSelect',
     labelWidth: 50,
     componentProps: {
       placeholder: '请选择用户组',
-    },
-    colProps: {
-      span: 24,
-    },
+      api: getAllList,
+      mode: 'multiple',
+      fieldNames: {
+        value: 'sn',
+        label: 'name'
+      }
+    }
   },
 ];
