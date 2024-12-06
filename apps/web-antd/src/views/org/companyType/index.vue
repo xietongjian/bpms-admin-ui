@@ -1,6 +1,5 @@
 <script lang="ts" setup>
   import { PerEnum } from '#/enums/perEnum';
-  import {AccessControl} from '@vben/access';
   import type {VxeGridProps} from '#/adapter/vxe-table';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {Button} from "ant-design-vue";
@@ -9,8 +8,9 @@
   import CompanyTypeModal from './company-type-modal.vue';
   import { message } from 'ant-design-vue';
   import type {VbenFormProps} from '@vben/common-ui';
-  import {Page, useVbenModal} from '@vben/common-ui';
+  import {Page} from '@vben/common-ui';
   import {useAccess} from "@vben/access";
+  import { TableAction } from '#/components/table-action';
 
   const PerPrefix = 'CompanyType:';
   const {hasAccessByCodes}  = useAccess();
@@ -27,7 +27,7 @@
     schema: searchFormSchema,
   };
 
-  const gridOptions: VxeGridProps<any> = {
+  const gridOptions: VxeGridProps = {
     checkboxConfig: {
       highlight: true,
       labelField: 'name',
@@ -109,7 +109,7 @@
     }, 200);
   }
 
-  function createActions(record: Recordable) {
+  function createActions(record: Recordable<any>) {
     return [
       {
         auth: [PerPrefix + PerEnum.ADD],
@@ -128,7 +128,7 @@
         tooltip: '删除',
         icon: 'ant-design:delete-outlined',
         color: 'error',
-        onClick: (e) => {
+        onClick: (e: any) => {
           e.stopPropagation();
         },
         popConfirm: {

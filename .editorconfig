@@ -10,7 +10,7 @@ max_line_length = 100
 trim_trailing_whitespace = true
 quote_type = single
 
-[*.{yml,yaml,json}]
+[*.{yml,yaml,json,ts}]
 indent_style = space
 indent_size = 2
 

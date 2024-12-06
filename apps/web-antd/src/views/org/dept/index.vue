@@ -3,7 +3,7 @@
   import {AccessControl} from '@vben/access';
   import { ref, unref } from 'vue';
   import type { Recordable } from '@vben/types';
-
+  import {Button} from 'ant-design-vue';
   import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
   import { deleteByIds, getDepts } from '#/api/org/dept';
   import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';
@@ -13,13 +13,20 @@
   // import SplitPane from '@/views/components/splitPane/index.vue';
   import { columns, searchFormSchema } from './dept.data';
   import { EmpInfo } from '#/views/components/EmpInfo';
-  import {Page } from "@vben/common-ui";
+  import {Page} from '@vben/common-ui';
   import type {VbenFormProps} from '@vben/common-ui';
+  import {useAccess} from "@vben/access";
+  import { TableAction } from '#/components/table-action';
 
+
+  const PerPrefix = 'Department:';
+
+  const {hasAccessByCodes}  = useAccess();
 
   // const [registerModal, { openModal, setModalProps }] = useModal();
-  const currentNode = ref<Recordable>({});
+  const currentNode = ref<Recordable<any>>({});
 
+  const deptModalRef = ref();
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -74,7 +81,7 @@
     });
   }
 
-  function handleEdit(record: Recordable) {
+  function handleEdit(record: Recordable<any>) {
     setModalProps({ title: '修改部门', centered: true });
     openModal(true, {
       record,
@@ -82,7 +89,7 @@
     });
   }
 
-  function handleCreateChild(record: Recordable) {
+  function handleCreateChild(record: Recordable<any>) {
     setModalProps({ title: '新增【' + record.name + '】的子部门' });
     record = { companyId: unref(currentNode)?.id, pid: record.id };
     openModal(true, {
@@ -91,7 +98,7 @@
     });
   }
 
-  function handleDelete(record: Recordable) {
+  function handleDelete(record: Recordable<any>) {
     if (record.children && record.children.length > 0) {
       createMessage.warning('有子节点，不能删除！');
       return;
@@ -119,9 +126,37 @@
     }, 200);
   }
 
-  function handleSelect(node: any) {
+  function handleSelect(node: Recordable<any>) {
     currentNode.value = node;
     reloadData();
+  }
+
+  function createActions(row: Recordable<any>) {
+    return [
+      {
+        auth: [PerPrefix + PerEnum.ADD],
+        tooltip: '添加子部门',
+        icon: 'ant-design:plus-outlined',
+        onClick: handleCreateChild.bind(null, row),
+      },
+      {
+        auth: [PerPrefix + PerEnum.UPDATE],
+        tooltip: '修改',
+        icon: 'clarity:note-edit-line',
+        onClick: handleEdit.bind(null, row),
+      },
+      {
+        auth: [PerPrefix + PerEnum.DELETE],
+        tooltip: '删除',
+        icon: 'ant-design:delete-outlined',
+        color: 'error',
+        popConfirm: {
+          title: '是否确认删除',
+          confirm: handleDelete.bind(null, row),
+          placement: 'left',
+        },
+      },
+    ];
   }
 </script>
 
@@ -134,39 +169,13 @@
       <div class="flex-1 h-full">
         <BasicTable @register="registerTable" class="!pt-0 !pl-0 !pr-0 !pb-0">
           <template #toolbar>
-            <Authority :value="'Department:' + PerEnum.ADD">
-              <a-button type="primary" @click="handleCreate">新增</a-button>
-            </Authority>
+            <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
           </template>
-          <template #bodyCell="{ column, record }">
+          <template #bodyCell="{ column, row }">
             <template v-if="column.key === 'action'">
               <TableAction
                   :stopButtonPropagation="true"
-                  :actions="[
-                    {
-                      auth: 'Department:' + PerEnum.ADD,
-                      tooltip: '添加子部门',
-                      icon: 'ant-design:plus-outlined',
-                      onClick: handleCreateChild.bind(null, record),
-                    },
-                    {
-                      auth: 'Department:' + PerEnum.UPDATE,
-                      tooltip: '修改',
-                      icon: 'clarity:note-edit-line',
-                      onClick: handleEdit.bind(null, record),
-                    },
-                    {
-                      auth: 'Department:' + PerEnum.DELETE,
-                      tooltip: '删除',
-                      icon: 'ant-design:delete-outlined',
-                      color: 'error',
-                      popConfirm: {
-                        title: '是否确认删除',
-                        confirm: handleDelete.bind(null, record),
-                        placement: 'left',
-                      },
-                    },
-                  ]"
+                  :actions="createActions(row)"
               />
             </template>
 
@@ -181,6 +190,6 @@
         </BasicTable>
       </div>
     </div>
-    <DeptModal @register="registerModal" @success="handleSuccess" />
+    <DeptModal ref="deptModalRef" @register="registerModal" @success="handleSuccess" />
   </Page>
 </template>
