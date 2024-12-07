@@ -1,18 +1,25 @@
 <template>
-  <div ref="wrapperRef" :class="prefixCls">
-    <Tabs tab-position="left" :tabBarStyle="tabBarStyle">
-      <template v-for="item in settingList" :key="item.key">
-        <TabPane :tab="item.name">
-          <component :is="tabs[item.component]" />
-        </TabPane>
-      </template>
-    </Tabs>
-  </div>
+  <Page auto-content-height >
+    <div class="bg-card h-full">
+      <Tabs tab-position="left" :tabBarStyle="tabBarStyle">
+        <template v-for="item in settingList" :key="item.key">
+          <TabPane :tab="item.name">
+            <div class="p-4">
+              <component :is="tabs[item.component]"/>
+            </div>
+          </TabPane>
+        </template>
+      </Tabs>
+    </div>
+
+  </Page>
 </template>
 
 <script lang="ts" setup>
-  import { Tabs } from 'ant-design-vue';
-  import { settingList } from './data';
+  import {Page, useVbenModal} from '@vben/common-ui';
+
+  import {Tabs} from 'ant-design-vue';
+  import {settingList} from './data';
   import BaseSetting from './BaseSetting.vue';
   import SecureSetting from './SecureSetting.vue';
   // import AccountBind from './AccountBind.vue';
@@ -26,7 +33,6 @@
     // MsgNotify,
   };
 
-  const prefixCls = 'account-setting';
   const tabBarStyle = {
     width: '220px',
   };
@@ -34,6 +40,7 @@
 <style lang="less">
   .account-setting {
     margin: 12px;
+
     .base-title {
       padding-left: 0;
     }

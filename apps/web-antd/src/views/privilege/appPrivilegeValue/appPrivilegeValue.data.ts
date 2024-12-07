@@ -1,10 +1,12 @@
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import {z} from "@vben/common-ui";
 
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
     field: 'name',
-    width: 100,
     align: 'left',
   },
   {
@@ -27,7 +29,7 @@ export const columns: BasicColumn[] = [
   {
     title: '操作',
     field: 'action',
-    width: 400,
+    width: 100,
     align: 'left',
     fixed: 'right',
     slots: {
@@ -38,16 +40,24 @@ export const columns: BasicColumn[] = [
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'id',
-    fieldName: 'ID',
+    fieldName: 'id',
+    label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: [''],
+    },
   },
   {
-    field: 'name',
-    fieldName: '名称',
-    required: true,
+    fieldName: 'name',
+    label: '名称',
     component: 'Input',
+    rules: z
+      .string({
+        required_error: '名称不能为空！'
+      })
+      .min(1, '名称不能为空')
+      .max(32, "字符长度不能大于32！"),
     /*rules: [
       {
         required: true,
@@ -59,24 +69,17 @@ export const formSchema: FormSchema[] = [
         message: '字符长度不能大于32！',
       },
     ],*/
-    colProps: {
-      span: 24,
-    },
   },
   {
     fieldName: 'position',
     label: '位',
-    required: true,
+    rules: 'required',
     component: 'InputNumber',
-    colProps: {
-      span: 24,
-    },
   },
   {
     fieldName: 'orderNo',
     label: '排序',
-    helpMessage: '数值越小越靠前！',
-    required: true,
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
@@ -87,7 +90,7 @@ export const formSchema: FormSchema[] = [
   {
     label: '备注',
     fieldName: 'remark',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -100,8 +103,5 @@ export const formSchema: FormSchema[] = [
         message: '字符长度不能大于200！',
       },
     ],*/
-    colProps: {
-      span: 24,
-    },
   },
 ];

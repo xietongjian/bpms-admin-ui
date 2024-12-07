@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineComponent, ref, watch, unref, onMounted, computed, watchEffect } from 'vue';
 import { SearchOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
-
+import OrgSelectorModal from './org-selector-modal.vue';
 import {usePagination} from '@vben/hooks';
 import {EmptyIcon, Grip, listIcons} from '@vben/icons';
 import {$t} from '@vben/locales';
@@ -29,6 +29,9 @@ const props = withDefaults(defineProps<Props>(), {
   pageSize: 36,
   icons: () => [],
 });
+
+const selectorRef = ref();
+const orgSelectorModalRef = ref();
 
 const emit = defineEmits<{
   change: [string];
@@ -103,11 +106,16 @@ function close() {
   visible.value = false;
 }
 
+function openSelectorModal() {
+  orgSelectorModalRef.value.open();
+}
+
 defineExpose({toggleOpenState, open, close});
 </script>
 <template>
-  <div>
+  <div class="w-full  ">
     <Select
+      ref="selectorRef"
         :value="selectorListRef"
         v-bind="attrs"
         class="w-full"
@@ -131,7 +139,7 @@ defineExpose({toggleOpenState, open, close});
       </template>
     </Select>
 
-    <OrgSelectorModal @register="registerPersonalModal" @change="handleChange"/>
+    <OrgSelectorModal ref="orgSelectorModalRef" @register="registerPersonalModal" @change="handleChange"/>
   </div>
 
   <!--    <VbenPopover

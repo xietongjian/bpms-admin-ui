@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {computed, defineEmits, ref, unref} from 'vue';
+import {computed, defineEmits, ref, unref, defineExpose} from 'vue';
 import {saveOrUpdate} from '#/api/privilege/appPrivilegeValue';
 import {useVbenModal} from '@vben/common-ui';
 import {useVbenForm} from "#/adapter/form";
@@ -41,17 +41,18 @@ const emit = defineEmits(['success', 'register']);
       if (!isOpen) {
         return null;
       }
-      modalApi.modalLoading(true);
+      modalApi.setState({loading: true, confirmLoading: true});
+
       const values = modalApi.getData<Record<string, any>>();
       isUpdate.value = !!values.id;
       if (isUpdate.value) {
         await formApi.setValues(values);
       }
       if (values) {
-        modalApi.setValues(values);
+        formApi.setValues(values);
         modalApi.setState({loading: false, confirmLoading: false});
       }
-      modalApi.modalLoading(false);
+      modalApi.setState({loading: false, confirmLoading: false});
     },
     onConfirm() {
       // await baseFormApi.submitForm();
@@ -63,15 +64,21 @@ const emit = defineEmits(['success', 'register']);
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
-      const res = await saveOrUpdate(values);
-      closeModal();
-      emit('success');
+      modalApi.setState({loading: true, confirmLoading: true});
+      const {valid} = await formApi.validate();
+
+      if(valid){
+        const values = await formApi.getValues();
+        const res = await saveOrUpdate(values);
+        modalApi.close();
+        emit('success');
+      }
+
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
+  defineExpose(modalApi);
 </script>
 
 <template>

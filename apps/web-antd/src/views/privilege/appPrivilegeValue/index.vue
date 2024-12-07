@@ -47,14 +47,16 @@ const [BasicTable, tableApi] = useVbenVxeGrid({gridOptions});
 function handleCreate() {
   appPrivilegeValueModalRef.value.setData({});
   appPrivilegeValueModalRef.value.open();
+  appPrivilegeValueModalRef.value.setState({title: '新增'});
 }
 
-function handleEdit(record: Recordable) {
+function handleEdit(record: Recordable<any>) {
   appPrivilegeValueModalRef.value.setData(record);
   appPrivilegeValueModalRef.value.open();
+  appPrivilegeValueModalRef.value.setState({title: '修改'});
 }
 
-function handleDelete(record: Recordable) {
+function handleDelete(record: Recordable<any>) {
   deleteByIds([record.id]).then((res) => {
     tableApi.reload();
   });
