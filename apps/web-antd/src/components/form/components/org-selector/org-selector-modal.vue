@@ -1,37 +1,54 @@
 <template>
   <BasicModal
-    class="w-[1000px] min-h-[400px]"
+    class="w-[1000px] min-h-[400px] overflow-y-hidden"
+    contentClass="overflow-y-hidden flex flex-col flex-1 w-full"
     centered
     :title="getTitle"
   >
-    <div class="flex flex-col h-full !border-1 !border-gray-200">
-      <div class="min-h-[30px] w-full !border-1">
-        <template v-if="selectedList && selectedList.length > 0" v-for="(item, index) in selectedList" :key="item.id">
-          <Tag color="processing" closable @close="removeSelectedItem(item.id)">
-            {{ item.shortName }}
-          </Tag>
-        </template>
-        <template v-else>
-          请选择组织
-        </template>
+    <div class="min-h-[30px] !border-1">
+      <template v-if="selectedList && selectedList.length > 0" v-for="(item, index) in selectedList" :key="item.id">
+        <Tag color="processing" closable @close="removeSelectedItem(item.id)">
+          {{ item.shortName }}
+        </Tag>
+      </template>
+      <template v-else>
+        请选择组织
+      </template>
+    </div>
+    <div class="flex-1 w-full flex flex-col min-h-[300px]">
+      <div class="h-[40px] items-center flex">
+        <InputSearch
+          size="middle"
+          v-model:value="searchValue"
+          placeholder="请输入关键字"
+        />
       </div>
-      <div class="flex-1 w-full">
-        <div class="org-tree w-4/4 xl:w-10/10 overflow-hidden">
-          <Tree
-            ref="treeRef"
-            class="w-4/4 org-tree"
-            title="组织"
-            search
-            treeWrapperClassName="h-[calc(100%-35px)] overflow-auto"
-            :clickRowToExpand="false"
-            :treeData="treeData"
-            @check="handleCheck"
-            @select="handleSelect"
-            :checkable="multiSelect ? true : false"
-            :selectable="multiSelect ? false : true"
-            :checkStrictly="true"
-          />
-        </div>
+      <div class="flex-1 overflow-y-auto mt-2">
+        <Tree
+          ref="treeRef"
+          title="组织"
+          search
+          block-node
+          :clickRowToExpand="false"
+          :treeData="treeData"
+          @check="handleCheck"
+          :expanded-keys="expandedKeys"
+          :auto-expand-parent="autoExpandParent"
+          @expand="onExpand"
+          @select="handleSelect"
+          :checkable="multiSelect ? true : false"
+          :selectable="multiSelect ? false : true"
+          :checkStrictly="true"
+        >
+          <template #title="{ title }">
+            <span v-if="title.indexOf(searchValue) > -1">
+              {{ title.substring(0, title.indexOf(searchValue)) }}
+              <span style="color: #f50">{{ searchValue }}</span>
+              {{ title.substring(title.indexOf(searchValue) + searchValue.length) }}
+            </span>
+            <span v-else>{{ title }}</span>
+          </template>
+        </Tree>
       </div>
     </div>
   </BasicModal>
@@ -44,19 +61,25 @@
     computed,
     watch,
     reactive,
-    toRefs,
     ref,
     unref,
-    onMounted,
     nextTick,
   } from 'vue';
-  import { Tag, Table, Tree } from 'ant-design-vue';
+  import { Tag, Input, Tree } from 'ant-design-vue';
   import {useVbenModal} from '@vben/common-ui';
+  import type { TreeProps } from 'ant-design-vue';
 
-  import { columns, searchFormSchema } from './selector.data';
-  import { getOrgTree } from '#/api/org/dept';
+  import { searchFormSchema } from './selector.data';
+  import { getOrgTree, getOrgListData } from '#/api/org/dept';
   import { getCompanies } from '#/api/org/company';
   import { forEach } from '#/utils/helper/treeHelper';
+
+  const InputSearch = Input.Search;
+  enum OrgSelectType {
+    COMPANY = '1',
+    DEPT = '2',
+    ORG = '3',
+  }
 
   const emit = defineEmits(['change', 'register'])
   const props = defineProps({
@@ -65,14 +88,19 @@
       default: '人员选择',
     }
   });
+
+  const searchValue = ref('');
   // 使用id，shortName进行赋值
   const selectedList = ref([]);
   const multiSelect = ref<boolean>(false);
-  // const [registerModal] = useModal();
   const treeData = ref([]);
-  const tableData = ref([]);
   const selectedRowKeys = ref([]);
   const treeRef = ref(null);
+  const gData = ref<TreeProps['treeData']>(treeData);
+
+  const expandedKeys = ref<(string | number)[]>([]);
+  const autoExpandParent = ref<boolean>(true);
+
   function getTree() {
     const tree = unref(treeRef);
     if (!tree) {
@@ -80,24 +108,58 @@
     }
     return tree;
   }
-  const expandedKeys = ref([]);
 
   const state = reactive({
     selectedList: [],
     selectedRowKeys: [],
   });
 
+  watch(searchValue, value => {
+    const expanded = treeData.value
+      .map((item: TreeProps['treeData']) => {
+        debugger;
+        if (item.title.indexOf(value) > -1) {
+          debugger;
+          return getParentKey(item.key, gData.value);
+        }
+        return null;
+      })
+      .filter((item, i, self) => item && self.indexOf(item) === i);
+    debugger;
+    expandedKeys.value = expanded;
+    searchValue.value = value;
+    autoExpandParent.value = true;
+  });
+
+  const getParentKey = (
+    key: string | number,
+    tree: TreeProps['treeData'],
+  ): string | number | undefined => {
+    let parentKey;
+    for (let i = 0; i < tree.length; i++) {
+      debugger;
+      const node = tree[i];
+      if (node.children) {
+        if (node.children.some(item => item.key === key)) {
+          parentKey = node.key;
+        } else if (getParentKey(key, node.children)) {
+          parentKey = getParentKey(key, node.children);
+        }
+      }
+    }
+    return parentKey;
+  };
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
     onCancel() {
       modalApi.close();
     },
-    onOpenChange(isOpen: boolean) {
+    async onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          initData();
+          await initData(values);
           // baseFormApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
@@ -109,36 +171,37 @@
     },
   });
 
-  function initData() {
-    if (selectorProps.selectType === OrgSelectType.COMPANY) {
-      getCompanies()
-        .then((res) => {
-          treeData.value = res as unknown as TreeItem[];
-          if (unref(multiSelect)) {
-            setTimeout(() => {
-              getTree()?.setCheckedKeys(selectedRowKeys);
-            }, 20);
-          } else {
-            setTimeout(() => {
-              getTree()?.setSelectedKeys(selectedRowKeys);
-              getTree()?.setExpandedKeys(selectedRowKeys);
-            }, 20);
-          }
+  const onExpand = (keys: string[]) => {
+    expandedKeys.value = keys;
+    autoExpandParent.value = false;
+  };
 
-          setTimeout(() => {
-            getTree()?.setExpandedKeys(unref(treeData).map((item) => item.id));
-          }, 100);
-        })
-        .finally(() => {
-          // getTree().filterByLevel(1)
-        });
+  async function initData(values) {
+    if (values.selectType === OrgSelectType.COMPANY) {
+      const res = await getCompanies();
+      treeData.value = res;
+      if (unref(multiSelect)) {
+        setTimeout(() => {
+          // getTree()?.setCheckedKeys(selectedRowKeys);
+        }, 20);
+      } else {
+        setTimeout(() => {
+          // getTree()?.setSelectedKeys(selectedRowKeys);
+          // getTree()?.setExpandedKeys(selectedRowKeys);
+        }, 20);
+      }
+
+      setTimeout(() => {
+        // getTree()?.setExpandedKeys(unref(treeData).map((item) => item.id));
+      }, 100);
     } else {
       // 部门和公司树（组织树）
       getOrgTree()
         .then((res) => {
+          treeData.value = res;
           const expandKeys = [];
           // 如果只能选择部门，则将公司的数据设置禁用
-          if (selectorProps.selectType === OrgSelectType.DEPT) {
+          if (values.selectType === OrgSelectType.DEPT) {
             forEach(res, (item) => {
               // 只能选部门
               item.disabled = item.sourceType === OrgSelectType.COMPANY; // 部门选择器，禁用公司的选项
@@ -150,18 +213,18 @@
 
           if (unref(multiSelect)) {
             setTimeout(() => {
-              unref(treeRef)?.setCheckedKeys(selectedRowKeys);
+              // unref(treeRef)?.setCheckedKeys(selectedRowKeys);
             }, 200);
           } else {
             setTimeout(() => {
               // TODO 这里有个问题：默认展开时无法展开父节点
               console.log(selectedRowKeys);
-              getTree()?.setSelectedKeys(selectedRowKeys);
+              // getTree()?.setSelectedKeys(selectedRowKeys);
             }, 200);
           }
           expandKeys.concat(selectedRowKeys);
 
-          getTree()?.setExpandedKeys(expandKeys);
+          // getTree()?.setExpandedKeys(expandKeys);
         })
         .finally(() => {});
     }
@@ -251,17 +314,6 @@
     });
     //reload();
   });*/
-
-  // 给表单元素添加回车事件
-  searchFormSchema.forEach((item: object) => {
-    if (item) {
-      item['componentProps']['onkeypress'] = (e) => {
-        if (e.keyCode === 13) {
-          //reload();
-        }
-      };
-    }
-  });
 
   const getTitle = computed(() => '选择人员');
 

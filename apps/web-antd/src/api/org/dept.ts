@@ -31,31 +31,33 @@ export const getDepts = (params: any) => {
   });
 };
 
-export const getOrgTree = () => {
-  const result = requestClient.get<any>(Api.GetOrgTree);
-  return Promise.resolve(result).then((res: any) => {
-    res.forEach((item) => {
-      item.key = item.id;
-      item.value = item.id;
-      item.title = item.shortName;
-      if (item.sourceType == 1) {
-        item.icon = 'bx:building-house';
-      } else if (item.sourceType == 2) {
-        item.icon = 'ant-design:cluster-outlined';
-      }
-    });
-    const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
-    forEach(
-      treeData,
-      (node) => {
-        if (node.children.length === 0) {
-          delete node.children;
-        }
-      },
-      { id: 'id', children: 'children', pid: 'pid' },
-    );
-    return treeData;
+export const getOrgListData = () => {
+  return requestClient.get<any>(Api.GetOrgTree);
+}
+
+export const getOrgTree = async () => {
+  const result = await getOrgListData();
+  result.forEach((item) => {
+    item.key = item.id;
+    item.value = item.id;
+    item.title = item.shortName;
+    if (item.sourceType == 1) {
+      item.icon = 'bx:building-house';
+    } else if (item.sourceType == 2) {
+      item.icon = 'ant-design:cluster-outlined';
+    }
   });
+  const treeData = listToTree(result, { id: 'id', children: 'children', pid: 'pid' });
+  forEach(
+    treeData,
+    (node) => {
+      if (node.children.length === 0) {
+        delete node.children;
+      }
+    },
+    { id: 'id', children: 'children', pid: 'pid' },
+  );
+  return treeData;
 };
 
 export const saveOrUpdate = (params: any) => requestClient.post(Api.SaveOrUpdate, params);

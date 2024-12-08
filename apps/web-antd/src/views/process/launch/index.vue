@@ -131,10 +131,7 @@ async function fetch() {
     title: "常用流程",
     pid: "",
   });
-  tempTreeData = tempTreeData.map(item => {
-    item.children = [];
-    return item;
-  });
+
   treeData.value = tempTreeData;
   nextTick(() => {
     // 加载后展开节层级
