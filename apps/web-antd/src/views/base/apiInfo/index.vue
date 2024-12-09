@@ -1,20 +1,21 @@
 
 <script lang="ts" setup>
-import {nextTick, ref, h, unref} from 'vue';
-import {getApiInfoListByPage, getApiCategoryListData, deleteApiCategoryById, deleteApiInfoById} from '@/api/base/apiInfo';
 import type { Recordable } from '@vben/types';
-import {listToTree} from "#/utils/helper/treeHelper";
-import {PerEnum} from "#/enums/perEnum";
-import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
-import {AccessControl} from '@vben/access';
 
-import {columns, searchFormSchema} from "./apiInfo.data";
-import apiInfoDrawer from "./api-info-drawer.vue";
+import { h, ref, unref} from 'vue';
+
+import { useVbenDrawer, useVbenModal, VbenFormProps} from '@vben/common-ui';
+
+import {deleteApiCategoryById, deleteApiInfoById, getApiCategoryListData, getApiInfoListByPage} from '@/api/base/apiInfo';
+import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons-vue";
+import { message, Popconfirm, Tooltip} from "ant-design-vue";
+
+import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
+import {listToTree} from "#/utils/helper/treeHelper";
+
 import apiCategoryModal from "./api-category-modal.vue";
-import {DeleteOutlined, PlusOutlined, EditOutlined} from "@ant-design/icons-vue";
-import {Popconfirm, Button, Row, Col, message, Tree, Tooltip} from "ant-design-vue";
-import {Page, useVbenModal, useVbenDrawer, VbenFormProps} from '@vben/common-ui';
-import { TableAction } from '#/components/table-action';
+import apiInfoDrawer from "./api-info-drawer.vue";
+import {columns, searchFormSchema} from "./apiInfo.data";
 
 const selectNodeIds = ref([]);
 const treeLoading = ref(true);
@@ -148,7 +149,7 @@ function handleUpdateCategory(node: any) {
 }
 
 async function handleDeleteCategory(node: any) {
-  //openFullLoading();
+  // openFullLoading();
   try {
     const {success, msg} = await deleteApiCategoryById(node.id);
     if(success){
@@ -295,6 +296,6 @@ async function handleSelect(node: any, e: any) {
       </SplitPane>
     </div>
     <ApiInfoDrawer @register="registerApiInfoDrawer" @success="handleSuccess" />
-    <ApiCategoryModal @register="registerApiCategoryModal" @success="handleCategorySuccess"/>
+    <ApiCategoryModal @register="registerApiCategoryModal" @success="handleCategorySuccess" />
   </Page>
 </template>

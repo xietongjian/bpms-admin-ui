@@ -1,16 +1,38 @@
 <script lang="ts" setup>
-import {nextTick, ref, unref} from 'vue';
-import {Page} from '@vben/common-ui';
+import { nextTick, ref, unref } from 'vue';
 
-import {Avatar, Spin, Input, Col, Divider, Empty, List, Popconfirm, Row, Space, Tooltip, Tree, TypographyLink} from 'ant-design-vue';
-import {DeleteOutlined, PartitionOutlined, PictureFilled} from '@ant-design/icons-vue';
+import { Page } from '@vben/common-ui';
 
-import {forEach, listToTree} from '#/utils/helper/treeHelper';
-import {groupBy} from '#/utils/index';
-import {getFlowCategories} from '#/api/base/category';
-import {getDraftPageList, getMyCommonlyList, getPagerModelModelInfo,} from "#/api/process/process";
+import {
+  DeleteOutlined,
+  PartitionOutlined,
+  PictureFilled,
+} from '@ant-design/icons-vue';
+import {
+  Avatar,
+  Col,
+  Divider,
+  Empty,
+  Input,
+  List,
+  Popconfirm,
+  Row,
+  Space,
+  Spin,
+  Tooltip,
+  Tree,
+  TypographyLink,
+} from 'ant-design-vue';
 
-import { Splitpanes, Pane } from '#/components/splitpanes'
+import { getFlowCategories } from '#/api/base/category';
+import {
+  getDraftPageList,
+  getMyCommonlyList,
+  getPagerModelModelInfo,
+} from '#/api/process/process';
+import { Pane, Splitpanes } from '#/components/splitpanes';
+import { forEach, listToTree } from '#/utils/helper/treeHelper';
+import { groupBy } from '#/utils/index';
 
 const showModel = ref(true);
 
@@ -21,7 +43,7 @@ const allCategoriesList = ref<any[]>([]);
 const allCategoryMap = ref([]);
 const dataList = ref<any[]>([]);
 const modelList = ref([]);
-const searchTxt = ref<string>("");
+const searchTxt = ref<string>('');
 const dataListLoading = ref<boolean>(false);
 const basicTreeRef = ref<any>(null);
 const currentCategory = ref<any>({});
@@ -57,38 +79,52 @@ function fetchModelByPage() {
       showModel.value = false;
       // 查询草稿数据
       dataListLoading.value = true;
-      getDraftPageList({categoryCode: unref(currentCategory).code, ...unref(pager), keyword: unref(searchTxt)}).then(res => {
-        const {rows, total} = res;
-        dataList.value = rows;
-        pagination.total = total;
-        pager.value.total = total;
-      }).finally(() => {
-        dataListLoading.value = false;
-      });
+      getDraftPageList({
+        categoryCode: unref(currentCategory).code,
+        ...unref(pager),
+        keyword: unref(searchTxt),
+      })
+        .then((res) => {
+          const { rows, total } = res;
+          dataList.value = rows;
+          pagination.total = total;
+          pager.value.total = total;
+        })
+        .finally(() => {
+          dataListLoading.value = false;
+        });
     } else if (unref(currentCategory).code === 'myCommonlyList') {
       showModel.value = false;
       // 查询我的常用流程
       dataListLoading.value = true;
-      getMyCommonlyList().then(res => {
-        dataList.value = res;
-        pagination.total = res.length;
-        pager.value.total = res.length;
-      }).finally(() => {
-        dataListLoading.value = false;
-      });
+      getMyCommonlyList()
+        .then((res) => {
+          dataList.value = res;
+          pagination.total = res.length;
+          pager.value.total = res.length;
+        })
+        .finally(() => {
+          dataListLoading.value = false;
+        });
     } else {
       showModel.value = true;
       // 查询模板数据
       dataListLoading.value = true;
-      getPagerModelModelInfo({categoryCode: unref(currentCategory).code, ...unref(pager), keyword: unref(searchTxt)}).then(res => {
-        const {rows, total} = res;
-        const result = groupBy(rows, "categoryCode");
-        modelList.value = result;
-        pagination.total = total;
-        pager.value.total = total;
-      }).finally(() => {
-        dataListLoading.value = false;
-      });
+      getPagerModelModelInfo({
+        categoryCode: unref(currentCategory).code,
+        ...unref(pager),
+        keyword: unref(searchTxt),
+      })
+        .then((res) => {
+          const { rows, total } = res;
+          const result = groupBy(rows, 'categoryCode');
+          modelList.value = result;
+          pagination.total = total;
+          pager.value.total = total;
+        })
+        .finally(() => {
+          dataListLoading.value = false;
+        });
     }
   } else {
     pagination.total = 0;
@@ -108,30 +144,38 @@ async function fetch() {
   allCategoriesList.value = JSON.parse(JSON.stringify(categories));
   // 所有的类别根据sn属性转换成map对象
   const tempAllCategoryMap = {};
-  categories.forEach(item => {
+  categories.forEach((item) => {
     item.key = item.id;
     item.title = item.name;
     tempAllCategoryMap[item.code] = item;
   });
   allCategoryMap.value = tempAllCategoryMap;
-  let tempTreeData = listToTree(categories, {id: 'id', children: 'children', pid: 'pid'});
-  forEach(tempTreeData, (node) => {
-    if (node.children.length === 0) {
-      delete node.children;
-    }
-  }, {id: 'id', children: 'children', pid: 'pid'});
+  const tempTreeData = listToTree(categories, {
+    id: 'id',
+    children: 'children',
+    pid: 'pid',
+  });
+  forEach(
+    tempTreeData,
+    (node) => {
+      if (node.children.length === 0) {
+        delete node.children;
+      }
+    },
+    { id: 'id', children: 'children', pid: 'pid' },
+  );
 
   tempTreeData.unshift({
-    code: "draftList",
-    key: "draftList",
-    title: "我的草稿",
-    pid: "",
+    code: 'draftList',
+    key: 'draftList',
+    title: '我的草稿',
+    pid: '',
   });
   tempTreeData.unshift({
-    code: "myCommonlyList",
-    key: "myCommonlyList",
-    title: "常用流程",
-    pid: "",
+    code: 'myCommonlyList',
+    key: 'myCommonlyList',
+    title: '常用流程',
+    pid: '',
   });
 
   treeData.value = tempTreeData;
@@ -143,33 +187,34 @@ async function fetch() {
   });
 }
 function onSearch() {
-    fetchModelByPage();
+  fetchModelByPage();
 }
 
 function handleSelect(keys: string, e) {
   const node = e.selectedNodes[0];
-  if (node) {
-    currentCategory.value = node;
-  } else {
-    currentCategory.value = {};
-  }
+  currentCategory.value = node || {};
   pager.value.pageNum = 1;
   pagination.current = 1;
   searchTxt.value = '';
   fetchModelByPage();
 }
-
 </script>
 
 <template>
-  <Page content-class="h-full" auto-content-height>
-    <Splitpanes class="default-theme h-full [&_.splitpanes__splitter]:!w-[10px]">
+  <Page auto-content-height content-class="h-full">
+    <Splitpanes
+      class="default-theme h-full [&_.splitpanes__splitter]:!w-[10px]"
+    >
       <Pane class="bg-transparent" min-size="20" size="30">
-        <div class="w-full h-full bg-card flex flex-col">
-          <div class="h-[50px] w-full flex-center p-4 border-b border-solid border-gray-200/50">
-            <h1 style="font-size: 16px;">流程分类</h1>
+        <div class="bg-card flex h-full w-full flex-col">
+          <div
+            class="flex-center h-[50px] w-full border-b border-solid border-gray-200/50 p-4"
+          >
+            <h1 style="font-size: 16px">流程分类</h1>
           </div>
-          <div class="flex-1 h-full overflow-y-auto overflow-x-hidden pt-2 pb-2">
+          <div
+            class="h-full flex-1 overflow-y-auto overflow-x-hidden pb-2 pt-2"
+          >
             <Tree
               v-bind="$attrs"
               v-if="treeData.length > 0"
@@ -178,12 +223,11 @@ function handleSelect(keys: string, e) {
               :field-names="{ title: 'title', key: 'key' }"
               :show-line="false"
               :tree-data="treeData"
-              block-node
               :virtual="false"
+              block-node
               default-expand-all
               @select="handleSelect"
-            >
-            </Tree>
+            />
             <div v-else class="mt-5">
               <Empty
                 :image="Empty.PRESENTED_IMAGE_SIMPLE"
@@ -193,41 +237,47 @@ function handleSelect(keys: string, e) {
           </div>
         </div>
       </Pane>
-      <Pane class="bg-transparent ml-2" min-size="20" size="70" >
-        <div class="w-full h-full p-0 flex flex-col gap-4">
-          <div class="h-[50px] w-full flex flex-row flex-center p-4 bg-card">
+      <Pane class="ml-2 bg-transparent" min-size="20" size="70">
+        <div class="flex h-full w-full flex-col gap-4 p-0">
+          <div class="flex-center bg-card flex h-[50px] w-full flex-row p-4">
             <div class="w-[300px]">
-              <h1 style="font-size: 16px;">流程名称（共{{ pager.total }}条）</h1>
+              <h1 style="font-size: 16px">流程名称（共{{ pager.total }}条）</h1>
             </div>
-            <div class="flex-1" style="padding: 6px;">
+            <div class="flex-1" style="padding: 6px">
               <InputSearch
                 v-model:value="searchTxt"
-                placeholder="搜索流程模板"
+                :allow-clear="true"
                 enter-button
-                :allowClear="true"
+                placeholder="搜索流程模板"
                 @search="onSearch"
               />
             </div>
           </div>
-          <div class="flex-1 overflow-x-hidden overflow-y-auto !p-4 bg-card m">
-            <Spin v-if="showModel" :spinning="dataListLoading" >
+          <div class="bg-card m flex-1 overflow-y-auto overflow-x-hidden !p-4">
+            <Spin v-if="showModel" :spinning="dataListLoading">
               <div class="m-h-[500px]">
                 <template v-if="modelList && Object.keys(modelList).length > 0">
                   <div v-for="(values, key) of modelList" :key="key">
                     <Divider orientation="left" orientation-margin="0px">
-                      <h1 style="font-size: 16px; font-weight: bold;">{{ allCategoryMap[key]?.name }}</h1>
+                      <h1 style="font-size: 16px; font-weight: bold">
+                        {{ allCategoryMap[key]?.name }}
+                      </h1>
                     </Divider>
                     <Row :gutter="[16, 8]" align="top">
-                      <Col :span="8" v-for="item in values">
+                      <Col v-for="item in values" :span="8">
                         <Space>
-                          <Avatar class="model-icon" :src="item.modelIcon">
+                          <Avatar :src="item.modelIcon" class="model-icon">
                             <template #icon>
-                              <PictureFilled/>
+                              <PictureFilled />
                             </template>
                           </Avatar>
-                          <Tooltip title="流程图预览" placement="top">
-                            <PartitionOutlined @click="showFlowDiagram(item.name, item.modelKey, '')"
-                                               class="flow-diagram-icon"/>
+                          <Tooltip placement="top" title="流程图预览">
+                            <PartitionOutlined
+                              class="flow-diagram-icon"
+                              @click="
+                                showFlowDiagram(item.name, item.modelKey, '')
+                              "
+                            />
                           </Tooltip>
                           <TypographyLink @click="handleLaunch(item)">
                             {{ item.name }}
@@ -238,15 +288,21 @@ function handleSelect(keys: string, e) {
                   </div>
                 </template>
                 <div v-else>
-                  <Empty v-if="!dataListLoading" description="暂无流程模板"/>
+                  <Empty v-if="!dataListLoading" description="暂无流程模板" />
                 </div>
               </div>
             </Spin>
 
-            <List v-else class="model-list" :loading="dataListLoading" :pagination="pagination" size="small"
-                  :data-source="dataList">
+            <List
+              v-else
+              :data-source="dataList"
+              :loading="dataListLoading"
+              :pagination="pagination"
+              class="model-list"
+              size="small"
+            >
               <template #renderItem="{ item }">
-                <ListItem class="list" key="item.id">
+                <ListItem key="item.id" class="list">
                   <template #actions>
                     <span>{{ item.categoryName }}</span>
                   </template>
@@ -254,24 +310,29 @@ function handleSelect(keys: string, e) {
                     <template #title>
                       <Space>
                         <Popconfirm
-                          title="确定要删除吗？"
-                          ok-text="确定"
+                          v-if="item.businessKey"
                           cancel-text="取消"
-                          @confirm="handleDelFormDraftById(item.id)"
+                          ok-text="确定"
+                          title="确定要删除吗？"
                           type="link"
-                          v-if="item.businessKey">
-                          <DeleteOutlined style="color: red"/>
+                          @confirm="handleDelFormDraftById(item.id)"
+                        >
+                          <DeleteOutlined style="color: red" />
                         </Popconfirm>
 
-                        <Avatar class="model-icon" :src="item.modelIcon">
+                        <Avatar :src="item.modelIcon" class="model-icon">
                           <template #icon>
-                            <PictureFilled/>
+                            <PictureFilled />
                           </template>
                         </Avatar>
 
-                        <Tooltip title="流程图预览" placement="top">
-                          <PartitionOutlined @click="showFlowDiagram(item.name, item.modelKey, '')"
-                                             class="flow-diagram-icon"/>
+                        <Tooltip placement="top" title="流程图预览">
+                          <PartitionOutlined
+                            class="flow-diagram-icon"
+                            @click="
+                              showFlowDiagram(item.name, item.modelKey, '')
+                            "
+                          />
                         </Tooltip>
                         <TypographyLink @click="handleLaunch(item)">
                           {{ item.name }}
