@@ -12,6 +12,8 @@ import { message, Popconfirm, Tooltip} from "ant-design-vue";
 
 import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
 import {listToTree} from "#/utils/helper/treeHelper";
+import { Pane, Splitpanes } from '#/components/splitpanes';
+
 
 import apiCategoryModal from "./api-category-modal.vue";
 import apiInfoDrawer from "./api-info-drawer.vue";
@@ -226,75 +228,73 @@ async function handleSelect(node: any, e: any) {
 }
 </script>
 
-<div>
+<template>
   <Page auto-content-height>
-    <div class="p-4 h-full">
-      <SplitPane>
-        <div>
-          <Tree
-              v-bind="$attrs"
-              v-if="apiCategoryTreeData.length > 0"
-              v-model:selected-keys="selectNodeIds"
-              :class="$attrs.class"
-              :field-names="{ title: 'title', key: 'key' }"
-              :show-line="{ showLeafIcon: false }"
-              :tree-data="apiCategoryTreeData"
-              block-node
-              :virtual="false"
-              default-expand-all
-              @select="handleSelect"
-          >
-            <template #headerTitle >
-              <Row align="middle" class="w-full">
-                <Col span="12">
-                  接口分类
-                </Col>
-                <Col span="12" class="text-right">
-                  <Button size="small" @click="handleCreateCategory" type="primary">新增分类</Button>
-                </Col>
-              </Row>
+    <Splitpanes>
+      <Pane class="bg-transparent" min-size="20" size="30">
+        <Tree
+            v-bind="$attrs"
+            v-if="apiCategoryTreeData.length > 0"
+            v-model:selected-keys="selectNodeIds"
+            :class="$attrs.class"
+            :field-names="{ title: 'title', key: 'key' }"
+            :show-line="{ showLeafIcon: false }"
+            :tree-data="apiCategoryTreeData"
+            block-node
+            :virtual="false"
+            default-expand-all
+            @select="handleSelect"
+        >
+          <template #headerTitle >
+            <Row align="middle" class="w-full">
+              <Col span="12">
+                接口分类
+              </Col>
+              <Col span="12" class="text-right">
+                <Button size="small" @click="handleCreateCategory" type="primary">新增分类</Button>
+              </Col>
+            </Row>
+          </template>
+        </Tree>
+      </Pane>
+      <Pane class="ml-2 bg-transparent" min-size="20" size="70">
+        <BasicTable @register="registerTable" class="!p-0">
+          <template #toolbar>
+            <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
+              <a-button type="primary" @click="handleCreate">新增</a-button>
+            </AccessControl>
+          </template>
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'categoryId'">
+              {{ apiCategoryDataMap[record.categoryId]?.name || '-' }}
             </template>
-          </Tree>
-        </div>
-        <div>
-          <BasicTable @register="registerTable" class="!p-0">
-            <template #toolbar>
-              <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
-                <a-button type="primary" @click="handleCreate">新增</a-button>
-              </AccessControl>
-            </template>
-            <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'categoryId'">
-                {{ apiCategoryDataMap[record.categoryId]?.name || '-' }}
-              </template>
-              <template v-if="column.key === 'action'">
-                <TableAction
-                  :actions="[
-                    {
-                      auth: 'App:' + PerEnum.UPDATE,
-                      tooltip: '修改',
-                      icon: 'clarity:note-edit-line',
-                      onClick: handleEdit.bind(null, record),
+            <template v-if="column.key === 'action'">
+              <TableAction
+                :actions="[
+                  {
+                    auth: 'App:' + PerEnum.UPDATE,
+                    tooltip: '修改',
+                    icon: 'clarity:note-edit-line',
+                    onClick: handleEdit.bind(null, record),
+                  },
+                  {
+                    auth: 'App:' + PerEnum.DELETE,
+                    tooltip: '删除',
+                    icon: 'ant-design:delete-outlined',
+                    color: 'error',
+                    popConfirm: {
+                      placement: 'left',
+                      title: '是否确认删除',
+                      confirm: handleDeleteApiInfo.bind(null, record),
                     },
-                    {
-                      auth: 'App:' + PerEnum.DELETE,
-                      tooltip: '删除',
-                      icon: 'ant-design:delete-outlined',
-                      color: 'error',
-                      popConfirm: {
-                        placement: 'left',
-                        title: '是否确认删除',
-                        confirm: handleDeleteApiInfo.bind(null, record),
-                      },
-                    },
-                  ]"
-                />
-              </template>
+                  },
+                ]"
+              />
             </template>
-          </BasicTable>
-        </div>
-      </SplitPane>
-    </div>
+          </template>
+        </BasicTable>
+      </Pane>
+    </Splitpanes>
     <ApiInfoDrawer @register="registerApiInfoDrawer" @success="handleSuccess" />
     <ApiCategoryModal @register="registerApiCategoryModal" @success="handleCategorySuccess" />
   </Page>
