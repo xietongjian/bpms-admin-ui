@@ -10,6 +10,8 @@ import {groupBy} from '#/utils/index';
 import {getFlowCategories} from '#/api/base/category';
 import {getDraftPageList, getMyCommonlyList, getPagerModelModelInfo,} from "#/api/process/process";
 
+import { Splitpanes, Pane } from '#/components/splitpanes'
+
 const showModel = ref(true);
 
 const ListItem = List.Item;
@@ -160,124 +162,129 @@ function handleSelect(keys: string, e) {
 </script>
 
 <template>
-  <Page content-class="flex flex-row gap-4 h-full" auto-content-height>
-    <div class="w-[260px] h-full bg-card flex flex-col">
-      <div class="h-[50px] w-full flex-center p-4 border-b border-solid border-gray-200">
-        <h1 style="font-size: 16px;">流程分类</h1>
-      </div>
-      <div class="flex-1 h-full overflow-y-auto overflow-x-hidden pt-2 pb-2">
-        <Tree
-          v-bind="$attrs"
-          v-if="treeData.length > 0"
-          v-model:selected-keys="selectNodeId"
-          :class="$attrs.class"
-          :field-names="{ title: 'title', key: 'key' }"
-          :show-line="false"
-          :tree-data="treeData"
-          block-node
-          :virtual="false"
-          default-expand-all
-          @select="handleSelect"
-        >
-        </Tree>
-        <div v-else class="mt-5">
-          <Empty
-            :image="Empty.PRESENTED_IMAGE_SIMPLE"
-            description="无数据"
-          />
-        </div>
-      </div>
-    </div>
-
-    <div class="flex-1 h-full p-0 flex flex-col gap-4">
-      <div class="h-[50px] w-full flex flex-row flex-center p-4 bg-card">
-        <div class="w-[300px]">
-          <h1 style="font-size: 16px;">流程名称（共{{ pager.total }}条）</h1>
-        </div>
-        <div class="flex-1" style="padding: 6px;">
-          <InputSearch
-              v-model:value="searchTxt"
-              placeholder="搜索流程模板"
-              enter-button
-              :allowClear="true"
-              @search="onSearch"
-          />
-        </div>
-      </div>
-      <div class="flex-1 overflow-x-hidden overflow-y-auto !p-4 bg-card m">
-        <Spin v-if="showModel" :spinning="dataListLoading" >
-          <div class="m-h-[500px]">
-            <template v-if="modelList && Object.keys(modelList).length > 0">
-              <div v-for="(values, key) of modelList" :key="key">
-                <Divider orientation="left" orientation-margin="0px">
-                  <h1 style="font-size: 16px; font-weight: bold;">{{ allCategoryMap[key]?.name }}</h1>
-                </Divider>
-                <Row :gutter="[16, 8]" align="top">
-                  <Col :span="8" v-for="item in values">
-                    <Space>
-                      <Avatar class="model-icon" :src="item.modelIcon">
-                        <template #icon>
-                          <PictureFilled/>
-                        </template>
-                      </Avatar>
-                      <Tooltip title="流程图预览" placement="top">
-                        <PartitionOutlined @click="showFlowDiagram(item.name, item.modelKey, '')"
-                                           class="flow-diagram-icon"/>
-                      </Tooltip>
-                      <TypographyLink @click="handleLaunch(item)">
-                        {{ item.name }}
-                      </TypographyLink>
-                    </Space>
-                  </Col>
-                </Row>
-              </div>
-            </template>
-            <div v-else>
-              <Empty v-if="!dataListLoading" description="暂无流程模板"/>
+  <Page content-class="h-full" auto-content-height>
+    <Splitpanes class="default-theme h-full [&_.splitpanes__splitter]:!w-[10px]">
+      <Pane class="bg-transparent" min-size="20" size="30">
+        <div class="w-full h-full bg-card flex flex-col">
+          <div class="h-[50px] w-full flex-center p-4 border-b border-solid border-gray-200/50">
+            <h1 style="font-size: 16px;">流程分类</h1>
+          </div>
+          <div class="flex-1 h-full overflow-y-auto overflow-x-hidden pt-2 pb-2">
+            <Tree
+              v-bind="$attrs"
+              v-if="treeData.length > 0"
+              v-model:selected-keys="selectNodeId"
+              :class="$attrs.class"
+              :field-names="{ title: 'title', key: 'key' }"
+              :show-line="false"
+              :tree-data="treeData"
+              block-node
+              :virtual="false"
+              default-expand-all
+              @select="handleSelect"
+            >
+            </Tree>
+            <div v-else class="mt-5">
+              <Empty
+                :image="Empty.PRESENTED_IMAGE_SIMPLE"
+                description="无数据"
+              />
             </div>
           </div>
-        </Spin>
-
-        <List v-else class="model-list" :loading="dataListLoading" :pagination="pagination" size="small"
-              :data-source="dataList">
-          <template #renderItem="{ item }">
-            <ListItem class="list" key="item.id">
-              <template #actions>
-                <span>{{ item.categoryName }}</span>
-              </template>
-              <ListItemMeta>
-                <template #title>
-                  <Space>
-                    <Popconfirm
-                        title="确定要删除吗？"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="handleDelFormDraftById(item.id)"
-                        type="link"
-                        v-if="item.businessKey">
-                      <DeleteOutlined style="color: red"/>
-                    </Popconfirm>
-
-                    <Avatar class="model-icon" :src="item.modelIcon">
-                      <template #icon>
-                        <PictureFilled/>
-                      </template>
-                    </Avatar>
-
-                    <Tooltip title="流程图预览" placement="top">
-                      <PartitionOutlined @click="showFlowDiagram(item.name, item.modelKey, '')"
-                                         class="flow-diagram-icon"/>
-                    </Tooltip>
-                    <TypographyLink @click="handleLaunch(item)">
-                      {{ item.name }}
-                    </TypographyLink>
-                  </Space>
+        </div>
+      </Pane>
+      <Pane class="bg-transparent ml-2" min-size="20" size="70" >
+        <div class="w-full h-full p-0 flex flex-col gap-4">
+          <div class="h-[50px] w-full flex flex-row flex-center p-4 bg-card">
+            <div class="w-[300px]">
+              <h1 style="font-size: 16px;">流程名称（共{{ pager.total }}条）</h1>
+            </div>
+            <div class="flex-1" style="padding: 6px;">
+              <InputSearch
+                v-model:value="searchTxt"
+                placeholder="搜索流程模板"
+                enter-button
+                :allowClear="true"
+                @search="onSearch"
+              />
+            </div>
+          </div>
+          <div class="flex-1 overflow-x-hidden overflow-y-auto !p-4 bg-card m">
+            <Spin v-if="showModel" :spinning="dataListLoading" >
+              <div class="m-h-[500px]">
+                <template v-if="modelList && Object.keys(modelList).length > 0">
+                  <div v-for="(values, key) of modelList" :key="key">
+                    <Divider orientation="left" orientation-margin="0px">
+                      <h1 style="font-size: 16px; font-weight: bold;">{{ allCategoryMap[key]?.name }}</h1>
+                    </Divider>
+                    <Row :gutter="[16, 8]" align="top">
+                      <Col :span="8" v-for="item in values">
+                        <Space>
+                          <Avatar class="model-icon" :src="item.modelIcon">
+                            <template #icon>
+                              <PictureFilled/>
+                            </template>
+                          </Avatar>
+                          <Tooltip title="流程图预览" placement="top">
+                            <PartitionOutlined @click="showFlowDiagram(item.name, item.modelKey, '')"
+                                               class="flow-diagram-icon"/>
+                          </Tooltip>
+                          <TypographyLink @click="handleLaunch(item)">
+                            {{ item.name }}
+                          </TypographyLink>
+                        </Space>
+                      </Col>
+                    </Row>
+                  </div>
                 </template>
-              </ListItemMeta>
-            </ListItem>
-          </template>
-        </List>
-      </div>
-    </div>
+                <div v-else>
+                  <Empty v-if="!dataListLoading" description="暂无流程模板"/>
+                </div>
+              </div>
+            </Spin>
+
+            <List v-else class="model-list" :loading="dataListLoading" :pagination="pagination" size="small"
+                  :data-source="dataList">
+              <template #renderItem="{ item }">
+                <ListItem class="list" key="item.id">
+                  <template #actions>
+                    <span>{{ item.categoryName }}</span>
+                  </template>
+                  <ListItemMeta>
+                    <template #title>
+                      <Space>
+                        <Popconfirm
+                          title="确定要删除吗？"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="handleDelFormDraftById(item.id)"
+                          type="link"
+                          v-if="item.businessKey">
+                          <DeleteOutlined style="color: red"/>
+                        </Popconfirm>
+
+                        <Avatar class="model-icon" :src="item.modelIcon">
+                          <template #icon>
+                            <PictureFilled/>
+                          </template>
+                        </Avatar>
+
+                        <Tooltip title="流程图预览" placement="top">
+                          <PartitionOutlined @click="showFlowDiagram(item.name, item.modelKey, '')"
+                                             class="flow-diagram-icon"/>
+                        </Tooltip>
+                        <TypographyLink @click="handleLaunch(item)">
+                          {{ item.name }}
+                        </TypographyLink>
+                      </Space>
+                    </template>
+                  </ListItemMeta>
+                </ListItem>
+              </template>
+            </List>
+          </div>
+        </div>
+      </Pane>
+    </Splitpanes>
   </Page>
 </template>

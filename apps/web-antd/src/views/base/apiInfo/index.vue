@@ -14,6 +14,7 @@ import apiCategoryModal from "./api-category-modal.vue";
 import {DeleteOutlined, PlusOutlined, EditOutlined} from "@ant-design/icons-vue";
 import {Popconfirm, Button, Row, Col, message, Tree, Tooltip} from "ant-design-vue";
 import {Page, useVbenModal, useVbenDrawer, VbenFormProps} from '@vben/common-ui';
+import { TableAction } from '#/components/table-action';
 
 const selectNodeIds = ref([]);
 const treeLoading = ref(true);
@@ -224,11 +225,11 @@ async function handleSelect(node: any, e: any) {
 }
 </script>
 
-<template>
+<div>
   <Page auto-content-height>
     <div class="p-4 h-full">
       <SplitPane>
-        <template #left>
+        <div>
           <Tree
               v-bind="$attrs"
               v-if="apiCategoryTreeData.length > 0"
@@ -253,8 +254,8 @@ async function handleSelect(node: any, e: any) {
               </Row>
             </template>
           </Tree>
-        </template>
-        <template #main>
+        </div>
+        <div>
           <BasicTable @register="registerTable" class="!p-0">
             <template #toolbar>
               <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
@@ -290,7 +291,7 @@ async function handleSelect(node: any, e: any) {
               </template>
             </template>
           </BasicTable>
-        </template>
+        </div>
       </SplitPane>
     </div>
     <ApiInfoDrawer @register="registerApiInfoDrawer" @success="handleSuccess" />
