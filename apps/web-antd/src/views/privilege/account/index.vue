@@ -9,12 +9,9 @@ import {getAccountPageList, deleteByIds} from '#/api/privilege/account';
 import type {Recordable} from '@vben/types';
 import {columns, searchFormSchema} from './account.data';
 import {UserOutlined} from '@ant-design/icons-vue';
-
 import AccountModal from './account-modal.vue';
 import PasswordModal from './PasswordModal.vue';
 import SetGroupModal from './SetGroupModal.vue';
-
-// import AppSecretKeyModal from './app-secret-key-modal.vue';
 import {useAccess} from '@vben/access';
 import {PerEnum} from "#/enums/perEnum";
 import {TableAction} from '#/components/table-action';
@@ -24,7 +21,6 @@ const setGroupModalRef = ref();
 const accountModalRef = ref();
 const {hasAccessByCodes} = useAccess();
 const PerPrefix = 'Account:';
-
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -205,8 +201,8 @@ function previewImageVisibleChange(visible, prevVisible) {
 
     </BasicTable>
     <AccountModal ref="accountModalRef" @onSuccess="tableApi.reload()"/>
-    <PasswordModal ref="passwordModalRef" @register="registerPasswordModal" @success="handlePasswordSuccess"/>
-    <SetGroupModal ref="setGroupModalRef" @register="registerSetGroupModal" @success="handleSetGroupSuccess"/>
+    <PasswordModal ref="passwordModalRef" @success="handlePasswordSuccess"/>
+    <SetGroupModal ref="setGroupModalRef" @success="handleSetGroupSuccess"/>
   </Page>
 </template>
 

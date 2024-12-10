@@ -1,18 +1,22 @@
-
 <script lang="ts" setup>
-import type { Recordable } from '@vben/types';
+import type {Recordable} from '@vben/types';
 
-import { h, ref, unref} from 'vue';
+import {h, ref, unref} from 'vue';
 
-import { useVbenDrawer, useVbenModal, VbenFormProps} from '@vben/common-ui';
+import {Page, useVbenDrawer, useVbenModal} from '@vben/common-ui';
 
-import {deleteApiCategoryById, deleteApiInfoById, getApiCategoryListData, getApiInfoListByPage} from '@/api/base/apiInfo';
+import {
+  deleteApiCategoryById,
+  deleteApiInfoById,
+  getApiCategoryListData,
+  getApiInfoListByPage
+} from '#/api/base/apiInfo';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons-vue";
-import { message, Popconfirm, Tooltip} from "ant-design-vue";
+import {message, Button, Popconfirm, Tooltip} from "ant-design-vue";
 
 import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
 import {listToTree} from "#/utils/helper/treeHelper";
-import { Pane, Splitpanes } from '#/components/splitpanes';
+import {Pane, Splitpanes} from '#/components/splitpanes';
 
 
 import apiCategoryModal from "./api-category-modal.vue";
@@ -22,7 +26,10 @@ import {columns, searchFormSchema} from "./apiInfo.data";
 const selectNodeIds = ref([]);
 const treeLoading = ref(true);
 
-const [registerApiInfoDrawer, {openDrawer: openApiInfoDrawer, setDrawerProps: setApiInfoDrawerProps}] = useDrawer();
+const [registerApiInfoDrawer, {
+  openDrawer: openApiInfoDrawer,
+  setDrawerProps: setApiInfoDrawerProps
+}] = useDrawer();
 
 const [ApiInfoDrawer, baseDrawerApi] = useVbenDrawer({
   // 连接抽离的组件
@@ -82,12 +89,15 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 const apiCategoryDataMap = ref<any>({});
 const apiCategoryTreeData = ref<any[]>([]);
-const [registerApiCategoryModal, {openModal: openApiCategoryModal, setModalProps: setApiCategoryModalProps}] = useModal();
+const [registerApiCategoryModal, {
+  openModal: openApiCategoryModal,
+  setModalProps: setApiCategoryModalProps
+}] = useModal();
 
 const treeActionList: any[] = [
   {
     render: (node) => {
-      return h(Tooltip, {placement: 'top', title:'新建子分类'}, [
+      return h(Tooltip, {placement: 'top', title: '新建子分类'}, [
         h(PlusOutlined, {
           class: 'ml-2',
           onClick: (e) => {
@@ -100,12 +110,17 @@ const treeActionList: any[] = [
   },
   {
     render: (node) => {
-      return h(Tooltip, {placement: 'top', title:'编辑'}, [
+      return h(Tooltip, {placement: 'top', title: '编辑'}, [
         h(EditOutlined, {
           class: 'ml-2',
           onClick: (e) => {
             e.stopPropagation();
-            handleUpdateCategory({id: node.id, pid: node.pid, name: node.title, orderNo: node.orderNo});
+            handleUpdateCategory({
+              id: node.id,
+              pid: node.pid,
+              name: node.title,
+              orderNo: node.orderNo
+            });
           },
         })
       ]);
@@ -139,7 +154,7 @@ function handleCreateCategory(node: any) {
     isUpdate: false,
     record: {pid: node?.id}
   });
-  setApiCategoryModalProps({ title: "新增分类", centered: true });
+  setApiCategoryModalProps({title: "新增分类", centered: true});
 }
 
 function handleUpdateCategory(node: any) {
@@ -147,14 +162,14 @@ function handleUpdateCategory(node: any) {
     isUpdate: true,
     record: node
   });
-  setApiCategoryModalProps({ title: "修改分类", centered: true });
+  setApiCategoryModalProps({title: "修改分类", centered: true});
 }
 
 async function handleDeleteCategory(node: any) {
   // openFullLoading();
   try {
     const {success, msg} = await deleteApiCategoryById(node.id);
-    if(success){
+    if (success) {
       message.success(msg);
       initApiCategoryTree();
     } else {
@@ -171,7 +186,7 @@ function handleCreate() {
     isUpdate: false,
     record: {categoryId: unref(currentNode)?.id}
   });
-  setApiInfoDrawerProps({ title: `新建接口` });
+  setApiInfoDrawerProps({title: `新建接口`});
 }
 
 function handleEdit(record: Recordable) {
@@ -179,7 +194,7 @@ function handleEdit(record: Recordable) {
     record,
     isUpdate: true,
   });
-  setApiInfoDrawerProps({ title: `编辑-${record.name}` });
+  setApiInfoDrawerProps({title: `编辑-${record.name}`});
 }
 
 function handleDeleteApiInfo(record: Recordable) {
@@ -210,6 +225,7 @@ function handleSuccess() {
     reload({searchInfo: {categoryId: unref(currentNode)?.id, ...values}});
   }, 200);
 }
+
 function handleCategorySuccess() {
   initApiCategoryTree();
 }
@@ -233,19 +249,19 @@ async function handleSelect(node: any, e: any) {
     <Splitpanes>
       <Pane class="bg-transparent" min-size="20" size="30">
         <Tree
-            v-bind="$attrs"
-            v-if="apiCategoryTreeData.length > 0"
-            v-model:selected-keys="selectNodeIds"
-            :class="$attrs.class"
-            :field-names="{ title: 'title', key: 'key' }"
-            :show-line="{ showLeafIcon: false }"
-            :tree-data="apiCategoryTreeData"
-            block-node
-            :virtual="false"
-            default-expand-all
-            @select="handleSelect"
+          v-bind="$attrs"
+          v-if="apiCategoryTreeData.length > 0"
+          v-model:selected-keys="selectNodeIds"
+          :class="$attrs.class"
+          :field-names="{ title: 'title', key: 'key' }"
+          :show-line="{ showLeafIcon: false }"
+          :tree-data="apiCategoryTreeData"
+          block-node
+          :virtual="false"
+          default-expand-all
+          @select="handleSelect"
         >
-          <template #headerTitle >
+          <template #headerTitle>
             <Row align="middle" class="w-full">
               <Col span="12">
                 接口分类
@@ -295,7 +311,7 @@ async function handleSelect(node: any, e: any) {
         </BasicTable>
       </Pane>
     </Splitpanes>
-    <ApiInfoDrawer @register="registerApiInfoDrawer" @success="handleSuccess" />
-    <ApiCategoryModal @register="registerApiCategoryModal" @success="handleCategorySuccess" />
+    <ApiInfoDrawer @register="registerApiInfoDrawer" @success="handleSuccess"/>
+    <ApiCategoryModal @register="registerApiCategoryModal" @success="handleCategorySuccess"/>
   </Page>
 </template>

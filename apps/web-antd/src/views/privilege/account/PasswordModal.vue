@@ -7,15 +7,14 @@
   import { ref, computed, unref } from 'vue';
 
   import {useVbenModal} from '@vben/common-ui';
-  import {accountFormSchema, passwordFormSchema} from './account.data';
+  import {passwordFormSchema} from './account.data';
   import { setPassword } from '#/api/privilege/account';
   import { message } from 'ant-design-vue';
   import {useVbenForm} from '#/adapter/form';
 
-  const isUpdate = ref(true);
 
   const [BasicForm, baseFormApi] = useVbenForm({
-    schemas: passwordFormSchema,
+    schema: passwordFormSchema,
     commonConfig: {
       // 所有表单项
       componentProps: {
@@ -62,7 +61,7 @@
     }
   });*/
 
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增账号' : '设置密码'));
+  const getTitle = computed(() => '设置密码');
 
   async function handleSubmit() {
     try {
