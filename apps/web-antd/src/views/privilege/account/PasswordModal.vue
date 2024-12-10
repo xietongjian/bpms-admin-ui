@@ -13,7 +13,7 @@
   import {useVbenForm} from '#/adapter/form';
 
 
-  const [BasicForm, baseFormApi] = useVbenForm({
+  const [BasicForm, formApi] = useVbenForm({
     schema: passwordFormSchema,
     commonConfig: {
       // 所有表单项
@@ -35,7 +35,7 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          baseFormApi.setValues(values);
+          formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -65,22 +65,22 @@
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
-      values.password = values.passwordNew;
-      delete values.passwordNew;
-      delete values.confirmPassword;
-      const {
-        data: { success, msg },
-      } = await setPassword(values);
-      if (success) {
-        message.success(msg);
-        closeModal();
-      } else {
-        message.error(msg);
+      modalApi.setState({loading: true, confirmLoading: true});
+      const valid = await formApi.validate();
+      if(valid){
+        const values = await formApi.getValues();
+        const res = await setPassword({id: values.id, password: values.passwordNew});
+        debugger;
+        if (success) {
+          message.success(msg);
+          modalApi.close();
+        } else {
+          message.error(msg);
+        }
       }
+
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
   defineExpose(modalApi)

@@ -38,7 +38,7 @@ export const allocationRoles = (params: any) => {
 };
 
 export const setPassword = (params: any) =>
-  requestClient.post<any>(Api.SetPassword, params, { isReturnNativeResponse: true });
+  requestClient.post<any>(Api.SetPassword, params, { isTransformResponse: false });
 
 export const deleteByIds = (params: Array<string>) =>
   requestClient.post<any>(Api.Delete, params );

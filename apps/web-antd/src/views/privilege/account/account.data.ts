@@ -229,52 +229,21 @@ export const passwordFormSchema: FormSchema[] = [
     fieldName: 'confirmPassword',
     label: '确认密码',
     component: 'InputPassword',
-    rules: z
-        .string({
-          required_error: "确认密码不能为空"
-        })
-        .min(1, "长度必需在6-32之间！")
-        .max(32, '长度必需在6-32之间！')
-        .refine((confirmPassword, xtx) => {
-          const { passwordNew } = ctx.parent; // 从父级数据中获取密码
-          return confirmPassword === passwordNew;
-        }, "两次输入的密码不一致!"),
-    /*dependencies: {
-      show: true,
+    dependencies: {
       rules(values) {
-        debugger;
-        const { passwordNew, confirmPassword } = values;
-        debugger;
-        return
+        const { passwordNew } = values;
+        return z
+          .string({
+            required_error: "确认密码不能为空"
+          })
+          .min(1, "长度必需在6-32之间！")
+          .max(32, '长度必需在6-32之间！')
+          .refine((value) => value === passwordNew, {
+            message: '两次输入的密码不一致！',
+          });
       },
-      triggerFields: ['confirmPassword'],
-    },*/
-    /*dynamicRules: ({values}) => {
-      return [
-        {
-          required: true,
-          validator: (_, value) => {
-            if (!value) {
-              return Promise.reject('确认密码不能为空');
-            }
-            if (value !== values.passwordNew) {
-              return Promise.reject('两次输入的密码不一致!');
-            }
-            return Promise.resolve();
-          },
-        },
-        {
-          pattern: new RegExp('[^\\u4e00-\\u9fa5]+'),
-          type: 'string',
-          message: '密码不能输入汉字！',
-        },
-        {
-          min: 6,
-          max: 32,
-          message: '长度必需在6-32之间！',
-        },
-      ];
-    },*/
+      triggerFields: ['confirmPassword', 'passwordNew'],
+    },
   },
 ];
 
