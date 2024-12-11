@@ -1,10 +1,9 @@
-// import { BasicColumn, FormSchema } from '@/components/Table';
-// import Icon from '@/components/Icon/Icon.vue';
-import { h } from 'vue';
 import { z } from '#/adapter/form';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { RemarkDefaultEnum } from '#/enums/constantEnum';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import { checkEntityExist } from '#/api/privilege/group';
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -114,7 +113,39 @@ export const formSchema: FormSchema[] = [
     fieldName: 'sn',
     label: '标识',
     component: 'Input',
-    rules: 'required',
+    dependencies: {
+      rules(values) {
+        const { id, sn } = values;
+        return z
+            .string({
+              required_error: "用户组标识不能为空"
+            })
+            .min(1, "用户组标识不能为空")
+            .max(100, '最多输入100个字符')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'sn',
+                      fieldValue: sn || '',
+                      fieldName: '用户组标识',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '用户组标识已存在',
+                },
+            );
+      },
+      triggerFields: ['sn'],
+    },
+
   },
   {
     label: '备注',
@@ -134,7 +165,10 @@ export const setAccountFormSchema: FormSchema[] = [
     label: 'ID',
     fieldName: 'id',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     label: '选择用户',

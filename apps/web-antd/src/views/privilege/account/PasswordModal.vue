@@ -41,25 +41,9 @@
       }
     },
     onConfirm() {
-      // await baseFormApi.submitForm();
       handleSubmit();
     },
   });
-
-  /*const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
-    resetFields();
-    setModalProps({
-      confirmLoading: false,
-      title: `给账号【${data.record.realName}(${data.record.username})】设置密码`,
-    });
-    isUpdate.value = !!data?.isUpdate;
-
-    if (unref(isUpdate)) {
-      setFieldsValue({
-        ...data.record,
-      });
-    }
-  });*/
 
   const getTitle = computed(() => '设置密码');
 
@@ -69,8 +53,7 @@
       const valid = await formApi.validate();
       if(valid){
         const values = await formApi.getValues();
-        const res = await setPassword({id: values.id, password: values.passwordNew});
-        debugger;
+        const {success, msg} = await setPassword({id: values.id, password: values.passwordNew});
         if (success) {
           message.success(msg);
           modalApi.close();
@@ -78,7 +61,6 @@
           message.error(msg);
         }
       }
-
     } finally {
       modalApi.setState({loading: false, confirmLoading: false});
     }

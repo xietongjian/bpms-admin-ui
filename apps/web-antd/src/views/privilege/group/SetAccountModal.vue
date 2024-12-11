@@ -1,8 +1,3 @@
-<template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
-  </BasicModal>
-</template>
 <script lang="ts" setup>
   import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
   import { setAccountFormSchema } from './group.data';
@@ -120,3 +115,8 @@
 
   defineExpose(modalApi)
 </script>
+<template>
+  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
+    <BasicForm @register="registerForm" />
+  </BasicModal>
+</template>
