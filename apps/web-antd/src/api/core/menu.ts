@@ -17,7 +17,7 @@ export async function getAllMenusApi() {
 function genMenuTree(menus){
   menus.filter(item => item.path !== '/analysis').forEach(item => {
     const sn = item.sn;
-    item.path = item.url;
+    item.path = !item.pid && item.url.indexOf('/') !== 0 ? ("/" + item.url) : item.url;
     item.component = (item.component === 'LAYOUT' ? 'BasicLayout' : item.component);
     item.meta = {
       title: item.name,
