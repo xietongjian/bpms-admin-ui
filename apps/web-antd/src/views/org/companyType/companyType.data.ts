@@ -1,14 +1,13 @@
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
+import {z} from "@vben/common-ui";
 
 export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
     field: 'name',
     align: 'left',
-    width: 300,
     resizable: true,
     treeNode: true,
   },
@@ -47,12 +46,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称/编码',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -61,37 +54,28 @@ export const formSchema : FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
-    colProps: {
-      span: 24,
-    },
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'pid',
     label: 'pid',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
-    required: true,
     component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 64,
-        message: '字符长度不能大于64！',
-      },
-    ],*/
-    colProps: {
-      span: 24,
-    },
+    rules: z
+        .string({required_error: '名称不能为空！'})
+        .min(1, {message: '名称不能为空！'})
+        .max(64, {message: '字符长度不能大于64！'}),
   },
   {
     fieldName: 'code',

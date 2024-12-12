@@ -5,3 +5,4 @@ export { default as ApiSelect } from './components/api-select.vue';
 export { default as ApiTreeSelect } from './components/api-tree-select.vue';
 export { default as IconPicker } from './components/icon-picker.vue';
 export { default as Upload } from './components/upload.vue';
+export * from './components/selector/org-selector';

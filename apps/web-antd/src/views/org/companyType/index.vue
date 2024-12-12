@@ -150,41 +150,6 @@
       <template #action="{ row }">
         <TableAction :actions="createActions(row)" />
       </template>
-      <!--
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-              :actions="[
-              {
-                auth: 'CompanyType:' + PerEnum.ADD,
-                tooltip: '添加子分类',
-                icon: 'ant-design:plus-outlined',
-                onClick: handleCreateChild.bind(null, record),
-              },
-              {
-                auth: 'CompanyType:' + PerEnum.UPDATE,
-                tooltip: '修改',
-                icon: 'clarity:note-edit-line',
-                onClick: handleEdit.bind(null, record),
-              },
-              {
-                auth: 'CompanyType:' + PerEnum.DELETE,
-                tooltip: '删除',
-                icon: 'ant-design:delete-outlined',
-                color: 'error',
-                onClick: (e) => {
-                  e.stopPropagation();
-                },
-                popConfirm: {
-                  title: '是否确认删除',
-                  confirm: handleDelete.bind(null, record),
-                  placement: 'left',
-                },
-              },
-            ]"
-          />
-        </template>
-      </template>-->
     </BasicTable>
     <CompanyTypeModal @success="handleSuccess" />
   </Page>

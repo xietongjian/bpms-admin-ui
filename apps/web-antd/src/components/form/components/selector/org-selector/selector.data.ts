@@ -1,4 +1,4 @@
-import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui/src';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { Tag } from 'ant-design-vue';
 import { h } from 'vue';

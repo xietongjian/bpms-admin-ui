@@ -10,9 +10,8 @@ export const columns: VxeGridProps['columns'] = [
     title: '名称',
     field: 'name',
     align: 'left',
-    width: 300,
-    minWidth: 300,
     resizable: true,
+    treeNode: true
   },
   {
     title: '编码',
@@ -26,12 +25,14 @@ export const columns: VxeGridProps['columns'] = [
     field: 'leaderName',
     width: 100,
     align: 'center',
+    slots: { default: 'leaderName' }
   },
   {
     title: '分管领导',
     field: 'superiorName',
     width: 100,
     align: 'center',
+    slots: { default: 'superiorName' }
   },
   {
     title: '所属公司',

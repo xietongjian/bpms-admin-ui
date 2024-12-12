@@ -2,9 +2,8 @@
 import { defineComponent, ref, watch, unref, onMounted, computed, watchEffect } from 'vue';
 import { SearchOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
 import OrgSelectorModal from './org-selector-modal.vue';
-import {usePagination} from '@vben/hooks';
 import {EmptyIcon, Grip, listIcons} from '@vben/icons';
-import {$t} from '@vben/locales';
+
 import {
   Button,
   Input,
@@ -22,6 +21,15 @@ interface Props {
    * 图标列表
    */
   icons?: string[];
+  multipart: {
+    type: boolean,
+    default: false,
+  },
+  type: {
+    type: string,
+    default: 'default',
+  }
+
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -41,7 +49,6 @@ const modelValue = defineModel({default: '', type: String});
 
 const visible = ref(false);
 const currentSelect = ref('');
-const currentPage = ref(1);
 const keyword = ref('');
 const keywordDebounce = refDebounced(keyword, 300);
 const currentList = computed(() => {
@@ -67,11 +74,6 @@ const showList = computed(() => {
   );
 });
 
-const {paginationList, total, setCurrentPage} = usePagination(
-    showList,
-    props.pageSize,
-);
-
 watchEffect(() => {
   currentSelect.value = modelValue.value;
 });
@@ -87,11 +89,6 @@ const handleClick = (icon: string) => {
   currentSelect.value = icon;
   modelValue.value = icon;
   close();
-};
-
-const handlePageChange = (page: number) => {
-  currentPage.value = page;
-  setCurrentPage(page);
 };
 
 function toggleOpenState() {

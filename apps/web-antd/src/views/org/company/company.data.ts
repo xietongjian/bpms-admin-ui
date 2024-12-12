@@ -1,24 +1,19 @@
-import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import { h } from 'vue';
-import { Tag } from 'ant-design-vue';
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 
 import { getCompanyTypes } from '#/api/org/companyType';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
-
-let companyTypeTreeData = [];
-const companyTypeObj = {};
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import {checkEntityExist} from "#/api/base/app";
 
 export const columns: VxeGridProps['columns'] = [
   {
     title: '全称',
     field: 'cname',
     align: 'left',
-    minWidth: 300,
-    width: 300,
     resizable: true,
+    treeNode: true
   },
   {
     title: '编码',
@@ -40,23 +35,15 @@ export const columns: VxeGridProps['columns'] = [
     field: 'typeId',
     align: 'left',
     width: 180,
-    customRender: ({ record }) => {
-      return companyTypeObj[record.typeId] || '未设置';
-    },
+    slots: {default: 'typeId'}
   },
 
   {
     title: '状态',
     field: 'status',
     width: 80,
-    customRender: ({ record }) => {
-      const status = record.status;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '启用' : '停用';
-      return h(Tag, { color: color }, () => text);
-    },
-  },
+    slots: {default: 'status'},
+      },
   {
     title: '排序',
     field: 'orderNo',
@@ -77,7 +64,7 @@ export const columns: VxeGridProps['columns'] = [
   },
 ];
 
-export const searchFormSchema: VxeGridProps['columns'] = [
+export const searchFormSchema: FormSchema[] = [
   {
     fieldName: 'keyword',
     label: '关键字',
@@ -86,17 +73,11 @@ export const searchFormSchema: VxeGridProps['columns'] = [
       placeholder: '请输入名称/编码',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
 
-export const modalSchema =  [
+export const modalSchema :FormSchema[]=  [
   {
     component: 'Input',
     dependencies: {
@@ -130,87 +111,111 @@ export const modalSchema =  [
 ];
 
 
-export const formSchema = [
+export const formSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
-    field: 'pid',
+    fieldName: 'pid',
     label: 'pid',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
-    field: 'cname',
+    fieldName: 'cname',
     label: '全称',
-    required: true,
     component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '全称不能为空！',
-      },
-      {
-        max: 64,
-        message: '字符长度不能大于64！',
-      },
-    ],*/
-    colProps: {
-      span: 24,
-    },
+    rules: z
+        .string({
+          required_error: '全称不能为空！',
+        })
+        .trim()
+        .min(1, "全称不能为空！")
+        .max(64, "字符长度不能大于64！"),
   },
   {
-    field: 'shortName',
+    fieldName: 'shortName',
     label: '简称',
-    required: false,
     component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '简称不能为空！',
-      },
-      {
-        max: 64,
-        message: '字符长度不能大于64！',
-      },
-    ],*/
-    colProps: {
-      span: 24,
-    },
+    rules: z
+        .string({
+          required_error: '简称不能为空！',
+        })
+        .trim()
+        .min(1, "简称不能为空！")
+        .max(64, "字符长度不能大于64！"),
   },
   {
-    field: 'code',
+    fieldName: 'code',
     label: '编码',
-    required: true,
     component: 'Input',
-    colProps: {
-      span: 24,
+    dependencies: {
+      rules(values) {
+        const { id, code } = values;
+        return z
+            .string({
+              required_error: "编码不能为空"
+            })
+            .min(1, "编码不能为空")
+            .max(100, '最多输入100个字符')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'code',
+                      fieldValue: code || '',
+                      fieldName: '编码',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '编码已存在',
+                },
+            );
+      },
+      triggerFields: ['code'],
     },
   },
   {
-    field: 'typeId',
+    fieldName: 'typeId',
     label: '类型',
-    required: true,
     component: 'ApiTreeSelect',
     componentProps: {
       api: getCompanyTypes,
+      placeholder: '请选择公司类型',
       getPopupContainer: () => document.body,
+      treeDataSimpleMode: true,
+      fieldNames: {
+        label: 'name',
+        value: 'code',
+      }
     },
-    colProps: {
-      span: 24,
-    },
+    rules: z
+        .string({
+          required_error: '类型不能为空！',
+        })
+        .trim()
+        .min(1, "类型不能为空！"),
   },
   {
-    field: 'orderNo',
+    fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
-    required: false,
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
@@ -219,9 +224,8 @@ export const formSchema = [
     },
   },
   {
-    field: 'status',
+    fieldName: 'status',
     label: '状态',
-    required: false,
     component: 'Switch',
     defaultValue: 1,
     componentProps: {
@@ -230,29 +234,21 @@ export const formSchema = [
       checkedChildren: '启用',
       unCheckedChildren: '禁用',
     },
-    colProps: {
-      span: 24,
-    },
   },
   {
-    field: 'descr',
+    fieldName: 'descr',
     label: '描述',
-    required: false,
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    /*rules: [
-      {
-        max: 200,
-        message: '字符长度不能大于64！',
-      },
-    ],*/
-    colProps: {
-      span: 24,
-    },
+    rules: z
+        .string()
+        .max(200, "字符长度不能大于200！")
+        .nullish()
+        .optional(),
   },
 ];

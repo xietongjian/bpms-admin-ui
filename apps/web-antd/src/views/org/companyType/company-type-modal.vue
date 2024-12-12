@@ -2,7 +2,6 @@
 import { ref, computed, unref, defineEmits } from 'vue';
 import { formSchema } from './companyType.data';
 import { saveOrUpdate, checkEntityExist } from '#/api/org/companyType';
-import { FormValidPatternEnum } from '#/enums/constantEnum';
 import {useVbenForm} from "#/adapter/form";
 import {useVbenModal} from '@vben/common-ui';
 
@@ -30,14 +29,15 @@ const [BasicModal, modalApi] = useVbenModal({
     if (!isOpen) {
       return null;
     }
-    modalApi.modalLoading(true);
+    modalApi.setState({loading: true, confirmLoading: true});
+
     const { id } = modalApi.getData() as { id?: number | string };
     isUpdate.value = !!id;
     if (isUpdate.value && id) {
       const record = await dictTypeInfo(id);
       await formApi.setValues(record);
     }
-    modalApi.modalLoading(false);
+    modalApi.setState({loading: false, confirmLoading: false});
   },
 });
 
@@ -157,7 +157,7 @@ async function handleSubmit() {
 
 
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal :title="getTitle" @ok="handleSubmit">
+    <BasicForm />
   </BasicModal>
 </template>

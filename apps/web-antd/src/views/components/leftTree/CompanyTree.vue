@@ -1,5 +1,5 @@
 <template>
-  <div class="company-tree bg-white overflow-hidden" v-loading="treeLoading">
+  <div class="company-tree bg-card overflow-hidden" v-loading="treeLoading">
     <Tree
       ref="treeRef"
       v-bind="$attrs"

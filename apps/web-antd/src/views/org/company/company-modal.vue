@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { computed, defineEmits, ref, unref } from 'vue';
+  import { computed, defineEmits, ref, unref, defineExpose } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import {message} from 'ant-design-vue';
   import {useVbenForm} from '#/adapter/form';
@@ -7,10 +7,9 @@
   import { $t } from '@vben/locales';
 
   import { formSchema } from './company.data';
-  import { checkEntityExist, saveOrUpdate } from '#/api/org/company';
-  import { FormValidPatternEnum } from '#/enums/constantEnum';
+  import { saveOrUpdate } from '#/api/org/company';
 
-  const emit = defineEmits<{ reload: [] }>();
+  const emit = defineEmits<{ success: [] }>();
 
   const isUpdate = ref(true);
   const title = computed(() => {
@@ -32,32 +31,30 @@
       if (!isOpen) {
         return null;
       }
-      modalApi.modalLoading(true);
-      const { id } = modalApi.getData() as { id?: number | string };
-      isUpdate.value = !!id;
-      if (isUpdate.value && id) {
-        const record = await dictTypeInfo(id);
-        await formApi.setValues(record);
-      }
-      modalApi.modalLoading(false);
+      modalApi.setState({loading: true, confirmLoading: true});
+      const values = modalApi.getData();
+      isUpdate.value = !!values.id;
+      await formApi.setValues(values);
+      modalApi.setState({loading: false, confirmLoading: false});
     },
   });
 
   async function handleConfirm() {
     try {
-      modalApi.modalLoading(true);
+      modalApi.setState({loading: true, confirmLoading: true});
       const { valid } = await formApi.validate();
       if (!valid) {
         return;
       }
       const data = cloneDeep(await formApi.getValues());
-      await saveOrUpdate(data);
-      emit('reload');
+      const res = await saveOrUpdate(data);
+      message.success();
+      emit('success');
       await handleCancel();
     } catch (error) {
       console.error(error);
     } finally {
-      modalApi.modalLoading(false);
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
 
@@ -65,6 +62,7 @@
     modalApi.close();
     await formApi.resetForm();
   }
+  defineExpose(modalApi);
 </script>
 <template>
   <BasicModal :close-on-click-modal="false" :title="title">

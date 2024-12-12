@@ -9,17 +9,19 @@ enum Api {
   CheckEntityExist = '/flow/org/company/checkEntityExist',
 }
 
-export const getCompanies = (params?: any) => {
-  const result = requestClient.post<any>(Api.CompanyList, params||{});
-  return Promise.resolve(result).then((res: any) => {
-    res.forEach((item) => {
-      item.key = item.id;
-      item.value = item.id;
-      item.title = item.shortName;
-      item.icon = 'bx:building-house';
-    });
-    const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
-    forEach(
+export const getCompaniesListData = (params?: any) => {
+  return requestClient.post<any>(Api.CompanyList, params||{});
+}
+export const getCompanies = async (params?: any) => {
+  const res = await getCompaniesListData(params);
+  res.forEach((item: any) => {
+    item.key = item.id;
+    item.value = item.id;
+    item.title = item.shortName;
+    item.icon = 'bx:building-house';
+  });
+  const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
+  forEach(
       treeData,
       (node) => {
         if (node.children.length === 0) {
@@ -27,15 +29,14 @@ export const getCompanies = (params?: any) => {
         }
       },
       { id: 'id', children: 'children', pid: 'pid' },
-    );
-    return treeData;
-  });
+  );
+  return treeData;
 };
 
-export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params);
+export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params, {isTransformResponse: false});
 
 export const deleteByIds = (params: Array<string>) =>
-  requestClient.post<any>(Api.Delete, params);
+  requestClient.post<any>(Api.Delete, params, {isTransformResponse: false});
 
 export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);

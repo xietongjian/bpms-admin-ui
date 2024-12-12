@@ -97,21 +97,25 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'typeId',
     label: '类型ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["id"]
+    }
   },
   {
     fieldName: 'typeCode',
     label: '类别编码',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["id"]
+    }
   },
   {
     fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
+    help: '数值越小越靠前！',
     required: false,
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
