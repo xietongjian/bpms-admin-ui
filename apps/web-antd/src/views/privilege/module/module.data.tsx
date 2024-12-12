@@ -4,8 +4,8 @@ import { h } from 'vue';
 
 import { DictEnum } from '@vben/constants';
 import { FolderIcon, MenuIcon, OkButtonIcon, VbenIcon } from '@vben/icons';
-import { $t } from '@vben/locales';
-import { getPopupContainer } from '@vben/utils';
+import { getPopupContainer } from '#vben/utils';
+import { OrderNoDefaultEnum } from '#/enums/constantEnum';
 
 import { type FormSchemaGetter, z } from '#/adapter/form';
 import { getDictOptions } from '#/utils/dict';
@@ -63,7 +63,7 @@ export const columns: VxeGridProps['columns'] = [
     width: 200,
     slots: {
       // 需要i18n支持 否则返回原始值
-      default: ({ row }) => $t(row.menuName),
+      // default: ({ row }) => $t(row.menuName),
     },
   },
   {
@@ -377,5 +377,190 @@ export const drawerSchema: FormSchemaGetter = () => [
     fieldName: 'isCache',
     help: '路由的keepAlive属性',
     label: '是否缓存',
+  },
+];
+
+
+export const formSchema: FormSchema[] = [
+  {
+    fieldName: 'id',
+    label: 'ID',
+    required: false,
+    component: 'Input',
+    show: false,
+  },
+  {
+    fieldName: 'menuType',
+    label: 'menuType',
+    component: 'Input',
+    defaultValue: 1,
+    show: false,
+  },
+  {
+    fieldName: 'pid',
+    label: 'pid',
+    required: false,
+    component: 'Input',
+    show: false,
+  },
+  {
+    fieldName: 'image',
+    label: '图标',
+    component: 'IconPicker',
+    componentProps: {
+      // mode: 'svg'
+    },
+
+  },
+  {
+    fieldName: 'name',
+    label: '名称',
+    required: true,
+    component: 'Input',
+    rules: [
+      {
+        required: true,
+        whitespace: true,
+        message: '名称不能为空！',
+      },
+      {
+        max: 32,
+        message: '字符长度不能大于32！',
+      },
+    ],
+
+  },
+  {
+    fieldName: 'sn',
+    label: '标识',
+    required: true,
+    component: 'Input',
+    dynamicDisabled: ({values})=> !!values.id,
+
+  },
+  {
+    fieldName: 'url',
+    label: 'URL',
+    component: 'Input',
+    rules: [
+      {
+        required: true,
+        whitespace: true,
+        message: 'URL不能为空！',
+      },
+      {
+        pattern: new RegExp('[^\/]+(\/(.+))*'),
+        type: 'string',
+        message: '请输入正确的URL地址！',
+      },
+      {
+        max: 128,
+        message: '字符长度不能大于128！',
+      },
+    ],
+    dynamicDisabled: ({values})=> !!values.id,
+
+  },
+  {
+    fieldName: 'moduleType',
+    label: '菜单类型',
+    component: 'RadioButtonGroup',
+    defaultValue: 'dictionary',
+    componentProps: {
+      options: [
+        { label: '目录', value: 'dictionary' },
+        { label: '菜单', value: 'menu' },
+      ],
+    },
+    dynamicDisabled: ({values}) => !!values.id,
+    colProps: { span: 24 },
+  },
+  {
+    fieldName: 'component',
+    label: '组件地址',
+    component: 'Input',
+    rules: [
+      {
+        required: true,
+        whitespace: true,
+        message: '组件目录地址不能为空！',
+      },
+      {
+        pattern: new RegExp('^\\/?(\\w+\\/?)+(\\.?\\w+)?$'),
+        type: 'string',
+        message: '请输入正确的目录地址！',
+      },
+      {
+        max: 128,
+        message: '字符长度不能大于128！',
+      },
+    ],
+    required: ({values}) => values.moduleType === 'menu',
+    show: ({values}) => values.moduleType === 'menu',
+    dynamicDisabled: ({values}) => !!values.id,
+
+  },
+  {
+    fieldName: 'redirect',
+    label: '跳转地址',
+    helpMessage: '目录菜单跳转地址！',
+    component: 'Input',
+    rules: [
+      {
+        required: false,
+        whitespace: true,
+        message: 'URL不能为空！',
+      },
+      {
+        pattern: new RegExp('[^\/]+(\/(.+))*'),
+        type: 'string',
+        message: '请输入正确的目录菜单跳转地址！',
+      },
+      {
+        max: 128,
+        message: '字符长度不能大于128！',
+      },
+    ],
+    show: ({values}) => values.moduleType === 'dictionary',
+
+  },
+  {
+    fieldName: 'orderNo',
+    label: '排序号',
+    helpMessage: '数值越小越靠前！',
+    component: 'InputNumber',
+    defaultValue: OrderNoDefaultEnum.VALUE,
+    componentProps: {
+      min: OrderNoDefaultEnum.MIN,
+      max: OrderNoDefaultEnum.MAX,
+    },
+  },
+  {
+    fieldName: 'status',
+    label: '状态',
+    required: false,
+    component: 'Switch',
+    defaultValue: 1,
+    componentProps: {
+      checkedValue: 1,
+      unCheckedValue: 0,
+      checkedChildren: '启用',
+      unCheckedChildren: '禁用',
+    },
+
+  },
+  {
+    fieldName: 'showStatus',
+    label: '是否显示',
+    required: false,
+    component: 'Switch',
+    defaultValue: 1,
+    componentProps: {
+      checkedValue: 1,
+      unCheckedValue: 0,
+      checkedChildren: '显示',
+      unCheckedChildren: '隐藏',
+    },
+
   },
 ];

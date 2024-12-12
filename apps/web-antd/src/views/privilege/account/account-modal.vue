@@ -3,7 +3,7 @@ import {useVbenModal} from '@vben/common-ui';
 import {message} from 'ant-design-vue';
 import {accountFormSchema} from './account.data';
 import {useVbenForm} from '#/adapter/form';
-import {saveOrUpdate} from '#/api/base/app';
+import {saveOrUpdate} from '#/api/privilege/account';
 
 const emit = defineEmits<{
   onSuccess: [void];

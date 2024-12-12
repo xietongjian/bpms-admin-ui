@@ -29,7 +29,7 @@ export const getAllList = (params?: any) => {
 };
 
 export const saveOrUpdate = (params?: any) =>
-  requestClient.post<any>( Api.SaveOrUpdate, params, { isReturnNativeResponse: true });
+  requestClient.post<any>( Api.SaveOrUpdate, params, { isTransformResponse: false });
 
 export const allocationRoles = (params: any) => {
   const userId = params.userId;

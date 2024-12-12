@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {nextTick} from 'vue';
+import {nextTick, ref} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {Page, useVbenModal} from '@vben/common-ui';
@@ -10,12 +10,13 @@ import { TableAction } from '#/components/table-action';
 
 import { getModules } from '#/api/privilege/module';
 import { useAccess } from '@vben/access';
-
+import ModuleDrawer from './module-drawer.vue';
 import {listColumns, searchFormSchema} from "#/views/privilege/module/module.data";
 import {PerEnum} from "#/enums/perEnum";
 import { IconifyIcon } from '@vben/icons';
 
 const PerPrefix = "Module:";
+const moduleDrawerRef = ref();
 const {hasAccessByCodes} = useAccess();
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -72,11 +73,11 @@ function expandAll() {
 }
 
 function handleAdd() {
-  /*modalApi.setData({});
-  modalApi.open();
-  modalApi.setState({
+  moduleDrawerRef.value.setData({});
+  moduleDrawerRef.value.open();
+  moduleDrawerRef.value.setState({
     title: '新建'
-  });*/
+  });
 }
 
 function handleEdit(record: Recordable) {
@@ -174,7 +175,7 @@ function createActions(record: Recordable): any[] {
     <BasicTable table-title="列表">
       <template #toolbar-tools>
         <Space>
-          <Button v-if="hasAccessByCodes[PerPrefix + PerEnum.ADD]" type="primary" @click="handleAdd">新建</Button>
+          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleAdd">新建</Button>
         </Space>
       </template>
 
@@ -205,6 +206,7 @@ function createActions(record: Recordable): any[] {
       </template>
     </BasicTable>
     <ModuleModal ref="moduleModalRef" @register="registerModal" @success="handleSuccess" />
+    <ModuleDrawer ref="moduleDrawerRef" @register="registerModal" @success="handleSuccess" />
     <PValueSettingModal ref="pValueSettingModalRef" @register="registerPValueModal" @success="handleSuccess" />
   </Page>
 </template>

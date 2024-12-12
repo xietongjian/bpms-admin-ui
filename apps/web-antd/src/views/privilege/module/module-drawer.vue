@@ -1,214 +1,161 @@
+<template>
+  <BasicDrawer v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
+    <BasicForm @register="registerForm" />
+  </BasicDrawer>
+</template>
 <script lang="ts" setup>
-import type {VxeGridProps} from '#/adapter/vxe-table';
-import type {VbenFormProps} from '@vben/common-ui';
-import {Page, useVbenModal} from '@vben/common-ui';
-import {Button, Space, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
-import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import {deleteByIds, getAppListByPage} from '#/api/base/app';
-import AppInputModal from './app-modal.vue';
-import AppSecretKeyModal from './app-secret-key-modal.vue';
-import {AccessControl} from '@vben/access';
-import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
-import {PerEnum} from "#/enums/perEnum";
-import {
-  SquareEditOutline,
-  DeleteOutline,
-  CloudSecurityOutline,
-  QuestionMarkCircleOutline,
-} from '@vben/icons';
+import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
+import { formSchema } from './module.data';
+import { saveOrUpdate, checkEntityExist } from '#/api/privilege/module';
+import { FormValidPatternEnum } from '#/enums/constantEnum';
+import {useVbenForm} from "#/adapter/form";
+import {setAccountFormSchema} from "#/views/privilege/group/group.data";
+import {useVbenModal, useVbenDrawer} from "@vben/common-ui";
 
-const [AppModal, modalApi] = useVbenModal({
-  connectedComponent: AppInputModal,
-  centered: true,
+const emit = defineEmits(['success', 'register']);
+
+const isUpdate = ref(true);
+
+
+const [BasicDrawer, drawerApi] = useVbenDrawer({
+  onCancel() {
+    drawerApi.close();
+  },
+  onOpenChange(isOpen: boolean) {
+    debugger;
+    if (isOpen) {
+      const values = drawerApi.getData<Record<string, any>>();
+      if (values) {
+        formApi.setValues(values);
+        drawerApi.setState({loading: false, confirmLoading: false});
+      }
+    }
+  },
+  onConfirm() {
+    // await baseFormApi.submitForm();
+    handleSubmit();
+  },
 });
 
-const [SecretKeyModal, secretKeyModalApi] = useVbenModal({
-  connectedComponent: AppSecretKeyModal,
-  centered: true,
-  showConfirmButton	: false,
-});
-
-interface RowType {
-  id: string;
-  name: string;
-  sn: string;
-  url: string;
-  indexUrl: string;
-  orderNo: number;
-  status: 1 | 0;
-  platformEnabled: 1 | 0;
-  note: string;
-}
-
-const formOptions: VbenFormProps = {
-  showCollapseButton: false,
-  submitOnEnter: true,
+const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
-    labelWidth: 60,
+    componentProps: {
+      // class: 'w-full',
+    },
   },
-  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
-  resetButtonOptions: {
-    show: false,
-  },
-  schema: searchFormSchema,
-};
-
-const gridOptions: VxeGridProps<RowType> = {
-  checkboxConfig: {
-    highlight: true,
-    labelField: 'name',
-  },
-  columns: listColumns,
-  columnConfig: {resizable: true},
-  height: 'auto',
-  keepSource: true,
-  border: false,
-  stripe: true,
-  proxyConfig: {
-    ajax: {
-      query: async ({page}, formValues) => {
-        return await getAppListByPage({
-          query: {
-            pageNum: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          entity: formValues || {},
-        }).then(res => {
-          res.items = res.rows;
-          return Promise.resolve(res);
-        });
+  showDefaultActions: false,
+  layout: 'horizontal',
+  schema: formSchema,
+  wrapperClass: 'grid-cols-1',
+});
+/*
+const getBaseDynamicRules = (params: CheckExistParams) => {
+  return [
+    {
+      trigger: 'blur',
+      validator: (_, value) => {
+        if (value) {
+          return checkEntityExist({
+            id: params.id,
+            field: params.field,
+            fieldValue: value,
+            fieldName: params.fieldName,
+          })
+            .then((res) => {
+              if (res) {
+                return Promise.resolve();
+              } else {
+                return Promise.reject(params.fieldName + '已存在，请修改！');
+              }
+            })
+            .catch((res) => {
+              return Promise.reject(res);
+            });
+        } else {
+          return Promise.resolve();
+        }
       },
     },
-  },
+  ] as Rule[];
 };
 
-const [BasicTable, tableApi] = useVbenVxeGrid({
-  formOptions,
-  gridOptions,
-  gridEvents: {
-    cellDblclick: (e: any) => {
-      const { row = {} } = e;
-      if (!row?.children) {
-        return;
-      }
-      const isExpanded = row?.expand;
-      tableApi.grid.setTreeExpand(row, !isExpanded);
-      row.expand = !isExpanded;
+const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+  await resetFields();
+  setModalProps({ confirmLoading: false });
+  isUpdate.value = !!data?.isUpdate;
+  let formData = data.record;
+
+  await updateSchema([
+    {
+      field: 'sn',
+      dynamicRules: () => {
+        return [
+          {
+            required: true,
+            whitespace: true,
+            message: '标识不能为空！',
+          },
+          {
+            trigger: ['change', 'blur'],
+            pattern: new RegExp(FormValidPatternEnum.SN),
+            type: 'string',
+            message: '请输入英文或数字！',
+          },
+          {
+            trigger: ['change', 'blur'],
+            max: 64,
+            message: '字符长度不能大于64！',
+          },
+          ...getBaseDynamicRules({
+            id: (unref(isUpdate) && formData && formData.id) || '',
+            field: 'sn',
+            fieldValue: '',
+            fieldName: '标识',
+          }),
+        ];
+      },
     },
-    // 需要监听使用箭头展开的情况 否则展开/折叠的数据不一致
-    toggleTreeExpand: (e: any) => {
-      const { row = {}, expanded } = e;
-      row.expand = expanded;
-    },
-  },
-});
+  ]);
 
-function handleAdd() {
-  modalApi.setData({});
-  modalApi.open();
-  modalApi.setState({
-    title: '新建'
-  });
-}
+  if (unref(isUpdate)) {
+    let moduleType = '';
 
-function handleEdit(record: any) {
-  modalApi.setData(record);
-  modalApi.open();
-  modalApi.setState({
-    title: '修改'
-  });
-}
-
-function handleViewSecretKey(record: any) {
-  secretKeyModalApi.setData(record);
-  secretKeyModalApi.open();
-  secretKeyModalApi.setState({
-    title: '查看密钥',
-  });
-}
-
-async function handleDelete(record: any) {
-  try {
-    const result = await deleteByIds([record.id]);
-    const {success, msg} = result;
-    if (success) {
-      message.success(msg);
-      await gridApi.reload();
-    } else{
-      message.error(msg);
+    if (formData.component === 'LAYOUT') {
+      moduleType = 'dictionary';
+    } else {
+      moduleType = 'menu';
     }
-  } catch (e) {
-    message.error(e.message);
+    setFieldsValue({
+      ...formData,
+      moduleType,
+    });
+  }
+});*/
+
+const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
+async function handleSubmit() {
+  try {
+    drawerApi.setState({loading: true, confirmLoading: true});
+    const valid = await formApi.validate();
+    if(!valid){
+      return;
+    }
+    const values = await formApi.getValues();
+    if (values.moduleType === 'dictionary') {
+      values.component = 'LAYOUT';
+      delete values.moduleType;
+    }
+    if (!values.menuType) {
+      values.menuType = 1;
+    }
+    await saveOrUpdate(values);
+    drawerApi.close();
+    emit('success');
+  } catch (error) {
+    console.error(error);
+  } finally {
+    drawerApi.setState({loading: false, confirmLoading: false});
   }
 }
+defineExpose(drawerApi)
 </script>
-
-<template>
-  <Page auto-content-height>
-    <BasicTable table-title="菜单列表" table-title-help="双击展开/收起子菜单">
-      <template #toolbar-tools>
-        <Space>
-          <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
-            <Button type="primary" @click="handleAdd">新建</Button>
-          </AccessControl>
-        </Space>
-      </template>
-
-      <template #action="{row}">
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Tooltip title="编辑">
-            <Button type="link" @click="handleEdit(row)">
-              <template #icon>
-                <SquareEditOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Tooltip>
-        </AccessControl>
-
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Tooltip title="密钥">
-            <Button type="link" @click="handleViewSecretKey(row)">
-              <template #icon>
-                <CloudSecurityOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Tooltip>
-        </AccessControl>
-
-        <AccessControl :codes="['App:'+PerEnum.UPDATE]" type="code">
-          <Popconfirm @confirm="handleDelete(row)" :ok-button-props="{danger: true}">
-            <template #title >
-              <div class="w-32">
-                确定要删除吗？
-              </div>
-            </template>
-            <template #icon>
-              <QuestionMarkCircleOutline class="text-red-500 size-6"/>
-            </template>
-            <Button type="link" danger>
-              <template #icon>
-                <DeleteOutline class="size-4 mx-auto"/>
-              </template>
-            </Button>
-          </Popconfirm>
-        </AccessControl>
-      </template>
-
-      <template #image="{ row }">
-        <Image :src="row.image" height="30" width="30"/>
-      </template>
-
-      <template #status="{ row }">
-        <Tag v-if="row.status===1" color="green">启用</Tag>
-        <Tag v-else color="red">禁用</Tag>
-      </template>
-
-      <template #platformEnabled="{ row }">
-        <Tag v-if="row.platformEnabled===1" color="green">开启</Tag>
-        <Tag v-else>关闭</Tag>
-      </template>
-    </BasicTable>
-    <AppModal @onSuccess="gridApi.reload()"/>
-    <SecretKeyModal @onSuccess="gridApi.reload()"/>
-  </Page>
-</template>

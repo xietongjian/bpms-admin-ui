@@ -119,23 +119,23 @@ export const accountFormSchema: FormSchema[] = [
     fieldName: 'realName',
     label: '用户名',
     component: 'Input',
-    show: false,
-    dependencies: {
-      show: false,
-      triggerFields: ['']
-    }
+    // dependencies: {
+    //   show: false,
+    //   triggerFields: ['']
+    // }
   },
   {
     fieldName: 'realNameSelector',
     label: '姓名',
-    rules: 'required',
-    component: 'PersonalSelector',
+    // rules: 'required',
+    // component: 'PersonalSelector',
+    component: 'Input',
   },
   {
     fieldName: 'headImg',
-    label: '',
+    label: '头像',
     component: 'Input',
-    slot: 'headImg',
+    // slot: 'headImg',
     colProps: {
       style: 'margin: auto;position: absolute;right: 20px;',
       span: 10,
@@ -152,34 +152,25 @@ export const accountFormSchema: FormSchema[] = [
         {label: '女', value: 0},
       ],
     },
-    colProps: {span: 10},
   },
   {
     fieldName: 'userNo',
     label: '工号',
     component: 'Input',
-    required: true,
-    colProps: {
-      span: 16,
-    },
+    // required: true,
+    rules: "required",
   },
   {
     label: '手机',
     fieldName: 'mobile',
     component: 'Input',
-    required: true,
-    colProps: {
-      span: 16,
-    },
+    rules: "required",
   },
   {
     label: '邮箱',
     fieldName: 'email',
     component: 'Input',
-    required: false,
-    colProps: {
-      span: 20,
-    },
+    rules: "required",
   },
 ];
 
