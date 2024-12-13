@@ -4,7 +4,7 @@ import { computed, defineEmits, ref, unref } from 'vue';
 import {
   getApiCategoryTreeData,
   saveOrUpdateApiCategory,
-} from '@/api/base/apiInfo';
+} from '#/api/base/apiInfo';
 import { BasicForm, useForm } from '@/components/Form';
 import { BasicModal, useModalInner } from '@/components/Modal';
 import { useMessage } from '@/hooks/web/useMessage';

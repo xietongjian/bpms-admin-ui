@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import {defineExpose} from 'vue';
-import {useVbenModal} from '@vben/common-ui';
 import {message} from 'ant-design-vue';
-import {formSchema} from './app.data';
+
+import {useVbenModal} from '@vben/common-ui';
 import {useVbenForm} from '#/adapter/form';
+
+import {formSchema} from './app.data';
 import {saveOrUpdate} from '#/api/base/app';
 
 const emit = defineEmits<{
@@ -19,18 +21,18 @@ const [BasicModal, modalApi] = useVbenModal({
     if (isOpen) {
       const values = modalApi.getData<Record<string, any>>();
       if (values) {
-        baseFormApi.setValues(values);
+        formApi.setValues(values);
         modalApi.setState({loading: false, confirmLoading: false});
       }
     }
   },
   onConfirm() {
-    // await baseFormApi.submitForm();
+    // await formApi.submitForm();
     handleSubmit();
   },
 });
 
-const [BaseForm, baseFormApi] = useVbenForm({
+const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
     componentProps: {
       // class: 'w-full',
@@ -44,10 +46,10 @@ const [BaseForm, baseFormApi] = useVbenForm({
 
 async function handleSubmit() {
   modalApi.setState({loading: true, confirmLoading: true});
-  const {valid} = await baseFormApi.validate();
+  const {valid} = await formApi.validate();
   if (valid) {
     try {
-      const values = await baseFormApi.getValues();
+      const values = await formApi.getValues();
       const {msg, success} = await saveOrUpdate(values);
       if (success) {
         message.success(msg);
@@ -69,6 +71,6 @@ defineExpose(modalApi);
 </script>
 <template>
   <BasicModal class="w-[600px]">
-    <BaseForm/>
+    <BasicForm />
   </BasicModal>
 </template>

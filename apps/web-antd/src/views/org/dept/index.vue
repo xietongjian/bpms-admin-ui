@@ -41,10 +41,6 @@
   };
 
   const gridOptions: VxeGridProps<any> = {
-    checkboxConfig: {
-      highlight: true,
-      labelField: 'name',
-    },
     pagerConfig: {
       enabled: false,
     },
@@ -66,9 +62,7 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
-          return await getDepts({
-            entity: formValues || {},
-          });
+          return await getDepts(formValues || {});
         },
       },
     },
@@ -77,7 +71,7 @@
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
   function handleCreate() {
-    record = { companyId: unref(currentNode)?.id };
+    const record = { companyId: unref(currentNode)?.id };
     deptModalRef.value.setData(record);
     deptModalRef.value.open();
     deptModalRef.value.setState({
@@ -118,7 +112,7 @@
 
   function reloadData() {
     if (unref(currentNode) && unref(currentNode).id) {
-      tableApi.reload({ searchInfo: { companyId: unref(currentNode).id } });
+      tableApi.reload({ companyId: unref(currentNode).id });
     } else {
       tableApi.setDatas([]);
     }

@@ -4,6 +4,8 @@ import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
+import { checkEntityExist } from '#/api/org/dept';
+import { getCompaniesListData } from '#/api/org/company';
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -57,12 +59,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称/标识',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 14, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -93,18 +89,41 @@ export const deptFormSchema: FormSchema[] = [
         .string({required_error: '名称不能为空！'})
         .min(1, {message: '名称不能为空！'})
         .max(100, {message: '字符长度不能大于100！'}),
-    colProps: {
-      span: 24,
-    },
   },
   {
     fieldName: 'code',
     label: '编码',
     component: 'Input',
-    rules: z
-        .string({required_error: '编码不能为空！'})
-        .min(1, {message: '编码不能为空！'})
-        .max(100, {message: '字符长度不能大于100！'}),
+    dependencies: {
+      rules(values) {
+        const { id, code } = values;
+        return z
+            .string({required_error: '编码不能为空！'})
+            .min(1, {message: '编码不能为空！'})
+            .max(100, {message: '字符长度不能大于100！'})
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'code',
+                      fieldValue: code || '',
+                      fieldName: '系统标识',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '系统标识已存在',
+                },
+            );
+      },
+      triggerFields: ['sn'],
+    },
   },
   {
     fieldName: 'leaderPersonal',
@@ -113,15 +132,15 @@ export const deptFormSchema: FormSchema[] = [
     componentProps: {
       multiple: false,
     },
-    colProps: {
-      span: 24,
-    },
   },
   {
     fieldName: 'leaderName',
     label: '部门领导',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'superiorPersonal',
@@ -130,35 +149,42 @@ export const deptFormSchema: FormSchema[] = [
     componentProps: {
       multiple: false,
     },
-    required: false,
-    colProps: {
-      span: 24,
-    },
   },
   {
     fieldName: 'superiorName',
     label: '分管领导',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'companyId',
     label: '所属公司',
-    component: 'TreeSelect',
+    component: 'ApiTreeSelect',
     componentProps: {
+      api: getCompaniesListData,
+      // childrenField: 'children',
+      treeDataSimpleMode: true,
+      fieldNames: {
+        label: 'cname',
+        value: 'id'
+      },
+      labelField: 'cname',
+      valueField: 'path',
+      allowClear: true,
+      searchPlaceholder: '搜索',
+      treeNodeLabelProp: 'cname',
       treeNodeFilterProp: 'cname',
       getPopupContainer: () => document.body,
     },
-    required: true,
-    colProps: {
-      span: 24,
-    },
+    rules: 'selectRequired'
   },
   {
     fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
-    required: false,
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
@@ -169,21 +195,17 @@ export const deptFormSchema: FormSchema[] = [
   {
     label: '备注',
     fieldName: 'note',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    /*rules: [
-      {
-        max: 256,
-        message: '字符长度不能大于256！',
-      },
-    ],*/
-    colProps: {
-      span: 24,
-    },
+    rules: z
+        .string()
+        .max(500, "字符长度不能大于500！")
+        .nullish()
+        .optional(),
   },
 ];

@@ -53,7 +53,7 @@ import {BasicDrawer, useDrawerInner} from '@/components/Drawer';
 import {BasicForm, useForm} from '@/components/Form';
 import {apiInfoFormSchema} from './apiInfo.data';
 import {FormItem, FormItemRest, Input, Select} from "ant-design-vue";
-import {getApiCategoryListData, getApiCategoryTreeData, saveOrUpdateApiInfo} from '@/api/base/apiInfo';
+import {getApiCategoryListData, getApiCategoryTreeData, saveOrUpdateApiInfo} from '#/api/base/apiInfo';
 import { useMessage } from '@/hooks/web/useMessage';
 
 import ApiInfoVariables from "@/views/base/apiInfo/ApiInfoVariables.vue";

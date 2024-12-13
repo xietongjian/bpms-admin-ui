@@ -1,14 +1,11 @@
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits } from 'vue';
+  import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
   // import { BasicModal, useModalInner } from '@/components/Modal';
   // import { BasicForm, Rule, useForm } from '@/components/Form/index';
   import { deptFormSchema } from './dept.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/org/dept';
-  import { getCompanies } from '#/api/org/company';
   // import { CheckExistParams } from '#/api/model/baseModel';
-  import { FormValidPatternEnum } from '#/enums/constantEnum';
   import {useVbenForm} from "#/adapter/form";
-  import {roleFormSchema} from "#/views/org/role/role.data";
   import {useVbenModal} from '@vben/common-ui';
 
   const emit = defineEmits(['success', 'register']);
@@ -25,7 +22,7 @@
   });*/
 
 
-  const [BaseForm, baseFormApi] = useVbenForm({
+  const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
       componentProps: {
         // class: 'w-full',
@@ -46,13 +43,13 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          baseFormApi.setValues(values);
+          formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
     },
     onConfirm() {
-      // await baseFormApi.submitForm();
+      // await formApi.submitForm();
       handleSubmit();
     },
   });
@@ -189,6 +186,7 @@
       setModalProps({ confirmLoading: false });
     }
   }
+  defineExpose(modalApi);
 </script>
 <template>
   <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">

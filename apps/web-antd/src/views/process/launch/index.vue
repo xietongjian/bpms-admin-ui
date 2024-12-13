@@ -202,9 +202,7 @@ function handleSelect(keys: string, e) {
 
 <template>
   <Page auto-content-height content-class="h-full">
-    <Splitpanes
-      class="default-theme h-full [&_.splitpanes__splitter]:!w-[10px]"
-    >
+    <Splitpanes class="default-theme h-full" >
       <Pane class="bg-transparent" min-size="20" size="30">
         <div class="bg-card flex h-full w-full flex-col">
           <div

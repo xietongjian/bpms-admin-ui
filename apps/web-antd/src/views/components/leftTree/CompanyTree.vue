@@ -1,19 +1,27 @@
 <template>
-  <div class="company-tree bg-card overflow-hidden" v-loading="treeLoading">
-    <Tree
-      ref="treeRef"
-      v-bind="$attrs"
-      v-if="treeData.length > 0"
-      :class="$attrs.class"
-      :field-names="{ title: 'title', key: 'key' }"
-      :show-line="false"
-      :tree-data="treeData"
-      block-node
-      :virtual="false"
-      default-expand-all
-      @select="handleSelect"
-    >
-    </Tree>
+  <div class="bg-card h-full flex flex-col p-2">
+    <div class="h-[30px] leading-[30px] font-md font-bold">
+      公司
+    </div>
+    <div class="flex-1 overflow-auto">
+      <Tree
+          ref="treeRef"
+          v-bind="$attrs"
+          v-if="treeData.length > 0"
+          :class="$attrs.class"
+          :field-names="{ title: 'title', key: 'key' }"
+          :show-line="false"
+          :tree-data="treeData"
+          block-node
+          :virtual="false"
+          default-expand-all
+          @select="handleSelect"
+      >
+        <template #icon>
+          <HomeOutlined />
+        </template>
+      </Tree>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -21,6 +29,7 @@
   import { getCompanies } from '#/api/org/company';
   import { findNode } from '#/utils/helper/treeHelper';
   import {Tree} from "ant-design-vue";
+  import {HomeTwoTone, HomeOutlined, SmileOutlined} from "@ant-design/icons-vue";
 
   const emit = defineEmits(['select']);
 

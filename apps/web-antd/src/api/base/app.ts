@@ -9,7 +9,7 @@ enum Api {
   SaveOrUpdate = '/flow/base/app/saveOrUpdate',
 }
 // export const getAll = (params?: any) => {
-//   return defHttp.post({ url: Api.GetAll, params }).then((res: any) => {
+//   return requestClient.post({ url: Api.GetAll, params }).then((res: any) => {
 //     res.forEach((item) => {
 //       item.label = item.name;
 //       item.value = item.sn;
@@ -30,7 +30,7 @@ export async function getAll(params?: any) {
  * @param data
  */
 export async function deleteByIds(data: Array<string>) {
-  return requestClient.post<any>(Api.Delete, data, { noTransformResponse: true });
+  return requestClient.post<any>(Api.Delete, data, { isTransformResponse: true });
 }
 
 /**
@@ -60,13 +60,13 @@ export async function refreshSecretKey (params: string) {
 
 
 /*
-export const saveOrUpdate = (params: any) => defHttp.post({ url: Api.SaveOrUpdate, params });
+export const saveOrUpdate = (params: any) => requestClient.post({ url: Api.SaveOrUpdate, params });
 
 export const refreshSecretKey = (params: string) =>
-  defHttp.post<string>({ url: Api.RefreshSecretKey + '/' + params, params: {} });
+  requestClient.post<string>({ url: Api.RefreshSecretKey + '/' + params, params: {} });
 
 export const checkEntityExist = (params: any) =>
-  defHttp.post<boolean>({ url: Api.CheckEntityExist, params });
+  requestClient.post<boolean>({ url: Api.CheckEntityExist, params });
 
-export const deleteByIds = (params: Array<string>) => defHttp.post({ url: Api.Delete, params });
+export const deleteByIds = (params: Array<string>) => requestClient.post({ url: Api.Delete, params });
 */

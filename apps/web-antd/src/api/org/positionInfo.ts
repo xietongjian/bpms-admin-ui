@@ -3,8 +3,8 @@ import { requestClient } from '#/api/request';
 import { forEach, listToTree } from '#/utils/helper/treeHelper';
 
 enum Api {
-  Getanys = '/flow/org/positionInfo/getanyTree',
-  GetanyTree = '/flow/org/positionInfo/getanyTree',
+  GetPositionInfos = '/flow/org/positionInfo/getPositionInfoTree',
+  GetPositionInfoTree = '/flow/org/positionInfo/getPositionInfoTree',
   GetPagerModel = '/flow/org/positionInfo/getPagerModel',
   SaveOrUpdate = '/flow/org/positionInfo/saveOrUpdate',
   BatchSaveOrUpdatePositionSeqAndPosition = '/flow/org/positionInfo/batchSaveOrUpdatePositionSeqAndPosition',
@@ -13,7 +13,7 @@ enum Api {
 }
 
 export const getanyTree = (params?: any) => {
-  const result = requestClient.post<any[]>(Api.GetanyTree, params);
+  const result = requestClient.post<any[]>(Api.GetPositionInfoTree, params);
   return Promise.resolve(result).then((res: any) => {
     res.forEach((item) => {
       item.key = item.id;
@@ -40,7 +40,7 @@ export const getanyTree = (params?: any) => {
 };
 
 export const getanys = (params: any) => {
-  const result = requestClient.post<any>(Api.Getanys, params);
+  const result = requestClient.post<any>(Api.GetPositionInfos, params);
 
   return Promise.resolve(result)
     .then((res) => {

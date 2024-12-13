@@ -1,18 +1,23 @@
 <script lang="ts" setup>
 import {ref} from 'vue';
+import type { Recordable } from '@vben/types';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
-import {Page, useVbenModal} from '@vben/common-ui';
-import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
+import {PerEnum} from "#/enums/perEnum";
+
+import {Page} from '@vben/common-ui';
+import {Button, Image, Tag, message} from 'ant-design-vue';
+
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import {deleteByIds, getAppListByPage} from '#/api/base/app';
+import { TableAction } from '#/components/table-action';
+
+import {useAccess} from '@vben/access';
+
+import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import AppModal from './app-modal.vue';
 import AppSecretKeyModal from './app-secret-key-modal.vue';
-import {useAccess} from '@vben/access';
-import { TableAction } from '#/components/table-action';
-import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
-import {PerEnum} from "#/enums/perEnum";
-import type { Recordable } from '@vben/types';
+import {deleteByIds, getAppListByPage} from '#/api/base/app';
+
 
 const PerPrefix = "App:";
 const {hasAccessByCodes} = useAccess();

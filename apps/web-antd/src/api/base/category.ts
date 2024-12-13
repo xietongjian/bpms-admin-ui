@@ -12,11 +12,11 @@ export async function getFlowCategories (params?: any){
 }
 /*
 
-export const saveOrUpdate = (params: any) => defHttp.post<any>({ url: Api.SaveOrUpdate, params });
+export const saveOrUpdate = (params: any) => requestClient.post<any>({ url: Api.SaveOrUpdate, params });
 
 export const checkEntityExist = (params: CheckExistParams) =>
-  defHttp.post<boolean>({ url: Api.CheckEntityExist, params });
+  requestClient.post<boolean>({ url: Api.CheckEntityExist, params });
 
 export const deleteByIds = (params: Array<string>) =>
-  defHttp.post<any>({ url: Api.Delete, params });
+  requestClient.post<any>({ url: Api.Delete, params });
 */
