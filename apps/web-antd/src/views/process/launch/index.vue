@@ -241,7 +241,7 @@ function handleSelect(keys: string, e) {
             <div class="w-[300px]">
               <h1 style="font-size: 16px">流程名称（共{{ pager.total }}条）</h1>
             </div>
-            <div class="flex-1" style="padding: 6px">
+            <div class="flex-1 p-2">
               <InputSearch
                 v-model:value="searchTxt"
                 :allow-clear="true"

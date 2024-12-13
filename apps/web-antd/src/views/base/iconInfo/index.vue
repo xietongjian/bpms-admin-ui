@@ -1,8 +1,8 @@
 <template>
   <Page auto-content-height>
-    <div class="p-4 h-full">
-      <Splitpanes class="default-theme h-full !bg-card">
-        <Pane class="!bg-card" min-size="10" size="20">
+    <div class="h-full">
+      <Splitpanes class="default-theme h-full !bg-card p-2">
+        <Pane class="!bg-card p-2" min-size="10" size="20">
           <Tree
               :loading="treeLoading"
               title="图标分类"
@@ -11,6 +11,7 @@
               :treeData="iconCategoryTreeData"
               @select="handleSelect"
               ref="basicTreeRef"
+              block-node
               :field-names="{ title: 'name' }"
               :actionList="treeActionList"
           >
@@ -27,33 +28,57 @@
             </template>
           </Tree>
         </Pane>
-        <Pane class="flex flex-col ml-2 !bg-card p-2" min-size="20" size="80">
-          <div class="h-10">
-            aaa
+        <Pane class="flex flex-col ml-2 !bg-card p-0" min-size="20" size="80">
+          <div class="h-12 flex flex-row justify-between">
+            <InputSearch class="w-[50%]"
+              v-model:value="searchTxt"
+              :allow-clear="true"
+              enter-button
+              placeholder="搜索图标"
+              @search="onSearch"
+            />
+            <div>
+              <Button type="primary" @click="handleCreate">新建</Button>
+            </div>
           </div>
-          <div class="flex-1">
-            <List :grid="{ xs: 4, sm: 6, md: 6, lg: 8, xl: 8, xxl: 10 }" :pagination="pagination" :data-source="listData">
-              <template #renderItem="{ item }">
-                <ListItem>
-                  <div class="flex items-center flex-col size-[80px] p-1 border-rounded border-[1px] border-solid border-gray-400 outline-px outline-solid outline-gray-300 hover:outline-blue-500">
+
+          <div class="flex-1 w-full overflow-y-auto">
+            <Spin :spinning="dataLoading" >
+              <div class="flex flex-row w-full flex-wrap min-h-[300px]">
+                <div v-if="listData && listData.length > 0" v-for="item in listData"
+                     class="flex flex-col items-center w-[80px] h-[100px] p-1">
+                  <div class="rounded-md hover:outline-rounded hover:outline hover:outline-solid hover:outline-blue-500 h-[60px] w-[60px] p-1">
                     <Avatar
-                        :src="item.icon"
-                        square
-                        class="size-[60px] cursor-pointer object-contain"
-                        @click="previewImageHandle(item.icon)"
+                      :src="item.icon"
+                      shape="square"
+                      class="w-full h-full items-center cursor-pointer object-contain"
+                      @click="previewImageHandle(item.icon)"
                     >
                       <template #icon>
                         <UserOutlined/>
                       </template>
                     </Avatar>
-                    <div class="ml-2 text-center">
-                      <div class="text-sm">{{ item.name }}</div>
-                      <div class="text-xs text-gray-400">{{ item.sn }}</div>
-                    </div>
                   </div>
-                </ListItem>
-              </template>
-            </List>
+                  <div class="text-center w-full">
+                    <div class="text-sm w-full overflow-ellipsis overflow-hidden whitespace-nowrap overflow-hidden whitespace-nowrap text-overflow-ellipsis" :title="item.name">{{ item.name }}</div>
+                    <div class="text-xs text-gray-400">{{ item.sn }}</div>
+                  </div>
+                </div>
+                <div v-else class="text-center w-full">
+                  <Empty />
+                </div>
+              </div>
+            </Spin>
+          </div>
+
+          <div class="h-12 text-center flex flex-col justify-center">
+            <Pagination size="small"
+                        :pagination="pagination"
+                        :defaultPageSize="50"
+                        @change="onChange"
+                        @showSizeChange="onShowSizeChange"
+                        :pageSizeOptions="['50', '100', '200', '500', '1000']"
+                        :total="pagination.total"/>
           </div>
 
 <!--          <BasicTable @register="registerTable" class="!p-0">
@@ -145,8 +170,9 @@ import IconInfoModal from './IconInfoModal.vue';
 import IconCategoryModal from './IconCategoryModal.vue';
 
 import {DeleteOutlined, PlusOutlined, EditOutlined, UserOutlined} from '@ant-design/icons-vue';
-import {message, Popconfirm, Card, Button, Image, Row, Col, Tooltip, Avatar, Tree, List} from 'ant-design-vue';
-
+import {message, Popconfirm, Spin, Pagination, Card, Empty, Input, Button, Image, Row, Col, Tooltip, Avatar, Tree, List} from 'ant-design-vue';
+const InputSearch = Input.Search;
+const searchTxt = ref('');
 const ListItem = List.Item;
 const listData = ref([]);
 const previewImage = ref<string>('');
@@ -154,17 +180,28 @@ const previewImageVisible = ref<boolean>(false);
 const iconInfoModalRef = ref();
 const iconCategoryModalRef = ref();
 const treeLoading = ref(true);
-
-const pagination = {
-  onChange: (page: number) => {
-    fetchIconInfoList({pageNum: page});
-  },
+const dataLoading = ref(false);
+const pagination = ref({
+  current: 1,
   pageSize: 50,
   total: 0,
-};
+});
 
+function onChange(page: number) {
+  debugger;
+  fetchIconInfoList({pageNum: page});
+}
+function onShowSizeChange(current: number, pageSize: number) {
+  pagination.value.pageSize = pageSize;
+  pagination.value.current = 1;
+}
 const iconCategoryDataMap = ref<any>({});
 const iconCategoryTreeData = ref<any[]>([]);
+
+function onSearch(e) {
+  fetchIconInfoList({pageNum: 1, keyword: e});
+}
+
 
 const treeActionList: any[] = [
   {
@@ -225,12 +262,21 @@ const treeActionList: any[] = [
 ];
 
 async function fetchIconInfoList(params){
-  const {total, rows} = await getIconInfoListByPage({
-    query: {pageSize: pagination.pageSize, pageNum: params.pageNum},
-    entity: {keyword: params.keyword}
-  });
-  pagination.total = total;
-  listData.value = rows;
+  dataLoading.value = true;
+  try {
+    const {total, rows} = await getIconInfoListByPage({
+      query: {pageSize: pagination.value.pageSize, pageNum: params.pageNum},
+      entity: {keyword: params.keyword}
+    });
+    pagination.value.total = total;
+    listData.value = rows;
+  } catch (e) {
+    console.error(e);
+  }
+  finally {
+    dataLoading.value = false;
+  }
+
 }
 
 onMounted(async() => {

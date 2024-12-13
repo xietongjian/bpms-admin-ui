@@ -34,7 +34,7 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
   onConfirm() {
     // await baseFormApi.submitForm();
     handleSubmit();
-  },
+  }
 });
 
 const [BasicForm, formApi] = useVbenForm({
