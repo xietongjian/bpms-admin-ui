@@ -1,6 +1,10 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '@/enums/constantEnum';
-import { CodeEditor, MODE } from '@/components/CodeEditor';
+import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+
+// import { CodeEditor, MODE } from '#/components/CodeEditor';
 
 import { Tag } from 'ant-design-vue';
 import { h } from 'vue';
@@ -8,17 +12,17 @@ import { h } from 'vue';
 const colProps = {
   span: 24,
 };
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '接口名',
-    dataIndex: 'name',
+    field: 'name',
     width: 150,
     align: 'left',
     resizable: true,
   },
   {
     title: '请求方式',
-    dataIndex: 'method',
+    field: 'method',
     align: 'left',
     width: 90,
     customRender: ({ record }) => {
@@ -36,39 +40,46 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '请求地址',
-    dataIndex: 'url',
+    field: 'url',
     width: 150,
     align: 'left',
     resizable: true,
   },
   {
     title: '所属分类',
-    dataIndex: 'categoryId',
+    field: 'categoryId',
     width: 120,
     align: 'left',
   },
   {
     title: '排序号',
-    dataIndex: 'orderNo',
+    field: 'orderNo',
     width: 120,
     align: 'left',
   },
   {
     title: '创建时间',
-    dataIndex: 'createTime',
+    field: 'createTime',
     width: 180,
   },
   {
     title: '接口描述',
-    dataIndex: 'remark',
+    field: 'remark',
     align: 'left',
     width: 180,
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -86,13 +97,13 @@ export const searchFormSchema: FormSchema[] = [
 
 export const apiCategoryFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
     show: false,
   },
   {
-    field: 'pid',
+    fieldName: 'pid',
     label: '父级分类',
     component: 'TreeSelect',
     show: ({ values }) => {
@@ -108,7 +119,7 @@ export const apiCategoryFormSchema: FormSchema[] = [
     colProps: { span: 24 },
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '分类名称',
     required: true,
     component: 'Input',
@@ -126,7 +137,7 @@ export const apiCategoryFormSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'orderNo',
+    fieldName: 'orderNo',
     label: '排序号',
     helpMessage: '数值越小越靠前！',
     required: false,
@@ -141,13 +152,13 @@ export const apiCategoryFormSchema: FormSchema[] = [
 
 export const apiInfoFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
     show: false,
   },
   {
-    field: 'categoryId',
+    fieldName: 'categoryId',
     label: '分类',
     required: true,
     component: 'TreeSelect',
@@ -161,7 +172,7 @@ export const apiInfoFormSchema: FormSchema[] = [
     colProps: { span: 16 },
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '接口名称',
     required: true,
     component: 'Input',
@@ -179,7 +190,7 @@ export const apiInfoFormSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'remark',
+    fieldName: 'remark',
     label: '接口描述',
     required: false,
     component: 'InputTextArea',
@@ -192,7 +203,7 @@ export const apiInfoFormSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'method',
+    fieldName: 'method',
     label: '请求地址',
     required: true,
     defaultValue: 'GET',
@@ -203,21 +214,21 @@ export const apiInfoFormSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'headers',
+    fieldName: 'headers',
     label: '请求头参数',
     required: false,
     slot: 'headersSlot',
     colProps,
   },
   {
-    field: 'pathVariables',
+    fieldName: 'pathVariables',
     label: '路径参数',
     required: false,
     slot: 'pathVariablesSlot',
     colProps,
   },
   {
-    field: 'queryVariables',
+    fieldName: 'queryVariables',
     label: '查询参数',
     required: false,
     slot: 'queryVariablesSlot',
@@ -225,7 +236,7 @@ export const apiInfoFormSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'requestBody',
+    fieldName: 'requestBody',
     label: '请求体',
     // slot: 'requestBodySlot',
     required: false,
@@ -246,7 +257,7 @@ export const apiInfoFormSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'responseBodyCase',
+    fieldName: 'responseBodyCase',
     label: '响应示例',
     required: false,
     component: 'Input',

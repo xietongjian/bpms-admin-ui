@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import type {Recordable} from '@vben/types';
-
 import {h, ref, unref} from 'vue';
-
-import {Page, useVbenDrawer, useVbenModal} from '@vben/common-ui';
+import type {Recordable} from '@vben/types';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import {useVbenVxeGrid} from '#/adapter/vxe-table';
+import type {VbenFormProps} from '@vben/common-ui';
+import {Page} from '@vben/common-ui';
+import {PerEnum} from "#/enums/perEnum";
 
 import {
   deleteApiCategoryById,
@@ -12,33 +14,37 @@ import {
   getApiInfoListByPage
 } from '#/api/base/apiInfo';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons-vue";
-import {message, Button, Popconfirm, Tooltip} from "ant-design-vue";
-
-import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
+import {Button, message, Popconfirm, Tooltip, Tree} from "ant-design-vue";
+import {TableAction} from '#/components/table-action';
 import {listToTree} from "#/utils/helper/treeHelper";
 import {Pane, Splitpanes} from '#/components/splitpanes';
 
-
-import apiCategoryModal from "./api-category-modal.vue";
-import apiInfoDrawer from "./api-info-drawer.vue";
+import ApiCategoryModal from "./api-category-modal.vue";
+import ApiInfoDrawer from "./api-info-drawer.vue";
 import {columns, searchFormSchema} from "./apiInfo.data";
+import {useAccess} from '@vben/access';
 
 const selectNodeIds = ref([]);
 const treeLoading = ref(true);
 
-const [registerApiInfoDrawer, {
-  openDrawer: openApiInfoDrawer,
-  setDrawerProps: setApiInfoDrawerProps
-}] = useDrawer();
+const apiInfoDrawer = ref();
+const apiCategoryModal = ref();
+const PerPrefix = "ApiInfo:";
+const {hasAccessByCodes} = useAccess();
 
-const [ApiInfoDrawer, baseDrawerApi] = useVbenDrawer({
-  // 连接抽离的组件
-  connectedComponent: apiInfoDrawer,
-});
-const [ApiCategoryModal, baseModalApi] = useVbenModal({
-  // 连接抽离的组件
-  connectedComponent: apiCategoryModal,
-});
+// const [registerApiInfoDrawer, {
+//   openDrawer: openApiInfoDrawer,
+//   setDrawerProps: setApiInfoDrawerProps
+// }] = useDrawer();
+
+// const [ApiInfoDrawer, baseDrawerApi] = useVbenDrawer({
+//   // 连接抽离的组件
+//   connectedComponent: apiInfoDrawer,
+// });
+// const [ApiCategoryModal, baseModalApi] = useVbenModal({
+//   // 连接抽离的组件
+//   connectedComponent: apiCategoryModal,
+// });
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -89,10 +95,14 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 const apiCategoryDataMap = ref<any>({});
 const apiCategoryTreeData = ref<any[]>([]);
+const apiCategoryModalRef = ref();
+const apiInfoDrawerRef = ref();
+/*
 const [registerApiCategoryModal, {
   openModal: openApiCategoryModal,
   setModalProps: setApiCategoryModalProps
 }] = useModal();
+*/
 
 const treeActionList: any[] = [
   {
@@ -150,19 +160,19 @@ const currentNode = ref(undefined);
 initApiCategoryTree();
 
 function handleCreateCategory(node: any) {
-  openApiCategoryModal(true, {
-    isUpdate: false,
-    record: {pid: node?.id}
+  unref(apiCategoryModalRef).setData({pid: node?.id});
+  unref(apiCategoryModalRef).open();
+  unref(apiCategoryModalRef).setState({
+    title: "新增分类",
   });
-  setApiCategoryModalProps({title: "新增分类", centered: true});
 }
 
 function handleUpdateCategory(node: any) {
-  openApiCategoryModal(true, {
-    isUpdate: true,
-    record: node
+  unref(apiCategoryModalRef).setData(node);
+  unref(apiCategoryModalRef).open();
+  unref(apiCategoryModalRef).setState({
+    title: "修改分类",
   });
-  setApiCategoryModalProps({title: "修改分类", centered: true});
 }
 
 async function handleDeleteCategory(node: any) {
@@ -182,24 +192,24 @@ async function handleDeleteCategory(node: any) {
 }
 
 function handleCreate() {
-  openApiInfoDrawer(true, {
-    isUpdate: false,
-    record: {categoryId: unref(currentNode)?.id}
+  apiInfodrawerRef.value.setData({categoryId: unref(currentNode)?.id});
+  apiInfoDrawerRef.value.open();
+  apiInfoDrawerRef.value.setState({
+    title: "新增接口",
   });
-  setApiInfoDrawerProps({title: `新建接口`});
 }
 
-function handleEdit(record: Recordable) {
-  openApiInfoDrawer(true, {
-    record,
-    isUpdate: true,
+function handleEdit(record: Recordable<any>) {
+  apiInfoDrawerRef.value.setData(record);
+  apiInfoDrawerRef.value.open();
+  apiInfoDrawerRef.value.setState({
+    title: `编辑-${record.name}`,
   });
-  setApiInfoDrawerProps({title: `编辑-${record.name}`});
 }
 
-function handleDeleteApiInfo(record: Recordable) {
+function handleDeleteApiInfo(record: Recordable<any>) {
   deleteApiInfoById(record.id).then(() => {
-    reload();
+    tableApi.reload();
   });
 }
 
@@ -222,7 +232,7 @@ function handleSuccess() {
   setTimeout(() => {
     const {getFieldsValue} = getForm();
     const values = getFieldsValue();
-    reload({searchInfo: {categoryId: unref(currentNode)?.id, ...values}});
+    tableApi.reload({searchInfo: {categoryId: unref(currentNode)?.id, ...values}});
   }, 200);
 }
 
@@ -234,13 +244,36 @@ async function handleSelect(node: any, e: any) {
   const selectedNode = e.selectedNodes[0];
   if (selectedNode) {
     currentNode.value = selectedNode;
-    const {getFieldsValue} = getForm();
-    const values = getFieldsValue();
-    await reload({searchInfo: {categoryId: selectedNode.id, ...values}});
+    // const {getFieldsValue} = getForm();
+    // const values = getFieldsValue();
+    await tableApi.reload({searchInfo: {categoryId: selectedNode.id}});
   } else {
     currentNode.value = undefined;
-    await reload();
+    await tableApi.reload();
   }
+}
+
+function createActions(record: Recordable<any>) {
+  return [
+    {
+      auth: [PerPrefix + PerEnum.UPDATE],
+      tooltip: '修改',
+      icon: 'clarity:note-edit-line',
+      onClick: handleEdit.bind(null, record),
+    },
+    {
+      auth: [PerPrefix + PerEnum.DELETE],
+      tooltip: '删除',
+      icon: 'ant-design:delete-outlined',
+      danger: true,
+      popConfirm: {
+        placement: 'left',
+        title: '是否确认删除',
+        confirm: handleDeleteApiInfo.bind(null, record),
+        okButtonProps: {danger: true}
+      },
+    },
+  ];
 }
 </script>
 
@@ -249,17 +282,17 @@ async function handleSelect(node: any, e: any) {
     <Splitpanes>
       <Pane class="bg-transparent" min-size="20" size="30">
         <Tree
-          v-bind="$attrs"
-          v-if="apiCategoryTreeData.length > 0"
-          v-model:selected-keys="selectNodeIds"
-          :class="$attrs.class"
-          :field-names="{ title: 'title', key: 'key' }"
-          :show-line="{ showLeafIcon: false }"
-          :tree-data="apiCategoryTreeData"
-          block-node
-          :virtual="false"
-          default-expand-all
-          @select="handleSelect"
+            v-bind="$attrs"
+            v-if="apiCategoryTreeData.length > 0"
+            v-model:selected-keys="selectNodeIds"
+            :class="$attrs.class"
+            :field-names="{ title: 'title', key: 'key' }"
+            :show-line="{ showLeafIcon: false }"
+            :tree-data="apiCategoryTreeData"
+            block-node
+            :virtual="false"
+            default-expand-all
+            @select="handleSelect"
         >
           <template #headerTitle>
             <Row align="middle" class="w-full">
@@ -275,43 +308,25 @@ async function handleSelect(node: any, e: any) {
       </Pane>
       <Pane class="ml-2 bg-transparent" min-size="20" size="70">
         <BasicTable @register="registerTable" class="!p-0">
-          <template #toolbar>
-            <AccessControl :codes="['App:'+PerEnum.ADD]" type="code">
-              <a-button type="primary" @click="handleCreate">新增</a-button>
-            </AccessControl>
+          <template #toolbar-tools>
+            <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" size="small" type="primary"
+                    @click="handleCreate">新增
+            </Button>
           </template>
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'categoryId'">
               {{ apiCategoryDataMap[record.categoryId]?.name || '-' }}
             </template>
-            <template v-if="column.key === 'action'">
-              <TableAction
-                :actions="[
-                  {
-                    auth: 'App:' + PerEnum.UPDATE,
-                    tooltip: '修改',
-                    icon: 'clarity:note-edit-line',
-                    onClick: handleEdit.bind(null, record),
-                  },
-                  {
-                    auth: 'App:' + PerEnum.DELETE,
-                    tooltip: '删除',
-                    icon: 'ant-design:delete-outlined',
-                    color: 'error',
-                    popConfirm: {
-                      placement: 'left',
-                      title: '是否确认删除',
-                      confirm: handleDeleteApiInfo.bind(null, record),
-                    },
-                  },
-                ]"
-              />
-            </template>
+          </template>
+          <template #action="{ row }">
+            <TableAction
+                :actions="createActions(row)"
+            />
           </template>
         </BasicTable>
       </Pane>
     </Splitpanes>
-    <ApiInfoDrawer @register="registerApiInfoDrawer" @success="handleSuccess"/>
-    <ApiCategoryModal @register="registerApiCategoryModal" @success="handleCategorySuccess"/>
+    <ApiInfoDrawer ref="apiInfoDrawerRef" @register="registerApiInfoDrawer" @success="handleSuccess"/>
+    <ApiCategoryModal ref="apiCategoryModalRef" @register="registerApiCategoryModal" @success="handleCategorySuccess"/>
   </Page>
 </template>

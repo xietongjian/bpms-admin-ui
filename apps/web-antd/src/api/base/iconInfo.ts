@@ -9,6 +9,8 @@ enum Api {
   SaveOrUpdateIconCategory = '/flow/privilege/iconCategory/saveOrUpdate',
   DeleteIconCategoryById = '/flow/privilege/iconCategory/delete',
   DeleteIconInfoById = '/flow/privilege/iconInfo/delete',
+  CheckEntityExist = '/flow/base/app/checkEntityExist',
+
 }
 
 export const getIconInfoListByPage = (params: any) => {
@@ -24,6 +26,10 @@ export const getIconInfoListByPage = (params: any) => {
 
   return requestClient.post(Api.IconInfoPageList, params);
 };
+
+export async function checkEntityExist(params: any) {
+  return requestClient.post<any>(Api.CheckEntityExist, params);
+}
 
 export const getIconInfoTreeData = async (params: any) => {
   const apiCategoryList = await getIconCategoryListData();

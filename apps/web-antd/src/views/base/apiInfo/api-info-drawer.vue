@@ -47,17 +47,16 @@
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
-import {ref, unref, defineEmits} from 'vue';
-import {BasicDrawer, useDrawerInner} from '@/components/Drawer';
+import {ref, unref, defineEmits, defineExpose} from 'vue';
+import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
+import {useVbenForm} from '#/adapter/form';
 
-import {BasicForm, useForm} from '@/components/Form';
 import {apiInfoFormSchema} from './apiInfo.data';
-import {FormItem, FormItemRest, Input, Select} from "ant-design-vue";
+import {FormItem, FormItemRest, message, Input, Select} from "ant-design-vue";
 import {getApiCategoryListData, getApiCategoryTreeData, saveOrUpdateApiInfo} from '#/api/base/apiInfo';
-import { useMessage } from '@/hooks/web/useMessage';
 
-import ApiInfoVariables from "@/views/base/apiInfo/ApiInfoVariables.vue";
-const { createMessage } = useMessage();
+import ApiInfoVariables from "#/views/base/apiInfo/ApiInfoVariables.vue";
+import {formSchema} from "#/views/base/app/app.data";
 
 const headersRef = ref(null);
 const pathVariablesRef = ref(null);
@@ -65,6 +64,39 @@ const queryVariablesRef = ref(null);
 
 const isUpdate = ref(true);
 const emit = defineEmits(['success'])
+
+
+const [BasicDrawer, drawerApi] = useVbenDrawer({
+  onCancel() {
+    drawerApi.close();
+  },
+  onOpenChange(isOpen: boolean) {
+    if (isOpen) {
+      const values = drawerApi.getData<Record<string, any>>();
+      if (values) {
+        formApi.setValues(values);
+        drawerApi.setState({loading: false, confirmLoading: false});
+      }
+    }
+  },
+  onConfirm() {
+    // await formApi.submitForm();
+    handleSubmit();
+  },
+});
+
+const [BasicForm, formApi] = useVbenForm({
+  commonConfig: {
+    componentProps: {
+      // class: 'w-full',
+    },
+  },
+  showDefaultActions: false,
+  layout: 'horizontal',
+  schema: formSchema,
+  wrapperClass: 'grid-cols-1',
+});
+/*
 const [
   registerForm,
   {resetFields, updateSchema, getFieldsValue, scrollToField, setFieldsValue, validate},
@@ -93,12 +125,16 @@ const [registerDrawer, {setDrawerProps, closeDrawer}] = useDrawerInner(async (da
   } finally {
     setDrawerProps({loading: false, confirmLoading: false});
   }
-});
+});*/
 
 async function handleSubmit() {
   try {
-    const values = await validate();
-    setDrawerProps({confirmLoading: true, loading: true});
+    const valid = await formApi.validate();
+    if (!valid) return;
+
+    const values = formApi.getValues();
+
+    drawerApi.setState({loading: true, confirmLoading: true});
 
     const headersData = await unref(headersRef).handleSubmit();
     const pathVariablesData = await unref(pathVariablesRef).handleSubmit();
@@ -111,15 +147,16 @@ async function handleSubmit() {
     const {success, msg} = await saveOrUpdateApiInfo(values);
     if(success){
       emit('success');
-      createMessage.success(msg);
-      closeDrawer();
+      message.success(msg);
+      drawerApi.close();
     } else{
-      createMessage.error(msg);
+      message.error(msg);
     }
   } finally {
-    setDrawerProps({loading: false, confirmLoading: false});
+    drawerApi.setState({loading: false, confirmLoading: false});
   }
 }
+defineExpose(drawerApi)
 </script>
 <style lang="less">
 .apiInfo_form .local_urlValue {

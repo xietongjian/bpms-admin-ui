@@ -9,8 +9,6 @@ import {message} from 'ant-design-vue';
 
 const emit = defineEmits(['success', 'register']);
 
-const isUpdate = ref(true);
-
 const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
     labelWidth: 100,
@@ -31,12 +29,8 @@ const [BasicModal, modalApi] = useVbenModal({
     }
     modalApi.setState({loading: true, confirmLoading: true});
 
-    const { id } = modalApi.getData() as { id?: number | string };
-    isUpdate.value = !!id;
-    if (isUpdate.value && id) {
-      const record = await dictTypeInfo(id);
-      await formApi.setValues(record);
-    }
+    const values = modalApi.getData();
+    await formApi.setValues(values);
     modalApi.setState({loading: false, confirmLoading: false});
   },
 });
@@ -140,24 +134,33 @@ const [BasicModal, modalApi] = useVbenModal({
   }
 });*/
 
-const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
-
 async function handleSubmit() {
   try {
-    setModalProps({ confirmLoading: true });
-    const values = await validate();
-    await saveOrUpdate(values);
-    closeModal();
-    emit('success');
+    modalApi.setState({loading: true, confirmLoading: true});
+    const valid  = await formApi.validate();
+    if (!valid) {
+      return;
+    }
+    const values = await formApi.getValues();
+
+    const {success, msg} = await saveOrUpdate(values);
+    if (success) {
+      message.success(msg);
+      modalApi.close();
+      emit('success');
+    } else{
+      message.error(msg);
+    }
   } finally {
-    setModalProps({ confirmLoading: false });
+    modalApi.setState({loading: false, confirmLoading: false});
   }
 }
+defineExpose(modalApi)
 </script>
 
 
 <template>
-  <BasicModal :title="getTitle" @ok="handleSubmit">
+  <BasicModal>
     <BasicForm />
   </BasicModal>
 </template>

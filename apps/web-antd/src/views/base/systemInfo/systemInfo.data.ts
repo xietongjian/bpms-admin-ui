@@ -1,110 +1,103 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
-import { RemarkDefaultEnum } from '@/enums/constantEnum';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {FormValidPatternEnum, RemarkDefaultEnum} from "#/enums/commonEnum";
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+
 import { uploadApi } from '#/api/sys/upload';
 
-const colProps = {
-  span: 24,
-};
 /**
  * name
  * url
  * imgUrl
  * description
  */
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
-    width: 300,
     resizable: true,
   },
   {
     title: '跳转路径',
-    dataIndex: 'url',
-    width: 180,
+    field: 'url',
+    width: 380,
     align: 'left',
   },
   {
     title: '系统描述',
-    dataIndex: 'description',
+    field: 'description',
     align: 'left',
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'name',
+    fieldName: 'name',
     label: '关键字',
     component: 'Input',
     componentProps: {
       placeholder: '请输入关键字',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["id"]
+    }
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
-    required: true,
     component: 'Input',
     compnentProps: {
       placeholder: '请输入名称',
     },
-    rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 64,
-        message: '字符长度不能大于64！',
-      },
-    ],
-    colProps,
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(64, "名称不能大于64个字符"),
   },
   {
-    field: 'url',
+    fieldName: 'url',
     label: '跳转地址',
-    required: true,
     component: 'Input',
     componentProps: {
       placeholder: '请输入跳转地址',
     },
-    rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '跳转地址不能为空！',
-      },
-      {
-        max: 64,
-        message: '字符长度不能大于64！',
-      },
-    ],
-    colProps,
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(64, "名称不能大于64个字符"),
   },
   {
-    field: 'imgUrl',
+    fieldName: 'imgUrl',
     label: '图标',
-    required: false,
     component: 'ImageUpload',
-    show: true,
+    dependencies: {
+      show: false,
+      triggerFields: ["id"]
+    },
     componentProps: {
       api: uploadApi,
       name: 'file',
@@ -116,14 +109,11 @@ export const formSchema: FormSchema[] = [
       helpText: '(仅支持gif,png)大小不超过1M，建议上传尺寸(像素)：200px*200px',
       accept: ['gif', 'png'],
     },
-    colProps: {
-      span: 12,
-    },
   },
   {
     label: '系统描述',
-    field: 'description',
-    component: 'InputTextArea',
+    fieldName: 'description',
+    component: 'Textarea',
     componentProps: {
       placeholder: '请输入系统描述',
       autoSize: {
@@ -131,12 +121,10 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    rules: [
-      {
-        max: 1024,
-        message: '字符长度不能大于1024！',
-      },
-    ],
-    colProps,
+    rules: z
+        .string()
+        .max(500, "字符长度不能大于500！")
+        .nullish()
+        .optional(),
   },
 ];

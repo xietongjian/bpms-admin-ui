@@ -1,21 +1,53 @@
 <script lang="ts" setup>
 import { computed, defineEmits, ref, unref } from 'vue';
+import {message} from 'ant-design-vue';
+import {useVbenModal} from '@vben/common-ui';
+import {useVbenForm} from '#/adapter/form';
 
 import {
   getApiCategoryTreeData,
   saveOrUpdateApiCategory,
 } from '#/api/base/apiInfo';
-import { BasicForm, useForm } from '@/components/Form';
-import { BasicModal, useModalInner } from '@/components/Modal';
-import { useMessage } from '@/hooks/web/useMessage';
 
 import { apiCategoryFormSchema } from './apiInfo.data';
 
 const emit = defineEmits(['success']);
-const { createMessage } = useMessage();
 
 const isUpdate = ref(true);
 
+
+const [BasicModal, modalApi] = useVbenModal({
+  draggable: true,
+  onCancel() {
+    modalApi.close();
+  },
+  onOpenChange(isOpen: boolean) {
+    if (isOpen) {
+      const values = modalApi.getData<Record<string, any>>();
+      if (values) {
+        formApi.setValues(values);
+        modalApi.setState({loading: false, confirmLoading: false});
+      }
+    }
+  },
+  onConfirm() {
+    // await formApi.submitForm();
+    handleSubmit();
+  },
+});
+
+const [BasicForm, formApi] = useVbenForm({
+  commonConfig: {
+    componentProps: {
+      // class: 'w-full',
+    },
+  },
+  showDefaultActions: false,
+  layout: 'horizontal',
+  schema: apiCategoryFormSchema,
+  wrapperClass: 'grid-cols-1',
+});
+/*
 const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] =
   useForm({
     labelWidth: 100,
@@ -46,34 +78,34 @@ const [registerModal, { setModalProps, closeModal }] = useModalInner(
     });
     setModalProps({ confirmLoading: false, loading: false });
   },
-);
+);*/
 
 const getTitle = computed(() => (unref(isUpdate) ? '修改' : '新增'));
 
 async function handleSubmit() {
   try {
-    setModalProps({ confirmLoading: true, loading: true });
-    const values = await validate();
+    modalApi.setState({loading: true, confirmLoading: true});
+    const valid = await formApi.validate();
+    if (!valid) {
+      return;
+    }
+    const values = await formApi.getValues();
     const { success, msg } = await saveOrUpdateApiCategory(values);
     if (success) {
-      createMessage.success(msg);
-      closeModal();
+      message.success(msg);
+      modalApi.close();
       emit('success');
     } else {
-      createMessage.error(msg);
+      message.error(msg);
     }
   } finally {
-    setModalProps({ confirmLoading: false, loading: false });
+    modalApi.setState({loading: false, confirmLoading: false});
   }
 }
+defineExpose(modalApi)
 </script>
 <template>
-  <BasicModal
-    v-bind="$attrs"
-    :title="getTitle"
-    @ok="handleSubmit"
-    @register="registerModal"
-  >
-    <BasicForm @register="registerForm" />
+  <BasicModal >
+    <BasicForm />
   </BasicModal>
 </template>

@@ -17,6 +17,7 @@ import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useAccess} from '@vben/access';
 import {listColumns} from "#/views/base/app/app.data";
 import {getAppListByPage} from "#/api/base/app";
+import {Page} from "@vben/common-ui";
 const PerPrefix = "JobGradeType:";
 
 
@@ -137,7 +138,7 @@ function handleCreate() {
   }
 </script>
 <template>
-  <div>
+  <Page auto-content-height>
     <BasicTable @register="registerTable">
       <template #toolbar-tools>
         <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
@@ -151,5 +152,5 @@ function handleCreate() {
       </template>
     </BasicTable>
     <JobGradeTypeModal @register="registerModal" @success="handleSuccess" />
-  </div>
+  </Page>
 </template>

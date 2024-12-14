@@ -1,117 +1,169 @@
 <template>
-  <div>
-    <BasicTable @register="registerTable">
-      <template #toolbar>
-        <Authority :value="'Group:' + PerEnum.ADD">
-          <a-button type="primary" @click="handleCreate"> 新增</a-button>
-        </Authority>
+  <Page auto-content-height>
+    <BasicTable>
+      <template #toolbar-tools>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-            :actions="[
-              {
-                auth: 'Group:' + PerEnum.UPDATE,
-                tooltip: '修改',
-                icon: 'clarity:note-edit-line',
-                onClick: handleEdit.bind(null, record),
-              },
-              {
-                auth: 'Group:' + PerEnum.DELETE,
-                tooltip: '删除',
-                icon: 'ant-design:delete-outlined',
-                color: 'error',
-                popConfirm: {
-                  title: '是否确认删除',
-                  confirm: handleDelete.bind(null, record),
-                  placement: 'left',
-                },
-              },
-            ]"
-          />
-        </template>
-        <template v-if="column.key === 'name'">
-          <Space>
-            <Avatar :src="record.imgUrl" class="w-[60px] h-[60px]">
-              <template #icon>
-                <UserOutlined />
-              </template>
-            </Avatar>
-            <span>
-              {{record.name}}
+      <template #action="{ row }">
+        <TableAction
+            :actions="createActions(row)"
+        />
+      </template>
+      <template #imgUrl="{ row }">
+        <Space>
+          <Avatar :src="row.imgUrl" class="w-[60px] h-[60px]">
+            <template #icon>
+              <UserOutlined/>
+            </template>
+          </Avatar>
+          <span>
+              {{ row.name }}
             </span>
-          </Space>
-        </template>
+        </Space>
       </template>
     </BasicTable>
 
-    <GroupModal @register="registerModal" @success="handleSuccess" />
-  </div>
+    <SystemInfoModal ref="systemInfoModalRef" @success="handleSuccess"/>
+  </Page>
 </template>
 <script lang="ts" setup>
-  import { defineOptions } from 'vue';
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { getPagerModel, deleteSystemById } from '#/api/base/systemInfo';
-  import { Tag, Avatar, Space } from 'ant-design-vue';
-  import { columns, searchFormSchema } from './systemInfo.data';
-  import GroupModal from './SystemInfoModal.vue';
+import {ref, unref} from 'vue';
+import type {Recordable} from '@vben/types';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormProps} from '@vben/common-ui';
+import {PerEnum} from "#/enums/perEnum";
+import {getPagerModel, deleteSystemById} from '#/api/base/systemInfo';
+import {Tag, Avatar, Button, Space} from 'ant-design-vue';
+import {columns, searchFormSchema} from './systemInfo.data';
+import SystemInfoModal from './SystemInfoModal.vue';
+import { TableAction } from '#/components/table-action';
 
-  import { Authority } from '@/components/Authority';
-  import { PerEnum } from '@/enums/perEnum';
-  import {UserOutlined} from "@ant-design/icons-vue";
+import {useAccess} from '@vben/access';
+import {UserOutlined} from "@ant-design/icons-vue";
+import {useVbenVxeGrid} from "#/adapter/vxe-table";
+import {Page} from "@vben/common-ui";
 
-  defineOptions({
-    name: 'SystemInfo',
-  });
+const PerPrefix = "SystemInfo:";
+const {hasAccessByCodes} = useAccess();
+const systemInfoModalRef = ref();
 
-  const [registerModal, { openModal }] = useModal();
+const formOptions: VbenFormProps = {
+  showCollapseButton: false,
+  submitOnEnter: true,
+  commonConfig: {
+    labelWidth: 60,
+  },
+  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  resetButtonOptions: {
+    show: false,
+  },
+  schema: searchFormSchema,
+};
 
-  const [registerTable, { reload }] = useTable({
-    title: '列表',
-    api: getPagerModel,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
+
+const gridOptions: VxeGridProps<any> = {
+  checkboxConfig: {
+    highlight: true,
+    labelField: 'name',
+  },
+  columns,
+  rowConfig: {
+    isHover: true
+  },
+  columnConfig: {resizable: true},
+  height: 'auto',
+  keepSource: true,
+  border: false,
+  stripe: true,
+  proxyConfig: {
+    ajax: {
+      query: async ({page}, formValues) => {
+        return await getPagerModel({
+          query: {
+            pageNum: page.currentPage,
+            pageSize: page.pageSize,
+          },
+          entity: formValues || {},
+        });
+      },
     },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: true,
-    showIndexColumn: false,
-    rowSelection: false,
-    actionColumn: {
-      width: 160,
-      title: '操作',
-      dataIndex: 'action',
+  },
+};
+
+const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+
+function createActions(record: Recordable<any>) {
+  return [
+    {
+      auth: [PerPrefix + PerEnum.UPDATE],
+      tooltip: '修改',
+      icon: 'clarity:note-edit-line',
+      onClick: handleEdit.bind(null, record),
     },
+    {
+      auth: [PerEnum + PerEnum.DELETE],
+      tooltip: '删除',
+      icon: 'ant-design:delete-outlined',
+      color: 'error',
+      popConfirm: {
+        title: '是否确认删除',
+        confirm: handleDelete.bind(null, record),
+        placement: 'left',
+        okButtonProps: { danger: true },
+      },
+    },
+  ];
+}
+/*
+const [registerModal, {openModal}] = useModal();
+
+const [registerTable, {reload}] = useTable({
+  title: '列表',
+  api: getPagerModel,
+  columns,
+  formConfig: {
+    labelWidth: 120,
+    schemas: searchFormSchema,
+    showAdvancedButton: false,
+    showResetButton: false,
+    autoSubmitOnEnter: true,
+  },
+  canColDrag: true,
+  useSearchForm: true,
+  bordered: true,
+  showIndexColumn: false,
+  rowSelection: false,
+  actionColumn: {
+    width: 160,
+    title: '操作',
+    dataIndex: 'action',
+  },
+});*/
+
+function handleCreate() {
+  systemInfoModalRef.value.setData();
+  systemInfoModalRef.value.open();
+  systemInfoModalRef.value.setState({
+    title: '创建'
   });
+}
 
-  function handleCreate() {
-    openModal(true, {
-      isUpdate: false,
-    });
-  }
+function handleEdit(record: Recordable<any>) {
+  systemInfoModalRef.value.setData(record);
+  systemInfoModalRef.value.open();
+  systemInfoModalRef.value.setState({
+    title: '编辑'
+  });
+}
 
-  function handleEdit(record: Recordable) {
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });
-  }
+function handleDelete(record: Recordable<any>) {
+  deleteSystemById([record.id]).then((res) => {
+    tableApi.reload();
+  });
+}
 
-  function handleDelete(record: Recordable) {
-    deleteSystemById([record.id]).then((res) => {
-      reload();
-    });
-  }
-
-  function handleSuccess() {
-    setTimeout(() => {
-      reload();
-    }, 200);
-  }
+function handleSuccess() {
+  tableApi.reload();
+}
 
 </script>
