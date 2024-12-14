@@ -3,33 +3,64 @@
     <div class="h-full">
       <Splitpanes class="default-theme h-full !bg-card p-2">
         <Pane class="!bg-card p-2" min-size="10" size="20">
-          <Tree
-              :loading="treeLoading"
-              title="图标分类"
-              treeWrapperClassName="h-[calc(100%-35px)] overflow-auto h-full"
-              :clickRowToExpand="false"
-              :treeData="iconCategoryTreeData"
-              @select="handleSelect"
-              ref="basicTreeRef"
-              block-node
-              :field-names="{ title: 'name' }"
-              :actionList="treeActionList"
-          >
-            <template #headerTitle>
-              <Row align="middle" class="w-full">
-                <Col span="12"> 图标分类</Col>
-                <Col span="12" class="text-right">
-                  <Button size="small" @click="handleCreateCategory" type="primary"
-                  >新增分类
-                  </Button
-                  >
-                </Col>
-              </Row>
-            </template>
-          </Tree>
+          <div class="flex flex-col">
+            <div class="h-10 flex flex-row justify-between border border-solid border-b-px border-x-0 border-t-0">
+              <span>
+                图标分类
+              </span>
+              <span>
+                <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])"
+                        size="small"
+                        @click="handleCreateCategory"
+                        type="primary">
+                  新增
+                </Button>
+              </span>
+            </div>
+            <div>
+              <Tree
+                :loading="treeLoading"
+                title="图标分类"
+                treeWrapperClassName="h-[calc(100%-35px)] overflow-auto h-full"
+                :clickRowToExpand="false"
+                :treeData="iconCategoryTreeData"
+                @select="handleSelect"
+                ref="basicTreeRef"
+                block-node
+                :field-names="{ title: 'name' }"
+                :actionList="treeActionList"
+              >
+                <template #title="node">
+                  <div class="w-full flex flex-row justify-between group">
+                    <span >{{node.name}}</span>
+                    <span class="group-hover:block hidden text-right">
+                      <Button @click.stop
+                              size="small"
+                              type="link"
+                              :icon="h(EditOutlined)"
+                              @click="handleUpdateCategory(node)" />
+                      <Popconfirm
+                        title="确定要删除吗？"
+                        ok-text="确认"
+                        cancel-text="取消"
+                        @confirm="handleDeleteCategory(node)"
+                        :okButtonProps="{danger: true}"
+                      >
+                        <Button @click.stop
+                                size="small"
+                                type="link"
+                                :icon="h(DeleteOutlined)"
+                                danger />
+                      </Popconfirm>
+                    </span>
+                  </div>
+                </template>
+              </Tree>
+            </div>
+          </div>
         </Pane>
         <Pane class="flex flex-col ml-2 !bg-card p-0" min-size="20" size="80">
-          <div class="h-12 flex flex-row justify-between">
+          <div class="h-12 flex flex-row justify-between items-center">
             <InputSearch class="w-[50%]"
               v-model:value="searchTxt"
               :allow-clear="true"
@@ -38,30 +69,57 @@
               @search="onSearch"
             />
             <div>
-              <Button type="primary" @click="handleCreate">新建</Button>
+              <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新建</Button>
             </div>
           </div>
 
-          <div class="flex-1 w-full overflow-y-auto">
+          <div class="flex-1 w-full overflow-y-auto border border-x-0">
             <Spin :spinning="dataLoading" >
               <div class="flex flex-row w-full flex-wrap min-h-[300px]">
                 <div v-if="listData && listData.length > 0" v-for="item in listData"
-                     class="flex flex-col items-center w-[80px] h-[100px] p-1">
+                     class="group relative flex flex-col items-center w-[80px] h-[100px] p-1">
                   <div class="rounded-md hover:outline-rounded hover:outline hover:outline-solid hover:outline-blue-500 h-[60px] w-[60px] p-1">
                     <Avatar
                       :src="item.icon"
                       shape="square"
-                      class="w-full h-full items-center cursor-pointer object-contain"
+                      class="w-full !leading-[62px] h-full items-center cursor-pointer object-contain"
                       @click="previewImageHandle(item.icon)"
                     >
                       <template #icon>
-                        <UserOutlined/>
+                        <PictureOutlined class="text-4xl" />
                       </template>
                     </Avatar>
                   </div>
                   <div class="text-center w-full">
                     <div class="text-sm w-full overflow-ellipsis overflow-hidden whitespace-nowrap overflow-hidden whitespace-nowrap text-overflow-ellipsis" :title="item.name">{{ item.name }}</div>
                     <div class="text-xs text-gray-400">{{ item.sn }}</div>
+                  </div>
+                  <div
+                    v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE, PerPrefix + PerEnum.DELETE])"
+                    class="group-hover:block hidden absolute top-1 right-3 cursor-pointer">
+                    <Dropdown>
+                      <a class="w-[20px] h-[20px] bg-blue-500/80 rounded-full flex items-center justify-center" @click.prevent>
+                        <EllipsisOutlined style="color: white;"/>
+                      </a>
+                      <template #overlay>
+                        <Menu>
+                          <MenuItem v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])">
+                            <a href="javascript:;" @click="handleEdit(item)" >编辑</a>
+                          </MenuItem>
+                          <MenuItem v-if="hasAccessByCodes([PerPrefix + PerEnum.DELETE])">
+                            <Popconfirm
+                              title="确定要删除吗？"
+                              ok-text="确认"
+                              cancel-text="取消"
+                              @confirm="handleDeleteIconInfo(item)"
+                              :okButtonProps="{danger: true}"
+                            >
+                              <a href="javascript:;">删除</a>
+                            </Popconfirm>
+                          </MenuItem>
+                        </Menu>
+                      </template>
+                    </Dropdown>
                   </div>
                 </div>
                 <div v-else class="text-center w-full">
@@ -74,64 +132,17 @@
           <div class="h-12 text-center flex flex-col justify-center">
             <Pagination size="small"
                         :pagination="pagination"
-                        :defaultPageSize="50"
+                        :defaultPageSize="100"
                         @change="onChange"
                         @showSizeChange="onShowSizeChange"
-                        :pageSizeOptions="['50', '100', '200', '500', '1000']"
+                        :pageSizeOptions="['50', '100', '200', '300', '500', '1000']"
                         :total="pagination.total"/>
           </div>
-
-<!--          <BasicTable @register="registerTable" class="!p-0">
-            <template #toolbar>
-              <Authority :value="'IconInfo:' + PerEnum.ADD">
-                <a-button type="primary" @click="handleCreate">新增</a-button>
-              </Authority>
-            </template>
-            <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'name'">
-                <Avatar
-                    :src="record.icon"
-                    class="w-[50px] h-[50px] cursor-pointer object-contain"
-                    @click="previewImageHandle(record.icon)"
-                >
-                  <template #icon>
-                    <UserOutlined/>
-                  </template>
-                </Avatar>
-              </template>
-              <template v-if="column.key === 'categoryId'">
-                {{ iconCategoryDataMap[record.categoryId]?.name || '-' }}
-              </template>
-              <template v-if="column.key === 'action'">
-                <TableAction
-                    :actions="[
-                    {
-                      auth: 'IconInfo:' + PerEnum.UPDATE,
-                      tooltip: '修改',
-                      icon: 'clarity:note-edit-line',
-                      onClick: handleEdit.bind(null, record),
-                    },
-                    {
-                      auth: 'IconInfo:' + PerEnum.DELETE,
-                      tooltip: '删除',
-                      icon: 'ant-design:delete-outlined',
-                      color: 'error',
-                      popConfirm: {
-                        placement: 'left',
-                        title: '是否确认删除',
-                        confirm: handleDeleteIconInfo.bind(null, record),
-                      },
-                    },
-                  ]"
-                />
-              </template>
-            </template>
-          </BasicTable>-->
         </Pane>
       </Splitpanes>
     </div>
-    <IconInfoModal ref="iconInfoModalRef" @register="registerIconInfoDrawer" @success="handleSuccess"/>
-    <IconCategoryModal ref="iconCategoryModalRef" @register="registerIconCategoryModal" @success="handleCategorySuccess"/>
+    <IconInfoModal ref="iconInfoModalRef" @success="handleSuccess"/>
+    <IconCategoryModal ref="iconCategoryModalRef" @success="handleCategorySuccess"/>
     <div class="w-0 h-0 overflow-hidden">
       <Image
           :width="0"
@@ -143,37 +154,50 @@
   </Page>
 </template>
 <script lang="ts" setup>
-import {ref, h, unref, onMounted} from 'vue';
+import {h, onMounted, ref} from 'vue';
 import {
-  getIconInfoListByPage,
-  getIconCategoryListData,
   deleteIconCategoryById,
   deleteIconInfoById,
+  getIconCategoryListData,
+  getIconInfoListByPage,
 } from '#/api/base/iconInfo';
 import {Page} from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
-import type {VxeGridProps} from '#/adapter/vxe-table';
-import type {VbenFormProps} from '@vben/common-ui';
 
-import {Splitpanes, Pane} from '#/components/splitpanes';
+import {Pane, Splitpanes} from '#/components/splitpanes';
 import {listToTree} from '#/utils/helper/treeHelper';
-
-import {columns, searchFormSchema} from './iconInfo.data';
-
 import {PerEnum} from "#/enums/perEnum";
-import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import {TableAction} from '#/components/table-action';
-
 import {useAccess} from '@vben/access';
 
 import IconInfoModal from './IconInfoModal.vue';
 import IconCategoryModal from './IconCategoryModal.vue';
 
-import {DeleteOutlined, PlusOutlined, EditOutlined, UserOutlined} from '@ant-design/icons-vue';
-import {message, Popconfirm, Spin, Pagination, Card, Empty, Input, Button, Image, Row, Col, Tooltip, Avatar, Tree, List} from 'ant-design-vue';
+import {DeleteOutlined, EditOutlined, EllipsisOutlined, PictureOutlined, PlusOutlined} from '@ant-design/icons-vue';
+import {
+  Avatar,
+  Button,
+  Col,
+  Dropdown,
+  Empty,
+  Image,
+  Input,
+  Menu,
+  message,
+  Pagination,
+  Popconfirm,
+  Row,
+  Spin,
+  Tooltip,
+  Tree
+} from 'ant-design-vue';
+
+const PerPrefix = "IconInfo:";
+const {hasAccessByCodes} = useAccess();
+
+const MenuItem = Menu.Item;
+
 const InputSearch = Input.Search;
 const searchTxt = ref('');
-const ListItem = List.Item;
 const listData = ref([]);
 const previewImage = ref<string>('');
 const previewImageVisible = ref<boolean>(false);
@@ -181,6 +205,10 @@ const iconInfoModalRef = ref();
 const iconCategoryModalRef = ref();
 const treeLoading = ref(true);
 const dataLoading = ref(false);
+const iconCategoryDataMap = ref<any>({});
+const iconCategoryTreeData = ref<any[]>([]);
+
+
 const pagination = ref({
   current: 1,
   pageSize: 50,
@@ -188,18 +216,17 @@ const pagination = ref({
 });
 
 function onChange(page: number) {
-  debugger;
-  fetchIconInfoList({pageNum: page});
+  pagination.value.current = page;
+  fetchIconInfoList();
 }
 function onShowSizeChange(current: number, pageSize: number) {
   pagination.value.pageSize = pageSize;
   pagination.value.current = 1;
 }
-const iconCategoryDataMap = ref<any>({});
-const iconCategoryTreeData = ref<any[]>([]);
 
 function onSearch(e) {
-  fetchIconInfoList({pageNum: 1, keyword: e});
+  pagination.value.current = 1;
+  fetchIconInfoList();
 }
 
 
@@ -261,12 +288,12 @@ const treeActionList: any[] = [
   },
 ];
 
-async function fetchIconInfoList(params){
+async function fetchIconInfoList(){
   dataLoading.value = true;
   try {
     const {total, rows} = await getIconInfoListByPage({
-      query: {pageSize: pagination.value.pageSize, pageNum: params.pageNum},
-      entity: {keyword: params.keyword}
+      query: {pageSize: pagination.value.pageSize, pageNum: pagination.value.current},
+      entity: {keyword: searchTxt.value, categoryId: currentNode.value?.id}
     });
     pagination.value.total = total;
     listData.value = rows;
@@ -280,7 +307,8 @@ async function fetchIconInfoList(params){
 }
 
 onMounted(async() => {
-  fetchIconInfoList({pageNum: 1});
+  pagination.value.current = 1;
+  fetchIconInfoList();
 });
 
 const currentNode = ref(undefined);
@@ -309,19 +337,19 @@ const currentNode = ref(undefined);
 initIconCategoryTree();
 
 function handleCreateCategory(node: any) {
-  openIconCategoryModal(true, {
-    isUpdate: false,
-    record: {pid: node?.id},
+  iconCategoryModalRef.value.setData({pid: node?.id});
+  iconCategoryModalRef.value.open();
+  iconCategoryModalRef.value.setState({
+    title: '新增分类'
   });
-  setIconCategoryModalProps({title: '新增分类', centered: true});
 }
 
 function handleUpdateCategory(node: any) {
-  openIconCategoryModal(true, {
-    isUpdate: true,
-    record: node,
+  iconCategoryModalRef.value.setData(node);
+  iconCategoryModalRef.value.open();
+  iconCategoryModalRef.value.setState({
+    title: '修改分类'
   });
-  setIconCategoryModalProps({title: '修改分类', centered: true});
 }
 
 function previewImageHandle(previewImg) {
@@ -336,7 +364,6 @@ function previewImageVisibleChange(visible, prevVisible) {
 }
 
 async function handleDeleteCategory(node: any) {
-  // openFullLoading();
   try {
     const {success, msg} = await deleteIconCategoryById(node.id);
     if (success) {
@@ -351,25 +378,27 @@ async function handleDeleteCategory(node: any) {
 }
 
 function handleCreate() {
-  openIconInfoDrawer(true, {
-    isUpdate: false,
-    record: {categoryId: unref(currentNode)?.id},
+  iconInfoModalRef.value.setData({});
+  iconInfoModalRef.value.open();
+  iconInfoModalRef.value.setState({
+    title: '新建图标'
   });
-  setIconInfoDrawerProps({title: `新建接口`});
 }
 
-function handleEdit(record: Recordable) {
-  openIconInfoDrawer(true, {
-    record,
-    isUpdate: true,
+function handleEdit(record: Recordable<any>) {
+  iconInfoModalRef.value.setData(record);
+  iconInfoModalRef.value.open();
+  iconInfoModalRef.value.setState({
+    title: '编辑图标'
   });
-  setIconInfoDrawerProps({title: `编辑-${record.name}`});
 }
 
-function handleDeleteIconInfo(record: Recordable) {
-  deleteIconInfoById(record.id).then(() => {
-    reload();
-  });
+async function handleDeleteIconInfo(record: Recordable<any>) {
+  const {success, msg} = await deleteIconInfoById(record.id);
+  if (success) {
+    message.success(msg)
+    fetchIconInfoList();
+  }
 }
 
 async function initIconCategoryTree() {
@@ -389,9 +418,7 @@ async function initIconCategoryTree() {
 
 function handleSuccess() {
   setTimeout(() => {
-    const {getFieldsValue} = getForm();
-    const values = getFieldsValue();
-    reload({searchInfo: {categoryId: unref(currentNode)?.id, ...values}});
+    fetchIconInfoList();
   }, 200);
 }
 
@@ -399,16 +426,13 @@ function handleCategorySuccess() {
   initIconCategoryTree();
 }
 
-async function handleSelect(node: any, e: any) {
+function handleSelect(node: any, e: any) {
   const selectedNode = e.selectedNodes[0];
   if (selectedNode) {
     currentNode.value = selectedNode;
-    const {getFieldsValue} = getForm();
-    const values = getFieldsValue();
-    await reload({searchInfo: {categoryId: selectedNode.id, ...values}});
   } else {
     currentNode.value = undefined;
-    await reload();
   }
+  fetchIconInfoList();
 }
 </script>

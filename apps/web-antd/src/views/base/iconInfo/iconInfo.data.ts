@@ -3,6 +3,7 @@ import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { OrderNoDefaultEnum } from '#/enums/constantEnum';
+import {checkEntityExist, getIconCategoryTreeData} from "#/api/base/iconInfo";
 // import {uploadApi} from "#/api/sys/upload";
 
 const colProps = {
@@ -58,14 +59,21 @@ export const iconCategoryFormSchema: FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'pid',
     label: '父级分类',
     component: 'TreeSelect',
-    show: ({ values }) => {
+    /*show: ({ values }) => {
       return !!values.pid && !values.id;
+    },*/
+    dependencies: {
+      show: false,
+      triggerFields: ['']
     },
     componentProps: {
       fieldNames: {
@@ -74,31 +82,23 @@ export const iconCategoryFormSchema: FormSchema[] = [
       },
       getPopupContainer: () => document.body,
     },
-    colProps: { span: 24 },
   },
   {
     fieldName: 'name',
     label: '分类名称',
-    required: true,
     component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '分类名称不能为空！',
-      },
-      {
-        max: 255,
-        message: '分类名称长度不能大于255！',
-      },
-    ],*/
-    colProps,
+    rules: z
+      .string({
+        required_error: '名称不能为空',
+      })
+      .trim()
+      .min(1, "名称不能为空")
+      .max(255, "名称不能大于255个字符"),
   },
   {
     fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
-    required: false,
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
@@ -113,67 +113,78 @@ export const iconInfoFormSchema: FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'categoryId',
     label: '分类',
-    required: true,
-    component: 'TreeSelect',
+    rules: "required",
+    component: 'ApiTreeSelect',
     componentProps: {
+      api: getIconCategoryTreeData,
       fieldNames: {
         label: 'name',
         value: 'id',
       },
       getPopupContainer: () => document.body,
     },
-    colProps: { span: 16 },
   },
   {
     fieldName: 'name',
     label: '图标名称',
-    required: true,
     component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 255,
-        message: '名称长度不能大于255！',
-      },
-    ],*/
-    colProps,
+    rules: z
+      .string({
+        required_error: '名称不能为空',
+      })
+      .trim()
+      .min(1, "名称不能为空")
+      .max(255, "名称不能大于255个字符")
   },
   {
     fieldName: 'sn',
     label: '标识',
-    required: true,
     component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '标识不能为空！',
+    dependencies: {
+      rules(values) {
+        const { id, sn } = values;
+        return z
+          .string({
+            required_error: "标识不能为空"
+          })
+          .min(1, "标识不能为空")
+          .max(100, '最多输入100个字符')
+          .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
+          .refine(
+            async (e) => {
+              let result = false;
+              try {
+                result = await checkEntityExist({
+                  id: id,
+                  field: 'sn',
+                  fieldValue: sn || '',
+                  fieldName: '标识',
+                });
+              } catch (e) {
+                console.error(e);
+              }
+              return result;
+            },
+            {
+              message: '标识已存在',
+            },
+          );
       },
-      {
-        max: 255,
-        message: '标识长度不能大于255！',
-      },
-    ],*/
-    colProps,
+      triggerFields: ['sn'],
+    },
   },
   {
     fieldName: 'icon',
     label: '图标',
     component: 'Input',
-    slot: 'iconImg',
-    colProps: {
-      style: '',
-      span: 10,
-    },
   },
   /*{
     field: 'icon',

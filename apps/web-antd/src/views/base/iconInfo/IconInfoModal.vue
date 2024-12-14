@@ -1,14 +1,15 @@
 <template>
   <BasicModal
     v-bind="$attrs"
-    @register="registerDrawer"
-    title="图标编辑"
     width="70%"
     showFooter
     @ok="handleSubmit"
   >
-    <BasicForm @register="registerForm" class="iconInf_form">
-      <template #iconImg="{ model, field }">
+    <BasicForm class="iconInf_form">
+      <template #field3="slotProps">
+        <Input placeholder="请输入" v-bind="slotProps" />
+      </template>
+      <template #icon="{ model, field }">
         <Upload
           style="margin: auto"
           name="avatar"
@@ -21,7 +22,7 @@
           <img v-if="imageUrl" :src="imageUrl" alt="avatar" class="w-20 h-20 object-contain" />
           <div v-else>
             <plus-outlined />
-            <div class="ant-upload-text">上传头像</div>
+            <div class="ant-upload-text">上传图标</div>
           </div>
         </Upload>
       </template>
@@ -29,7 +30,7 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, unref } from 'vue';
+  import { ref, unref, defineExpose } from 'vue';
   import { iconInfoFormSchema } from './iconInfo.data';
   import { FormItem, FormItemRest, Input, Select, message } from 'ant-design-vue';
   import { getIconCategoryTreeData, saveOrUpdateIconInfo } from '#/api/base/iconInfo';
@@ -61,6 +62,7 @@
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
           formApi.setValues(values);
+          imageUrl.value = values?.icon || '';
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -118,7 +120,7 @@
     }
   });*/
   const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/svg+xml';
     if (!isJpgOrPng) {
       message.error('只允许上传JPG图片！');
       return false;
@@ -149,9 +151,7 @@
       const values = await formApi.getValues();
       modalApi.setState({loading: true, confirmLoading: true});
 
-      if (Array.isArray(values.icon) && values.icon.length > 0) {
-        values.icon = values.icon[0];
-      }
+      debugger;
       values.icon = imageUrl.value;
 
       const { success, msg } = await saveOrUpdateIconInfo(values);
@@ -166,6 +166,7 @@
       modalApi.setState({loading: false, confirmLoading: false});
     }
   }
+  defineExpose(modalApi)
 </script>
 <style lang="less">
   .iconInfo_form .local_urlValue {
