@@ -5,6 +5,7 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {Button} from "ant-design-vue";
 import type { Recordable } from '@vben/types';
+import {message} from 'ant-design-vue';
 
 import {deleteById, getCompanyTypes} from '#/api/org/companyType';
 import {columns, searchFormSchema} from './companyType.data';
