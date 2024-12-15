@@ -83,14 +83,11 @@ function handleEdit(record: Recordable<any>) {
   });
 }
 
-function handleCreateChild(record: Recordable, e) {
-
-  e.stopPropagation();
-  setModalProps({title: '新增【' + record.name + '】的子分类'});
-  record = {pid: record.id};
-  openModal(true, {
-    record,
-    isUpdate: true,
+function handleCreateChild(record: Recordable<any>, e) {
+  companyTypeModalRef.value.setData({pid: record.id});
+  companyTypeModalRef.value.open();
+  companyTypeModalRef.value.setState({
+    title: '新增【' + record.name + '】的子分类'
   });
 }
 

@@ -22,7 +22,9 @@ const [BasicModal, modalApi] = useVbenModal({
   onCancel(){
 
   },
-  onConfirm() {},
+  onConfirm() {
+    handleSubmit();
+  },
   onOpenChange: async (isOpen) => {
     if (!isOpen) {
       return null;

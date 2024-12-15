@@ -1,7 +1,10 @@
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
+import { checkEntityExist } from '#/api/org/companyType';
+
 import {z} from "@vben/common-ui";
+import {FormValidPatternEnum} from "#/enums/commonEnum";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -87,16 +90,44 @@ export const formSchema : FormSchema[] = [
   {
     fieldName: 'code',
     label: '编码',
-    required: true,
     component: 'Input',
-    colProps: {
-      span: 24,
+    dependencies: {
+      rules(values) {
+        const { id, code } = values;
+        return z
+          .string({
+            required_error: "编码不能为空"
+          })
+          .min(1, "编码不能为空")
+          .max(100, '最多输入100个字符')
+          .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
+          .refine(
+            async (e) => {
+              let result = false;
+              try {
+                result = await checkEntityExist({
+                  id: id,
+                  field: 'code',
+                  fieldValue: code || '',
+                  fieldName: '类型编码',
+                });
+              } catch (e) {
+                console.error(e);
+              }
+              return result;
+            },
+            {
+              message: '类型编码已存在',
+            },
+          );
+      },
+      triggerFields: ['sn'],
     },
   },
   {
     fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
+    help: '数值越小越靠前！',
     required: false,
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
@@ -108,22 +139,17 @@ export const formSchema : FormSchema[] = [
   {
     fieldName: 'descr',
     label: '描述',
-    required: false,
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-   /* rules: [
-      {
-        max: 200,
-        message: '字符长度不能大于64！',
-      },
-    ],*/
-    colProps: {
-      span: 24,
-    },
+    rules: z
+      .string()
+      .max(64, "字符长度不能大于64！")
+      .nullish()
+      .optional(),
   },
 ];
