@@ -48,7 +48,7 @@ export const getListByPage = (params?: any) => {
     delete entity['pageSize'];
   }
   const queryParam = { query, entity };
-  return requestClient.post<any>(Api.PageList, params: queryParam);
+  return requestClient.post<any>(Api.PageList, params);
 };
 
 export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params);

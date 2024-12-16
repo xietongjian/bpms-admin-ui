@@ -1,117 +1,44 @@
 <template>
-  <BasicModal
-    wrapClassName="bpmn-viewer-container "
-    v-bind="$attrs"
-    @register="registerModal"
-    @fullscreen="handleFullscreen"
-    @cancel="onCloseBpmnPreviewModal"
-  >
-    <template #title>
-      {{ getTitle }}
-      <LoadingOutlined v-if="modelName === ''" />
-    </template>
-    <div class="bpmn-container">
-      <div class="containers" ref="container" >
-        <BpmnPresetViewer
-          v-if="processInstanceId || processModelKey"
-          ref="presetViewer"
-          :theme="getTheme"
-          local="zh_CN"
-          translate-prefix="bpmn.information."
-          :procInstId="processInstanceId"
-          :modelKey="processModelKey"
-          @viewer-init="handleViewerInit"
-          @data-change="handleDataChange"
-        />
-        <div class="svg-controller">
-          <div class="scale-rate">
-            {{ Math.floor(defaultZoom * 10 * 10) + '%' }}
-          </div>
-          <Space>
-            <Button
-              title="缩小"
-              shape="circle"
-              size="small"
-              @click="processZoomOut()"
-              type="primary"
-            >
-              <MinusOutlined />
-            </Button>
-            <Button
-              :title="isFitView ? '按窗口大小显示' : '实际大小'"
-              shape="circle"
-              size="small"
-              @click="processFitContainer()"
-              type="primary"
-            >
-              <CompressOutlined v-if="isFitView" />
-              <ExpandOutlined v-else />
-            </Button>
-            <Button
-              title="放大"
-              shape="circle"
-              size="small"
-              @click="processZoomIn()"
-              type="primary"
-            >
-              <PlusOutlined />
-            </Button>
-          </Space>
-        </div>
-      </div>
-    </div>
-
-    <template #insertFooter>
-      <Dropdown>
-        <template #overlay>
-          <Menu @click="handleDownloadClick">
-            <MenuItem key="png">PNG</MenuItem>
-            <MenuItem key="svg">SVG</MenuItem>
-            <MenuItem key="bpmn">BPMN</MenuItem>
-            <MenuItem key="xml">XML</MenuItem>
-          </Menu>
-        </template>
-        <Button type="primary" :loading="exportLoading">
-          导出流程图
-          <DownOutlined />
-        </Button>
-      </Dropdown>
-    </template>
-
-    <div class="approve-history-ctrl" v-if="!!processInstanceId">
-      <ApproveHistoryTimeLine :procInstId="processInstanceId" />
-    </div>
+  <BasicModal class="w-[1000px] h-full]" title="-">
+    <BpmnPreviewContainer :modelKey="modelKey" :procInstId="procInstId" ref="presetView"/>
   </BasicModal>
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, unref, shallowRef, ComponentInstance } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
+  import { computed, ref, unref, shallowRef, defineExpose } from 'vue';
   import { Button, Space, Dropdown, Menu } from 'ant-design-vue';
-  import {
-    LoadingOutlined,
-    CompressOutlined,
-    ExpandOutlined,
-    MinusOutlined,
-    PlusOutlined,
-    DownOutlined,
-  } from '@ant-design/icons-vue';
-  import { BpmnPresetViewer } from '@/assets/bpmn/viewer/lib/bpmn-viewer.js';
-  import ApproveHistoryTimeLine from '@/views/components/process/ApproveHistoryTimeLine.vue';
-  import { useRequest } from '@vben/hooks';
-  import '@/assets/bpmn/viewer/lib/style.css';
-  import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
+  import {useVbenModal} from '@vben/common-ui';
+  import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
+  // import ApproveHistoryTimeLine from '#/views/components/process/ApproveHistoryTimeLine.vue';
+  import BpmnPreviewContainer from './bpmnPreviewContainer.vue';
+  // import { useRequest } from '@vben/hooks';
 
-  const { isDark } = useDarkModeTheme();
-  const MenuItem = Menu.Item;
-  const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
+  const modelKey = ref('');
+  const procInstId = ref('');
 
-  defineProps({
-    title: {
-      type: String,
-      default: '流程预览',
+  const [BasicModal, modalApi] = useVbenModal({
+    centered: true,
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        debugger;
+        if (values) {
+          modelKey.value = values.modelKey;
+          procInstId.value = values.procInstId;
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      // handleSubmit();
     },
   });
+
   const isFitView = ref<boolean>(false);
   const fitViewScaleRate = ref(1);
   const defaultZoom = ref<number>(1);
@@ -128,75 +55,6 @@
   bpmnViewer.value?.clear();
 }*/
 
-  function processFitContainer() {
-    const canvas = bpmnViewer.value?.get('canvas');
-
-    if (isFitView.value) {
-      isFitView.value = false;
-      canvas.zoom('fit-viewport', { x: 0, y: 0 });
-      defaultZoom.value = canvas.zoom();
-    } else {
-      isFitView.value = true;
-      defaultZoom.value = 1;
-      canvas.zoom('fit-viewport', { x: 0, y: 0 });
-      canvas.zoom(defaultZoom.value);
-    }
-  }
-  function processFitViewer() {
-    setTimeout(() => {
-      isFitView.value = true;
-      const canvas = bpmnViewer.value?.get('canvas');
-      canvas.zoom(defaultZoom.value);
-      canvas.zoom('fit-viewport', { x: 0, y: 0 });
-      defaultZoom.value = canvas.zoom();
-    }, 100);
-  }
-
-  function processZoomIn(zoomStep = 0.1) {
-    let newZoom = Math.floor(defaultZoom.value * 100 + zoomStep * 100) / 100;
-    if (newZoom > 4) {
-      newZoom = 4;
-      // throw new Error("[Process Designer Warn ]: The zoom ratio cannot be greater than 4");
-    }
-    defaultZoom.value = newZoom;
-    bpmnViewer.value?.get('canvas').zoom(defaultZoom.value);
-  }
-
-  function processZoomOut(zoomStep = 0.1) {
-    let newZoom = Math.floor(defaultZoom.value * 100 - zoomStep * 100) / 100;
-    if (newZoom < 0.2) {
-      newZoom = 0.2;
-      // throw new Error("[Process Designer Warn ]: The zoom ratio cannot be less than 0.2");
-    }
-    defaultZoom.value = newZoom;
-    bpmnViewer.value?.get('canvas').zoom(defaultZoom.value);
-  }
-
-  // 预览流程图时 - 鼠标滚动缩放
-  function changeScale(e) {
-    const scal = e.deltaY > 0 ? -0.1 : 0.1;
-    if (unref(defaultZoom) < 0.2) {
-      defaultZoom.value = 0.2;
-    }
-    if (unref(defaultZoom) > 4.0) {
-      defaultZoom.value = 4.0;
-    }
-    defaultZoom.value = unref(defaultZoom) + scal;
-    bpmnViewer.value?.get('canvas').zoom(unref(defaultZoom));
-
-    isFitView.value = defaultZoom.value >= fitViewScaleRate.value;
-  }
-
-  async function handleDownloadClick({ key }) {
-    exportLoading.value = true;
-    await presetViewer.value?.downloadProcess(key, unref(modelName));
-    exportLoading.value = false;
-  }
-
-  function handleViewerInit(v) {
-    bpmnViewer.value = v;
-  }
-
   function handleDataChange(data) {
     modelName.value = data.modelName;
     setTimeout(() => {
@@ -204,18 +62,18 @@
     });
   }
 
-  const [registerModal, { setModalProps, changeLoading }] = useModalInner(async (data) => {
-    setModalProps({
-      width: 1100,
-      minHeight: 450,
-    });
+  // const [registerModal, { setModalProps, changeLoading }] = useModalInner(async (data) => {
+  //   setModalProps({
+  //     width: 1100,
+  //     minHeight: 450,
+  //   });
+  //
+  //   const { modelKey, procInstId } = data;
+  //   processModelKey.value = modelKey;
+  //   processInstanceId.value = procInstId;
+  // });
 
-    const { modelKey, procInstId } = data;
-    processModelKey.value = modelKey;
-    processInstanceId.value = procInstId;
-  });
-
-  useRequest(
+/*  useRequest(
     () => {
       if (unref(processInstanceId)) {
         init('', unref(processInstanceId));
@@ -225,7 +83,7 @@
     {
       refreshOnWindowFocus: true,
     },
-  );
+  );*/
 
   const getTitle = computed(() => '流程图-' + modelName.value);
 
@@ -246,10 +104,11 @@
   async function init(modelKey, procInstId) {
     await presetViewer.value?.reloadViewerXML(modelKey, procInstId);
   }
+
+  defineExpose(modalApi)
 </script>
 
 <style lang="less">
-  @import '@/assets/bpmn/viewer/lib/style.css';
   .bpmn-viewer-container {
     .bpmn-viewer__toolbar {
       display: none;

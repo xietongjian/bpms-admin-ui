@@ -1,6 +1,26 @@
 <template>
   <Page auto-content-height>
-    <BasicTable @fetch-success="dataChangeEvent" @register="registerTodoTable">
+    <BasicTable>
+      <template #formName="{ row }">
+        <Tooltip placement="top" title="流程图预览">
+          <a>
+            <PartitionOutlined
+              @click="showFlowDiagram(row.processDefinitionKey, row.processInstanceId)"
+              class="color-blue-500 mr-2 hover:color-blue-600"
+            />
+          </a>
+        </Tooltip>
+
+        <!--          <router-link target="_blank" :to="genApproveUrl(record)" rel="opener">
+          {{ record.formName }}
+        </router-link>-->
+        <TypographyLink @click="handleViewForm(row)">
+          {{ row.formName }}
+        </TypographyLink>
+        <!--
+        approve/:modelKey/:procInstId/:bizId/:taskId/:showPost
+        -->
+      </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'startPersonName'">
           <EmpInfo :no="record.startPersonCode" :name="record.startPersonName" />
@@ -10,29 +30,10 @@
           {{ timeDurationFormatter(record.duration) }}
         </template>
 
-        <template v-if="column.key === 'formName'">
-          <Tooltip placement="top" title="流程图预览">
-            <a>
-              <PartitionOutlined
-                @click="showFlowDiagram(record.processDefinitionKey, record.processInstanceId)"
-                class="flow-diagram-icon mr-2 default-color0"
-              />
-            </a>
-          </Tooltip>
 
-          <!--          <router-link target="_blank" :to="genApproveUrl(record)" rel="opener">
-            {{ record.formName }}
-          </router-link>-->
-          <TypographyLink @click="handleViewForm(record)">
-            {{ record.formName }}
-          </TypographyLink>
-          <!--
-          approve/:modelKey/:procInstId/:bizId/:taskId/:showPost
-          -->
-        </template>
       </template>
     </BasicTable>
-    <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" />
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" />
     <ProcessFormModal ref="processFormModalRef" @register="registerProcessFormModal" @reload="reloadData" />
   </Page>
 </template>
@@ -50,9 +51,9 @@ import {ref} from 'vue';
   import { getAppingTasksPagerModel, getApps } from '#/api/process/process';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { timeDurationFormatter } from '#/utils';
+  import {BpmnPreviewModal} from '#/views/components/preview';
   //import { useProcessStore } from '@/store/modules/process';
   // import ProcessFormModal from '@/views/flowoperation/processTask/ProcessFormModal.vue';
-import {listColumns} from "#/views/base/app/app.data";
 
 /*  const [
     registerBpmnPreviewModal,
@@ -63,7 +64,7 @@ import {listColumns} from "#/views/base/app/app.data";
     { openModal: openProcessFormModal, setModalProps: setProcessFormModalProps },
   ] = useModal();*/
 
-
+const bpmnPreviewModalRef = ref();
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
   submitOnEnter: true,
@@ -149,6 +150,9 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
   }
 
   function showFlowDiagram(modelKey, procInstId) {
+    bpmnPreviewModalRef.value.setData({modelKey, procInstId});
+    bpmnPreviewModalRef.value.open();
+    /*
     openBpmnPreviewModal(true, {
       modelKey: modelKey,
       procInstId: !procInstId || procInstId === '0' ? '' : procInstId, // 参数空时传过来的是0
@@ -159,7 +163,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
       useWrapper: false,
       showOkBtn: false,
       cancelText: '关闭',
-    });
+    });*/
   }
   function reloadData() {
     setTimeout(() => {

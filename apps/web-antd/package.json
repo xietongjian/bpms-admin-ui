@@ -49,6 +49,14 @@
     "pinia": "catalog:",
     "vue": "catalog:",
     "vue-router": "catalog:",
-    "vditor": "^3.10.4"
+    "vditor": "^3.10.4",
+    "bpmn-js": "^17.9.1",
+    "bpmn-js-create-append-anything": "^0.5.2",
+    "bpmn-js-i18n-zh": "^1.1.0",
+    "bpmn-js-token-simulation": "^0.34.2",
+    "diagram-js": "^14.7.1",
+    "diagram-js-grid-bg": "^1.1.0",
+    "diagram-js-minimap": "^5.1.0",
+    "dmn-js": "^16.4.0"
   }
 }

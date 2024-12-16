@@ -58,6 +58,7 @@ export const todoTableSchema: VxeGridProps['columns'] = [
     title: '流程标题',
     field: 'formName',
     align: 'left',
+    slots: {default: 'formName'}
   },
   {
     title: '提交人',
