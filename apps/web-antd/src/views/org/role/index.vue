@@ -5,82 +5,44 @@
         <CompanyTree class="h-full" @select="handleSelect" />
       </div>
       <div class="flex-1 h-full">
-        <BasicTable @register="registerTable" >
-          <template #toolbar>
-            <Authority :value="'Role:' + PerEnum.ADD">
-              <a-button type="primary" @click="handleCreate">新增</a-button>
-            </Authority>
+        <BasicTable >
+          <template #toolbar-tools>
+            <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" class="ml-2" type="primary" @click="handleCreate">新增</Button>
           </template>
-          <template #bodyCell="{ column, record }">
-            <template v-if="column.key === 'action'">
-              <TableAction
-                :actions="[
-                    {
-                      auth: 'Role:' + PerEnum.UPDATE,
-                      tooltip: '配置所属公司',
-                      icon: 'ant-design:setting',
-                      onClick: handleSettingCompany.bind(null, record),
-                    },
-                    {
-                      auth: 'Role:' + PerEnum.UPDATE,
-                      tooltip: '修改',
-                      icon: 'clarity:note-edit-line',
-                      onClick: handleEdit.bind(null, record),
-                    },
-                    {
-                      auth: 'Role:' + PerEnum.DELETE,
-                      tooltip: '删除',
-                      icon: 'ant-design:delete-outlined',
-                      color: 'error',
-                      onClick: (e) => {
-                        e.stopPropagation();
-                      },
-                      popConfirm: {
-                        title: '是否确认删除',
-                        confirm: handleDelete.bind(null, record),
-                        placement: 'left',
-                      },
-                    },
-                  ]"
-              />
-            </template>
-
-            <template v-else-if="column.key === 'companies'">
-              <div v-if="record.companies && record.companies.length > 0">
-                <Popover title="所属公司" placement="left" class="companies-details">
-                  <template #content>
-                    <div class="role-companies">
-                      <div class="mb-2" v-if="record.companies.length > 0">
-                        <Divider class="split-line" orientation="left" />
-                        <Tag
+          <template #action="{row}">
+            <TableAction :actions="createActions(row)"/>
+          </template>
+          <template #companies="{row}">
+            <div v-if="row.companies && row.companies.length > 0">
+              <Popover title="所属公司" placement="left" class="companies-details">
+                <template #content>
+                  <div class="role-companies">
+                    <div class="mb-2" v-if="row.companies.length > 0">
+                      <Divider class="split-line" orientation="left" />
+                      <Tag
                           color="blue"
                           class="company-item"
-                          v-for="company in record.companies"
-                        >
-                          {{ company.cname }}
-                        </Tag>
-                      </div>
+                          v-for="company in row.companies"
+                      >
+                        {{ company.cname }}
+                      </Tag>
                     </div>
-                  </template>
-                  <div class="companies-handle">
-                    <Space>
-                      <!-- <Tag>所属公司</Tag>-->
-                      <Badge
-                        :count="record.companies.length"
-                        :number-style="{ backgroundColor: '#52c41a' }"
-                      />
-                    </Space>
                   </div>
-                </Popover>
-              </div>
-              <div v-else>未设置</div>
-            </template>
+                </template>
+                <div class="companies-handle">
+                  <Space>
+                    <!-- <Tag>所属公司</Tag>-->
+                    <Badge :count="row.companies.length" :number-style="{ backgroundColor: '#52c41a' }"/>
+                  </Space>
+                </div>
+              </Popover>
+            </div>
+            <div v-else>未设置</div>
           </template>
         </BasicTable>
-
       </div>
     </div>
-    <RoleModal @register="registerModal" @success="handleSuccess" />
+    <RoleModal ref="roleModalRef" @register="registerModal" @success="handleSuccess" />
     <OrgSelectorModal @register="registerOrgModal" @change="handleSettingOrgSuccess" />
   </Page>
 </template>
@@ -89,16 +51,16 @@
   import {useAccess} from '@vben/access';
   import type{Recordable} from '@vben/types';
   import { defineComponent, ref, unref } from 'vue';
-  import { Input, Tag, Space, Badge, Popover, Affix, Divider } from 'ant-design-vue';
+  import { Input, Tag, Space, Badge, Popover, message, Affix, Divider } from 'ant-design-vue';
   import { SettingOutlined } from '@ant-design/icons-vue';
   import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
   import { getRoleListByPage, deleteByIds, saveBatch } from '#/api/org/role';
   import type {VbenFormProps} from '@vben/common-ui';
+  import { TableAction } from '#/components/table-action';
 
   // import { PageWrapper } from '@/components/Page';
   import {Page, useVbenModal} from '@vben/common-ui';
   import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';
-  import { message } from 'ant-design-vue';
   // import { useModal } from '@/components/Modal';
   import RoleModal from './RoleModal.vue';
   // import OrgSelectorModal from '@/components/Selector/src/OrgSelectorModal.vue';
@@ -174,6 +136,7 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
+
           return await getRoleListByPage({
             query: {
               pageNum: page.currentPage,
@@ -188,6 +151,37 @@
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
+  function createActions(record: Recordable<any>) {
+    return [
+      {
+        auth: [PerPrefix + PerEnum.UPDATE],
+        tooltip: '配置所属公司',
+        icon: 'ant-design:setting',
+        onClick: handleSettingCompany.bind(null, record),
+      },
+      {
+        auth: [PerPrefix + PerEnum.UPDATE],
+        tooltip: '修改',
+        icon: 'clarity:note-edit-line',
+        onClick: handleEdit.bind(null, record),
+      },
+      {
+        auth: [PerPrefix + PerEnum.DELETE],
+        tooltip: '删除',
+        icon: 'ant-design:delete-outlined',
+        danger: true,
+        onClick: (e) => {
+          e.stopPropagation();
+        },
+        popConfirm: {
+          title: '是否确认删除',
+          confirm: handleDelete.bind(null, record),
+          placement: 'left',
+          okButtonProps: {danger: true}
+        },
+      },
+    ];
+  }
 
   function handleCreate() {
     const companyId = currentNode.value.id;
@@ -234,17 +228,17 @@
 
   function handleDelete(record: Recordable) {
     if (record.children && record.children.length > 0) {
-      createMessage.warning('有子节点，不能删除！');
+      message.warning('有子节点，不能删除！');
       return;
     }
     deleteByIds({ id: record.id }).then((res) => {
-      reload();
+      tableApi.reload();
     });
   }
 
   function handleSuccess() {
     setTimeout(() => {
-      reload();
+      tableApi.reload();
     }, 200);
   }
 
@@ -256,15 +250,15 @@
     const data = { roleId: unref(currentRole).id, companyIds: companyIds };
 
     saveBatch(data).then((res) => {
-      reload();
+      tableApi.reload();
     });
   }
 
   function handleSelect(node: any) {
     currentNode.value = node;
     const searchInfo = { searchInfo: { roleType: 0, companyId: node ? node.id : '' } };
-    setProps(searchInfo);
-    reload(searchInfo);
+    // setProps(searchInfo);
+    tableApi.reload(searchInfo);
   }
 
 </script>

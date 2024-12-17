@@ -33,14 +33,7 @@ export const getRoleListByPage = (params: any) => {
 };
 
 export const getMatrixRolePageList = (params: any) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params;
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const url = Api.GetMatrixRolePageList + '/' + params.type;
-  const queryParam = { query, entity };
+  const url = Api.GetMatrixRolePageList + '/' + (params.entity.type??'-1');
   return requestClient.post<any>(url, params);
 };
 
@@ -138,7 +131,7 @@ export const allocationPersonals = (params: any) =>
   requestClient.post<any>(Api.AllocationPersonals + '/' + params.roleId, params.personalList);
 
 export const deleteByIds = (params: any) =>
-  requestClient.post<any>(Api.Delete + '/' + params.id);
+  requestClient.post<any>(Api.Delete + '/' + params.id, {isTransformResponse: false});
 
 export const deleteRolePersonal = (params: Array<string>) =>
   requestClient.post<any>(Api.DeleteRolePersonal, params);

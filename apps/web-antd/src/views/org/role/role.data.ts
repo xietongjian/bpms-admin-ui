@@ -9,7 +9,6 @@ export const columns: VxeGridProps['columns'] = [
     title: '名称',
     field: 'name',
     align: 'left',
-    width: 300,
     resizable: true,
   },
   {
@@ -25,11 +24,19 @@ export const columns: VxeGridProps['columns'] = [
     align: 'center',
     width: 100,
     resizable: false,
+    slots: { default: 'companies' }
   },
   {
     title: '创建时间',
     field: 'createTime',
     width: 180,
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 

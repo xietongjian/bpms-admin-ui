@@ -57,8 +57,8 @@
   // const [registerModal, { openModal }] = useModal();
   const roleModalRef = ref();
 
-  const currentRole = ref<Recordable>({});
-  const currentNode = ref<Recordable>({});
+  const currentRole = ref<Recordable<any>>({});
+  const currentNode = ref<Recordable<any>>({});
   const treeData = ref<any[]>([]);
   const PerPrefix = 'MatrixRole:';
 
@@ -161,6 +161,7 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
+          formValues.type = currentNode.value?.id;
           return await getMatrixRolePageList({
             query: {
               pageNum: page.currentPage,
@@ -177,46 +178,44 @@
 
   function handleCreate() {
     const type = currentNode.value.id;
-    openModal(true, {
-      record: { type: type },
-      isUpdate: false,
+    roleModalRef.value.setData({type});
+    roleModalRef.value.open();
+    roleModalRef.value.setState({
+      title: '新增角色'
     });
   }
 
-  function handleEdit(record: Recordable) {
-    openModal(true, {
-      record,
-      isUpdate: true,
+  function handleEdit(record: Recordable<any>) {
+    roleModalRef.value.setData(record);
+    roleModalRef.value.open();
+    roleModalRef.value.setState({
+      title: '编辑角色'
     });
   }
 
-  function handleDelete(record: Recordable) {
+  function handleDelete(record: Recordable<any>) {
     /*if(record.children&&record.children.length>0){
     createMessage.warning("有子节点，不能删除！")
     return;
   }*/
     deleteByIds({ id: record.id }).then((res) => {
-      reload();
+      tableApi.reload();
     });
   }
 
   function handleSuccess() {
     setTimeout(() => {
-      reload();
+      tableApi.reload();
     }, 200);
   }
 
   function handleSelect(node: any, e) {
-    const searchInfo = { searchInfo: { type: -1 } };
     if (e.selectedNodes && e.selectedNodes.length > 0) {
       currentNode.value = e.selectedNodes[0];
-      searchInfo.searchInfo.type = currentNode.value.id;
     } else {
       currentNode.value = {};
     }
-
-    // setProps(searchInfo);
-    tableApi.reload(searchInfo);
+    tableApi.reload();
   }
 
 </script>
