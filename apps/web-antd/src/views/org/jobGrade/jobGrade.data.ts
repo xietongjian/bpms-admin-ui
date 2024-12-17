@@ -2,6 +2,7 @@ import { OrderNoDefaultEnum } from '#/enums/constantEnum';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { z } from '#/adapter/form';
+import { checkEntityExist } from '#/api/org/jobGrade';
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -57,12 +58,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称/编码',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -116,7 +111,6 @@ export const formSchema: FormSchema[] = [
     fieldName: 'orderNo',
     label: '排序号',
     help: '数值越小越靠前！',
-    required: false,
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {

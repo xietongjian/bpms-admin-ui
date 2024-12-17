@@ -1,78 +1,82 @@
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import { checkEntityExist } from '#/api/org/personal';
+
+import type {VxeGridProps} from '#/adapter/vxe-table';
+
 import { Tag } from 'ant-design-vue';
 import { h } from 'vue';
 import { formatToDate, formatToDateTime } from '@/utils/dateUtil';
 import { RemarkDefaultEnum } from '@/enums/constantEnum';
+import {z} from "@vben/common-ui";
+import {FormValidPatternEnum} from "#/enums/commonEnum";
 
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '姓名',
-    dataIndex: 'name',
+    field: 'name',
     width: 120,
     align: 'left',
+    slots: {default 'name'}
   },
   {
     title: '工号',
-    dataIndex: 'code',
+    field: 'code',
     width: 100,
     align: 'left',
     resizable: true,
   },
   {
     title: '状态',
-    dataIndex: 'status',
+    field: 'status',
     width: 60,
-    customRender: ({ record }) => {
-      const status = record.status;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '在职' : '离职';
-      return h(Tag, { color: color }, () => text);
-    },
+    slots: {default: 'status'}
   },
   {
     title: '邮箱',
-    dataIndex: 'email',
+    field: 'email',
     width: 120,
     align: 'left',
     resizable: true,
   },
   {
     title: '手机',
-    dataIndex: 'mobile',
+    field: 'mobile',
     width: 120,
     align: 'left',
     resizable: true,
   },
   {
     title: '部门',
-    dataIndex: 'deptName',
+    field: 'deptName',
     width: 120,
     align: 'left',
     resizable: true,
   },
   {
     title: '公司',
-    dataIndex: 'companyName',
+    field: 'companyName',
     width: 120,
     align: 'left',
     resizable: true,
   },
   {
     title: '上级领导',
-    dataIndex: 'leaderName',
+    field: 'leaderName',
     width: 100,
     align: 'center',
+    slots: {default: 'leaderName'},
   },
   {
     title: '角色',
-    dataIndex: 'roles',
+    field: 'roles',
     width: 120,
     align: 'left',
+    slots: {default: 'roles'},
   },
   {
     title: '离职日期',
-    dataIndex: 'leaveDate',
+    field: 'leaveDate',
     width: 100,
     customRender: ({ text }) => {
       return text ? formatToDate(text) : '';
@@ -80,7 +84,7 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '创建时间',
-    dataIndex: 'createTime',
+    field: 'createTime',
     width: 130,
     customRender: ({ text }) => {
       return text ? formatToDateTime(text) : '';
@@ -108,43 +112,69 @@ export const searchFormSchema: FormSchema[] = [
 
 export const personalFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["id"]
+    }
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '姓名',
     component: 'Input',
     required: true,
     colProps: {
       span: 9,
     },
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '姓名不能为空！',
-      },
-      {
-        max: 20,
-        message: '字符长度不能大于20！',
-      },
-    ],*/
+    rules: z
+        .string({
+          required_error: '姓名不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(20, "字符长度不能大于20")
   },
   {
-    field: 'code',
+    fieldName: 'code',
     label: '工号',
     component: 'Input',
-    required: true,
-    colProps: {
-      span: 9,
+    dependencies: {
+      rules(values) {
+        const { id, code } = values;
+        return z
+            .string({
+              required_error: "工号不能为空"
+            })
+            .min(1, "工号不能为空")
+            .max(100, '最多输入100个字符')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'code',
+                      fieldValue: code || '',
+                      fieldName: '人员工号',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '工号已存在',
+                },
+            );
+      },
+      triggerFields: ['code'],
     },
   },
   {
-    field: 'headImg',
+    fieldName: 'headImg',
     label: '',
     component: 'Input',
     slot: 'headImg',
@@ -154,7 +184,7 @@ export const personalFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'sex',
+    fieldName: 'sex',
     label: '性别',
     component: 'RadioButtonGroup',
     defaultValue: 1,
@@ -164,39 +194,29 @@ export const personalFormSchema: FormSchema[] = [
         { label: '女', value: 2 },
       ],
     },
-    colProps: { span: 24 },
   },
   {
-    field: 'jobGradeCode',
+    fieldName: 'jobGradeCode',
     label: '职级',
     component: 'TreeSelect',
-    colProps: {
-      span: 9,
-    },
     componentProps: {
       treeNodeFilterProp: 'showName',
       getPopupContainer: () => document.body,
     },
   },
   {
-    field: 'positionCode',
+    fieldName: 'positionCode',
     label: '岗位',
     component: 'TreeSelect',
-    colProps: {
-      span: 9,
-    },
     componentProps: {
       treeNodeFilterProp: 'showName',
       getPopupContainer: () => document.body,
     },
   },
   {
-    field: 'companyId',
+    fieldName: 'companyId',
     label: '所属公司',
     component: 'TreeSelect',
-    colProps: {
-      span: 12,
-    },
     componentProps: {
       treeNodeFilterProp: 'cname',
       getPopupContainer: () => document.body,
@@ -204,12 +224,9 @@ export const personalFormSchema: FormSchema[] = [
     required: true,
   },
   {
-    field: 'deptId',
+    fieldName: 'deptId',
     label: '所属部门',
     component: 'TreeSelect',
-    colProps: {
-      span: 10,
-    },
     componentProps: {
       treeNodeFilterProp: 'name',
       getPopupContainer: () => document.body,
@@ -218,36 +235,28 @@ export const personalFormSchema: FormSchema[] = [
   },
   {
     label: '手机',
-    field: 'mobile',
+    fieldName: 'mobile',
     component: 'Input',
-    required: true,
-    colProps: {
-      span: 9,
-    },
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '手机不能为空！',
-      },
-      {
-        pattern: new RegExp('^(1[0-9])\\d{9}$'),
-        type: 'string',
-        message: '请输入正确的手机号！',
-      },
-      {
-        max: 11,
-        message: '字符长度不能大于11！',
-      },
-    ],*/
+    rules: z
+        .string({
+          required_error: '手机号不能为空',
+          invalid_type_error: '格式不正确',
+        })
+        .max(11, "字符长度不能大于11")
+        .regex(new RegExp('^(1[0-9])\\d{9}$'), "请输入正确的手机号"),
   },
   {
     label: '邮箱',
-    field: 'email',
+    fieldName: 'email',
     component: 'Input',
-    colProps: {
-      span: 9,
-    },
+    rules: z
+        .string({
+          required_error: '邮箱不能为空',
+          invalid_type_error: '格式不正确',
+        })
+        .max(256, "字符长度不能大于256")
+        .regex(new RegExp('^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$'), "请输入正确的邮箱地址"),
+
     /*rules: [
       {
         pattern: new RegExp('^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$'),
@@ -261,7 +270,7 @@ export const personalFormSchema: FormSchema[] = [
     ],*/
   },
   {
-    field: 'status',
+    fieldName: 'status',
     label: '在职状态',
     component: 'RadioButtonGroup',
     defaultValue: 1,
@@ -274,23 +283,18 @@ export const personalFormSchema: FormSchema[] = [
   },
   {
     label: '地址',
-    field: 'address',
-    component: 'InputTextArea',
+    fieldName: 'address',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    /*rules: [
-      {
-        max: 400,
-        message: '字符长度不能大于400！',
-      },
-    ],*/
-    colProps: {
-      span: 24,
-    },
+    rules: z
+        .string()
+        .max(500, "字符长度不能大于500！")
+        .nullish()
+        .optional(),
   },
-  // status
 ];

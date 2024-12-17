@@ -22,21 +22,23 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, Rule, useForm } from '@/components/Form';
+  import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
+
+  import {useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from '#/adapter/form';
+
   import { personalFormSchema } from './personal.data';
   import { getDepts } from '#/api/org/dept';
   import { getCompanies } from '#/api/org/company';
   import { saveOrUpdate, checkEntityExist } from '#/api/org/personal';
-  import { message } from 'ant-design-vue';
+  import { message, Upload } from 'ant-design-vue';
   import { CheckExistParams } from '#/api/model/baseModel';
   import { getJobGradeTree } from '#/api/org/jobGrade';
   import { getPositionInfoTree } from '#/api/org/positionInfo';
-  import { FormValidPatternEnum } from '@/enums/constantEnum';
-  import { findNode } from '@/utils/helper/treeHelper';
+  import { FormValidPatternEnum } from '#/enums/constantEnum';
+  import { findNode } from '#/utils/helper/treeHelper';
 
-  const emit = defineEmits(['success', 'register']);
+  const emit = defineEmits(['success']);
   const isUpdate = ref(true);
   const imageUrl = ref<string>('');
 

@@ -1,39 +1,18 @@
 <template>
   <Page auto-content-height>
     <JobGradeTypeList class="w-1/4 xl:w-1/5" @select="handleSelect"/>
-    <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5">
-      <template #toolbar>
-        <Authority :value="'JobGrade:' + PerEnum.ADD">
-          <a-button type="primary" @click="handleCreate">新增</a-button>
-        </Authority>
+
+    <BasicTable class="w-3/4 xl:w-4/5">
+      <template #toolbar-tools>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-              :actions="[
-              {
-                auth: 'JobGrade:' + PerEnum.UPDATE,
-                tooltip: '修改',
-                icon: 'clarity:note-edit-line',
-                onClick: handleEdit.bind(null, record),
-              },
-              {
-                auth: 'JobGrade:' + PerEnum.DELETE,
-                tooltip: '删除',
-                icon: 'ant-design:delete-outlined',
-                color: 'error',
-                popConfirm: {
-                  title: '是否确认删除',
-                  confirm: handleDelete.bind(null, record),
-                  placement: 'left',
-                },
-              },
-            ]"
-          />
-        </template>
+      <template #action="{ row }">
+        <TableAction
+            :actions="createActions(row)"
+        />
       </template>
     </BasicTable>
-    <JobGradeModal @register="registerModal" @success="handleSuccess"/>
+    <JobGradeModal ref="jobGradeModalRef" @success="handleSuccess"/>
   </Page>
 </template>
 <script lang="ts" setup>
@@ -42,22 +21,25 @@ import {useAccess} from '@vben/access';
 import {ref, unref} from 'vue';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {Recordable} from '@vben/types';
 
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {getJobGrades, deleteById} from '#/api/org/jobGrade';
-import {Page, useVbenModal} from '@vben/common-ui';
+import {Page} from '@vben/common-ui';
 // import JobGradeTypeList from '@/views/components/leftTree/JobGradeTypeList.vue';
 import JobGradeModal from './JobGradeModal.vue';
 import {columns, searchFormSchema} from './jobGrade.data';
 import {message} from 'ant-design-vue';
 import {getJobGradeTypes} from "#/api/org/jobGradeType";
-import type {Recordable} from '@vben/types';
+import { TableAction } from '#/components/table-action';
 
 const PerPrefix = 'JobGrade:';
 const {hasAccessByCodes} = useAccess();
 
 // const [registerModal, {openModal, setModalProps}] = useModal();
-const currentTreeNode = ref<Recordable>({});
+const currentTreeNode = ref<Recordable<any>>({});
+
+const jobGradeModalRef = ref();
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -100,6 +82,29 @@ const gridOptions: VxeGridProps = {
 
 const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
+function createActions (row: Recordable<any>) {
+  return [
+    {
+      auth: [PerPrefix + PerEnum.UPDATE],
+      tooltip: '修改',
+      icon: 'clarity:note-edit-line',
+      onClick: handleEdit.bind(null, row),
+    },
+    {
+      auth: [PerPrefix + PerEnum.DELETE],
+      tooltip: '删除',
+      icon: 'ant-design:delete-outlined',
+      danger: true,
+      popConfirm: {
+        title: '是否确认删除',
+        confirm: handleDelete.bind(null, row),
+        placement: 'left',
+        okButtonProps: {danger: true}
+      },
+    },
+  ];
+}
+
 /*const [registerTable, { reload }] = useTable({
   title: '列表',
   api: getJobGrades,
@@ -126,27 +131,27 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 function handleCreate() {
   if (!unref(currentTreeNode).code) {
-    createMessage.warning('请选择分类！', 2);
+    message.warning('请选择分类！', 2);
     return;
   }
-  setModalProps({title: '新增职级'});
-  openModal(true, {
-    record: {typeId: unref(currentTreeNode).id, typeCode: unref(currentTreeNode).code},
-    isUpdate: true,
+  jobGradeModalRef.value.setData({typeId: unref(currentTreeNode).id, typeCode: unref(currentTreeNode).code});
+  jobGradeModalRef.value.open();
+  jobGradeModalRef.value.setState({
+    title: '新增职级',
   });
 }
 
-function handleEdit(record: Recordable) {
-  setModalProps({title: '修改职级'});
-  openModal(true, {
-    record,
-    isUpdate: true,
+function handleEdit(record: Recordable<any>) {
+  jobGradeModalRef.value.setData(record);
+  jobGradeModalRef.value.open();
+  jobGradeModalRef.value.setState({
+    title: '修改职级',
   });
 }
 
-function handleDelete(record: Recordable) {
+function handleDelete(record: Recordable<any>) {
   deleteById([record.id]).then(() => {
-    reload();
+    tableApi.reload();
   });
 }
 
@@ -159,6 +164,6 @@ function handleSuccess() {
 function handleSelect(node: any) {
   currentTreeNode.value = node;
   let searchInfo = {typeId: node ? node.id : ''};
-  reload({searchInfo});
+  tableApi.reload({searchInfo});
 }
 </script>

@@ -1,24 +1,20 @@
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits } from 'vue';
-  // import { BasicModal, useModalInner } from '@/components/Modal';
-  // import { BasicForm, Rule, useForm } from '@/components/Form';
-  import { formSchema } from './jobGradeType.data';
-  import { saveOrUpdate, checkEntityExist } from '#/api/org/jobGradeType';
-  import { FormValidPatternEnum } from '#/enums/constantEnum';
-  import {useVbenForm} from "#/adapter/form";
-  import {roleFormSchema} from "#/views/org/role/role.data";
-  import {useVbenModal} from '@vben/common-ui';
+import {computed, defineEmits, ref, unref, defineExpose} from 'vue';
+import {formSchema} from './jobGradeType.data';
+import {saveOrUpdate} from '#/api/org/jobGradeType';
+import {useVbenForm} from "#/adapter/form";
+import {useVbenModal} from '@vben/common-ui';
 
-  const emit = defineEmits(['success', 'register']);
+const emit = defineEmits(['success']);
 
-  const isUpdate = ref(true);
-  const [BasicForm, formApi] = useVbenForm({
-    commonConfig: {
-      labelWidth: 100,
-    },
-    schema: formSchema,
-    showDefaultActions: false,
-  });
+const isUpdate = ref(true);
+const [BasicForm, formApi] = useVbenForm({
+  commonConfig: {
+    labelWidth: 100,
+  },
+  schema: formSchema,
+  showDefaultActions: false,
+});
 /*
   const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
@@ -26,115 +22,121 @@
     showActionButtonGroup: false,
   });*/
 
-  const getBaseDynamicRules = (params: any) => {
-    return [
-      {
-        trigger: 'blur',
-        validator: (_, value) => {
-          if (value) {
-            return checkEntityExist({
-              id: params.id,
-              field: params.field,
-              fieldValue: value,
-              fieldName: params.fieldName,
+/*const getBaseDynamicRules = (params: any) => {
+  return [
+    {
+      trigger: 'blur',
+      validator: (_, value) => {
+        if (value) {
+          return checkEntityExist({
+            id: params.id,
+            field: params.field,
+            fieldValue: value,
+            fieldName: params.fieldName,
+          })
+            .then((res) => {
+              if (res) {
+                return Promise.resolve();
+              } else {
+                return Promise.reject(params.fieldName + '已存在，请修改！');
+              }
             })
-              .then((res) => {
-                if (res) {
-                  return Promise.resolve();
-                } else {
-                  return Promise.reject(params.fieldName + '已存在，请修改！');
-                }
-              })
-              .catch((res) => {
-                return Promise.reject(res);
-              });
-          } else {
-            return Promise.resolve();
-          }
-        },
-      },
-    ] as Rule[];
-  };
-
-
-  const [BasicModal, modalApi] = useVbenModal({
-    draggable: true,
-    onCancel() {
-      modalApi.close();
-    },
-    onOpenChange(isOpen: boolean) {
-      if (isOpen) {
-        const values = modalApi.getData<Record<string, any>>();
-        if (values) {
-          baseFormApi.setValues(values);
-          modalApi.setState({loading: false, confirmLoading: false});
+            .catch((res) => {
+              return Promise.reject(res);
+            });
+        } else {
+          return Promise.resolve();
         }
-      }
-    },
-    onConfirm() {
-      // await baseFormApi.submitForm();
-      handleSubmit();
-    },
-  });
-  /*
-  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
-    await resetFields();
-    setModalProps({ confirmLoading: false });
-    isUpdate.value = !!data?.isUpdate;
-    let formData = data.record;
-
-    await updateSchema([
-      {
-        field: 'code',
-        dynamicRules: () => {
-          return [
-            {
-              required: true,
-              whitespace: true,
-              message: '标识不能为空！',
-            },
-            {
-              pattern: new RegExp(FormValidPatternEnum.SN),
-              type: 'string',
-              message: '请输入英文或数字！',
-            },
-            {
-              max: 40,
-              message: '字符长度不能大于40！',
-            },
-            ...getBaseDynamicRules({
-              id: (unref(isUpdate) && formData && formData.id) || '',
-              field: 'code',
-              fieldValue: '',
-              fieldName: '标识',
-            }),
-          ];
-        },
       },
-    ]);
-    if (unref(isUpdate)) {
-      setFieldsValue({
-        ...data.record,
-      });
-    }
-  });*/
+    },
+  ] as Rule[];
+};*/
 
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 
-  async function handleSubmit() {
-    try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
-      await saveOrUpdate(values);
-      closeModal();
-      emit('success');
-    } finally {
-      setModalProps({ confirmLoading: false });
+const [BasicModal, modalApi] = useVbenModal({
+  draggable: true,
+  onCancel() {
+    modalApi.close();
+  },
+  onOpenChange(isOpen: boolean) {
+    if (isOpen) {
+      const values = modalApi.getData<Record<string, any>>();
+      if (values) {
+        formApi.setValues(values);
+        modalApi.setState({loading: false, confirmLoading: false});
+      }
     }
+  },
+  onConfirm() {
+    // await baseFormApi.submitForm();
+    handleSubmit();
+  },
+});
+/*
+const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+  await resetFields();
+  setModalProps({ confirmLoading: false });
+  isUpdate.value = !!data?.isUpdate;
+  let formData = data.record;
+
+  await updateSchema([
+    {
+      field: 'code',
+      dynamicRules: () => {
+        return [
+          {
+            required: true,
+            whitespace: true,
+            message: '标识不能为空！',
+          },
+          {
+            pattern: new RegExp(FormValidPatternEnum.SN),
+            type: 'string',
+            message: '请输入英文或数字！',
+          },
+          {
+            max: 40,
+            message: '字符长度不能大于40！',
+          },
+          ...getBaseDynamicRules({
+            id: (unref(isUpdate) && formData && formData.id) || '',
+            field: 'code',
+            fieldValue: '',
+            fieldName: '标识',
+          }),
+        ];
+      },
+    },
+  ]);
+  if (unref(isUpdate)) {
+    setFieldsValue({
+      ...data.record,
+    });
   }
+});*/
+
+const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
+
+async function handleSubmit() {
+  try {
+    modalApi.setState({loading: true, confirmLoading: true});
+    const valid = await formApi.validate();
+    if (!valid) {
+      return;
+    }
+    const values = await formApi.getValues();
+    await saveOrUpdate(values);
+    modalApi.close();
+    emit('success');
+  } finally {
+    modalApi.setState({loading: false, confirmLoading: false});
+  }
+}
+
+defineExpose(modalApi)
 </script>
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal>
+    <BasicForm/>
   </BasicModal>
 </template>

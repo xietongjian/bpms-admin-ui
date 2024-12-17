@@ -28,11 +28,16 @@ import {BpmnMocker, BpmnPresetViewer} from '#/assets/bpmn/viewer/lib/bpmn-viewer
 import '#/assets/bpmn/viewer/lib/style.css';
 import {getBpmnByModelKey, getCustomFlowSequenceFlows} from "#/api/process/process";
 import {useUserStore} from '@vben/stores';
+import { useAuthStore } from '#/store';
+
 import {useVbenModal} from '@vben/common-ui';
 import {usePreferences} from '@vben/preferences';
 
+const authStore = useAuthStore();
+
 const {isDark} = usePreferences();
 const userStore = useUserStore();
+const userInfo = userStore.userInfo || (await authStore.fetchUserInfo());
 
 
 const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
@@ -62,7 +67,7 @@ const [BasicModal, modalApi] = useVbenModal({
           modelKey,
           dataJson: JSON.stringify(formData),
           procInstId,
-          userCode: userStore?.getUserInfo?.userNo
+          userCode: userInfo?.userNo
         };
 
         const modelInfo = await getBpmnByModelKey({modelKey});
@@ -91,7 +96,7 @@ const [BasicModal, modalApi] = useVbenModal({
 });
 
 
-const bpmnMockerRef = ref<ComponentInstance<typeof BpmnPresetViewer>>();
+const bpmnMockerRef = ref<any>();
 
 const modelName = ref('');
 

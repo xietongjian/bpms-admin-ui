@@ -11,51 +11,26 @@
         />
       </div>
       <div class="flex-1 h-full">
-        <BasicTable @register="registerTable" class="!pt-0 !pl-0 !pr-0 !pb-0">
-          <template #toolbar>
-            <Authority :value="'MatrixRole:' + PerEnum.ADD">
-              <a-button type="primary" @click="handleCreate">新增</a-button>
-            </Authority>
+        <BasicTable class="!pt-0 !pl-0 !pr-0 !pb-0">
+          <template #toolbar-tools>
+            <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
           </template>
-          <template #bodyCell="{ column, record }">
-            <template v-if="column.key === 'action'">
-              <TableAction
-                :actions="[
-                    {
-                      auth: 'MatrixRole:' + PerEnum.UPDATE,
-                      tooltip: '修改',
-                      icon: 'clarity:note-edit-line',
-                      onClick: handleEdit.bind(null, record),
-                    },
-                    {
-                      auth: 'MatrixRole:' + PerEnum.DELETE,
-                      tooltip: '删除',
-                      icon: 'ant-design:delete-outlined',
-                      color: 'error',
-                      onClick: (e) => {
-                        e.stopPropagation();
-                      },
-                      popConfirm: {
-                        title: '是否确认删除',
-                        confirm: handleDelete.bind(null, record),
-                        placement: 'left',
-                      },
-                    },
-                  ]"
-              />
-            </template>
 
-            <template v-else-if="column.key === 'type'">
-              <Tag v-if="record.type === 1" color="processing">公司矩阵角色</Tag>
-              <Tag v-else-if="record.type === 2" color="cyan">部门矩阵角色</Tag>
-            </template>
+          <template #action="{ row }">
+            <TableAction
+                :actions="createActions(row)"
+            />
+          </template>
+          <template #type="{ row }">
+            <Tag v-if="row.type === 1" color="processing">公司矩阵角色</Tag>
+            <Tag v-else-if="row.type === 2" color="cyan">部门矩阵角色</Tag>
           </template>
         </BasicTable>
 
       </div>
 
     </div>
-    <RoleModal @register="registerModal" @success="handleSuccess" />
+    <RoleModal ref="roleModalRef" @success="handleSuccess" />
   </Page>
 </template>
 <script lang="ts" setup>
@@ -74,15 +49,46 @@
   import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';
   import RoleModal from './RoleModal.vue';
   // import OrgSelectorModal from '@/components/Selector/src/OrgSelectorModal.vue';
+  import { TableAction } from '#/components/table-action';
 
   import { columns, searchFormSchema } from './role.data';
   import {listColumns} from "#/views/base/app/app.data";
 
   // const [registerModal, { openModal }] = useModal();
+  const roleModalRef = ref();
 
   const currentRole = ref<Recordable>({});
   const currentNode = ref<Recordable>({});
   const treeData = ref<any[]>([]);
+  const PerPrefix = 'MatrixRole:';
+
+  const {hasAccessByCodes} = useAccess();
+
+  function createActions(row: Recordable<any>) {
+    return [
+      {
+        auth: [PerPrefix + PerEnum.UPDATE],
+        tooltip: '修改',
+        icon: 'clarity:note-edit-line',
+        onClick: handleEdit.bind(null, row),
+      },
+      {
+        auth: [PerPrefix + PerEnum.DELETE],
+        tooltip: '删除',
+        icon: 'ant-design:delete-outlined',
+        danger: true,
+        onClick: (e) => {
+          e.stopPropagation();
+        },
+        popConfirm: {
+          title: '是否确认删除',
+          confirm: handleDelete.bind(null, row),
+          placement: 'left',
+          okButtonProps: { danger: true },
+        },
+      },
+    ];
+  }
 
   onMounted(() => {
     treeData.value = [

@@ -1,186 +1,143 @@
-
 <template>
-  <PageWrapper dense contentFullHeight fixedHeight class="h-full">
-    <div class="p-4 h-full">
-      <SplitPane>
-        <template #left>
-          <OrgTree class="h-full" @select="handleSelect" />
-        </template>
-        <template #main>
-          <BasicTable @register="registerTable" class="!pt-0 !pl-0 !pr-0 !pb-0">
-            <template #toolbar>
-              <Authority :value="'Personal:' + PerEnum.ADD">
-                <Button type="link" @click="handleExportTemplate">导出模板</Button>
-              </Authority>
-              <Authority :value="'Personal:' + PerEnum.ADD">
-                <ImpExcel @success="loadDataSuccess" dateFormat="xlsx">
-                  <Button>
-                    <template #icon>
-                      <ImportOutlined />
-                    </template>
-                    导入Excel
-                  </Button>
-                </ImpExcel>
-              </Authority>
+  <Page auto-content-height>
+    <Splitpanes class="default-theme h-full" >
+      <Pane class="bg-transparent" min-size="20" size="30">
+        <OrgTree class="h-full" @select="handleSelect" />
+      </Pane>
+      <Pane class="ml-2 bg-transparent" min-size="20" size="70">
+        <BasicTable @register="registerTable" class="!pt-0 !pl-0 !pr-0 !pb-0">
+          <template #toolbar-tools>
+            <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="link" @click="handleExportTemplate">导出模板</Button>
+            <ImpExcel v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" @success="loadDataSuccess" dateFormat="xlsx">
+              <Button>
+                <template #icon>
+                  <ImportOutlined />
+                </template>
+                导入Excel
+              </Button>
+            </ImpExcel>
 
-              <Authority :value="'Personal:' + PerEnum.SYNC">
-                <PopConfirmButton
-                  title="同步需要花费一定的时间，确定要同步吗？"
-                  @confirm="handleSyncAll"
-                  type="primary"
-                >
-                  全量同步
-                </PopConfirmButton>
-              </Authority>
-              <Authority :value="'Personal:' + PerEnum.ADD">
-                <a-button type="primary" @click="handleCreate">新增</a-button>
-              </Authority>
-            </template>
-            <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'action'">
-                <TableAction
-                  :actions="[
-                    {
-                      auth: 'Personal:' + PerEnum.UPDATE,
-                      tooltip: '修改',
-                      icon: 'clarity:note-edit-line',
-                      onClick: handleEdit.bind(null, record),
-                    },
-                    {
-                      auth: 'Personal:' + PerEnum.DELETE,
-                      tooltip: '删除',
-                      icon: 'ant-design:delete-outlined',
-                      color: 'error',
-                      popConfirm: {
-                        title: '是否确认删除',
-                        confirm: handleDelete.bind(null, record),
-                      },
-                    },
-                    {
-                      auth: 'Personal:' + PerEnum.SYNC,
-                      tooltip: '同步',
-                      icon: 'ant-design:cloud-sync-outlined',
-                      popConfirm: {
-                        title: '是否同步用户信息？',
-                        placement: 'left',
-                        confirm: handleSync.bind(null, record),
-                      },
-                    },
-                  ]"
-                  :dropDownActions="[
-                    {
-                      auth: 'Personal:' + PerEnum.UPDATE,
-                      label: '设置领导',
-                      icon: 'ant-design:setting-outlined',
-                      onClick: handleSettingLeader.bind(null, record),
-                    },
-                  ]"
-                />
-              </template>
+            <PopConfirmButton v-if="hasAccessByCodes([PerPrefix + PerEnum.SYNC])"
+                              title="同步需要花费一定的时间，确定要同步吗？"
+                              @confirm="handleSyncAll"
+                              type="primary"
+            >
+              全量同步
+            </PopConfirmButton>
+            <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
+          </template>
 
-              <template v-else-if="column.key === 'name'">
-                <EmpInfo :no="record.code" :name="record.name">
-                  <Badge>
-                    <template #count>
-                      <WomanOutlined
-                        v-if="record.sex === 2"
-                        style="color: #f5222d; font-size: 12px"
+          <template #status="{ row }">
+            <Tag v-if="row.status === 1" color="green">在职</Tag>
+            <Tag v-else color="red">离职</Tag>
+          </template>
+          <template #action="{ row }">
+            <TableAction
+                :actions="createActions(row)"
+            />
+          </template>
+
+          <template #name="{ row }">
+            <EmpInfo :no="row.code" :name="row.name">
+              <Badge>
+                <template #count>
+                  <WomanOutlined
+                      v-if="row.sex === 2"
+                      style="color: #f5222d; font-size: 12px"
+                  />
+                  <ManOutlined v-else style="color: #1890ff; font-size: 12px" />
+                </template>
+                <Avatar :src="row.headImg" @click="previewImageHandle(row.headImg)">
+                  <template #icon>
+                    <UserOutlined />
+                  </template>
+                </Avatar>
+              </Badge>
+              {{ row.name }}
+            </EmpInfo>
+          </template>
+
+          <template #roles="{ row }">
+            <div v-if="row.roles && row.roles.length > 0" class="personal-roles">
+              <Popover title="角色详情" placement="left" class="role-details">
+                <template #content>
+                  <div
+                      class="personal-roles"
+                      style="width: 300px; max-height: 400px; overflow: auto"
+                  >
+                    <div
+                        class="mb-2"
+                        v-if="row.roles.filter((item) => item.type === 0).length > 0"
+                    >
+                      <h3 class="mb-0">人员角色</h3>
+                      <Divider
+                          style="height: 1px; background-color: #7cb305; margin: 0"
+                          orientation="left"
                       />
-                      <ManOutlined v-else style="color: #1890ff; font-size: 12px" />
-                    </template>
-                    <Avatar :src="record.headImg" @click="previewImageHandle(record.headImg)">
-                      <template #icon>
-                        <UserOutlined />
-                      </template>
-                    </Avatar>
-                  </Badge>
-                  {{ record.name }}
-                </EmpInfo>
-              </template>
-
-              <template v-else-if="column.key === 'roles'">
-                <div v-if="record.roles && record.roles.length > 0" class="personal-roles">
-                  <Popover title="角色详情" placement="left" class="role-details">
-                    <template #content>
-                      <div
-                        class="personal-roles"
-                        style="width: 300px; max-height: 400px; overflow: auto"
+                      <Tag
+                          :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
+                          class="role-item"
+                          v-for="role in row.roles.filter((item) => item.type === 0)"
                       >
-                        <div
-                          class="mb-2"
-                          v-if="record.roles.filter((item) => item.type === 0).length > 0"
-                        >
-                          <h3 class="mb-0">人员角色</h3>
-                          <Divider
-                            style="height: 1px; background-color: #7cb305; margin: 0"
-                            orientation="left"
-                          />
-                          <Tag
-                            :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
-                            class="role-item"
-                            v-for="role in record.roles.filter((item) => item.type === 0)"
-                          >
-                            {{ (role.companyName || '') + ' - ' + role.name }}
-                          </Tag>
-                        </div>
-
-                        <div
-                          class="mb-2"
-                          v-if="record.roles.filter((item) => item.type === 1).length > 0"
-                        >
-                          <h3 class="mb-0">公司矩阵角色</h3>
-                          <Divider
-                            style="height: 1px; background-color: #7cb305; margin: 0"
-                            orientation="left"
-                          />
-                          <Tag
-                            :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
-                            class="role-item"
-                            v-for="role in record.roles.filter((item) => item.type === 1)"
-                          >
-                            {{ (role.companyName || '') + ' - ' + role.name }}
-                          </Tag>
-                        </div>
-
-                        <div
-                          class="mb-2"
-                          v-if="record.roles.filter((item) => item.type === 2).length > 0"
-                        >
-                          <h3 class="mb-0">部门矩阵角色</h3>
-                          <Divider
-                            style="height: 1px; background-color: #7cb305; margin: 0"
-                            orientation="left"
-                          />
-                          <Tag
-                            :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
-                            class="role-item"
-                            v-for="role in record.roles.filter((item) => item.type === 2)"
-                          >
-                            {{ (role.companyName || '') + ' - ' + role.name }}
-                          </Tag>
-                        </div>
-                      </div>
-                    </template>
-                    <div>
-                      <Tag>角色详情</Tag>
-                      <Badge
-                        :count="record.roles.length"
-                        :number-style="{ backgroundColor: '#52c41a' }"
-                      />
+                        {{ (role.companyName || '') + ' - ' + role.name }}
+                      </Tag>
                     </div>
-                  </Popover>
-                </div>
-                <div v-else>暂无</div>
-              </template>
 
-              <template v-else-if="column.key === 'leaderName'">
-                <EmpInfo :no="record.leaderCode" :name="record.leaderName" />
-              </template>
-            </template>
-          </BasicTable>
-        </template>
-      </SplitPane>
-    </div>
+                    <div
+                        class="mb-2"
+                        v-if="row.roles.filter((item) => item.type === 1).length > 0"
+                    >
+                      <h3 class="mb-0">公司矩阵角色</h3>
+                      <Divider
+                          style="height: 1px; background-color: #7cb305; margin: 0"
+                          orientation="left"
+                      />
+                      <Tag
+                          :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
+                          class="role-item"
+                          v-for="role in row.roles.filter((item) => item.type === 1)"
+                      >
+                        {{ (role.companyName || '') + ' - ' + role.name }}
+                      </Tag>
+                    </div>
+
+                    <div
+                        class="mb-2"
+                        v-if="row.roles.filter((item) => item.type === 2).length > 0"
+                    >
+                      <h3 class="mb-0">部门矩阵角色</h3>
+                      <Divider
+                          style="height: 1px; background-color: #7cb305; margin: 0"
+                          orientation="left"
+                      />
+                      <Tag
+                          :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
+                          class="role-item"
+                          v-for="role in row.roles.filter((item) => item.type === 2)"
+                      >
+                        {{ (role.companyName || '') + ' - ' + role.name }}
+                      </Tag>
+                    </div>
+                  </div>
+                </template>
+                <div>
+                  <Tag>角色详情</Tag>
+                  <Badge
+                      :count="row.roles.length"
+                      :number-style="{ backgroundColor: '#52c41a' }"
+                  />
+                </div>
+              </Popover>
+            </div>
+            <div v-else>暂无</div>
+          </template>
+
+          <template #leaderName="{ row }">
+            <EmpInfo :no="row.leaderCode" :name="row.leaderName" />
+          </template>
+        </BasicTable>
+      </Pane>
+    </Splitpanes>
 
     <Image
       :width="0"
@@ -188,16 +145,20 @@
       :src="previewImage"
       :preview="{ visible: previewImageVisible, onVisibleChange: previewImageVisibleChange }"
     />
-    <PersonalModal @register="registerModal" @success="handleSuccess" />
+    <PersonalModal ref="personalModalRef" @success="handleSuccess" />
     <!--    <PersonalSelector @register="registerPersonalModal" @success="handleSettingLeaderSuccess" />-->
     <PersonalSelectorModal @register="registerPersonalModal" @change="handleSettingLeaderSuccess" />
-  </PageWrapper>
+  </Page>
 </template>
 <script lang="ts" setup>
   import { PerEnum } from '#/enums/perEnum';
-  import {AccessControl} from '@vben/access';
   import { ref, unref } from 'vue';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
+  import { TableAction } from '#/components/table-action';
+  import type { Recordable } from '@vben/types';
+  import type {VxeGridProps} from '#/adapter/vxe-table';
+  import type {VbenFormProps} from '@vben/common-ui';
+
   import {
     getPersonalPageList,
     allocationRoles,
@@ -209,12 +170,13 @@
     downloadPersonalExcelTemplate,
     importPersonalExcelByData,
   } from '#/api/org/personal';
-  import { PageWrapper } from '@/components/Page';
-  import OrgTree from '@/views/components/leftTree/OrgTree.vue';
+  import {Page} from '@vben/common-ui';
+  import OrgTree from '#/views/components/leftTree/OrgTree.vue';
   import { ManOutlined, ImportOutlined, WomanOutlined, UserOutlined } from '@ant-design/icons-vue';
-  import { useModal } from '@/components/Modal';
+  import {useAccess} from '@vben/access';
+
   import PersonalModal from './PersonalModal.vue';
-  import PersonalSelectorModal from '@/components/Selector/src/PersonalSelectorModal.vue';
+  // import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
   import {
     Tag,
     Popover,
@@ -224,35 +186,47 @@
     Badge,
     Spin,
     Space,
+      message,
     Divider,
     Image,
   } from 'ant-design-vue';
-  import SplitPane from '@/views/components/splitPane/index.vue';
-  import { columns, searchFormSchema } from './personal.data';
-  import { EmpInfo } from '@/components/EmpInfo';
-  import { PopConfirmButton } from '@/components/Button';
-  import { ImpExcel, ExcelData, jsonToSheetXlsx } from '@/components/Excel';
-  import { saveOrUpdateRoleScope } from '#/api/flowsetting/rolePersonal';
-  import { message } from 'ant-design-vue';
-  import { useLoading } from '@/components/Loading';
+  import { Splitpanes, Pane } from '#/components/splitpanes';
 
-  const [registerModal, { openModal: openEditModal, setModalProps: setEditModalProps }] =
-    useModal();
+  import { columns, searchFormSchema } from './personal.data';
+  import { EmpInfo } from '#/views/components/EmpInfo';
+
+  // import { PopConfirmButton } from '@/components/Button';
+  // import { ImpExcel, ExcelData, jsonToSheetXlsx } from '@/components/Excel';
+  import type { Recordable } from '@vben/types';
+
+  import { saveOrUpdateRoleScope } from '#/api/flowsetting/rolePersonal';
+
+  // import { useLoading } from '@/components/Loading';
+
+  const PerPrefix = 'Personal:';
+  const {hasAccessByCodes} = useAccess();
+
+  const personalModalRef = ref();
+
+
+  // const [registerModal, { openModal: openEditModal, setModalProps: setEditModalProps }] =
+  //   useModal();
   // 人员选择弹窗
-  const [
+  /*const [
     registerPersonalModal,
     { openModal: openPersonalSelector, setModalProps: setPersonalModalProps },
   ] = useModal();
+
   const [openFullLoading, closeFullLoading] = useLoading({
     tip: '下载中...',
-  });
-  const currentPersonal = ref<Recordable>({});
+  });*/
+  const currentPersonal = ref<Recordable<any>>({});
   const deleteRoleLoading = ref<object>({});
   const previewImage = ref<string>('');
   const previewImageVisible = ref<boolean>(false);
-  const currentNode = ref<Recordable>({});
+  const currentNode = ref<Recordable<any>>({});
 
-  const [registerTable, { reload, setLoading }] = useTable({
+  /*const [registerTable, { reload, setLoading }] = useTable({
     title: '列表',
     api: getPersonalPageList,
     columns,
@@ -284,7 +258,49 @@
       }
       return { ...params, ...searchInfo };
     },
-  });
+  });*/
+
+  const formOptions: VbenFormProps = {
+    showCollapseButton: false,
+    submitOnEnter: true,
+    commonConfig: {
+      labelWidth: 60,
+    },
+    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+    resetButtonOptions: {
+      show: false,
+    },
+    schema: searchFormSchema,
+  };
+
+  const gridOptions: VxeGridProps<any> = {
+    checkboxConfig: {
+      highlight: true,
+      labelField: 'name',
+    },
+    columns,
+    columnConfig: {resizable: true},
+    height: 'auto',
+    keepSource: true,
+    border: false,
+    stripe: true,
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          return await getPersonalPageList({
+            query: {
+              pageNum: page.currentPage,
+              pageSize: page.pageSize,
+            },
+            entity: formValues || {},
+          });
+        },
+      },
+    },
+  };
+
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+
 
   function handleCreate() {
     let record = {};
@@ -295,15 +311,10 @@
         record = { companyId: unref(currentNode).companyId, deptId: unref(currentNode).id };
       }
     }
-    openEditModal(true, {
-      isUpdate: false,
-      record,
-    });
-    setEditModalProps({
+    personalModalRef.value.setData(record);
+    personalModalRef.value.open();
+    personalModalRef.value.setState({
       title: `新增人员`,
-      bodyStyle: { padding: '0px', margin: '0px' },
-      width: 900,
-      centered: true
     });
   }
 
@@ -314,10 +325,10 @@
         setLoading(false);
         const { success, msg } = res.data;
         if (success) {
-          createMessage.success(msg);
-          reload();
+          message.success(msg);
+          tableApi.reload();
         } else {
-          createMessage.error(msg);
+          message.error(msg);
         }
       })
       .catch((e) => {
@@ -325,20 +336,15 @@
       });
   }
 
-  function handleEdit(record: Recordable) {
-    openEditModal(true, {
-      record,
-      isUpdate: true,
-    });
-    setEditModalProps({
+  function handleEdit(record: Recordable<any>) {
+    personalModalRef.value.setData(record);
+    personalModalRef.value.open();
+    personalModalRef.value.setState({
       title: `修改人员`,
-      bodyStyle: { padding: '0px', margin: '0px' },
-      width: 900,
-      centered: true
     });
   }
 
-  function handleSettingLeader(record: Recordable) {
+  function handleSettingLeader(record: Recordable<any>) {
     currentPersonal.value = record;
     let selectedList = [];
     if (record.leaderCode && record.leaderName) {
@@ -364,7 +370,7 @@
 
   async function handleExportTemplate() {
     if (unref(currentNode).sourceType != '1') {
-      createMessage.warn('请选择公司！');
+      message.warn('请选择公司！');
       return;
     }
     const params = { companyId: unref(currentNode).id, sourceType: 'PERSONAL' };
@@ -413,7 +419,7 @@
         }
       }
       if (saveDataList.length === 0) {
-        createMessage.warn('未找到可导入的数据！');
+        message.warn('未找到可导入的数据！');
         return;
       }
 
@@ -423,10 +429,10 @@
         try {
           const result = await importPersonalExcelByData(saveDataList);
           if (result.success) {
-            reload();
-            createMessage.success(result.msg);
+            tableApi.reload();
+            message.success(result.msg);
           } else {
-            createMessage.error(result.msg);
+            message.error(result.msg);
           }
         } catch (e) {
           console.error('导入数据接口异常！', e);
@@ -460,23 +466,23 @@
     }
   }
 
-  function handleDelete(record: Recordable) {
+  function handleDelete(record: Recordable<any>) {
     deleteByIds([record.id]).then((res) => {
-      reload();
+      tableApi.reload();
     });
   }
 
-  function handleSync(record: Recordable) {
+  function handleSync(record: Recordable<any>) {
     setLoading(true);
     syncPersonalById({ id: record.id })
       .then((res) => {
         setLoading(false);
         const { success, msg } = res.data;
         if (success) {
-          createMessage.success(msg);
-          reload();
+          message.success(msg);
+          tableApi.reload();
         } else {
-          createMessage.error(msg);
+          message.error(msg);
         }
       })
       .catch((e) => {
@@ -486,7 +492,7 @@
 
   function handleSuccess() {
     setTimeout(() => {
-      reload();
+      tableApi.reload();
     }, 200);
   }
 
@@ -519,19 +525,51 @@
     } else if (currentNode.value?.sourceType === '2') {
       searchInfo = { deptId: unref(currentNode).id };
     }
-    reload({ searchInfo });
+    tableApi.reload({ searchInfo });
   }
 
   function handleSelect(node: any) {
     currentNode.value = node;
     reloadTable();
   }
-</script>
 
-<style lang="less">
-  .personal-roles {
-    .role-item {
-      margin: 4px 2px 0;
-    }
+  function createActions (row: Recordable<any>) {
+    return [
+        {
+          auth: [PerPrefix + PerEnum.UPDATE],
+          tooltip: '修改',
+          icon: 'clarity:note-edit-line',
+          onClick: handleEdit.bind(null, row),
+        },
+        {
+          auth: [PerPrefix + PerEnum.DELETE],
+          tooltip: '删除',
+          icon: 'ant-design:delete-outlined',
+          danger: true,
+          popConfirm: {
+            title: '是否确认删除',
+            confirm: handleDelete.bind(null, row),
+            okButtonProps: { danger: true },
+          },
+        },
+        {
+          auth: [PerPrefix + PerEnum.SYNC],
+          tooltip: '同步',
+          icon: 'ant-design:cloud-sync-outlined',
+          popConfirm: {
+            title: '是否同步用户信息？',
+            placement: 'left',
+            confirm: handleSync.bind(null, row),
+          },
+        },
+      ];
+    // :dropDownActions="[
+    //   {
+    //     auth: 'Personal:' + PerEnum.UPDATE,
+    //         label: '设置领导',
+    //       icon: 'ant-design:setting-outlined',
+    //       onClick: handleSettingLeader.bind(null, record),
+    //   },
+    // ];
   }
-</style>
+</script>

@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-  import { defineComponent, ref, computed, unref } from 'vue';
-  // import { BasicModal, useModalInner } from '@/components/Modal';
-  // import { BasicForm, Rule, useForm } from '@/components/Form';
+  import { ref, computed, unref, defineExpose } from 'vue';
+
+  import {useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from '#/adapter/form';
+
   import { formSchema } from './positionInfo.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/org/positionInfo';
   import { formatToDate } from '#/utils/dateUtil';
-  import {useVbenForm} from "#/adapter/form";
-  import {roleFormSchema} from "#/views/org/role/role.data";
 
 
   const isUpdate = ref(true);
-
+  const emit = defineEmits(["success"])
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
@@ -29,7 +29,7 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          baseFormApi.setValues(values);
+          formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -39,7 +39,7 @@
       handleSubmit();
     },
   });
-  const getBaseDynamicRules = (params: any) => {
+  /*const getBaseDynamicRules = (params: any) => {
     return [
       {
         trigger: 'blur',
@@ -67,7 +67,7 @@
         },
       },
     ] as Rule[];
-  };
+  };*/
 
   /*const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     await resetFields();
@@ -115,16 +115,21 @@
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
+      modalApi.setState({loading: true, confirmLoading: true});
+
+      const valid = await formApi.validate();
+      if (!valid) {
+        return;
+      }
+      const values = await formApi.getValues();
       if (values.startDate) {
         values.startDate = formatToDate(values.startDate);
       }
       await saveOrUpdate(values);
-      closeModal();
+      modalApi.close();
       emit('success');
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
 
@@ -137,9 +142,11 @@
       return { registerModal, registerForm, getTitle, handleSubmit };
     },
   });*/
+
+  defineExpose(modalApi)
 </script>
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal>
+    <BasicForm/>
   </BasicModal>
 </template>

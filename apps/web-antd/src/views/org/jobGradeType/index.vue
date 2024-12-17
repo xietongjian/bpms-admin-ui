@@ -1,51 +1,48 @@
-
 <script lang="ts" setup>
 import {ref} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
+import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
-
-  import { PerEnum } from '#/enums/perEnum';
-  import {AccessControl} from '@vben/access';
-  import {useVbenVxeGrid} from '#/adapter/vxe-table';
-  // import { useModal } from '@/components/Modal';
-  import { columns, searchFormSchema } from './jobGradeType.data';
-  import JobGradeTypeModal from './JobGradeTypeModal.vue';
-  import { getJobGradeTypes, deleteById } from '#/api/org/jobGradeType';
-  import type { Recordable } from '@vben/types';
-  import { TableAction } from '#/components/table-action';
-import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
-import {useAccess} from '@vben/access';
-import {listColumns} from "#/views/base/app/app.data";
-import {getAppListByPage} from "#/api/base/app";
 import {Page} from "@vben/common-ui";
+
+import {PerEnum} from '#/enums/perEnum';
+import {columns, searchFormSchema} from './jobGradeType.data';
+import JobGradeTypeModal from './JobGradeTypeModal.vue';
+import {deleteById, getJobGradeTypes} from '#/api/org/jobGradeType';
+import type {Recordable} from '@vben/types';
+import {TableAction} from '#/components/table-action';
+import {Button, Tag} from 'ant-design-vue';
+import {useAccess} from '@vben/access';
+
 const PerPrefix = "JobGradeType:";
 
+const jobGradeTypeModalRef = ref();
 
 const {hasAccessByCodes} = useAccess();
-  /*const [registerModal, { openModal }] = useModal();
-  const [registerTable, { reload }] = useTable({
-    title: '列表',
-    api: getJobGradeTypes,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: true,
-    pagination: false,
-    showIndexColumn: false,
-    isTreeTable: true,
-    actionColumn: {
-      width: 100,
-      title: '操作',
-      dataIndex: 'action',
-    },
-  });
+/*const [registerModal, { openModal }] = useModal();
+const [registerTable, { reload }] = useTable({
+  title: '列表',
+  api: getJobGradeTypes,
+  columns,
+  formConfig: {
+    labelWidth: 120,
+    schemas: searchFormSchema,
+    showAdvancedButton: false,
+    showResetButton: false,
+    autoSubmitOnEnter: true,
+  },
+  canColDrag: true,
+  useSearchForm: true,
+  bordered: true,
+  pagination: false,
+  showIndexColumn: false,
+  isTreeTable: true,
+  actionColumn: {
+    width: 100,
+    title: '操作',
+    dataIndex: 'action',
+  },
+});
 */
 
 const formOptions: VbenFormProps = {
@@ -91,57 +88,66 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 
 function handleCreate() {
-    openModal(true, {
-      isUpdate: false,
-    });
-  }
+  jobGradeTypeModalRef.value.setData({});
+  jobGradeTypeModalRef.value.open();
+  jobGradeTypeModalRef.value.setState({
+    title: '新增',
+  });
+}
 
-  function handleEdit(record: Recordable) {
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });
-  }
+function handleEdit(record: Recordable<any>) {
+  jobGradeTypeModalRef.value.setData(record);
+  jobGradeTypeModalRef.value.open();
+  jobGradeTypeModalRef.value.setState({
+    title: '修改',
+  });
+}
 
-  function handleDelete(record: Recordable) {
-    deleteById([record.id]).then(() => {
-      reload();
-    });
-  }
+function handleDelete(record: Recordable<any>) {
+  deleteById([record.id]).then(() => {
+    tableApi.reload();
+  });
+}
 
-  function handleSuccess() {
-    setTimeout(() => {
-      reload();
-    }, 200);
-  }
+function handleSuccess() {
+  setTimeout(() => {
+    tableApi.reload();
+  }, 200);
+}
 
-  function createActions(record: Recordable) {
-    return [
-      {
-        auth: [PerPrefix + PerEnum.UPDATE],
-        tooltip: '修改',
-        icon: 'clarity:note-edit-line',
-        onClick: handleEdit.bind(null, record),
+function createActions(record: Recordable<any>) {
+  return [
+    {
+      auth: [PerPrefix + PerEnum.UPDATE],
+      tooltip: '修改',
+      icon: 'clarity:note-edit-line',
+      onClick: handleEdit.bind(null, record),
+    },
+    {
+      auth: [PerPrefix + PerEnum.DELETE],
+      tooltip: '删除',
+      icon: 'ant-design:delete-outlined',
+      danger: true,
+      popConfirm: {
+        title: '是否确认删除',
+        confirm: handleDelete.bind(null, record),
+        placement: 'left',
+        okButtonProps: {danger: true}
       },
-      {
-        auth: [PerPrefix + PerEnum.DELETE],
-        tooltip: '删除',
-        icon: 'ant-design:delete-outlined',
-        color: 'error',
-        popConfirm: {
-          title: '是否确认删除',
-          confirm: handleDelete.bind(null, record),
-          placement: 'left',
-        },
-      },
-    ]
-  }
+    },
+  ]
+}
 </script>
 <template>
   <Page auto-content-height>
-    <BasicTable @register="registerTable">
+    <BasicTable>
       <template #toolbar-tools>
         <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
+      </template>
+
+      <template #status="{ row }">
+        <Tag v-if="row.status === 1" color="green">启用</Tag>
+        <Tag v-else color="red">停用</Tag>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -151,6 +157,6 @@ function handleCreate() {
         </template>
       </template>
     </BasicTable>
-    <JobGradeTypeModal @register="registerModal" @success="handleSuccess" />
+    <JobGradeTypeModal ref="jobGradeTypeModalRef" @success="handleSuccess"/>
   </Page>
 </template>
