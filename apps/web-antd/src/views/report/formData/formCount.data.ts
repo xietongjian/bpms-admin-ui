@@ -1,9 +1,12 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
 
-export const baseColumns: BasicColumn[] = [
+export const baseColumns: VxeGridProps['columns'] = [
   {
     title: '名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
     minWidth: 300,
     width: 300,
@@ -11,7 +14,7 @@ export const baseColumns: BasicColumn[] = [
   },
   {
     title: 'KEY',
-    dataIndex: 'modelKey',
+    field: 'modelKey',
     width: 100,
     align: 'left',
     resizable: true,
@@ -30,36 +33,28 @@ export const searchFormSchema: FormSchema[] = [
     colProps: {span: 6, lg:{span: 6, offset:0}, sm:{span: 10, offset: 0}, xs:{span: 16, offset: 0}},
   },*/
   {
-    field: 'dateRange',
+    fieldName: 'dateRange',
     label: '创建时间',
     component: 'RangePicker',
     labelWidth: 70,
-    colProps: {
-      span: 8,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 8, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
 export const modelInfoFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'categoryCode',
+    fieldName: 'categoryCode',
     label: 'ID',
-    required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
     component: 'Input',
     required: true,
@@ -76,13 +71,13 @@ export const modelInfoFormSchema: FormSchema[] = [
     ],
   },
   {
-    field: 'modelKey',
+    fieldName: 'modelKey',
     label: '标识',
     component: 'Input',
     required: true,
   },
   {
-    field: 'appSn',
+    fieldName: 'appSn',
     label: '所属系统',
     component: 'Select',
     componentProps: {
@@ -94,13 +89,16 @@ export const modelInfoFormSchema: FormSchema[] = [
 
 export const copyModelInfoFormSchema: FormSchema[] = [
   {
-    field: 'fromModelKey',
+    fieldName: 'fromModelKey',
     label: '来源ModelKey',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["fromModelKey"]
+    }
   },
   {
-    field: 'newModelName',
+    fieldName: 'newModelName',
     label: '新表单名称',
     component: 'Input',
     required: true,
@@ -117,7 +115,7 @@ export const copyModelInfoFormSchema: FormSchema[] = [
     ],
   },
   {
-    field: 'newCategoryCode',
+    fieldName: 'newCategoryCode',
     label: '新分类',
     required: true,
     component: 'TreeSelect',

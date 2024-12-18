@@ -1,36 +1,39 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import { z } from '#/adapter/form';
+
 import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
 
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '公司名称',
-    dataIndex: 'companyName',
+    field: 'companyName',
     align: 'left',
   },
   {
     title: '部门名称',
-    dataIndex: 'deptName',
+    field: 'deptName',
     align: 'left',
   },
   {
     title: '人员',
-    dataIndex: 'personalName',
+    field: 'personalName',
     align: 'center',
   },
   {
     title: '创建时间',
-    dataIndex: 'createTime',
+    field: 'createTime',
     align: 'left',
   },
   {
     title: '流程名称',
-    dataIndex: 'processName',
+    field: 'processName',
     align: 'left',
   },
   {
     title: '状态',
-    dataIndex: 'processStatusName',
+    field: 'processStatusName',
     width: 120,
     customRender: ({ record }) => {
       /*processStatus
@@ -41,6 +44,13 @@ export const columns: BasicColumn[] = [
       const text = enable ? '办结' : '审批中';
       return h(Tag, { color: color }, () => text);
     },
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
@@ -53,23 +63,23 @@ endDate
 * */
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'userNo',
+    fieldName: 'userNo',
     label: '提交人',
     component: 'PersonalSelector',
     componentProps: {
       placeholder: '请选择提交人',
     },
     labelWidth: 80,
-    colProps: {
+    /*colProps: {
       span: 6,
       lg: { span: 6, offset: 0 },
       sm: { span: 6, offset: 0 },
       xs: { span: 16, offset: 0 },
-    },
+    },*/
   },
 
   {
-    field: 'deptId',
+    fieldName: 'deptId',
     label: '部门名称',
     component: 'OrgSelector',
     componentProps: {
@@ -77,15 +87,15 @@ export const searchFormSchema: FormSchema[] = [
       selectType: '2',
       multiple: false,
     },
-    colProps: {
+    /*colProps: {
       span: 8,
       lg: { span: 8, offset: 0 },
       sm: { span: 6, offset: 0 },
       xs: { span: 16, offset: 0 },
-    },
+    },*/
   },
   {
-    field: 'companyId',
+    fieldName: 'companyId',
     label: '提交单位',
     component: 'OrgSelector',
     componentProps: {
@@ -93,22 +103,22 @@ export const searchFormSchema: FormSchema[] = [
       selectType: '1',
       multiple: false,
     },
-    colProps: {
+    /*colProps: {
       span: 8,
       lg: { span: 8, offset: 0 },
       sm: { span: 6, offset: 0 },
       xs: { span: 16, offset: 0 },
-    },
+    },*/
   },
   {
-    field: 'dateRange',
+    fieldName: 'dateRange',
     label: '时间范围',
     component: 'RangePicker',
-    colProps: {
+    /*colProps: {
       span: 8,
       lg: { span: 8, offset: 0 },
       sm: { span: 8, offset: 0 },
       xs: { span: 16, offset: 0 },
-    },
+    },*/
   },
 ];

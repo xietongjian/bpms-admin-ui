@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper v-loading="loadingRef" dense contentFullHeight fixedHeight class="h-full">
+  <Page auto-content-height>
     <div class="p-4 h-full">
       <BasicTable
         @register="registerTable"
@@ -22,40 +22,42 @@
         </template>
       </BasicTable>
     </div>
-    <BpmnPreviewModal @register="registerBpmnPreviewModal" />
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" />
     <ProcessFormModal @register="registerProcessFormModal" />
     <LaunchModal @register="registerLaunchModal" @success="handleSuccess" />
 
-  </PageWrapper>
+  </Page>
 </template>
 <script lang="ts" setup>
   import { ref, unref, watch, nextTick, onMounted } from 'vue';
-  import { useLoading } from '@/components/Loading';
-  import { type Recordable, type Nullable } from '@vben/types';
+  import type { Recordable } from '@vben/types';
+  import type {VxeGridProps} from '#/adapter/vxe-table';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import {PerEnum} from "#/enums/perEnum";
+
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { PageWrapper } from '@/components/Page';
+  import {Page} from '@vben/common-ui';
   import { useRouter } from 'vue-router';
 
-  import { useModal } from '@/components/Modal';
   import { baseColumns, searchFormSchema } from './formCount.data';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { BasicTree, TreeActionType, TreeItem } from '@/components/Tree';
+  // import { BasicTree, TreeActionType, TreeItem } from '@/components/Tree';
   import {
     getCustomColumnsByFormCode,
     getCustomColumnsByFormId,
     getFormTree,
     exportExcel,
     getPagerModelCustomData, exportExcelByCode,
-  } from '@/api/report/formCount';
-  import { forEach } from '@/utils/helper/treeHelper';
-  import SplitPane from '@/views/components/splitPane/index.vue';
-  import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
+  } from '#/api/report/formCount';
+  import { forEach } from '#/utils/helper/treeHelper';
+  import { Splitpanes, Pane } from '#/components/splitpanes';
+  import {BpmnPreviewModal} from '#/views/components/preview';
   import ProcessFormModal from '../../flowoperation/processTask/ProcessFormModal.vue';
-  import {downloadBlob} from "@/utils/file/download";
-  import LaunchModal from '@/views/process/actions/LaunchModal.vue';
+  import {downloadBlob} from "#/utils/file/download";
+  import LaunchModal from '#/views/process/actions/LaunchModal.vue';
 
   const { currentRoute } = useRouter();
 
+/*
   const [openFullLoading, closeFullLoading] = useLoading({
     tip: '下载中...',
   });
@@ -69,13 +71,13 @@
   ] = useModal();
   const [registerLaunchModal, {openModal: openLaunchModal, setModalProps: setLaunchModalProps}] = useModal();
 
+*/
 
-  const { createMessage, createConfirm } = useMessage();
-  const treeData = ref<TreeItem[]>([]);
+  const treeData = ref<any[]>([]);
   const treeLoading = ref<boolean>(false);
-  const basicTreeRef = ref<Nullable<TreeActionType>>(null);
-  const currentModelInfo = ref<Recordable>({});
-  const currentNode = ref<Recordable>({});
+  const basicTreeRef = ref<any>(null);
+  const currentModelInfo = ref<Recordable<any>>({});
+  const currentNode = ref<Recordable<any>>({});
   const loadingRef = ref(false);
   const showPublishBtn = ref(false);
   const showStopBtn = ref(false);
@@ -121,7 +123,7 @@
 
   function handleLaunch() {
     if(!formCode.value){
-      createMessage.warning('表单标识不能为空！');
+      message.warning('表单标识不能为空！');
       return;
     }
     openLaunchModal(true, {
@@ -165,7 +167,7 @@
   async function doSearchFunc() {
     const { setProps } = getForm();
     if (!formCode.value) {
-      createMessage.warning('表单标识不能为空！');
+      message.warning('表单标识不能为空！');
       return;
     }
     try {

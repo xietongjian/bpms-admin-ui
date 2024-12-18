@@ -9,9 +9,10 @@
 </template>
 <script lang="ts" setup>
   import {defineEmits, defineProps, ref, unref, defineExpose} from 'vue';
-  import {stopProcess} from "@/api/process/process";
-  import {useMessage} from '@/hooks/web/useMessage';
-  import {useLoading} from '@/components/Loading';
+  import {stopProcess} from "#/api/process/process";
+  import {message} from "ant-design-vue";
+
+  // import {useLoading} from '@/components/Loading';
   import {Space} from 'ant-design-vue';
 
   const emit = defineEmits(['doLaunch', 'doSimulation', 'doSave', 'doClose', 'doStop'])
@@ -25,7 +26,6 @@
 
   const canStop = ref(props.taskId && props.taskId !== '0' && props.procInstId && props.procInstId !== '0');
 
-  const {createMessage} = useMessage();
   const [openFullLoading, closeFullLoading] = useLoading({
     tip: '处理中...',
   });
@@ -50,11 +50,11 @@
     openFullLoading();
     stopProcess({processInstanceId: props.procInstId, taskId: props.taskId}).then(res => {
       if (res.success) {
-        createMessage.success(res.msg, 1, () => {
+        message.success(res.msg, 1, () => {
           doBack();
         });
       } else {
-        createMessage.error(res.msg);
+        message.error(res.msg);
       }
       closeFullLoading();
     }).catch(e => {

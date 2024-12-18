@@ -30,7 +30,7 @@ import {
   getMyCommonlyList,
   getPagerModelModelInfo,
 } from '#/api/process/process';
-import { Pane, Splitpanes } from '#/components/splitpanes';
+import { Splitpanes, Pane } from '#/components/splitpanes';
 import { forEach, listToTree } from '#/utils/helper/treeHelper';
 import { groupBy } from '#/utils/index';
 

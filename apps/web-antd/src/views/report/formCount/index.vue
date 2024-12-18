@@ -1,8 +1,8 @@
 <template>
-  <PageWrapper v-loading="loadingRef" dense contentFullHeight fixedHeight class="h-full">
+  <Page auto-content-height content-class="h-full">
     <div class="p-4 h-full">
-      <SplitPane>
-        <template #left>
+      <Splitpanes class="default-theme h-full" >
+        <Pane class="bg-transparent" min-size="20" size="30">
           <BasicTree
             title="表单分类"
             toolbar
@@ -19,8 +19,8 @@
               <span v-else style="color: #1890ff">{{ name }}</span>
             </template>
           </BasicTree>
-        </template>
-        <template #main>
+        </Pane>
+        <Pane class="ml-2 bg-transparent" min-size="20" size="70">
           <BasicTable
             @register="registerTable"
             @row-click="clickRow"
@@ -52,37 +52,46 @@
               </template>
             </template>
           </BasicTable>
-        </template>
-      </SplitPane>
+        </Pane>
+      </Splitpanes>
     </div>
-    <BpmnPreviewModal @register="registerBpmnPreviewModal" />
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" />
     <ProcessFormModal @register="registerProcessFormModal" />
-  </PageWrapper>
+  </Page>
 </template>
 <script lang="ts" setup>
   import { ref, unref, watch, nextTick, onMounted } from 'vue';
-  import { useLoading } from '@/components/Loading';
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { PageWrapper } from '@/components/Page';
+  import { TableAction } from '#/components/table-action';
+  import type { Recordable } from '@vben/types';
+  import type {VxeGridProps} from '#/adapter/vxe-table';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import {PerEnum} from "#/enums/perEnum";
 
-  import { useModal } from '@/components/Modal';
+  import {Page} from '@vben/common-ui';
+
   import { baseColumns, searchFormSchema } from './formCount.data';
-  import { useMessage } from '@/hooks/web/useMessage';
   import { BasicTree, TreeActionType, TreeItem } from '@/components/Tree';
   import {
     getCustomColumnsByFormId,
     getFormTree,
     exportExcel,
-    exportExcelByCode,
+    //exportExcelByCode,
     getPagerModelCustomData,
-  } from '@/api/report/formCount';
-  import { forEach } from '@/utils/helper/treeHelper';
-  import SplitPane from '@/views/components/splitPane/index.vue';
-  import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
-  import ProcessFormModal from '../../flowoperation/processTask/ProcessFormModal.vue';
-  import {downloadBlob} from "@/utils/file/download";
+  } from '#/api/report/formCount';
+  import { forEach } from '#/utils/helper/treeHelper';
+  import { Splitpanes, Pane } from '#/components/splitpanes';
+  // import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
+  import {BpmnPreviewModal} from '#/views/components/preview';
+  import {useVbenVxeGrid} from '#/adapter/vxe-table';
+  import {listColumns} from "#/views/base/app/app.data";
+  import {getAppListByPage} from "#/api/base/app";
+  import {Button, Image, Tag, message} from 'ant-design-vue';
 
-  const [openFullLoading, closeFullLoading] = useLoading({
+  // import ProcessFormModal from '../../flowoperation/processTask/ProcessFormModal.vue';
+  // import {downloadBlob} from "#/utils/file/download";
+
+
+/*  const [openFullLoading, closeFullLoading] = useLoading({
     tip: '下载中...',
   });
   const [
@@ -92,19 +101,18 @@
   const [
     registerBpmnPreviewModal,
     { openModal: openBpmnPreviewModal, setModalProps: setBpmnPreviewProps },
-  ] = useModal();
-
-  const { createMessage, createConfirm } = useMessage();
+  ] = useModal();*/
+  const bpmnPreviewModalRef = ref();
   const treeData = ref<TreeItem[]>([]);
   const treeLoading = ref<boolean>(false);
-  const basicTreeRef = ref<Nullable<TreeActionType>>(null);
-  const currentModelInfo = ref<Recordable>({});
-  const currentNode = ref<Recordable>({});
+  const basicTreeRef = ref<any>(null);
+  const currentModelInfo = ref<Recordable<any>>({});
+  const currentNode = ref<Recordable<any>>({});
   const loadingRef = ref(false);
   const showPublishBtn = ref(false);
   const showStopBtn = ref(false);
 
-  const [
+  /*const [
     registerTable,
     {
       getForm,
@@ -140,7 +148,50 @@
       title: '操作',
       dataIndex: 'action',
     },
-  });
+  });*/
+
+
+  const formOptions: VbenFormProps = {
+    showCollapseButton: false,
+    submitOnEnter: true,
+    commonConfig: {
+      labelWidth: 60,
+    },
+    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+    resetButtonOptions: {
+      show: false,
+    },
+    schema: searchFormSchema,
+  };
+
+  const gridOptions: VxeGridProps<any> = {
+    checkboxConfig: {
+      highlight: true,
+      labelField: 'name',
+    },
+    columns: baseColumns,
+    columnConfig: {resizable: true},
+    height: 'auto',
+    keepSource: true,
+    border: false,
+    stripe: true,
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          return await getPagerModelCustomData({
+            query: {
+              pageNum: page.currentPage,
+              pageSize: page.pageSize,
+            },
+            entity: formValues || {},
+          });
+        },
+      },
+    },
+  };
+
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+
 
   /**
    *  自定义搜索功能
@@ -148,7 +199,7 @@
   async function doSearchFunc() {
     const { setProps } = getForm();
     if (!unref(currentNode).id) {
-      createMessage.warning('请选择表单！');
+      message.warning('请选择表单！');
       return;
     }
     try {
@@ -211,7 +262,7 @@
     },
   );
 
-  function handleViewForm(record: Recordable) {
+  function handleViewForm(record: Recordable<any>) {
     record.processInstanceId = record.proc_inst_id;
     record.businessKey = record.code;
     record.processDefinitionKey = record.model_key;
@@ -229,7 +280,13 @@
     });
   }
 
-  function handlePreview(record: Recordable) {
+  function handlePreview(record: Recordable<any>) {
+    bpmnPreviewModalRef.value.setData({
+      modelKey: record.model_key,
+      procInstId: record.proc_inst_id,
+    });
+    bpmnPreviewModalRef.value.open();
+    /*
     openBpmnPreviewModal(true, {
       modelKey: record.model_key,
       procInstId: record.proc_inst_id,
@@ -240,7 +297,7 @@
       useWrapper: false,
       showOkBtn: false,
       cancelText: '关闭',
-    });
+    });*/
   }
 
   async function handleExport() {
@@ -260,7 +317,7 @@
   }
 
   function handleSuccess() {
-    reload();
+    tableApi.reload();
   }
 
   function changePublishStopBtnShow(status) {
@@ -306,7 +363,7 @@
     }
     const selectedNode = e.selectedNodes[0];
     if (selectedNode.sourceType === '1') {
-      createMessage.warning('请选择表单');
+      message.warning('请选择表单');
       return;
     }
     setLoading(true);
@@ -339,7 +396,7 @@
     const values = validate();
     values.formId = unref(currentNode).id;
     setProps({ searchInfo: values });
-    reload();
+    tableApi.reload();
     return;
   }
 </script>
