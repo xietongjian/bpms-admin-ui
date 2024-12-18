@@ -51,7 +51,7 @@
   import {useAccess} from '@vben/access';
   import type{Recordable} from '@vben/types';
   import { defineComponent, ref, unref } from 'vue';
-  import { Input, Tag, Space, Badge, Popover, message, Affix, Divider } from 'ant-design-vue';
+  import { Input, Tag, Space, Button, Badge, Popover, message, Affix, Divider } from 'ant-design-vue';
   import { SettingOutlined } from '@ant-design/icons-vue';
   import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
   import { getRoleListByPage, deleteByIds, saveBatch } from '#/api/org/role';
@@ -75,8 +75,8 @@
   // const [registerOrgModal, { openModal: openOrgSelector, setModalProps: setOrgModalProps }] =
   //   useModal();
 
-  const currentRole = ref<Recordable>({});
-  const currentNode = ref<Recordable>({});
+  const currentRole = ref<Recordable<any>>({});
+  const currentNode = ref<Recordable<any>>({});
 
   const PerPrefix = 'Role:';
   const {hasAccessByCodes} = useAccess();
@@ -226,7 +226,7 @@
     });
   }
 
-  function handleDelete(record: Recordable) {
+  function handleDelete(record: Recordable<any>) {
     if (record.children && record.children.length > 0) {
       message.warning('有子节点，不能删除！');
       return;

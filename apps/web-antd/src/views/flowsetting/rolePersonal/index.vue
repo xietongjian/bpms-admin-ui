@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper dense contentFullHeight fixedHeight class="h-full">
+  <Page auto-content-height>
     <div class="p-4 h-full">
       <SplitPane>
         <template #left>
@@ -77,21 +77,23 @@
       @register="registerPersonalModal"
       @change="handleSettingPersonalSuccess"
     />
-  </PageWrapper>
+  </Page>
 </template>
 <script lang="ts" setup>
-  import { PerEnum } from '@/enums/perEnum';
+import {PerEnum} from "#/enums/perEnum";
   import { ref, unref, nextTick, onMounted } from 'vue';
-  import { useForm } from '@/components/Form/index';
+  // import { useForm } from '@/components/Form/index';
+import type { Recordable } from '@vben/types';
 
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import PersonalSelectorModal from '@/components/Selector/src/PersonalSelectorModal.vue';
+  // import { BasicTable, useTable, TableAction } from '@/components/Table';
+  import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
+import { TableAction } from '#/components/table-action';
+import { Pane, Splitpanes } from '#/components/splitpanes';
 
-  import { PageWrapper } from '@/components/Page';
-  import CompanyTree from '@/views/components/leftTree/CompanyTree.vue';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { useModal } from '@/components/Modal';
-  import SplitPane from '@/views/components/splitPane/index.vue';
+import {Page} from '@vben/common-ui';
+import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';
+  // import { useMessage } from '@/hooks/web/useMessage';
+  // import { useModal } from '@/components/Modal';
   import { EmpInfo } from '@/components/EmpInfo';
 
   import {
@@ -105,9 +107,7 @@
     deleteById,
     getPersonalsByRoleIdAndOrgId,
     saveOrUpdate,
-  } from '@/api/flowsetting/rolePersonal';
-
-  const { createMessage } = useMessage();
+  } from '#/api/flowsetting/rolePersonal';
 
   // 人员选择弹窗
   const [
