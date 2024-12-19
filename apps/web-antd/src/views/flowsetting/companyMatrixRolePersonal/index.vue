@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper dense contentFullHeight>
+  <Page auto-content-height>
     <BasicTable
       ref="companyMatrixTable"
       @register="registerTable"
@@ -67,33 +67,36 @@
       @register="registerExportMatrixRoleExcelModal"
       @success="defaultHeader"
     />
-  </PageWrapper>
+  </Page>
 </template>
 <script lang="ts" setup>
-  import { PerEnum } from '@/enums/perEnum';
-  import { Authority } from '@/components/Authority';
+import {PerEnum} from '#/enums/perEnum';
+import type { Recordable } from '@vben/types';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormProps} from '@vben/common-ui';
+
+import {useAccess} from "@vben/access";
   import { ref, unref, nextTick, onMounted, h } from 'vue';
   import { Button, Tag, Space, Popconfirm, Tooltip } from 'ant-design-vue';
   import { ImportOutlined, CloseOutlined, DownloadOutlined } from '@ant-design/icons-vue';
-  import { BasicTable, useTable } from '@/components/Table';
-  import PersonalSelectorModal from '@/components/Selector/src/PersonalSelectorModal.vue';
-  import ExportMatrixRoleExcelModal from '@/views/flowsetting/components/ExportMatrixRoleExcelModal.vue';
-  import { PageWrapper } from '@/components/Page';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { useModal } from '@/components/Modal';
-  import { getMatrixRoleList } from '@/api/org/role';
+import { TableAction } from '#/components/table-action';
+
+  import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
+  import ExportMatrixRoleExcelModal from '#/views/flowsetting/components/ExportMatrixRoleExcelModal.vue';
+import {Page} from '@vben/common-ui';
+  import { getMatrixRoleList } from '#/api/org/role';
   import {
     saveOrUpdateRoleScope,
     deleteMatrixPersonalById,
     getMatrixPersonal,
     getCompanyMatrixList,
-  } from '@/api/flowsetting/rolePersonal';
+  } from '#/api/flowsetting/rolePersonal';
   import { baseColumns, searchFormSchema } from './companyMatrix.data';
-  import { usePermission } from '@/hooks/web/usePermission';
-  import { jsonToSheetXlsx, ImpExcel, ExcelData } from '@/components/Excel';
-  import { treeToList } from '@/utils/helper/treeHelper';
+  // import { jsonToSheetXlsx, ImpExcel, ExcelData } from '@/components/Excel';
+  import { treeToList } from '#/utils/helper/treeHelper';
 
-  const { createMessage } = useMessage();
+const {hasAccessByCodes}  = useAccess();
+// const PerPrefix = "App:";
 
   // 人员选择弹窗
   const [

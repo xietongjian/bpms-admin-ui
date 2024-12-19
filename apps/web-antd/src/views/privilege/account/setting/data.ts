@@ -1,4 +1,5 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import { z } from '#/adapter/form';
 
 export interface ListItem {
   key: string;
@@ -39,7 +40,6 @@ export const baseSetschemas: FormSchema[] = [
     fieldName: 'realName',
     component: 'Input',
     label: '姓名',
-    colProps: { span: 18 },
   },
 /*  {
     fieldName: 'introduction',
@@ -51,19 +51,16 @@ export const baseSetschemas: FormSchema[] = [
     fieldName: 'tel',
     component: 'Input',
     label: '联系电话',
-    colProps: { span: 18 },
   },
   {
     fieldName: 'email',
     component: 'Input',
     label: '邮箱',
-    colProps: { span: 18 },
   },
   {
     fieldName: 'address',
     component: 'Input',
     label: '所在地区',
-    colProps: { span: 18 },
   },
   {
     fieldName: 'userNo',

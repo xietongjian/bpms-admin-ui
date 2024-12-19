@@ -5,7 +5,7 @@ import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
 
 import { Button, Image } from 'ant-design-vue';
 
-import { componentMap } from '#/components/view/component-map';
+// import { componentMap } from '#/components/view/component-map';
 import { omit } from '#/utils';
 
 import { useVbenForm } from './form';

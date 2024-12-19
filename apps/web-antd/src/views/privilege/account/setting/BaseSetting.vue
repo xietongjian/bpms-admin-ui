@@ -1,7 +1,7 @@
 <template>
-  <div class="w-full" title="基本设置" :canExpand="false">
+  <div class="w-full" title="基本设置" >
     <Row :gutter="24">
-      <Col :span="14">
+      <Col :span="20">
         <BasicForm />
       </Col>
 <!--      <Col :span="10">
@@ -23,10 +23,9 @@
 </template>
 <script lang="ts" setup>
   // import { CropperAvatar } from '@/components/Cropper';
+  import {computed, nextTick, onMounted} from 'vue';
   import { Col, Row, Collapse, message } from 'ant-design-vue';
-  import { computed, onMounted } from 'vue';
-  import {useVbenForm} from '@vben/common-ui';
-
+  import {useVbenForm} from '#/adapter/form';
 
   // import { accountInfoApi } from '@/api/demo/account';
   import { uploadApi } from '#/api/sys/upload';
@@ -45,15 +44,16 @@
   });
 
   onMounted(async () => {
+    await nextTick();
     const data = await getUserInfoApi();
     await formApi.setValues(data);
   });
 
-  const avatar = computed(() => {
-    const { avatar } = userStore.getUserInfo;
-    console.log(avatar);
-    return avatar || headerImg;
-  });
+  // const avatar = computed(() => {
+  //   const { avatar } = userStore.getUserInfo;
+  //   console.log(avatar);
+  //   return avatar || headerImg;
+  // });
 
   function updateAvatar({ src, data }) {
     const userinfo = userStore.getUserInfo;

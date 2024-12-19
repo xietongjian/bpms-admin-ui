@@ -3,7 +3,7 @@ import { computed, type PropType } from 'vue';
 
 import { requestClient } from '#/api/request';
 
-import { ApiCheckboxGroup, ApiRadioGroup, ApiSelect } from '..';
+import { ApiCheckboxGroup, ApiRadioGroup} from '..';
 
 type OptionsItem = { disabled?: boolean; label: string; value: string };
 
@@ -39,7 +39,7 @@ const DictComponent = computed(() => {
   } else if (props.renderType === 'CheckboxGroup') {
     return ApiCheckboxGroup;
   }
-  return ApiSelect;
+  return null;
 });
 const fetch = () => {
   return requestClient.post('/sys/dict/getByDictType', {

@@ -78,7 +78,8 @@ export type ComponentType =
   | 'TreeSelect'
   | 'Upload'
   | BaseFormComponentType
-  | CustomComponentType;
+  // | CustomComponentType
+    ;
 
 async function initComponentAdapter() {
   const components: Partial<Record<ComponentType, Component>> = {
@@ -154,7 +155,7 @@ async function initComponentAdapter() {
     Upload,
   };
   // 自动注册自定义组件
-  registerComponent(components);
+  // registerComponent(components);
   // 将组件注册到全局共享状态中
   globalShareState.setComponents(components);
 
