@@ -1,37 +1,42 @@
 <template>
-  <Page auto-content-height >
-    <div class="flex flex-row gap-2 h-full">
-      <div class="w-[260px] h-full bg-card flex flex-col">
-        <Tree
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="true"
+      :split-line="true"
+      :resizable="true"
+      :left-collapsible="true"
+      :auto-content-height="true"
+      content-class="h-full">
+    <template #left>
+      <Tree
           title="类型"
           treeWrapperClassName="h-[calc(100%-35px)] overflow-auto"
           :clickRowToExpand="false"
           :treeData="treeData"
           @select="handleSelect"
-        />
-      </div>
-      <div class="flex-1 h-full">
-        <BasicTable class="!pt-0 !pl-0 !pr-0 !pb-0">
-          <template #toolbar-tools>
-            <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
-          </template>
+      />
+    </template>
+    <div class="h-full">
+      <BasicTable class="!pt-0 !pl-0 !pr-0 !pb-0">
+        <template #toolbar-tools>
+          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
+        </template>
 
-          <template #action="{ row }">
-            <TableAction
-                :actions="createActions(row)"
-            />
-          </template>
-          <template #type="{ row }">
-            <Tag v-if="row.type === 1" color="processing">公司矩阵角色</Tag>
-            <Tag v-else-if="row.type === 2" color="cyan">部门矩阵角色</Tag>
-          </template>
-        </BasicTable>
-
-      </div>
-
+        <template #action="{ row }">
+          <TableAction
+              :actions="createActions(row)"
+          />
+        </template>
+        <template #type="{ row }">
+          <Tag v-if="row.type === 1" color="processing">公司矩阵角色</Tag>
+          <Tag v-else-if="row.type === 2" color="cyan">部门矩阵角色</Tag>
+        </template>
+      </BasicTable>
     </div>
     <RoleModal ref="roleModalRef" @success="handleSuccess" />
-  </Page>
+  </ColPage>
 </template>
 <script lang="ts" setup>
   import { PerEnum } from '#/enums/perEnum';
@@ -45,7 +50,7 @@
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import { getRoleListByPage, deleteByIds, saveBatch, getMatrixRolePageList } from '#/api/org/role';
   // import { BasicTree, TreeItem } from '@/components/Tree';
-  import {Page} from '@vben/common-ui';
+  import {ColPage, Page} from '@vben/common-ui';
   import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';
   import RoleModal from './RoleModal.vue';
   // import OrgSelectorModal from '@/components/Selector/src/OrgSelectorModal.vue';

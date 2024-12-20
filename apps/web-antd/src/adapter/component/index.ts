@@ -11,6 +11,9 @@ import type { Component, SetupContext } from 'vue';
 import { h } from 'vue';
 
 import { ApiComponent, globalShareState, IconPicker } from '@vben/common-ui';
+import { OrgSelector } from '#/components/selector';
+
+
 import { $t } from '@vben/locales';
 
 import {
@@ -38,7 +41,7 @@ import {
   Upload,
 } from 'ant-design-vue';
 
-import { registerComponent } from '#/components/form/component-map';
+// import { registerComponent } from '#/components/component-map';
 
 const withDefaultPlaceholder = <T extends Component>(
   component: T,
@@ -78,7 +81,7 @@ export type ComponentType =
   | 'TreeSelect'
   | 'Upload'
   | BaseFormComponentType
-  // | CustomComponentType
+  | CustomComponentType
     ;
 
 async function initComponentAdapter() {
@@ -131,6 +134,17 @@ async function initComponentAdapter() {
       return h(
         IconPicker,
         { iconSlot: 'addonAfter', inputComponent: Input, ...props, ...attrs },
+        slots,
+      );
+    },
+    OrgSelector: (props, { attrs, slots }) => {
+      return h(
+        OrgSelector,
+        {
+          iconSlot: 'addonAfter',
+          inputComponent: Input,
+          ...props,
+          ...attrs },
         slots,
       );
     },

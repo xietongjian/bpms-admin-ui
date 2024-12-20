@@ -88,7 +88,6 @@ import type { Recordable } from '@vben/types';
   // import { BasicTable, useTable, TableAction } from '@/components/Table';
   import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
 import { TableAction } from '#/components/table-action';
-import { Pane, Splitpanes } from '#/components/splitpanes';
 
 import {Page} from '@vben/common-ui';
 import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';

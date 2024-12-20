@@ -49,7 +49,6 @@
     getPagerModelCustomData, exportExcelByCode,
   } from '#/api/report/formCount';
   import { forEach } from '#/utils/helper/treeHelper';
-  import { Splitpanes, Pane } from '#/components/splitpanes';
   import {BpmnPreviewModal} from '#/views/components/preview';
   import ProcessFormModal from '../../flowoperation/processTask/ProcessFormModal.vue';
   import {downloadBlob} from "#/utils/file/download";

@@ -4,7 +4,7 @@ import type {Recordable} from '@vben/types';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
-import {Page} from '@vben/common-ui';
+import {ColPage} from '@vben/common-ui';
 import {PerEnum} from "#/enums/perEnum";
 
 import {
@@ -17,7 +17,6 @@ import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons-vue"
 import {Button, message, Popconfirm, Tooltip, Tree} from "ant-design-vue";
 import {TableAction} from '#/components/table-action';
 import {listToTree} from "#/utils/helper/treeHelper";
-import {Pane, Splitpanes} from '#/components/splitpanes';
 
 import ApiCategoryModal from "./api-category-modal.vue";
 import ApiInfoDrawer from "./api-info-drawer.vue";
@@ -278,9 +277,18 @@ function createActions(record: Recordable<any>) {
 </script>
 
 <template>
-  <Page auto-content-height>
-    <Splitpanes>
-      <Pane class="bg-transparent" min-size="20" size="30">
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="true"
+      :split-line="true"
+      :resizable="true"
+      :left-collapsible="true"
+      :auto-content-height="true"
+      content-class="h-full">
+    <template #left>
+      <div class="h-full bg-card">
         <Tree
             v-bind="$attrs"
             v-if="apiCategoryTreeData.length > 0"
@@ -305,28 +313,26 @@ function createActions(record: Recordable<any>) {
             </Row>
           </template>
         </Tree>
-      </Pane>
-      <Pane class="ml-2 bg-transparent" min-size="20" size="70">
-        <BasicTable @register="registerTable" class="!p-0">
-          <template #toolbar-tools>
-            <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" size="small" type="primary"
-                    @click="handleCreate">新增
-            </Button>
-          </template>
-          <template #bodyCell="{ column, record }">
-            <template v-if="column.key === 'categoryId'">
-              {{ apiCategoryDataMap[record.categoryId]?.name || '-' }}
-            </template>
-          </template>
-          <template #action="{ row }">
-            <TableAction
-                :actions="createActions(row)"
-            />
-          </template>
-        </BasicTable>
-      </Pane>
-    </Splitpanes>
+      </div>
+    </template>
+    <BasicTable @register="registerTable" class="!p-0">
+      <template #toolbar-tools>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" size="small" type="primary"
+                @click="handleCreate">新增
+        </Button>
+      </template>
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'categoryId'">
+          {{ apiCategoryDataMap[record.categoryId]?.name || '-' }}
+        </template>
+      </template>
+      <template #action="{ row }">
+        <TableAction
+            :actions="createActions(row)"
+        />
+      </template>
+    </BasicTable>
     <ApiInfoDrawer ref="apiInfoDrawerRef" @register="registerApiInfoDrawer" @success="handleSuccess"/>
     <ApiCategoryModal ref="apiCategoryModalRef" @register="registerApiCategoryModal" @success="handleCategorySuccess"/>
-  </Page>
+  </ColPage>
 </template>

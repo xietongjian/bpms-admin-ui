@@ -12,10 +12,9 @@
   // import SplitPane from '@/views/components/splitPane/index.vue';
   import { columns, searchFormSchema } from './dept.data';
   import { EmpInfo } from '#/views/components/EmpInfo';
-  import {Page} from '@vben/common-ui';
+  import {ColPage} from '@vben/common-ui';
   import type {VbenFormProps} from '@vben/common-ui';
   import { TableAction } from '#/components/table-action';
-  import { Pane, Splitpanes } from '#/components/splitpanes';
 
 
   const PerPrefix = 'Department:';
@@ -159,32 +158,37 @@
 </script>
 
 <template>
-  <Page auto-content-height>
-    <Splitpanes class="default-theme h-full">
-      <Pane class="bg-transparent" min-size="20" size="30">
-        <CompanyTree style="height: 100%" @select="handleSelect" />
-      </Pane>
-      <Pane class="ml-2 bg-transparent" min-size="20" size="70">
-        <BasicTable class="!pt-0 !pl-0 !pr-0 !pb-0">
-          <template #toolbar>
-            <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
-          </template>
-          <template #action="{ row }">
-            <TableAction
-                :stopButtonPropagation="true"
-                :actions="createActions(row)"
-            />
-          </template>
-          <template #superiorName="{ row }">
-            <EmpInfo :no="row.superiorCode" :name="row.superiorName" />
-          </template>
+  <ColPage
+    :left-max-width="50"
+    :left-min-width="10"
+    :left-width="15"
+    :split-handle="true"
+    :split-line="true"
+    :resizable="true"
+    :left-collapsible="true"
+    :auto-content-height="true"
+    content-class="h-full">
+    <template #left>
+      <CompanyTree @select="handleSelect" />
+    </template>
+    <BasicTable class="!pt-0 !pl-0 !pr-0 !pb-0">
+      <template #toolbar>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
+      </template>
+      <template #action="{ row }">
+        <TableAction
+          :stopButtonPropagation="true"
+          :actions="createActions(row)"
+        />
+      </template>
+      <template #superiorName="{ row }">
+        <EmpInfo :no="row.superiorCode" :name="row.superiorName" />
+      </template>
 
-          <template #leaderName="{ row }">
-            <EmpInfo :no="row.leaderCode" :name="row.leaderName" />
-          </template>
-        </BasicTable>
-      </Pane>
-    </Splitpanes>
+      <template #leaderName="{ row }">
+        <EmpInfo :no="row.leaderCode" :name="row.leaderName" />
+      </template>
+    </BasicTable>
     <DeptModal ref="deptModalRef" @success="handleSuccess" />
-  </Page>
+  </ColPage>
 </template>

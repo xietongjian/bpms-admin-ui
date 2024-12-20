@@ -1,5 +1,3 @@
 export type CustomComponentType =
-  | 'ApiCheckboxGroup'
-  | 'ApiDict'
-  | 'ApiRadioGroup';
+  | 'PersonalSelector';
   // | 'ApiTreeSelect';

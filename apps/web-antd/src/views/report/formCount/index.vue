@@ -1,17 +1,26 @@
 <template>
-  <Page auto-content-height content-class="h-full">
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="true"
+      :split-line="true"
+      :resizable="true"
+      :left-collapsible="true"
+      :auto-content-height="true"
+      content-class="h-full">
     <div class="p-4 h-full">
-      <Splitpanes class="default-theme h-full" >
-        <Pane class="bg-transparent" min-size="20" size="30">
+      <template #left>
+        <div class="h-full bg-card">
           <BasicTree
-            title="表单分类"
-            toolbar
-            search
-            treeWrapperClassName="h-[calc(100%-35px)] overflow-auto"
-            :clickRowToExpand="false"
-            :treeData="treeData"
-            ref="basicTreeRef"
-            @select="handleSelect"
+              title="表单分类"
+              toolbar
+              search
+              treeWrapperClassName="h-[calc(100%-35px)] overflow-auto"
+              :clickRowToExpand="false"
+              :treeData="treeData"
+              ref="basicTreeRef"
+              @select="handleSelect"
           >
             <template #title="{ name, sourceType }">
               <!-- 如果是分类则不可点击 -->
@@ -19,23 +28,23 @@
               <span v-else style="color: #1890ff">{{ name }}</span>
             </template>
           </BasicTree>
-        </Pane>
-        <Pane class="ml-2 bg-transparent" min-size="20" size="70">
-          <BasicTable
-            @register="registerTable"
-            @row-click="clickRow"
-            @selection-change="changeSelection"
-            @fetch-success="fetchSuccess"
-            class="!pt-0 !pl-0 !pr-0 !pb-0"
-          >
-            <template #toolbar>
-              <a-button type="primary" @click="handleExport"> 导出Excel </a-button>
-            </template>
+        </div>
+      </template>
+      <BasicTable
+          @register="registerTable"
+          @row-click="clickRow"
+          @selection-change="changeSelection"
+          @fetch-success="fetchSuccess"
+          class="!pt-0 !pl-0 !pr-0 !pb-0"
+      >
+        <template #toolbar>
+          <a-button type="primary" @click="handleExport"> 导出Excel </a-button>
+        </template>
 
-            <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'action'">
-                <TableAction
-                  :actions="[
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'action'">
+            <TableAction
+                :actions="[
                     {
                       label: '',
                       tooltip: '查看表单',
@@ -48,16 +57,14 @@
                       onClick: handlePreview.bind(null, record),
                     },
                   ]"
-                />
-              </template>
-            </template>
-          </BasicTable>
-        </Pane>
-      </Splitpanes>
+            />
+          </template>
+        </template>
+      </BasicTable>
     </div>
     <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" />
     <ProcessFormModal @register="registerProcessFormModal" />
-  </Page>
+  </ColPage>
 </template>
 <script lang="ts" setup>
   import { ref, unref, watch, nextTick, onMounted } from 'vue';
@@ -67,7 +74,7 @@
   import type {VbenFormProps} from '@vben/common-ui';
   import {PerEnum} from "#/enums/perEnum";
 
-  import {Page} from '@vben/common-ui';
+  import {ColPage, Page} from '@vben/common-ui';
 
   import { baseColumns, searchFormSchema } from './formCount.data';
   import { BasicTree, TreeActionType, TreeItem } from '@/components/Tree';
@@ -79,7 +86,6 @@
     getPagerModelCustomData,
   } from '#/api/report/formCount';
   import { forEach } from '#/utils/helper/treeHelper';
-  import { Splitpanes, Pane } from '#/components/splitpanes';
   // import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
   import {BpmnPreviewModal} from '#/views/components/preview';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';

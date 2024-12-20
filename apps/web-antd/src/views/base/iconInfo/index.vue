@@ -1,14 +1,21 @@
 <template>
-  <Page auto-content-height>
-    <div class="h-full">
-      <Splitpanes class="default-theme h-full !bg-card p-2">
-        <Pane class="!bg-card p-2" min-size="10" size="20">
-          <div class="flex flex-col">
-            <div class="h-10 flex flex-row justify-between border border-solid border-b-px border-x-0 border-t-0">
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="true"
+      :split-line="true"
+      :resizable="true"
+      :left-collapsible="true"
+      :auto-content-height="true"
+      content-class="h-full">
+    <template #left>
+      <div class="flex flex-col">
+        <div class="h-10 flex flex-row justify-between border border-solid border-b-px border-x-0 border-t-0">
               <span>
                 图标分类
               </span>
-              <span>
+          <span>
                 <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])"
                         size="small"
                         @click="handleCreateCategory"
@@ -16,35 +23,35 @@
                   新增
                 </Button>
               </span>
-            </div>
-            <div>
-              <Tree
-                :loading="treeLoading"
-                title="图标分类"
-                treeWrapperClassName="h-[calc(100%-35px)] overflow-auto h-full"
-                :clickRowToExpand="false"
-                :treeData="iconCategoryTreeData"
-                @select="handleSelect"
-                ref="basicTreeRef"
-                block-node
-                :field-names="{ title: 'name' }"
-                :actionList="treeActionList"
-              >
-                <template #title="node">
-                  <div class="w-full flex flex-row justify-between group">
-                    <span >{{node.name}}</span>
-                    <span class="group-hover:block hidden text-right">
+        </div>
+        <div>
+          <Tree
+              :loading="treeLoading"
+              title="图标分类"
+              treeWrapperClassName="h-[calc(100%-35px)] overflow-auto h-full"
+              :clickRowToExpand="false"
+              :treeData="iconCategoryTreeData"
+              @select="handleSelect"
+              ref="basicTreeRef"
+              block-node
+              :field-names="{ title: 'name' }"
+              :actionList="treeActionList"
+          >
+            <template #title="node">
+              <div class="w-full flex flex-row justify-between group">
+                <span >{{node.name}}</span>
+                <span class="group-hover:block hidden text-right">
                       <Button @click.stop
                               size="small"
                               type="link"
                               :icon="h(EditOutlined)"
                               @click="handleUpdateCategory(node)" />
                       <Popconfirm
-                        title="确定要删除吗？"
-                        ok-text="确认"
-                        cancel-text="取消"
-                        @confirm="handleDeleteCategory(node)"
-                        :okButtonProps="{danger: true}"
+                          title="确定要删除吗？"
+                          ok-text="确认"
+                          cancel-text="取消"
+                          @confirm="handleDeleteCategory(node)"
+                          :okButtonProps="{danger: true}"
                       >
                         <Button @click.stop
                                 size="small"
@@ -53,93 +60,91 @@
                                 danger />
                       </Popconfirm>
                     </span>
-                  </div>
-                </template>
-              </Tree>
-            </div>
-          </div>
-        </Pane>
-        <Pane class="flex flex-col ml-2 !bg-card p-0" min-size="20" size="80">
-          <div class="h-12 flex flex-row justify-between items-center">
-            <InputSearch class="w-[50%]"
-              v-model:value="searchTxt"
-              :allow-clear="true"
-              enter-button
-              placeholder="搜索图标"
-              @search="onSearch"
-            />
-            <div>
-              <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新建</Button>
-            </div>
-          </div>
-
-          <div class="flex-1 w-full overflow-y-auto border border-x-0">
-            <Spin :spinning="dataLoading" >
-              <div class="flex flex-row w-full flex-wrap min-h-[300px]">
-                <div v-if="listData && listData.length > 0" v-for="item in listData"
-                     class="group relative flex flex-col items-center w-[80px] h-[100px] p-1">
-                  <div class="rounded-md hover:outline-rounded hover:outline hover:outline-solid hover:outline-blue-500 h-[60px] w-[60px] p-1">
-                    <Avatar
-                      :src="item.icon"
-                      shape="square"
-                      class="w-full !leading-[62px] h-full items-center cursor-pointer object-contain"
-                      @click="previewImageHandle(item.icon)"
-                    >
-                      <template #icon>
-                        <PictureOutlined class="text-4xl" />
-                      </template>
-                    </Avatar>
-                  </div>
-                  <div class="text-center w-full">
-                    <div class="text-sm w-full overflow-ellipsis overflow-hidden whitespace-nowrap overflow-hidden whitespace-nowrap text-overflow-ellipsis" :title="item.name">{{ item.name }}</div>
-                    <div class="text-xs text-gray-400">{{ item.sn }}</div>
-                  </div>
-                  <div
-                    v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE, PerPrefix + PerEnum.DELETE])"
-                    class="group-hover:block hidden absolute top-1 right-3 cursor-pointer">
-                    <Dropdown>
-                      <a class="w-[20px] h-[20px] bg-blue-500/80 rounded-full flex items-center justify-center" @click.prevent>
-                        <EllipsisOutlined style="color: white;"/>
-                      </a>
-                      <template #overlay>
-                        <Menu>
-                          <MenuItem v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])">
-                            <a href="javascript:;" @click="handleEdit(item)" >编辑</a>
-                          </MenuItem>
-                          <MenuItem v-if="hasAccessByCodes([PerPrefix + PerEnum.DELETE])">
-                            <Popconfirm
-                              title="确定要删除吗？"
-                              ok-text="确认"
-                              cancel-text="取消"
-                              @confirm="handleDeleteIconInfo(item)"
-                              :okButtonProps="{danger: true}"
-                            >
-                              <a href="javascript:;">删除</a>
-                            </Popconfirm>
-                          </MenuItem>
-                        </Menu>
-                      </template>
-                    </Dropdown>
-                  </div>
-                </div>
-                <div v-else class="text-center w-full">
-                  <Empty />
-                </div>
               </div>
-            </Spin>
-          </div>
+            </template>
+          </Tree>
+        </div>
+      </div>
+    </template>
+    <div class="h-full flex flex-col ml-2 !bg-card p-0" min-size="20" size="80">
+      <div class="h-12 flex flex-row justify-between items-center">
+        <InputSearch class="w-[50%]"
+                     v-model:value="searchTxt"
+                     :allow-clear="true"
+                     enter-button
+                     placeholder="搜索图标"
+                     @search="onSearch"
+        />
+        <div>
+          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新建</Button>
+        </div>
+      </div>
 
-          <div class="h-12 text-center flex flex-col justify-center">
-            <Pagination size="small"
-                        :pagination="pagination"
-                        :defaultPageSize="100"
-                        @change="onChange"
-                        @showSizeChange="onShowSizeChange"
-                        :pageSizeOptions="['50', '100', '200', '300', '500', '1000']"
-                        :total="pagination.total"/>
+      <div class="flex-1 w-full overflow-y-auto border border-x-0">
+        <Spin :spinning="dataLoading" >
+          <div class="flex flex-row w-full flex-wrap min-h-[300px]">
+            <div v-if="listData && listData.length > 0" v-for="item in listData"
+                 class="group relative flex flex-col items-center w-[80px] h-[100px] p-1">
+              <div class="rounded-md hover:outline-rounded hover:outline hover:outline-solid hover:outline-blue-500 h-[60px] w-[60px] p-1">
+                <Avatar
+                    :src="item.icon"
+                    shape="square"
+                    class="w-full !leading-[62px] h-full items-center cursor-pointer object-contain"
+                    @click="previewImageHandle(item.icon)"
+                >
+                  <template #icon>
+                    <PictureOutlined class="text-4xl" />
+                  </template>
+                </Avatar>
+              </div>
+              <div class="text-center w-full">
+                <div class="text-sm w-full overflow-ellipsis overflow-hidden whitespace-nowrap overflow-hidden whitespace-nowrap text-overflow-ellipsis" :title="item.name">{{ item.name }}</div>
+                <div class="text-xs text-gray-400">{{ item.sn }}</div>
+              </div>
+              <div
+                  v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE, PerPrefix + PerEnum.DELETE])"
+                  class="group-hover:block hidden absolute top-1 right-3 cursor-pointer">
+                <Dropdown>
+                  <a class="w-[20px] h-[20px] bg-blue-500/80 rounded-full flex items-center justify-center" @click.prevent>
+                    <EllipsisOutlined style="color: white;"/>
+                  </a>
+                  <template #overlay>
+                    <Menu>
+                      <MenuItem v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])">
+                        <a href="javascript:;" @click="handleEdit(item)" >编辑</a>
+                      </MenuItem>
+                      <MenuItem v-if="hasAccessByCodes([PerPrefix + PerEnum.DELETE])">
+                        <Popconfirm
+                            title="确定要删除吗？"
+                            ok-text="确认"
+                            cancel-text="取消"
+                            @confirm="handleDeleteIconInfo(item)"
+                            :okButtonProps="{danger: true}"
+                        >
+                          <a href="javascript:;">删除</a>
+                        </Popconfirm>
+                      </MenuItem>
+                    </Menu>
+                  </template>
+                </Dropdown>
+              </div>
+            </div>
+            <div v-else class="text-center w-full">
+              <Empty />
+            </div>
           </div>
-        </Pane>
-      </Splitpanes>
+        </Spin>
+      </div>
+
+      <div class="h-12 text-center flex flex-col justify-center">
+        <Pagination size="small"
+                    :pagination="pagination"
+                    :defaultPageSize="100"
+                    @change="onChange"
+                    @showSizeChange="onShowSizeChange"
+                    :pageSizeOptions="['50', '100', '200', '300', '500', '1000']"
+                    :total="pagination.total"/>
+      </div>
     </div>
     <IconInfoModal ref="iconInfoModalRef" @success="handleSuccess"/>
     <IconCategoryModal ref="iconCategoryModalRef" @success="handleCategorySuccess"/>
@@ -151,7 +156,7 @@
           :preview="{ visible: previewImageVisible, onVisibleChange: previewImageVisibleChange }"
       />
     </div>
-  </Page>
+  </ColPage>
 </template>
 <script lang="ts" setup>
 import {h, onMounted, ref} from 'vue';
@@ -161,10 +166,9 @@ import {
   getIconCategoryListData,
   getIconInfoListByPage,
 } from '#/api/base/iconInfo';
-import {Page} from '@vben/common-ui';
+import {ColPage, Page} from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
 
-import {Pane, Splitpanes} from '#/components/splitpanes';
 import {listToTree} from '#/utils/helper/treeHelper';
 import {PerEnum} from "#/enums/perEnum";
 import {useAccess} from '@vben/access';

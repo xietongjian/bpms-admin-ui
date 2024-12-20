@@ -16,7 +16,6 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '接口名',
     field: 'name',
-    width: 150,
     align: 'left',
     resizable: true,
   },

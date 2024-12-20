@@ -1,143 +1,150 @@
 <template>
-  <Page auto-content-height>
-    <Splitpanes class="default-theme h-full" >
-      <Pane class="bg-transparent" min-size="20" size="30">
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="true"
+      :split-line="true"
+      :resizable="true"
+      :left-collapsible="true"
+      :auto-content-height="true"
+      content-class="h-full">
+    <template #left>
+      <div class="h-full bg-card">
         <OrgTree class="h-full" @select="handleSelect" />
-      </Pane>
-      <Pane class="ml-2 bg-transparent" min-size="20" size="70">
-        <BasicTable @register="registerTable" class="!pt-0 !pl-0 !pr-0 !pb-0">
-          <template #toolbar-tools>
-            <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="link" @click="handleExportTemplate">导出模板</Button>
-            <ImpExcel v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" @success="loadDataSuccess" dateFormat="xlsx">
-              <Button>
-                <template #icon>
-                  <ImportOutlined />
-                </template>
-                导入Excel
-              </Button>
-            </ImpExcel>
+      </div>
+    </template>
+    <BasicTable @register="registerTable" class="!pt-0 !pl-0 !pr-0 !pb-0">
+      <template #toolbar-tools>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="link" @click="handleExportTemplate">导出模板</Button>
+        <ImpExcel v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" @success="loadDataSuccess" dateFormat="xlsx">
+          <Button>
+            <template #icon>
+              <ImportOutlined />
+            </template>
+            导入Excel
+          </Button>
+        </ImpExcel>
 
-            <PopConfirmButton v-if="hasAccessByCodes([PerPrefix + PerEnum.SYNC])"
-                              title="同步需要花费一定的时间，确定要同步吗？"
-                              @confirm="handleSyncAll"
-                              type="primary"
-            >
-              全量同步
-            </PopConfirmButton>
-            <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
-          </template>
+        <PopConfirmButton v-if="hasAccessByCodes([PerPrefix + PerEnum.SYNC])"
+                          title="同步需要花费一定的时间，确定要同步吗？"
+                          @confirm="handleSyncAll"
+                          type="primary"
+        >
+          全量同步
+        </PopConfirmButton>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
+      </template>
 
-          <template #status="{ row }">
-            <Tag v-if="row.status === 1" color="green">在职</Tag>
-            <Tag v-else color="red">离职</Tag>
-          </template>
-          <template #action="{ row }">
-            <TableAction
-                :actions="createActions(row)"
-            />
-          </template>
+      <template #status="{ row }">
+        <Tag v-if="row.status === 1" color="green">在职</Tag>
+        <Tag v-else color="red">离职</Tag>
+      </template>
+      <template #action="{ row }">
+        <TableAction
+            :actions="createActions(row)"
+        />
+      </template>
 
-          <template #name="{ row }">
-            <EmpInfo :no="row.code" :name="row.name">
-              <Badge>
-                <template #count>
-                  <WomanOutlined
-                      v-if="row.sex === 2"
-                      style="color: #f5222d; font-size: 12px"
+      <template #name="{ row }">
+        <EmpInfo :no="row.code" :name="row.name">
+          <Badge>
+            <template #count>
+              <WomanOutlined
+                  v-if="row.sex === 2"
+                  style="color: #f5222d; font-size: 12px"
+              />
+              <ManOutlined v-else style="color: #1890ff; font-size: 12px" />
+            </template>
+            <Avatar :src="row.headImg" @click="previewImageHandle(row.headImg)">
+              <template #icon>
+                <UserOutlined />
+              </template>
+            </Avatar>
+          </Badge>
+          {{ row.name }}
+        </EmpInfo>
+      </template>
+
+      <template #roles="{ row }">
+        <div v-if="row.roles && row.roles.length > 0" class="personal-roles">
+          <Popover title="角色详情" placement="left" class="role-details">
+            <template #content>
+              <div
+                  class="personal-roles"
+                  style="width: 300px; max-height: 400px; overflow: auto"
+              >
+                <div
+                    class="mb-2"
+                    v-if="row.roles.filter((item) => item.type === 0).length > 0"
+                >
+                  <h3 class="mb-0">人员角色</h3>
+                  <Divider
+                      style="height: 1px; background-color: #7cb305; margin: 0"
+                      orientation="left"
                   />
-                  <ManOutlined v-else style="color: #1890ff; font-size: 12px" />
-                </template>
-                <Avatar :src="row.headImg" @click="previewImageHandle(row.headImg)">
-                  <template #icon>
-                    <UserOutlined />
-                  </template>
-                </Avatar>
-              </Badge>
-              {{ row.name }}
-            </EmpInfo>
-          </template>
-
-          <template #roles="{ row }">
-            <div v-if="row.roles && row.roles.length > 0" class="personal-roles">
-              <Popover title="角色详情" placement="left" class="role-details">
-                <template #content>
-                  <div
-                      class="personal-roles"
-                      style="width: 300px; max-height: 400px; overflow: auto"
+                  <Tag
+                      :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
+                      class="role-item"
+                      v-for="role in row.roles.filter((item) => item.type === 0)"
                   >
-                    <div
-                        class="mb-2"
-                        v-if="row.roles.filter((item) => item.type === 0).length > 0"
-                    >
-                      <h3 class="mb-0">人员角色</h3>
-                      <Divider
-                          style="height: 1px; background-color: #7cb305; margin: 0"
-                          orientation="left"
-                      />
-                      <Tag
-                          :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
-                          class="role-item"
-                          v-for="role in row.roles.filter((item) => item.type === 0)"
-                      >
-                        {{ (role.companyName || '') + ' - ' + role.name }}
-                      </Tag>
-                    </div>
-
-                    <div
-                        class="mb-2"
-                        v-if="row.roles.filter((item) => item.type === 1).length > 0"
-                    >
-                      <h3 class="mb-0">公司矩阵角色</h3>
-                      <Divider
-                          style="height: 1px; background-color: #7cb305; margin: 0"
-                          orientation="left"
-                      />
-                      <Tag
-                          :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
-                          class="role-item"
-                          v-for="role in row.roles.filter((item) => item.type === 1)"
-                      >
-                        {{ (role.companyName || '') + ' - ' + role.name }}
-                      </Tag>
-                    </div>
-
-                    <div
-                        class="mb-2"
-                        v-if="row.roles.filter((item) => item.type === 2).length > 0"
-                    >
-                      <h3 class="mb-0">部门矩阵角色</h3>
-                      <Divider
-                          style="height: 1px; background-color: #7cb305; margin: 0"
-                          orientation="left"
-                      />
-                      <Tag
-                          :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
-                          class="role-item"
-                          v-for="role in row.roles.filter((item) => item.type === 2)"
-                      >
-                        {{ (role.companyName || '') + ' - ' + role.name }}
-                      </Tag>
-                    </div>
-                  </div>
-                </template>
-                <div>
-                  <Tag>角色详情</Tag>
-                  <Badge
-                      :count="row.roles.length"
-                      :number-style="{ backgroundColor: '#52c41a' }"
-                  />
+                    {{ (role.companyName || '') + ' - ' + role.name }}
+                  </Tag>
                 </div>
-              </Popover>
-            </div>
-            <div v-else>暂无</div>
-          </template>
 
-          <template #leaderName="{ row }">
-            <EmpInfo :no="row.leaderCode" :name="row.leaderName" />
-          </template>
-        </BasicTable>
-      </Pane>
-    </Splitpanes>
+                <div
+                    class="mb-2"
+                    v-if="row.roles.filter((item) => item.type === 1).length > 0"
+                >
+                  <h3 class="mb-0">公司矩阵角色</h3>
+                  <Divider
+                      style="height: 1px; background-color: #7cb305; margin: 0"
+                      orientation="left"
+                  />
+                  <Tag
+                      :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
+                      class="role-item"
+                      v-for="role in row.roles.filter((item) => item.type === 1)"
+                  >
+                    {{ (role.companyName || '') + ' - ' + role.name }}
+                  </Tag>
+                </div>
+
+                <div
+                    class="mb-2"
+                    v-if="row.roles.filter((item) => item.type === 2).length > 0"
+                >
+                  <h3 class="mb-0">部门矩阵角色</h3>
+                  <Divider
+                      style="height: 1px; background-color: #7cb305; margin: 0"
+                      orientation="left"
+                  />
+                  <Tag
+                      :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
+                      class="role-item"
+                      v-for="role in row.roles.filter((item) => item.type === 2)"
+                  >
+                    {{ (role.companyName || '') + ' - ' + role.name }}
+                  </Tag>
+                </div>
+              </div>
+            </template>
+            <div>
+              <Tag>角色详情</Tag>
+              <Badge
+                  :count="row.roles.length"
+                  :number-style="{ backgroundColor: '#52c41a' }"
+              />
+            </div>
+          </Popover>
+        </div>
+        <div v-else>暂无</div>
+      </template>
+
+      <template #leaderName="{ row }">
+        <EmpInfo :no="row.leaderCode" :name="row.leaderName" />
+      </template>
+    </BasicTable>
 
     <Image
       :width="0"
@@ -148,7 +155,7 @@
     <PersonalModal ref="personalModalRef" @success="handleSuccess" />
     <!--    <PersonalSelector @register="registerPersonalModal" @success="handleSettingLeaderSuccess" />-->
     <PersonalSelectorModal @register="registerPersonalModal" @change="handleSettingLeaderSuccess" />
-  </Page>
+  </ColPage>
 </template>
 <script lang="ts" setup>
   import { PerEnum } from '#/enums/perEnum';
@@ -170,7 +177,7 @@
     downloadPersonalExcelTemplate,
     importPersonalExcelByData,
   } from '#/api/org/personal';
-  import {Page} from '@vben/common-ui';
+  import {ColPage, Page} from '@vben/common-ui';
   import OrgTree from '#/views/components/leftTree/OrgTree.vue';
   import { ManOutlined, ImportOutlined, WomanOutlined, UserOutlined } from '@ant-design/icons-vue';
   import {useAccess} from '@vben/access';
@@ -190,7 +197,6 @@
     Divider,
     Image,
   } from 'ant-design-vue';
-  import { Splitpanes, Pane } from '#/components/splitpanes';
 
   import { columns, searchFormSchema } from './personal.data';
   import { EmpInfo } from '#/views/components/EmpInfo';

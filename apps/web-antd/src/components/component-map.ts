@@ -8,7 +8,7 @@ const componentMap = new Map<CustomComponentType | string, Component>();
 // import.meta.glob() 直接引入所有的模块 Vite 独有的功能
 const modules = import.meta.glob(
   [
-    './selector/**/*.vue',
+    './selector',
     //'./components/**/*.vue',
     //'../../views/**/components/form/*.vue'
   ],
