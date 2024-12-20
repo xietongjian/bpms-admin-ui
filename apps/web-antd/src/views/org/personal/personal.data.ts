@@ -1,13 +1,10 @@
-import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { checkEntityExist } from '#/api/org/personal';
 
 import type {VxeGridProps} from '#/adapter/vxe-table';
 
-import { Tag } from 'ant-design-vue';
-import { h } from 'vue';
-import { formatToDate, formatToDateTime } from '@/utils/dateUtil';
-import { RemarkDefaultEnum } from '@/enums/constantEnum';
+// import { formatToDate, formatToDateTime } from '#/utils/dateUtil';
+import { RemarkDefaultEnum } from '#/enums/constantEnum';
 import {z} from "@vben/common-ui";
 import {FormValidPatternEnum} from "#/enums/commonEnum";
 
@@ -17,7 +14,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'name',
     width: 120,
     align: 'left',
-    slots: {default 'name'}
+    slots: {default: 'name'}
   },
   {
     title: '工号',
@@ -78,23 +75,30 @@ export const columns: VxeGridProps['columns'] = [
     title: '离职日期',
     field: 'leaveDate',
     width: 100,
-    customRender: ({ text }) => {
+    /*customRender: ({ text }) => {
       return text ? formatToDate(text) : '';
-    },
+    },*/
   },
   {
     title: '创建时间',
     field: 'createTime',
     width: 130,
-    customRender: ({ text }) => {
+    /*customRender: ({ text }) => {
       return text ? formatToDateTime(text) : '';
-    },
+    },*/
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -124,10 +128,7 @@ export const personalFormSchema: FormSchema[] = [
     fieldName: 'name',
     label: '姓名',
     component: 'Input',
-    required: true,
-    colProps: {
-      span: 9,
-    },
+    // required: true,
     rules: z
         .string({
           required_error: '姓名不能为空',
@@ -177,7 +178,7 @@ export const personalFormSchema: FormSchema[] = [
     fieldName: 'headImg',
     label: '',
     component: 'Input',
-    slot: 'headImg',
+    // slot: 'headImg',
     colProps: {
       style: 'margin: auto;position: absolute;right: 25px; width: 150px;height: 150px;',
       span: 8,
@@ -221,7 +222,7 @@ export const personalFormSchema: FormSchema[] = [
       treeNodeFilterProp: 'cname',
       getPopupContainer: () => document.body,
     },
-    required: true,
+    // required: true,
   },
   {
     fieldName: 'deptId',
@@ -231,7 +232,7 @@ export const personalFormSchema: FormSchema[] = [
       treeNodeFilterProp: 'name',
       getPopupContainer: () => document.body,
     },
-    required: true,
+    // required: true,
   },
   {
     label: '手机',

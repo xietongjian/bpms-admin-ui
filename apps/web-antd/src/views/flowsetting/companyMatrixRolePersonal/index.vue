@@ -81,10 +81,10 @@ import {useAccess} from "@vben/access";
   import { ImportOutlined, CloseOutlined, DownloadOutlined } from '@ant-design/icons-vue';
 import { TableAction } from '#/components/table-action';
 
-  import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
-  import ExportMatrixRoleExcelModal from '#/views/flowsetting/components/ExportMatrixRoleExcelModal.vue';
+  // import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
+  // import ExportMatrixRoleExcelModal from '#/views/flowsetting/components/ExportMatrixRoleExcelModal.vue';
 import {Page} from '@vben/common-ui';
-  import { getMatrixRoleList } from '#/api/org/role';
+import {getMatrixRoleList, getRoleListByPage} from '#/api/org/role';
   import {
     saveOrUpdateRoleScope,
     deleteMatrixPersonalById,
@@ -94,28 +94,30 @@ import {Page} from '@vben/common-ui';
   import { baseColumns, searchFormSchema } from './companyMatrix.data';
   // import { jsonToSheetXlsx, ImpExcel, ExcelData } from '@/components/Excel';
   import { treeToList } from '#/utils/helper/treeHelper';
+import {columns} from "#/views/flowsetting/rolePersonal/rolePersonal.data";
+import {useVbenVxeGrid} from "#/adapter/vxe-table";
 
 const {hasAccessByCodes}  = useAccess();
 // const PerPrefix = "App:";
 
   // 人员选择弹窗
-  const [
-    registerPersonalModal,
-    { openModal: openPersonalSelector, setModalProps: setPersonalModalProps },
-  ] = useModal();
+  // const [
+  //   registerPersonalModal,
+  //   { openModal: openPersonalSelector, setModalProps: setPersonalModalProps },
+  // ] = useModal();
 
-  const [
+/*  const [
     registerExportMatrixRoleExcelModal,
     {
       closeModal: closeExportMatrixRoleExcelModal,
       openModal: openExportMatrixRoleExcelModal,
       setModalProps: setExportMatrixRoleExcelModalProps,
     },
-  ] = useModal();
-  const { hasPermission } = usePermission();
-  const currentRole = ref<Recordable>({});
-  const currentRow = ref<Recordable>({});
-  const currentNode = ref<Recordable>({});
+  ] = useModal();*/
+  // const { hasPermission } = usePermission();
+  const currentRole = ref<Recordable<any>>({});
+  const currentRow = ref<Recordable<any>>({});
+  const currentNode = ref<Recordable<any>>({});
   const exportLoading = ref(false);
   const companyMatrixTable = ref();
   const matrixRoles = ref([]);
@@ -126,7 +128,7 @@ const {hasAccessByCodes}  = useAccess();
     });
   });
 
-  const [
+  /*const [
     registerTable,
     {
       reload,
@@ -160,7 +162,49 @@ const {hasAccessByCodes}  = useAccess();
     rowKey: 'id',
     canResize: true,
     resizeHeightOffset: -12,
-  });
+  });*/
+
+const formOptions: VbenFormProps = {
+  showCollapseButton: false,
+  submitOnEnter: true,
+  commonConfig: {
+    labelWidth: 60,
+  },
+  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  resetButtonOptions: {
+    show: false,
+  },
+  schema: searchFormSchema,
+};
+
+const gridOptions: VxeGridProps<any> = {
+  checkboxConfig: {
+    highlight: true,
+    labelField: 'name',
+  },
+  columns: baseColumns,
+  columnConfig: {resizable: true},
+  height: 'auto',
+  keepSource: true,
+  border: false,
+  stripe: true,
+  proxyConfig: {
+    ajax: {
+      query: async ({page}, formValues) => {
+        return await getCompanyMatrixList({
+          query: {
+            pageNum: page.currentPage,
+            pageSize: page.pageSize,
+          },
+          entity: formValues || {},
+        });
+      },
+    },
+  },
+};
+
+const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+
 
   // 人员选择后回调
   function handleSettingPersonalSuccess(selectedPersonal) {

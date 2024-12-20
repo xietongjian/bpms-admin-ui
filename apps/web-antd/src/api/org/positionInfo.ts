@@ -12,7 +12,7 @@ enum Api {
   CheckEntityExist = '/flow/org/positionInfo/checkEntityExist',
 }
 
-export const getanyTree = (params?: any) => {
+export const getPositionInfoTree = (params?: any) => {
   const result = requestClient.post<any[]>(Api.GetPositionInfoTree, params);
   return Promise.resolve(result).then((res: any) => {
     res.forEach((item) => {
@@ -39,7 +39,7 @@ export const getanyTree = (params?: any) => {
   });
 };
 
-export const getanys = (params: any) => {
+export const getPositionInfos = (params: any) => {
   const result = requestClient.post<any>(Api.GetPositionInfos, params);
 
   return Promise.resolve(result)

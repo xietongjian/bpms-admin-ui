@@ -1,8 +1,20 @@
 <template>
-  <Page auto-content-height>
-    <JobGradeTypeList class="w-1/4 xl:w-1/5" @select="handleSelect"/>
-
-    <BasicTable class="w-3/4 xl:w-4/5">
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="true"
+      :split-line="true"
+      :resizable="true"
+      :left-collapsible="true"
+      :auto-content-height="true"
+      content-class="h-full">
+    <template #left>
+      <div class="h-full bg-card">
+        <JobGradeTypeList class="w-1/4 xl:w-1/5" @select="handleSelect"/>
+      </div>
+    </template>
+    <BasicTable>
       <template #toolbar-tools>
         <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
       </template>
@@ -13,7 +25,7 @@
       </template>
     </BasicTable>
     <JobGradeModal ref="jobGradeModalRef" @success="handleSuccess"/>
-  </Page>
+  </ColPage>
 </template>
 <script lang="ts" setup>
 import {PerEnum} from '#/enums/perEnum';
@@ -25,12 +37,12 @@ import type {Recordable} from '@vben/types';
 
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {getJobGrades, deleteById} from '#/api/org/jobGrade';
-import {Page} from '@vben/common-ui';
+import {ColPage} from '@vben/common-ui';
 // import JobGradeTypeList from '@/views/components/leftTree/JobGradeTypeList.vue';
 import JobGradeModal from './JobGradeModal.vue';
 import {columns, searchFormSchema} from './jobGrade.data';
-import {message} from 'ant-design-vue';
-import {getJobGradeTypes} from "#/api/org/jobGradeType";
+import {message, Button} from 'ant-design-vue';
+// import {getJobGradeTypes} from "#/api/org/jobGradeType";
 import { TableAction } from '#/components/table-action';
 
 const PerPrefix = 'JobGrade:';

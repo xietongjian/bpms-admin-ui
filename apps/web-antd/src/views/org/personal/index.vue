@@ -11,13 +11,13 @@
       content-class="h-full">
     <template #left>
       <div class="h-full bg-card">
-        <OrgTree class="h-full" @select="handleSelect" />
+<!--        <OrgTree class="h-full" @select="handleSelect" />-->
       </div>
     </template>
-    <BasicTable @register="registerTable" class="!pt-0 !pl-0 !pr-0 !pb-0">
+    <BasicTable class="w-full" >
       <template #toolbar-tools>
         <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="link" @click="handleExportTemplate">导出模板</Button>
-        <ImpExcel v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" @success="loadDataSuccess" dateFormat="xlsx">
+<!--        <ImpExcel v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" @success="loadDataSuccess" dateFormat="xlsx">
           <Button>
             <template #icon>
               <ImportOutlined />
@@ -32,7 +32,7 @@
                           type="primary"
         >
           全量同步
-        </PopConfirmButton>
+        </PopConfirmButton>-->
         <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
       </template>
 
@@ -147,10 +147,10 @@
     </BasicTable>
 
     <Image
-      :width="0"
-      :height="0"
-      :src="previewImage"
-      :preview="{ visible: previewImageVisible, onVisibleChange: previewImageVisibleChange }"
+        :width="0"
+        :height="0"
+        :src="previewImage"
+        :preview="{ visible: previewImageVisible, onVisibleChange: previewImageVisibleChange }"
     />
     <PersonalModal ref="personalModalRef" @success="handleSuccess" />
     <!--    <PersonalSelector @register="registerPersonalModal" @success="handleSettingLeaderSuccess" />-->
@@ -177,8 +177,8 @@
     downloadPersonalExcelTemplate,
     importPersonalExcelByData,
   } from '#/api/org/personal';
-  import {ColPage, Page} from '@vben/common-ui';
-  import OrgTree from '#/views/components/leftTree/OrgTree.vue';
+  import {ColPage} from '@vben/common-ui';
+  // import OrgTree from '#/views/components/leftTree/OrgTree.vue';
   import { ManOutlined, ImportOutlined, WomanOutlined, UserOutlined } from '@ant-design/icons-vue';
   import {useAccess} from '@vben/access';
 
@@ -203,7 +203,6 @@
 
   // import { PopConfirmButton } from '@/components/Button';
   // import { ImpExcel, ExcelData, jsonToSheetXlsx } from '@/components/Excel';
-  import type { Recordable } from '@vben/types';
 
   import { saveOrUpdateRoleScope } from '#/api/flowsetting/rolePersonal';
 
@@ -325,10 +324,10 @@
   }
 
   function handleSyncAll() {
-    setLoading(true);
+    tableApi.setLoading(true);
     syncAllPersonal()
       .then((res) => {
-        setLoading(false);
+        tableApi.setLoading(false);
         const { success, msg } = res.data;
         if (success) {
           message.success(msg);
@@ -338,7 +337,7 @@
         }
       })
       .catch((e) => {
-        setLoading(false);
+        tableApi.setLoading(false);
       });
   }
 
@@ -431,7 +430,7 @@
 
       // 开始调用批量插入接口
       if (saveDataList && saveDataList.length > 0) {
-        setLoading(true);
+        tableApi.setLoading(true);
         try {
           const result = await importPersonalExcelByData(saveDataList);
           if (result.success) {
@@ -443,7 +442,7 @@
         } catch (e) {
           console.error('导入数据接口异常！', e);
         } finally {
-          setLoading(false);
+          tableApi.setLoading(false);
         }
       }
     }
@@ -459,14 +458,14 @@
 
   function handleSettingLeaderSuccess(selectedPersonals: any) {
     if (selectedPersonals && selectedPersonals.length > 0) {
-      setLoading(true);
+      tableApi.setLoading(true);
       setTimeout(() => {
         setLeaderCode({ leaderCode: selectedPersonals[0].code, id: unref(currentPersonal).id })
           .then(() => {
             reloadTable();
           })
           .finally(() => {
-            setLoading(false);
+            tableApi.setLoading(false);
           });
       }, 200);
     }
@@ -479,10 +478,10 @@
   }
 
   function handleSync(record: Recordable<any>) {
-    setLoading(true);
+    tableApi.setLoading(true);
     syncPersonalById({ id: record.id })
       .then((res) => {
-        setLoading(false);
+        tableApi.setLoading(false);
         const { success, msg } = res.data;
         if (success) {
           message.success(msg);
@@ -492,7 +491,7 @@
         }
       })
       .catch((e) => {
-        setLoading(false);
+        tableApi.setLoading(false);
       });
   }
 

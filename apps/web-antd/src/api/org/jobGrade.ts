@@ -1,6 +1,6 @@
 import { requestClient } from '#/api/request';
 
-import { forEach, listToTree } from '@/utils/helper/treeHelper';
+import { forEach, listToTree } from '#/utils/helper/treeHelper';
 
 enum Api {
   GetJobGrades = '/flow/org/jobGrade/getJobGrades',

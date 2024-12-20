@@ -9,7 +9,7 @@ import {getPagerModel, deleteById} from '#/api/org/positionInfo';
 import PositionInfoModal from './PositionInfoModal.vue';
 import {Button, Popconfirm, message} from 'ant-design-vue';
 import type {VbenFormProps} from '@vben/common-ui';
-import {Page} from '@vben/common-ui';
+import {ColPage} from '@vben/common-ui';
 import {useAccess} from '@vben/access';
 import {TableAction} from '#/components/table-action';
 
@@ -156,9 +156,20 @@ function createActions(record: Recordable) {
 </script>
 
 <template>
-  <Page auto-content-height>
-    <PositionSeqTree class="w-1/4 xl:w-1/5" @select="handleSelect"/>
-    <BasicTable class="w-3/4 xl:w-4/5">
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="true"
+      :split-line="true"
+      :resizable="true"
+      :left-collapsible="true"
+      :auto-content-height="true"
+      content-class="h-full">
+    <template #left>
+      <PositionSeqTree class="w-1/4 xl:w-1/5" @select="handleSelect"/>
+    </template>
+    <BasicTable>
       <template #toolbar-tools>
         <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
       </template>
@@ -171,5 +182,5 @@ function createActions(record: Recordable) {
       </template>
     </BasicTable>
     <PositionInfoModal ref="persitionInfoModalRef" @success="handleSuccess"/>
-  </Page>
+  </ColPage>
 </template>

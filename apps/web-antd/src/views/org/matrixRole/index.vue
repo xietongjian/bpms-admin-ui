@@ -10,13 +10,15 @@
       :auto-content-height="true"
       content-class="h-full">
     <template #left>
-      <Tree
+      <div class="h-full bg-card p-2">
+        <Tree
           title="类型"
           treeWrapperClassName="h-[calc(100%-35px)] overflow-auto"
           :clickRowToExpand="false"
           :treeData="treeData"
           @select="handleSelect"
-      />
+        />
+      </div>
     </template>
     <div class="h-full">
       <BasicTable class="!pt-0 !pl-0 !pr-0 !pb-0">

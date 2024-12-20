@@ -1,9 +1,12 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
 
-export const baseColumns: BasicColumn[] = [
+export const baseColumns: VxeGridProps['columns'] = [
   {
     title: '名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
     width: 200,
     resizable: true,
@@ -12,18 +15,18 @@ export const baseColumns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/标识',
     },
     labelWidth: 60,
-    colProps: {
+    /*colProps: {
       span: 6,
       lg: { span: 8, offset: 0 },
       sm: { span: 14, offset: 0 },
       xs: { span: 16, offset: 0 },
-    },
+    },*/
   },
 ];

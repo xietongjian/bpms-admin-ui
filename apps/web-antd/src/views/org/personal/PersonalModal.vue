@@ -13,7 +13,7 @@
         >
           <img v-if="imageUrl" :src="imageUrl" alt="avatar" style="width: 150px; height: 150px" />
           <div v-else>
-            <plus-outlined />
+            <PlusOutlined />
             <div class="ant-upload-text">上传头像</div>
           </div>
         </Upload>
@@ -32,24 +32,24 @@
   import { getCompanies } from '#/api/org/company';
   import { saveOrUpdate, checkEntityExist } from '#/api/org/personal';
   import { message, Upload } from 'ant-design-vue';
-  import { CheckExistParams } from '#/api/model/baseModel';
   import { getJobGradeTree } from '#/api/org/jobGrade';
   import { getPositionInfoTree } from '#/api/org/positionInfo';
   import { FormValidPatternEnum } from '#/enums/constantEnum';
   import { findNode } from '#/utils/helper/treeHelper';
-
+  import {PlusOutlined} from '@ant-design/icons-vue';
   const emit = defineEmits(['success']);
   const isUpdate = ref(true);
   const imageUrl = ref<string>('');
 
-  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
+/*  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
     labelWidth: 100,
     schemas: personalFormSchema,
     showActionButtonGroup: false,
     actionColOptions: {
       span: 23,
     },
-  });
+  });*/
+/*
 
   const getBaseDynamicRules = (params: CheckExistParams) => {
     return [
@@ -80,8 +80,43 @@
       },
     ] as Rule[];
   };
+*/
 
-  const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      handleSubmit();
+    },
+  });
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: personalFormSchema,
+    wrapperClass: 'grid-cols-1',
+  });
+
+
+  /*const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(
     async (data) => {
       changeLoading(true);
       await resetFields();
@@ -192,7 +227,7 @@
       }
       changeLoading(false);
     },
-  );
+  );*/
 
   const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '编辑'));
 
@@ -207,12 +242,12 @@
   const beforeUpload = (file) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
-      createMessage.error('只允许上传JPG图片！');
+      message.error('只允许上传JPG图片！');
       return false;
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
-      createMessage.error('图片不能大于2MB！');
+      message.error('图片不能大于2MB！');
       return false;
     }
     getBase64(file, (imgUrl) => {
@@ -223,20 +258,20 @@
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
+      modalApi.setState({loading: true, confirmLoading: true});
+      const valid = await formApi.validate();
+      if (!valid) {
+        return;
+      }
+      const values = await formApi.getValues();
       values.headImg = imageUrl.value;
       await saveOrUpdate(values);
-      closeModal();
+      modalApi.close();
       emit('success');
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
+  defineExpose(modalApi);
 </script>
 
-<style lang="less" scoped>
-  .personalForm {
-    position: relative;
-  }
-</style>

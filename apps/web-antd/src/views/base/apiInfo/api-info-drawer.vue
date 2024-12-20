@@ -93,7 +93,7 @@ const [BasicForm, formApi] = useVbenForm({
   },
   showDefaultActions: false,
   layout: 'horizontal',
-  schema: formSchema,
+  schema: apiInfoFormSchema,
   wrapperClass: 'grid-cols-1',
 });
 /*
