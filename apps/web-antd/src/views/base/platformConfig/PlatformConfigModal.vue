@@ -4,24 +4,24 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, Rule, useForm } from '@/components/Form';
+  import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
+  import {useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from '#/adapter/form';
+
   import { formSchema } from './platformConfig.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/base/platformConfig';
-  import { CheckExistParams } from '#/api/model/baseModel';
 
   const emit = defineEmits(['success', 'register']);
 
   const isUpdate = ref(true);
 
-  const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] = useForm({
+/*  const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
     schemas: formSchema,
     showActionButtonGroup: false,
-  });
+  });*/
 
-  const getBaseDynamicRules = (params: CheckExistParams) => {
+  /*const getBaseDynamicRules = (params: CheckExistParams) => {
     return [
       {
         trigger: 'blur',
@@ -86,19 +86,58 @@
         ...formData,
       });
     }
+  });*/
+
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      handleSubmit();
+    },
   });
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: formSchema,
+    wrapperClass: 'grid-cols-1',
+  });
+
 
   const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
+      modalApi.setState({loading: true, confirmLoading: true});
+      const valid = await formApi.validate();
+      if (!valid) {
+        return;
+      }
+      const values = await formApi.getValues();
       await saveOrUpdate(values);
-      closeModal();
+      modalApi.close();
       emit('success');
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
+  defineExpose(modalApi)
 </script>

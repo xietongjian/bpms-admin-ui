@@ -56,7 +56,6 @@ import {FormItem, FormItemRest, message, Input, Select} from "ant-design-vue";
 import {getApiCategoryListData, getApiCategoryTreeData, saveOrUpdateApiInfo} from '#/api/base/apiInfo';
 
 import ApiInfoVariables from "#/views/base/apiInfo/ApiInfoVariables.vue";
-import {formSchema} from "#/views/base/app/app.data";
 
 const headersRef = ref(null);
 const pathVariablesRef = ref(null);

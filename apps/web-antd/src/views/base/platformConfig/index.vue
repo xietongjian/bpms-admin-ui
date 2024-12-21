@@ -1,130 +1,193 @@
 <template>
-  <div>
-    <BasicTable @register="registerTable">
-      <template #toolbar>
-        <Authority :value="'PlatformConfig:' + PerEnum.ADD">
-          <a-button type="primary" @click="handleCreate">新增</a-button>
-        </Authority>
+  <Page auto-content-height>
+    <BasicTable>
+      <template #toolbar-tools>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-            :actions="[
-              {
-                auth: 'PlatformConfig:' + PerEnum.UPDATE,
-                tooltip: '修改',
-                icon: 'clarity:note-edit-line',
-                onClick: handleEdit.bind(null, record),
-              },
-              {
-                auth: 'PlatformConfig:' + PerEnum.DELETE,
-                tooltip: '删除',
-                icon: 'ant-design:delete-outlined',
-                color: 'error',
-                popConfirm: {
-                  title: '是否确认删除',
-                  confirm: handleDelete.bind(null, record),
-                },
-              },
-            ]"
-          />
-        </template>
-        <template v-else-if="column.key === 'appKey'">
-          <a @click="doCopyContent(record.appKey)"><CopyOutlined /></a>
-          {{ record.appKey }}
-        </template>
 
-        <template v-else-if="column.key === 'appSecret'">
-          <a @click="doCopyContent(record.appSecret)"><CopyOutlined /></a>
-          {{ record.appSecret }}
-        </template>
-        <template v-else-if="column.key === 'agentId'">
-          <a @click="doCopyContent(record.agentId)"><CopyOutlined /></a>
-          {{ record.agentId }}
-        </template>
-        <template v-else-if="column.key === 'corpId'">
-          <a @click="doCopyContent(record.corpId)"><CopyOutlined /></a>
-          {{ record.corpId }}
-        </template>
+      <template #action="{ row }">
+        <TableAction
+          :actions="createActions(row)"
+        />
+      </template>
+      <template #appKey="{ row }">
+        <a @click="doCopyContent(row.appKey)">
+          <CopyOutlined/>
+        </a>
+        {{ row.appKey }}
+      </template>
+
+      <template #appSecret="{ row }">
+        <a @click="doCopyContent(row.appSecret)">
+          <CopyOutlined/>
+        </a>
+        {{ row.appSecret }}
+      </template>
+      <template #agentId="{ row }">
+        <a @click="doCopyContent(row.agentId)">
+          <CopyOutlined/>
+        </a>
+        {{ row.agentId }}
+      </template>
+      <template #corpId="{ row }">
+        <a @click="doCopyContent(row.corpId)">
+          <CopyOutlined/>
+        </a>
+        {{ row.corpId }}
       </template>
     </BasicTable>
-    <PlatformConfigModal @register="registerModal" @success="handleSuccess" />
-  </div>
+    <PlatformConfigModal ref="platformConfigModalRef" @register="registerModal" @success="handleSuccess"/>
+  </Page>
 </template>
 <script lang="ts" setup>
-  import { PerEnum } from '@/enums/perEnum';
-  import { Authority } from '@/components/Authority';
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { getPlatformConfigListByPage, deleteByIds } from '#/api/base/platformConfig';
-  import PlatformConfigModal from './PlatformConfigModal.vue';
-  import { columns, searchFormSchema } from './platformConfig.data';
-  import { useModal } from '@/components/Modal';
-  import { copyText } from '@/utils/copyTextToClipboard';
-  import { CopyOutlined } from '@ant-design/icons-vue';
+import {ref} from 'vue';
 
-  const [registerModal, { openModal, setModalProps }] = useModal();
+import type {Recordable} from '@vben/types';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormProps} from '@vben/common-ui';
+import {PerEnum} from "#/enums/perEnum";
+import {Button, message} from 'ant-design-vue';
+import {TableAction} from '#/components/table-action';
 
-  const [registerTable, { reload }] = useTable({
-    title: '列表',
-    api: getPlatformConfigListByPage,
-    columns,
-    formConfig: {
-      labelWidth: 100,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
+import {Page} from '@vben/common-ui';
+
+import {getPlatformConfigListByPage, deleteByIds} from '#/api/base/platformConfig';
+import PlatformConfigModal from './PlatformConfigModal.vue';
+import {columns, searchFormSchema} from './platformConfig.data';
+// import { copyText } from '@/utils/copyTextToClipboard';
+import {CopyOutlined} from '@ant-design/icons-vue';
+import {useVbenVxeGrid} from "#/adapter/vxe-table";
+import {useAccess} from '@vben/access';
+
+const PerPrefix = "PlatformConfig:";
+const {hasAccessByCodes} = useAccess();
+const platformConfigModalRef = ref();
+/*const [registerModal, { openModal, setModalProps }] = useModal();
+
+const [registerTable, { reload }] = useTable({
+  title: '列表',
+  api: getPlatformConfigListByPage,
+  columns,
+  formConfig: {
+    labelWidth: 100,
+    schemas: searchFormSchema,
+    showAdvancedButton: false,
+    showResetButton: false,
+    autoSubmitOnEnter: true,
+  },
+  canColDrag: true,
+  useSearchForm: true,
+  bordered: true,
+  showIndexColumn: true,
+  actionColumn: {
+    width: 140,
+    title: '操作',
+    dataIndex: 'action',
+  },
+});*/
+
+
+const formOptions: VbenFormProps = {
+  showCollapseButton: false,
+  submitOnEnter: true,
+  commonConfig: {
+    labelWidth: 60,
+  },
+  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  resetButtonOptions: {
+    show: false,
+  },
+  schema: searchFormSchema,
+};
+
+const gridOptions: VxeGridProps<any> = {
+  checkboxConfig: {
+    highlight: true,
+    labelField: 'name',
+  },
+  columns,
+  columnConfig: {resizable: true},
+  height: 'auto',
+  keepSource: true,
+  border: false,
+  stripe: true,
+  proxyConfig: {
+    ajax: {
+      query: async ({page}, formValues) => {
+        return await getPlatformConfigListByPage({
+          query: {
+            pageNum: page.currentPage,
+            pageSize: page.pageSize,
+          },
+          entity: formValues || {},
+        });
+      },
     },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: true,
-    showIndexColumn: true,
-    actionColumn: {
-      width: 140,
-      title: '操作',
-      dataIndex: 'action',
+  },
+};
+
+const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+
+function createActions(record: Recordable<any>) {
+  return [
+    {
+      auth: [PerPrefix + PerEnum.UPDATE],
+      tooltip: '修改',
+      icon: 'clarity:note-edit-line',
+      onClick: handleEdit.bind(null, record),
     },
+    {
+      auth: [PerPrefix + PerEnum.DELETE],
+      tooltip: '删除',
+      icon: 'ant-design:delete-outlined',
+      danger: true,
+      popConfirm: {
+        title: '是否确认删除',
+        confirm: handleDelete.bind(null, record),
+        okButtonProps: {
+          danger: true,
+        }
+      },
+    },
+  ];
+}
+
+function handleCreate() {
+  platformConfigModalRef.value.setData({});
+  platformConfigModalRef.value.open();
+  platformConfigModalRef.value.setState({
+    title: '新建'
   });
+}
 
-  function handleCreate() {
-    openModal(true, {
-      isUpdate: false,
-    });
-    setModalProps({
-      width: 600,
-    });
-  }
+function handleEdit(record: Recordable<any>) {
+  platformConfigModalRef.value.setData(record);
+  platformConfigModalRef.value.open();
+  platformConfigModalRef.value.setState({
+    title: '新建'
+  });
+}
 
-  function handleEdit(record: Recordable) {
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });
-    setModalProps({
-      width: 600,
-    });
-  }
+function handleDelete(record: Recordable<any>) {
+  deleteByIds([record.id]).then(() => {
+    tableApi.reload();
+  });
+}
 
-  function handleDelete(record: Recordable) {
-    deleteByIds([record.id]).then(() => {
-      reload();
-    });
-  }
+function handleSuccess() {
+  setTimeout(() => {
+    tableApi.reload();
+  }, 200);
+}
 
-  function handleSuccess() {
-    setTimeout(() => {
-      reload();
-    }, 200);
-  }
+function handleCloseFunc() {
+  setTimeout(() => {
+    tableApi.reload();
+  }, 200);
+  return Promise.resolve(true);
+}
 
-  function handleCloseFunc() {
-    setTimeout(() => {
-      reload();
-    }, 200);
-    return Promise.resolve(true);
-  }
-
-  function doCopyContent(content) {
-    copyText(content);
-  }
+function doCopyContent(content) {
+  // copyText(content);
+}
 </script>

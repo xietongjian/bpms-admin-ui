@@ -1,18 +1,20 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
-import { RemarkDefaultEnum } from '@/enums/constantEnum';
-import { Tag } from 'ant-design-vue';
-import { h } from 'vue';
+import { RemarkDefaultEnum } from '#/enums/constantEnum';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+
 
 const colProps = {
   span: 24,
 };
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '类型',
-    dataIndex: 'type',
+    field: 'type',
     align: 'left',
     width: 90,
-    customRender: ({ record }) => {
+    /*customRender: ({ record }) => {
       const { type } = record;
       let typeName = '钉钉';
       let color = '';
@@ -26,76 +28,76 @@ export const columns: BasicColumn[] = [
         color = 'blue';
       }
       return h(Tag, { color: color }, () => typeName);
-    },
+    },*/
   },
   {
     title: 'appKey',
-    dataIndex: 'appKey',
-    width: 150,
+    field: 'appKey',
     align: 'left',
+    slots: {default: 'appKey'},
     resizable: true,
   },
   {
     title: '秘钥',
-    dataIndex: 'appSecret',
+    field: 'appSecret',
     align: 'left',
-    width: 180,
+    slots: {default: 'appSecret'},
     resizable: true,
   },
   {
     title: '应用Id',
-    dataIndex: 'agentId',
-    width: 120,
+    field: 'agentId',
+    slots: {default: 'agentId'},
     align: 'left',
   },
   {
     title: '企业Id',
-    dataIndex: 'corpId',
-    width: 120,
+    field: 'corpId',
+    slots: {default: 'corpId'},
     align: 'left',
   },
   {
     title: '跳转路径',
-    dataIndex: 'returnUrl',
-    width: 150,
+    field: 'returnUrl',
     align: 'left',
   },
   {
     title: '创建时间',
-    dataIndex: 'createTime',
+    field: 'createTime',
     width: 180,
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/标识',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
     show: false,
   },
   {
-    field: 'type',
+    fieldName: 'type',
     label: '类型',
-    required: true,
+    // required: true,
     component: 'Select',
     componentProps: {
       options: [
@@ -107,11 +109,11 @@ export const formSchema: FormSchema[] = [
     colProps: { span: 16 },
   },
   {
-    field: 'appKey',
+    fieldName: 'appKey',
     label: 'appKey',
-    required: true,
+    // required: true,
     component: 'Input',
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -121,13 +123,12 @@ export const formSchema: FormSchema[] = [
         max: 32,
         message: 'appKey长度不能大于32！',
       },
-    ],
+    ],*/
     colProps,
   },
   {
-    field: 'appSecret',
+    fieldName: 'appSecret',
     label: '秘钥',
-    required: false,
     component: 'InputTextArea',
     componentProps: {
       autoSize: {
@@ -136,20 +137,20 @@ export const formSchema: FormSchema[] = [
       },
     },
     show: true,
-    rules: [
+    /*rules: [
       {
         max: 1500,
         message: '字符长度不能大于1500！',
       },
-    ],
+    ],*/
     colProps,
   },
   {
-    field: 'returnUrl',
+    fieldName: 'returnUrl',
     label: '回调地址',
     required: true,
     component: 'Input',
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -159,20 +160,18 @@ export const formSchema: FormSchema[] = [
         max: 128,
         message: '字符长度不能大于128！',
       },
-    ],
+    ],*/
     colProps,
   },
   {
-    field: 'agentId',
+    fieldName: 'agentId',
     label: '应用Id',
-    required: false,
     component: 'Input',
     colProps,
   },
   {
-    field: 'corpId',
+    fieldName: 'corpId',
     label: '企业Id',
-    required: false,
     component: 'Input',
     colProps,
   },
@@ -180,13 +179,13 @@ export const formSchema: FormSchema[] = [
 
 export const secretKeyFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
     show: false,
   },
   {
-    field: 'appKey',
+    fieldName: 'appKey',
     label: 'appKey',
     component: 'Input',
     slot: 'snSlot',
@@ -194,7 +193,7 @@ export const secretKeyFormSchema: FormSchema[] = [
   },
   {
     label: '密钥',
-    field: 'appSecret',
+    fieldName: 'appSecret',
     component: 'Input',
     slot: 'snSlot',
     colProps,
