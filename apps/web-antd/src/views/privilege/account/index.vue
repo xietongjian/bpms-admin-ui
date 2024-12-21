@@ -2,7 +2,7 @@
 import {ref} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
-import {Page, useVbenModal} from '@vben/common-ui';
+import {Page} from '@vben/common-ui';
 import {Button, Image, Tag, Space, Avatar, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {getAccountPageList, deleteByIds} from '#/api/privilege/account';
@@ -20,6 +20,7 @@ const passwordModalRef = ref();
 const setGroupModalRef = ref();
 const accountModalRef = ref();
 const {hasAccessByCodes} = useAccess();
+
 const PerPrefix = 'Account:';
 
 const formOptions: VbenFormProps = {
@@ -33,6 +34,7 @@ const formOptions: VbenFormProps = {
     show: false,
   },
   schema: searchFormSchema,
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
 };
 
 const gridOptions: VxeGridProps<any> = {

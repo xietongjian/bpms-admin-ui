@@ -11,14 +11,7 @@ enum Api {
 }
 
 export const getAccountPageList = (params: any) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { query, entity };
-  return requestClient.post<any>(Api.AccountPageList, queryParam );
+  return requestClient.post<any>(Api.AccountPageList, params );
 };
 
 export const checkEntityExist = (params: any) =>

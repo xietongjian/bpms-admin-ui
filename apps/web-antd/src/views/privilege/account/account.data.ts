@@ -76,14 +76,9 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入账号名/姓名/手机',
+      allowClear: true,
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: {span: 6, offset: 0},
-      sm: {span: 10, offset: 0},
-      xs: {span: 16, offset: 0},
-    },
   },
 ];
 
@@ -260,7 +255,8 @@ export const setGroupFormSchema: FormSchema[] = [
       fieldNames: {
         value: 'sn',
         label: 'name'
-      }
+      },
+      class: 'w-full',
     }
   },
 ];
