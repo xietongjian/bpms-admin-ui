@@ -47,14 +47,12 @@ export const modelInfoFormSchema: FormSchema[] = [
   {
     field: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
     show: false,
   },
   {
     field: 'categoryCode',
     label: 'ID',
-    required: false,
     component: 'Input',
     show: false,
   },

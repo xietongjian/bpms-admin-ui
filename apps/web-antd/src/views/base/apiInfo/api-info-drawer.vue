@@ -1,9 +1,9 @@
 <template>
   <BasicDrawer
+      class="w-[1000px]"
       v-bind="$attrs"
       @register="registerDrawer"
       title="接口编辑"
-      width="70%"
       showFooter
       @ok="handleSubmit"
   >
@@ -31,14 +31,14 @@
           </FormItem>
         </Input.Group>
       </template>
-      <template #headersSlot="{ model, field, disabled }">
-        <ApiInfoVariables ref="headersRef" type="header" :variables="model[field]"/>
+      <template #headers="slotProps">
+        <ApiInfoVariables ref="headersRef" type="header" :variables="slotProps.field.value"/>
       </template>
-      <template #pathVariablesSlot="{ model, field, disabled }">
-        <ApiInfoVariables ref="pathVariablesRef" type="path" :variables="model[field]"/>
+      <template #pathVariables="slotProps">
+        <ApiInfoVariables ref="pathVariablesRef" type="path" :variables="slotProps.field.value"/>
       </template>
-      <template #queryVariablesSlot="{ model, field, disabled }">
-        <ApiInfoVariables ref="queryVariablesRef" type="query" :variables="model[field]"/>
+      <template #queryVariables="slotProps">
+        <ApiInfoVariables ref="queryVariablesRef" type="query" :variables="slotProps.field.value"/>
       </template>
       <!--      <template #requestBody="{ model, field, disabled }">
               <ApiInfoVariables :variables="model[field]" />

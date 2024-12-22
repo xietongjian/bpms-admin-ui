@@ -154,12 +154,14 @@ export const apiInfoFormSchema: FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["id"]
+    }
   },
   {
     fieldName: 'categoryId',
     label: '分类',
-    required: true,
     component: 'TreeSelect',
     componentProps: {
       fieldNames: {
@@ -169,12 +171,19 @@ export const apiInfoFormSchema: FormSchema[] = [
       getPopupContainer: () => document.body,
     },
     colProps: { span: 16 },
+    rules: 'selectRequired'
   },
   {
     fieldName: 'name',
     label: '接口名称',
-    required: true,
     component: 'Input',
+    rules: z
+        .string({
+          required_error: '名称不能为空！'
+        })
+        .min(1, {message: '名称不能为空！'})
+        .max(255, {message: '字符长度不能大于255！'}),
+
     /*rules: [
       {
         required: true,
@@ -186,20 +195,17 @@ export const apiInfoFormSchema: FormSchema[] = [
         message: '名称长度不能大于255！',
       },
     ],*/
-    colProps,
   },
   {
     fieldName: 'remark',
     label: '接口描述',
-    required: false,
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     fieldName: 'method',
@@ -215,9 +221,7 @@ export const apiInfoFormSchema: FormSchema[] = [
   {
     fieldName: 'headers',
     label: '请求头参数',
-    required: false,
     slot: 'headersSlot',
-    colProps,
   },
   {
     fieldName: 'pathVariables',
@@ -238,7 +242,6 @@ export const apiInfoFormSchema: FormSchema[] = [
     fieldName: 'requestBody',
     label: '请求体',
     // slot: 'requestBodySlot',
-    required: false,
     component: 'Input',
     render: ({ model, field }) => {
       return h(CodeEditor, {
@@ -258,7 +261,6 @@ export const apiInfoFormSchema: FormSchema[] = [
   {
     fieldName: 'responseBodyCase',
     label: '响应示例',
-    required: false,
     component: 'Input',
     render: ({ model, field }) => {
       return h(CodeEditor, {
@@ -306,7 +308,7 @@ export const vxeFlowVariableTableColumns = [
   },
   {
     title: '是否必填',
-    width: 90,
+    width: 100,
     field: 'required',
     align: 'center',
     slots: { default: 'requiredRender' },

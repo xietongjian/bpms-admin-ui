@@ -1,8 +1,8 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
 import type {VxeGridProps} from '#/adapter/vxe-table';
 
 import { Badge } from 'ant-design-vue';
+import {getApps} from "#/api/process/process";
 // import {getApproveStatusIcon} from "@/utils";
 export const searchFormSchema: FormSchema[] = [
   {
@@ -11,23 +11,28 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/编码',
+      allowClear: true,
     },
     labelWidth: 60,
-    colProps: {span: 6, lg:{span: 6, offset:0}, sm:{span: 10, offset: 0}, xs:{span: 16, offset: 0}},
   },
   {
     fieldName: 'dateRange',
     label: '时间范围',
     component: 'RangePicker',
     labelWidth: 80,
-    colProps: {span: 6, lg:{span: 6, offset:0}, sm:{span: 10, offset: 0}, xs:{span: 16, offset: 0}},
   },
   {
     fieldName: 'appSn',
     label: '系统',
-    component: 'Select',
+    component: 'ApiSelect',
     labelWidth: 60,
-    colProps: {span: 6, lg:{span: 6, offset:0}, sm:{span: 10, offset: 0}, xs:{span: 16, offset: 0}},
+    componentProps: {
+      api: getApps,
+      labelField: 'name',
+      valueField: 'sn',
+      placeholder: '请选择系统',
+      allowClear: true,
+    },
   }
 ];
 export const haveDownTableSchema: VxeGridProps['columns']= [
@@ -45,6 +50,7 @@ export const haveDownTableSchema: VxeGridProps['columns']= [
     title: '流程标题',
     field: 'formName',
     align: 'left',
+    slots: { default: 'formName' }
   },
   {
     title: '提交人',

@@ -77,26 +77,22 @@ export const formSchema: FormSchema[] = [
   {
     field: 'ip',
     label: '访问ip',
-    required: false,
     component: 'Input',
     show: true,
   },
   {
     field: 'operationId',
     label: '操作人id',
-    required: false,
     component: 'Input',
     show: true,
   },
   {
     field: 'operationUsername',
     label: '操作人的姓名',
-    required: false,
     component: 'Input',
     show: true,
     rules: [
       {
-        required: false,
         whitespace: true,
         message: '操作人的姓名不能为空！',
       },
@@ -109,14 +105,12 @@ export const formSchema: FormSchema[] = [
   {
     field: 'operationPerson',
     label: '操作人姓名',
-    required: false,
     component: 'Input',
     show: true,
   },
   {
     field: 'operationContent',
     label: '操作内容',
-    required: false,
     component: 'Input',
     show: true,
   },

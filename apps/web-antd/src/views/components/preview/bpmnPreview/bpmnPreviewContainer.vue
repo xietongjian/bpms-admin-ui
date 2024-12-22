@@ -1,6 +1,6 @@
 <template>
   <div class="bpmn-viewer-container w-full h-full">
-    <div class="containers group relative" ref="container" >
+    <div class="containers group relative h-full w-full" ref="container" >
       <BpmnPresetViewer
           v-if="modelKey || procInstId"
           ref="presetViewer"
@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, unref, shallowRef, defineProps, defineExpose } from 'vue';
+  import { computed, ref, unref, shallowRef, defineProps, defineEmits, defineExpose } from 'vue';
   import { Button, Space } from 'ant-design-vue';
   import {
     CompressOutlined,
@@ -64,7 +64,7 @@
 
   import '#/assets/bpmn/viewer/lib/style.css';
   import { usePreferences } from '@vben/preferences';
-
+  const emit = defineEmits(['data-change']);
   const { isDark } = usePreferences();
   const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
 
@@ -156,7 +156,7 @@
     isFitView.value = defaultZoom.value >= fitViewScaleRate.value;
   }
 
-  async function handleDownloadClick({ key }) {
+  async function downloadProcess({ key }) {
     await presetViewer.value?.downloadProcess(key, unref(modelName));
   }
 
@@ -166,9 +166,7 @@
 
   function handleDataChange(data) {
     modelName.value = data.modelName;
-    setTimeout(() => {
-      processFitViewer();
-    });
+    emit('data-change', data);
   }
   //
   // const [registerModal, { setModalProps, changeLoading }] = useModalInner(async (data) => {
@@ -212,7 +210,7 @@
     await presetViewer.value?.reloadViewerXML(modelKey, procInstId);
   }
 
-
+  defineExpose({downloadProcess})
 </script>
 
 <style lang="scss">

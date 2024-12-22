@@ -47,10 +47,14 @@
         return;
       }
       const data = cloneDeep(await formApi.getValues());
-      const res = await saveOrUpdate(data);
-      message.success();
-      emit('success');
-      await handleCancel();
+      const {success, msg} = await saveOrUpdate(data);
+      if(success){
+        message.success(msg);
+        emit('success');
+        modalApi.close();
+      } else {
+        message.error(msg);
+      }
     } catch (error) {
       console.error(error);
     } finally {

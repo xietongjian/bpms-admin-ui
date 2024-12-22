@@ -11,23 +11,21 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/编码',
+      allowClear: true,
     },
     labelWidth: 60,
-    colProps: {span: 6, lg:{span: 6, offset:0}, sm:{span: 10, offset: 0}, xs:{span: 16, offset: 0}},
   },
   {
     fieldName: 'dateRange',
     label: '时间范围',
     component: 'RangePicker',
     labelWidth: 80,
-    colProps: {span: 6, lg:{span: 6, offset:0}, sm:{span: 10, offset: 0}, xs:{span: 16, offset: 0}},
   },
   {
     fieldName: 'appSn',
     label: '系统',
     component: 'Select',
     labelWidth: 60,
-    colProps: {span: 6, lg:{span: 6, offset:0}, sm:{span: 10, offset: 0}, xs:{span: 16, offset: 0}},
   }
 ];
 export const launchedTableSchema: VxeGridProps['columns'] = [
@@ -45,12 +43,14 @@ export const launchedTableSchema: VxeGridProps['columns'] = [
     title: '流程标题',
     field: 'formName',
     align: 'left',
+    slots: { default: 'formName' }
   },
   {
     title: '待办人',
     width: 150,
     field: 'currentAssignees',
     align: 'left',
+    slots: { default: 'currentAssignees' }
   },
   {
     title: '提交时间',

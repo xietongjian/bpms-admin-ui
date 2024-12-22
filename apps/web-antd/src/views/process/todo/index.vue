@@ -3,23 +3,13 @@
     <BasicTable>
       <template #formName="{ row }">
         <Tooltip placement="top" title="流程图预览">
-          <a>
-            <PartitionOutlined
-              @click="showFlowDiagram(row.processDefinitionKey, row.processInstanceId)"
-              class="color-blue-500 mr-2 hover:color-blue-600"
-            />
-          </a>
+          <TypographyLink @click="handleBpmnPreview(row.processDefinitionKey, row.processInstanceId)">
+            <PartitionOutlined class="mr-2"/>
+          </TypographyLink>
         </Tooltip>
-
-        <!--          <router-link target="_blank" :to="genApproveUrl(record)" rel="opener">
-          {{ record.formName }}
-        </router-link>-->
         <TypographyLink @click="handleViewForm(row)">
           {{ row.formName }}
         </TypographyLink>
-        <!--
-        approve/:modelKey/:procInstId/:bizId/:taskId/:showPost
-        -->
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'startPersonName'">
@@ -42,11 +32,10 @@ import {ref} from 'vue';
   import { useVbenVxeGrid } from '#/adapter/vxe-table';
   import type {VxeGridProps} from '#/adapter/vxe-table';
   import type {VbenFormProps} from '@vben/common-ui';
-  import {Page, useVbenModal} from '@vben/common-ui';
+  import {Page} from '@vben/common-ui';
 
   import { TypographyLink, Tooltip } from 'ant-design-vue';
   import { PartitionOutlined } from '@ant-design/icons-vue';
-  // import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
   import { todoTableSchema, searchFormSchema } from './data';
   import { getAppingTasksPagerModel, getApps } from '#/api/process/process';
   import { EmpInfo } from '#/views/components/EmpInfo';
@@ -71,9 +60,9 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
   resetButtonOptions: {
-    show: false,
+    show: true,
   },
   schema: searchFormSchema,
 };
@@ -134,7 +123,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
     });
   });*/
 
-  function handleViewForm(record: Recordable) {
+  function handleViewForm(record: Recordable<any>) {
     record.allowsOperation = true;
     openProcessFormModal(true, {
       record,
@@ -149,22 +138,11 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
     });
   }
 
-  function showFlowDiagram(modelKey, procInstId) {
+  function handleBpmnPreview(modelKey, procInstId) {
     bpmnPreviewModalRef.value.setData({modelKey, procInstId});
     bpmnPreviewModalRef.value.open();
-    /*
-    openBpmnPreviewModal(true, {
-      modelKey: modelKey,
-      procInstId: !procInstId || procInstId === '0' ? '' : procInstId, // 参数空时传过来的是0
-      isUpdate: true,
-    });
-    setBpmnPreviewProps({
-      centered: true,
-      useWrapper: false,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });*/
   }
+
   function reloadData() {
     setTimeout(() => {
       reload();

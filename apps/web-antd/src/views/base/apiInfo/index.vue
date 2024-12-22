@@ -31,20 +31,6 @@ const apiCategoryModal = ref();
 const PerPrefix = "ApiInfo:";
 const {hasAccessByCodes} = useAccess();
 
-// const [registerApiInfoDrawer, {
-//   openDrawer: openApiInfoDrawer,
-//   setDrawerProps: setApiInfoDrawerProps
-// }] = useDrawer();
-
-// const [ApiInfoDrawer, baseDrawerApi] = useVbenDrawer({
-//   // 连接抽离的组件
-//   connectedComponent: apiInfoDrawer,
-// });
-// const [ApiCategoryModal, baseModalApi] = useVbenModal({
-//   // 连接抽离的组件
-//   connectedComponent: apiCategoryModal,
-// });
-
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
   submitOnEnter: true,

@@ -2,7 +2,7 @@
 import {PerEnum} from '#/enums/perEnum';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {Page, type VbenFormProps} from '@vben/common-ui';
-import {deleteByIds, getCompanies, getCompaniesListData} from '#/api/org/company';
+import {deleteByIds, getCompaniesListData} from '#/api/org/company';
 import {columns, searchFormSchema} from './company.data';
 import CompanyModal from './company-modal.vue';
 import type { Recordable } from '@vben/types';

@@ -128,7 +128,6 @@ export const formSchema : FormSchema[] = [
     fieldName: 'orderNo',
     label: '排序号',
     help: '数值越小越靠前！',
-    required: false,
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {

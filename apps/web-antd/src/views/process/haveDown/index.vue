@@ -1,6 +1,17 @@
 <template>
   <Page auto-content-height>
     <BasicTable @fetch-success="dataChangeEvent" @register="registerHaveDownTable" >
+      <template #formName="{ row }">
+        <Tooltip placement="top" title="流程图预览">
+          <TypographyLink @click="handleBpmnPreview(row.processDefinitionKey, row.processInstanceId)">
+            <PartitionOutlined class="mr-2"/>
+          </TypographyLink>
+        </Tooltip>
+        <TypographyLink @click="handleViewForm(row)">
+          {{row.formName}}
+        </TypographyLink>
+      </template>
+
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'startPersonName'">
           <EmpInfo :no="record.startPersonCode" :name="record.startPersonName" />
@@ -22,7 +33,7 @@
         </template>
       </template>
     </BasicTable>
-    <BpmnPreviewModal @register="registerBpmnPreviewModal" />
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" />
     <ProcessFormModal
       @register="registerProcessFormModal"
       @visible-change="handleProcessFormVisibleChange"
@@ -39,7 +50,7 @@ import {Page, useVbenModal} from '@vben/common-ui';
   // import { BasicTable, useTable } from '@/components/Table';
   import {TypographyLink, Tooltip} from 'ant-design-vue';
   import {PartitionOutlined} from '@ant-design/icons-vue';
-  // import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
+import {BpmnPreviewModal} from '#/views/components/preview';
   import { haveDownTableSchema, searchFormSchema } from './data';
   import {getApplyedTasksPagerModel, getApps} from "#/api/process/process";
   // import { useModal } from '@/components/Modal';
@@ -87,6 +98,7 @@ import {Page, useVbenModal} from '@vben/common-ui';
     })
   })*/
 
+const bpmnPreviewModalRef = ref();
 
 
 const formOptions: VbenFormProps = {
@@ -95,9 +107,9 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
   resetButtonOptions: {
-    show: false,
+    show: true,
   },
   schema: searchFormSchema,
 };
@@ -130,6 +142,10 @@ const gridOptions: VxeGridProps<any> = {
 
 const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
+function handleBpmnPreview(modelKey, procInstId) {
+  bpmnPreviewModalRef.value.setData({modelKey, procInstId});
+  bpmnPreviewModalRef.value.open();
+}
 
   function handleViewForm(record: Recordable) {
     openProcessFormModal(true, {

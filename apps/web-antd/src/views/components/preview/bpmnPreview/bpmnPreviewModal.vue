@@ -1,23 +1,58 @@
 <template>
-  <BasicModal class="w-[1000px] h-full]" title="-">
-    <BpmnPreviewContainer :modelKey="modelKey" :procInstId="procInstId" ref="presetView"/>
+  <BasicModal class="w-[1000px] h-full">
+    <template #title>
+      流程图 - {{modelName}}
+      <LoadingOutlined v-if="modelName === ''" />
+    </template>
+    <BpmnPreviewContainer
+      :modelKey="modelKey"
+      :procInstId="procInstId"
+      ref="bpmnPreviewContainerRef"
+      @data-change="handleDataChange"
+    />
+    <template #prepend-footer>
+      <Dropdown>
+        <template #overlay>
+          <Menu @click="handleDownloadClick">
+            <MenuItem key="png">PNG</MenuItem>
+            <MenuItem key="svg">SVG</MenuItem>
+            <MenuItem key="bpmn">BPMN</MenuItem>
+            <MenuItem key="xml">XML</MenuItem>
+          </Menu>
+        </template>
+        <Button type="primary" :loading="exportLoading">
+          导出流程图
+          <DownOutlined />
+        </Button>
+      </Dropdown>
+    </template>
   </BasicModal>
 </template>
 
 <script lang="ts" setup>
   import { computed, ref, unref, shallowRef, defineExpose } from 'vue';
-  import { Button, Space, Dropdown, Menu } from 'ant-design-vue';
   import {useVbenModal} from '@vben/common-ui';
   import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
   // import ApproveHistoryTimeLine from '#/views/components/process/ApproveHistoryTimeLine.vue';
   import BpmnPreviewContainer from './bpmnPreviewContainer.vue';
-  // import { useRequest } from '@vben/hooks';
+  import { Button, Space, Dropdown, Menu } from 'ant-design-vue';
 
+  // import { useRequest } from '@vben/hooks';
+  import {
+    LoadingOutlined,
+    CompressOutlined,
+    ExpandOutlined,
+    MinusOutlined,
+    PlusOutlined,
+    DownOutlined,
+  } from '@ant-design/icons-vue';
+  const bpmnPreviewContainerRef = ref();
   const modelKey = ref('');
   const procInstId = ref('');
+  const MenuItem = Menu.Item;
 
   const [BasicModal, modalApi] = useVbenModal({
-    centered: true,
+    // centered: true,
     draggable: true,
     onCancel() {
       modalApi.close();
@@ -25,23 +60,18 @@
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
-        debugger;
         if (values) {
           modelKey.value = values.modelKey;
           procInstId.value = values.procInstId;
           modalApi.setState({loading: false, confirmLoading: false});
         }
+      } else {
+        modelName.value = '';
       }
     },
-    onConfirm() {
-      // await formApi.submitForm();
-      // handleSubmit();
-    },
+    showConfirmButton: false,
+    cancelText: '关闭',
   });
-
-  const isFitView = ref<boolean>(false);
-  const fitViewScaleRate = ref(1);
-  const defaultZoom = ref<number>(1);
   const presetViewer = ref<ComponentInstance<typeof BpmnPresetViewer>>();
   const bpmnViewer = shallowRef();
 
@@ -57,9 +87,15 @@
 
   function handleDataChange(data) {
     modelName.value = data.modelName;
-    setTimeout(() => {
-      processFitViewer();
-    });
+    // setTimeout(() => {
+    //   processFitViewer();
+    // });
+  }
+
+  async function handleDownloadClick({ key }) {
+    exportLoading.value = true;
+    await bpmnPreviewContainerRef.value?.downloadProcess(key, unref(modelName));
+    exportLoading.value = false;
   }
 
   // const [registerModal, { setModalProps, changeLoading }] = useModalInner(async (data) => {

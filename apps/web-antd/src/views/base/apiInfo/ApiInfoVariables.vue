@@ -1,6 +1,6 @@
 <template>
-  <div class="api-variable-setting">
-    <BasicTable :loading="true" class="variable-table !py-1 !px-0" ref="tableRef" v-bind="gridOptions">
+  <div class="w-full h-full">
+    <BasicTable :loading="true" ref="tableRef" class="variable-table !py-1 !px-0" v-bind="gridOptions">
       <template #action="{ row }">
         <TableAction outside :actions="createActions(row)" />
       </template>
@@ -11,12 +11,12 @@
     </BasicTable>
 
     <div style="width: 500px; margin: auto">
-      <a-button
+      <Button
           :loading="gridOptions.loading"
           type="dashed"
           style="width: 100%"
           @click="handleAddRow"
-      >添加变量</a-button
+      >添加变量</Button
       >
       <!--      <a-button type="primary" style="width: 100%;" @click="handleSubmit">保存</a-button>-->
     </div>
@@ -26,10 +26,11 @@
 <script lang="ts" setup>
 import { defineComponent, reactive, ref, unref, watch, onMounted, computed, nextTick } from 'vue';
 import { vxeFlowVariableTableColumns } from './apiInfo.data';
-import { Tag, message } from 'ant-design-vue';
+import { Tag, Button, message } from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
+import {TableAction} from '#/components/table-action';
 
 defineComponent({
   name: 'ApiVariableSetting',
@@ -78,6 +79,9 @@ const gridOptions = reactive<any>({
   // editConfig: { trigger: 'click', mode: 'cell', showStatus: true },
   columns: vxeFlowVariableTableColumns,
   toolbarConfig: {
+    enabled: false,
+  },
+  pagerConfig: {
     enabled: false,
   },
   formConfig: {
@@ -130,6 +134,7 @@ onMounted(async () => {
 });
 
 async function loadData() {
+  debugger;
   tableRef.value?.remove();
   if (!props.variables) {
     return;

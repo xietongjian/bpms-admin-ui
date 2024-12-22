@@ -1,71 +1,70 @@
 <template>
   <Page auto-content-height>
-    <BasicTable @fetch-success="dataChangeEvent" @register="registerLaunchedTable" >
-      <template #toolbar>
+    <BasicTable table-title="列表">
+      <template #toolbar-tools>
         <Button @click="handleExport" type="primary">导出</Button>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'formName'">
-          <Tooltip placement="top" title="流程图预览">
-            <a>
-              <PartitionOutlined @click="showFlowDiagram(record.processDefinitionKey, record.processInstanceId)" class="flow-diagram-icon mr-2"/>
-            </a>
-          </Tooltip>
-          <TypographyLink @click="handleViewForm(record)">
-            {{record.formName}}
+      <template #formName="{ row }">
+        <Tooltip placement="top" title="流程图预览">
+          <TypographyLink @click="handleBpmnPreview(row.processDefinitionKey, row.processInstanceId)">
+            <PartitionOutlined class="mr-2"/>
           </TypographyLink>
+        </Tooltip>
+        <TypographyLink @click="handleViewForm(row)">
+          {{row.formName}}
+        </TypographyLink>
+      </template>
+      <template #currentAssignees="{ row }">
+        <template v-if="row.currentAssignees && row.currentAssignees.length>0" >
+          <template v-if="row.currentAssignees.length > 2">
+            <Space>
+              <template v-for="item in row.currentAssignees.slice(0, 2)" >
+                <EmpInfo v-if="item.type === 'user'" :no="item.code" :name="item.name" />
+                <Popover v-else :title="'角色信息'">
+                  <template #content>
+                    <div>名称：{{item.name}}</div>
+                    <div>标识：{{item.code}}</div>
+                  </template>
+                  {{item.name}}
+                </Popover>
+              </template>
+              <Popover >
+                <template #content>
+                  <template v-for="item in row.currentAssignees.slice(2, row.currentAssignees.length)" >
+                    <EmpInfo v-if="item.type==='user'" :no="item.code" :name="item.name" />
+                  </template>
+                </template>
+                <Badge :count="row.currentAssignees.length-2" :number-style="{ backgroundColor: '#52c41a' }" />
+              </Popover>
+            </Space>
+          </template>
+          <template v-else>
+            <Space>
+              <template v-for="item in row.currentAssignees" >
+                <EmpInfo v-if="item.type === 'user'" :no="item.code" :name="item.name" />
+                <Popover v-else :title="'角色信息'">
+                  <template #content>
+                    <div>名称：{{item.name}}</div>
+                    <div>标识：{{item.code}}</div>
+                  </template>
+                  {{item.name}}
+                </Popover>
+              </template>
+            </Space>
+          </template>
         </template>
+        <template v-else>
+          -
+        </template>
+      </template>
 
+      <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'duration'">
           {{ timeDurationFormatter(record.duration) }}
         </template>
-
-        <template v-else-if="column.key === 'currentAssignees'">
-          <template v-if="record.currentAssignees && record.currentAssignees.length>0" >
-            <template v-if="record.currentAssignees.length > 2">
-              <Space>
-                <template v-for="item in record.currentAssignees.slice(0, 2)" >
-                  <EmpInfo v-if="item.type === 'user'" :no="item.code" :name="item.name" />
-                  <Popover v-else :title="'角色信息'">
-                    <template #content>
-                      <div>名称：{{item.name}}</div>
-                      <div>标识：{{item.code}}</div>
-                    </template>
-                    {{item.name}}
-                  </Popover>
-                </template>
-                <Popover >
-                  <template #content>
-                    <template v-for="item in record.currentAssignees.slice(2, record.currentAssignees.length)" >
-                      <EmpInfo v-if="item.type==='user'" :no="item.code" :name="item.name" />
-                    </template>
-                  </template>
-                  <Badge :count="record.currentAssignees.length-2" :number-style="{ backgroundColor: '#52c41a' }" />
-                </Popover>
-              </Space>
-            </template>
-            <template v-else>
-              <Space>
-                <template v-for="item in record.currentAssignees" >
-                  <EmpInfo v-if="item.type === 'user'" :no="item.code" :name="item.name" />
-                  <Popover v-else :title="'角色信息'">
-                    <template #content>
-                      <div>名称：{{item.name}}</div>
-                      <div>标识：{{item.code}}</div>
-                    </template>
-                    {{item.name}}
-                  </Popover>
-                </template>
-              </Space>
-            </template>
-          </template>
-          <template v-else>
-            -
-          </template>
-        </template>
       </template>
     </BasicTable>
-    <BpmnPreviewModal @register="registerBpmnPreviewModal" />
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" />
     <ProcessFormModal
       @register="registerProcessFormModal"
       @visible-change="handleProcessFormVisibleChange"
@@ -83,7 +82,9 @@ import type {VbenFormProps} from '@vben/common-ui';
 import {Page, useVbenModal} from '@vben/common-ui';
   import {Space, Button, Badge, Popover, Tooltip, TypographyLink} from 'ant-design-vue';
   import {DownloadOutlined, PartitionOutlined} from '@ant-design/icons-vue';
-  // import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
+import {BpmnPreviewModal} from '#/views/components/preview';
+
+// import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
   import { launchedTableSchema, searchFormSchema } from './data';
   import {findMyProcessinstancesPagerModel, getApps} from "#/api/process/process";
   import { EmpInfo } from '#/views/components/EmpInfo';
@@ -127,6 +128,7 @@ import {getAppingTasksPagerModel} from "#/api/process/process";
     showIndexColumn: true,
     immediate: false
   });*/
+const bpmnPreviewModalRef = ref();
 
 
 const formOptions: VbenFormProps = {
@@ -135,9 +137,9 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
   resetButtonOptions: {
-    show: false,
+    show: true,
   },
   schema: searchFormSchema,
 };
@@ -230,19 +232,10 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
     }
   }
 
-  function showFlowDiagram(modelKey, procInstId){
-    openBpmnPreviewModal(true, {
-      modelKey: modelKey,
-      procInstId: (!procInstId||procInstId==='0')?'':procInstId,    // 参数空时传过来的是0
-      isUpdate: true,
-    });
-    setBpmnPreviewProps({
-      centered: true,
-      useWrapper: false,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });
-  }
+function handleBpmnPreview(modelKey, procInstId) {
+  bpmnPreviewModalRef.value.setData({modelKey, procInstId});
+  bpmnPreviewModalRef.value.open();
+}
 
   function reloadData(){
     reload();

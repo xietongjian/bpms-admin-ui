@@ -1,5 +1,4 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { getApps } from '#/api/process/process';
 
@@ -12,16 +11,15 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/编码',
+      allowClear: true,
     },
     labelWidth: 60,
-    colProps: {span: 6, lg:{span: 6, offset:0}, sm:{span: 10, offset: 0}, xs:{span: 16, offset: 0}},
   },
   {
     fieldName: 'dateRange',
     label: '时间范围',
     component: 'RangePicker',
     labelWidth: 80,
-    colProps: {span: 6, lg:{span: 6, offset:0}, sm:{span: 10, offset: 0}, xs:{span: 16, offset: 0}},
   },
   {
     fieldName: 'appSn',
@@ -33,8 +31,8 @@ export const searchFormSchema: FormSchema[] = [
       labelField: 'name',
       valueField: 'sn',
       placeholder: '请选择系统',
+      allowClear: true,
     },
-    colProps: {span: 6, lg:{span: 6, offset:0}, sm:{span: 10, offset: 0}, xs:{span: 16, offset: 0}},
   }
 ];
 export const todoTableSchema: VxeGridProps['columns'] = [
