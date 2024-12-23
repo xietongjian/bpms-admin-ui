@@ -141,10 +141,9 @@ async function initComponentAdapter() {
       return h(
         OrgSelector,
         {
-          iconSlot: 'addonAfter',
-          inputComponent: Input,
           ...props,
-          ...attrs },
+          ...attrs
+        },
         slots,
       );
     },

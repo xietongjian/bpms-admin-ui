@@ -18,13 +18,13 @@
         </div>
       </Col>-->
     </Row>
-<!--    <a-button type="primary" @click="handleSubmit"> 更新基本信息 </a-button>-->
+    <Button type="primary" @click="handleSubmit"> 更新基本信息 </Button>
   </div>
 </template>
 <script lang="ts" setup>
   // import { CropperAvatar } from '@/components/Cropper';
   import {computed, nextTick, onMounted} from 'vue';
-  import { Col, Row, Collapse, message } from 'ant-design-vue';
+  import { Col, Row, Collapse, message, Button } from 'ant-design-vue';
   import {useVbenForm} from '#/adapter/form';
 
   // import { accountInfoApi } from '@/api/demo/account';
@@ -62,7 +62,9 @@
     console.log('data', data);
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
+    const values = await (formApi.getValues());
+    console.log(values);
     message.success('更新成功！');
   }
 </script>

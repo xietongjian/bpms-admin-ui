@@ -63,7 +63,7 @@ export const baseSetschemas: FormSchema[] = [
     label: '所在地区',
   },
   {
-    fieldName: 'userNo',
+    fieldName: 'testOrgSelector',
     component: 'OrgSelector',
     label: '测试组织选择',
     componentProps: {
@@ -71,8 +71,8 @@ export const baseSetschemas: FormSchema[] = [
       multiple: true,
       type: 'company',
       closeOnSelect: true,
-      modelValue: [{
-        id: '1', name: 'XXXX有限公司', type: 'company',
+      value: [{
+        id: '1', key: '1', value: '1', name: 'XXXX有限公司', label: 'XXXX有限公司', type: 'company',
       },{
         id: '2', name: 'WWWWW有限公司', type: 'company',
       }]

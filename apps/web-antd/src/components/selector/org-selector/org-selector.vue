@@ -39,6 +39,10 @@ interface Props {
   closeOnSelect: {
     type: boolean,
     default: true;
+  },
+  modelValue: {
+    type: object | object[],
+    default: undefined,
   }
 }
 
@@ -61,7 +65,7 @@ const emit = defineEmits<{
 const modelValue = defineModel({default: [], type: Array});
 
 const visible = ref(false);
-const currentSelect = ref('');
+const currentSelect = ref(undefined);
 const keyword = ref('');
 const keywordDebounce = refDebounced(keyword, 300);
 const currentList = computed(() => {
@@ -80,7 +84,25 @@ const currentList = computed(() => {
     return [];
   }
 });
-
+function handleDropdownVisibleChange(open) {
+  // 展开时默认展开并滚动到选中的树节点
+  if(open){
+    console.log(props.modelValue);
+  }
+  // const selectedKeys = [...this.selectedKeys];
+  // const keyPath = [...extra.keyPath];
+  //
+  // // 清空之前展开的节点
+  // tree.expandedKeys = [];
+  //
+  // // 展开当前选中节点的所有上级节点
+  // keyPath.forEach((key) => {
+  //   tree.expandedKeys.push(key);
+  // });
+  //
+  // // 更新Vue状态
+  // this.selectedKeys = keyPath;
+}
 
 function handleFilterTreeNode (searchValue: string, treeNode: any) {
   if (!searchValue) return false;
@@ -119,7 +141,7 @@ async function initData() {
   if (props.type === 'company') {
     const res = await getCompanyTreeData();
     treeData.value = res;
-    if (unref(props.multipart)) {
+    if (unref(props.multiple)) {
       setTimeout(() => {
         // getTree()?.setCheckedKeys(selectedRowKeys);
       }, 20);
@@ -169,12 +191,6 @@ async function initData() {
   }
 }
 
-const handleClick = (icon: string) => {
-  currentSelect.value = icon;
-  modelValue.value = icon;
-  close();
-};
-
 function toggleOpenState() {
   visible.value = !visible.value;
 }
@@ -188,7 +204,6 @@ function close() {
 }
 
 function openSelectorModal() {
-  debugger;
   orgSelectorModalRef.value.setData(modelValue.value);
   orgSelectorModalRef.value.open();
 }
@@ -228,7 +243,7 @@ defineExpose({toggleOpenState, open, close});
     <template  v-else>
       <TreeSelect
           ref="selectorRef"
-          v-model:value="selectorDataList"
+          v-model:value="currentSelect"
           :placeholder="placeholder"
           class="w-full "
           :multiple="multiple"
@@ -236,16 +251,17 @@ defineExpose({toggleOpenState, open, close});
           :labelInValue="true"
           :tree-data="treeData"
           :showSearch="true"
+          @dropdownVisibleChange="handleDropdownVisibleChange"
           :filterTreeNode="handleFilterTreeNode"
       >
         <template #tagRender="{ label, closable, onClose, option }">
           <Popover :z-index="1200">
             <template #content>
-              {{ label }}
+              {{ label || '-' }}
             </template>
             <Tag class="flex items-center gap-1 !text-sm p-px m-px mr-1" :closable="closable" :color="option.color" @close="onClose">
               <span class="icon-[ix--building2] size-4" ></span>
-              {{ label }}
+              {{ label || '-' }}
             </Tag>
           </Popover>
         </template>
