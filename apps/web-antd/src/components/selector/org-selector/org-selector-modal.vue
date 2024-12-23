@@ -114,6 +114,16 @@
     selectedRowKeys: [],
   });
 
+  function filterTreeNode(searchValue, node) {
+    debugger;
+    const nodeData = node.data.props || {};
+
+    return (
+      nodeData.title &&
+      nodeData.title.includes(searchValue)
+    );
+  }
+
   watch(searchValue, value => {
     const expanded = treeData.value
       .map((item: TreeProps['treeData']) => {

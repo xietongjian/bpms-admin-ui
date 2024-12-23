@@ -68,8 +68,8 @@ export const baseSetschemas: FormSchema[] = [
     label: '测试组织选择',
     componentProps: {
       placeholder: '请选择组织',
-      multipart: false,
-      type: 'org',
+      multiple: true,
+      type: 'company',
       closeOnSelect: true,
       modelValue: [{
         id: '1', name: 'XXXX有限公司', type: 'company',

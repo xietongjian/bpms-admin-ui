@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full" title="基本设置" >
+  <div class="w-full" >
     <Row :gutter="24">
       <Col :span="20">
         <BasicForm />

@@ -1,27 +1,39 @@
 <script setup lang="ts">
 import { defineComponent, ref, watch, unref, onMounted, computed, watchEffect } from 'vue';
-import { SearchOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
+import Icon, { SearchOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
 import OrgSelectorModal from './org-selector-modal.vue';
 import {EmptyIcon, Grip, listIcons} from '@vben/icons';
 
 import {
-  Button,
-  Input,
   Select,
+  TreeSelect,
   Tooltip,
+  Tag,
+  Popover,
   Pagination,
 } from 'ant-design-vue';
 
 import {refDebounced} from '@vueuse/core';
+import {getCompanies, getCompanyTreeData} from "#/api/org/company";
+import {getOrgTree} from "#/api/org/dept";
+import {forEach} from "#/utils/helper/treeHelper";
 
 interface Props {
-  multipart: {
+  multiple: {
     type: boolean,
     default: false,
   },
   type: {
     type: 'org' | 'company' | 'dept',
     default: 'org',
+  },
+  selectorMode: {
+    type: 'default' | 'dialog',
+    default: 'default'
+  },
+  placeholder: {
+    type: string,
+    default: '请选择'
   },
   // 仅在multipart=false单选时有效
   closeOnSelect: {
@@ -31,22 +43,22 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  multipart: false,
+  multiple: false,
   type: 'org',
   closeOnSelect: true,
   modelValue: [],
+  selectorMode: 'default',
 });
 
 const selectorDataList = ref([]);
 const selectorRef = ref();
 const orgSelectorModalRef = ref();
-
+const treeData = ref([]);
 const emit = defineEmits<{
   change: [string];
 }>();
 
 const modelValue = defineModel({default: [], type: Array});
-debugger;
 
 const visible = ref(false);
 const currentSelect = ref('');
@@ -69,6 +81,12 @@ const currentList = computed(() => {
   }
 });
 
+
+function handleFilterTreeNode (searchValue: string, treeNode: any) {
+  if (!searchValue) return false;
+  return treeNode?.title?.indexOf(searchValue) > -1;
+}
+
 const showList = computed(() => {
   return currentList.value.filter((item) =>
       item.includes(keywordDebounce.value),
@@ -85,6 +103,71 @@ watch(
       emit('change', v);
     },
 );
+
+onMounted(() => {
+  if (props.selectorMode === 'default') {
+    initData();
+  }
+});
+enum OrgSelectType {
+  COMPANY = '1',
+  DEPT = '2',
+  ORG = '3',
+}
+
+async function initData() {
+  if (props.type === 'company') {
+    const res = await getCompanyTreeData();
+    treeData.value = res;
+    if (unref(props.multipart)) {
+      setTimeout(() => {
+        // getTree()?.setCheckedKeys(selectedRowKeys);
+      }, 20);
+    } else {
+      setTimeout(() => {
+        // getTree()?.setSelectedKeys(selectedRowKeys);
+        // getTree()?.setExpandedKeys(selectedRowKeys);
+      }, 20);
+    }
+
+    setTimeout(() => {
+      // getTree()?.setExpandedKeys(unref(treeData).map((item) => item.id));
+    }, 100);
+  } else {
+    // 部门和公司树（组织树）
+    getOrgTree()
+      .then((res) => {
+        treeData.value = res;
+        const expandKeys = [];
+        // 如果只能选择部门，则将公司的数据设置禁用
+        if (values.selectType === OrgSelectType.DEPT) {
+          forEach(res, (item) => {
+            // 只能选部门
+            item.disabled = item.sourceType === OrgSelectType.COMPANY; // 部门选择器，禁用公司的选项
+            item.sourceType === OrgSelectType.COMPANY && expandKeys.push(item.id); // 如果只能选择部门，需要将公司全部展开
+          });
+        }
+
+        treeData.value = res as unknown as TreeItem[];
+
+        if (unref(multipart)) {
+          setTimeout(() => {
+            // unref(treeRef)?.setCheckedKeys(selectedRowKeys);
+          }, 200);
+        } else {
+          setTimeout(() => {
+            // TODO 这里有个问题：默认展开时无法展开父节点
+            console.log(selectedRowKeys);
+            // getTree()?.setSelectedKeys(selectedRowKeys);
+          }, 200);
+        }
+        expandKeys.concat(selectedRowKeys);
+
+        // getTree()?.setExpandedKeys(expandKeys);
+      })
+      .finally(() => {});
+  }
+}
 
 const handleClick = (icon: string) => {
   currentSelect.value = icon;
@@ -113,33 +196,70 @@ function openSelectorModal() {
 defineExpose({toggleOpenState, open, close});
 </script>
 <template>
-  <div class="w-full  ">
-    <Select
-      ref="selectorRef"
-      :value="selectorDataList"
-      v-bind="attrs"
-      class="w-full"
-      :open="false"
-      :mode="props.multipart? 'multiple': 'tags'"
-      :allowClear="true"
-      :labelInValue="true"
-      maxTagPlaceholder=""
-      @change="changeSelectItem"
-      @click="openSelectorModal"
-      :showArrow="true"
-    >
-      <template #clearIcon>
-        <CloseCircleOutlined @click="clearSelectedList"/>
-      </template>
-      <template #suffixIcon>
-        <SearchOutlined style="color: #666"/>
-      </template>
-      <template #[item]="data" v-for="item in Object.keys($slots)">
-        <slot :name="item" v-bind="data"></slot>
-      </template>
-    </Select>
+  <div class="w-full">
+    <template v-if="selectorMode === 'dialog'">
+      <Select
+        ref="selectorRef"
+        :value="selectorDataList"
+        :placeholder="placeholder"
+        class="w-full"
+        :open="false"
+        :mode="props.multipart? 'multiple': 'tags'"
+        :allowClear="true"
+        :labelInValue="true"
+        maxTagPlaceholder=""
+        @change="changeSelectItem"
+        @click="openSelectorModal"
+        :showArrow="true"
+      >
+        <template #clearIcon>
+          <CloseCircleOutlined @click="clearSelectedList"/>
+        </template>
+        <template #suffixIcon>
+          <SearchOutlined style="color: #666"/>
+        </template>
+        <template #[item]="data" v-for="item in Object.keys($slots)">
+          <slot :name="item" v-bind="data"></slot>
+        </template>
+      </Select>
 
-    <OrgSelectorModal ref="orgSelectorModalRef" @change="handleChange"/>
+      <OrgSelectorModal ref="orgSelectorModalRef" @change="handleChange"/>
+    </template>
+    <template  v-else>
+      <TreeSelect
+          ref="selectorRef"
+          v-model:value="selectorDataList"
+          :placeholder="placeholder"
+          class="w-full "
+          :multiple="multiple"
+          :allowClear="true"
+          :labelInValue="true"
+          :tree-data="treeData"
+          :showSearch="true"
+          :filterTreeNode="handleFilterTreeNode"
+      >
+        <template #tagRender="{ label, closable, onClose, option }">
+          <Popover :z-index="1200">
+            <template #content>
+              {{ label }}
+            </template>
+            <Tag class="flex items-center gap-1 !text-sm p-px m-px mr-1" :closable="closable" :color="option.color" @close="onClose">
+              <span class="icon-[ix--building2] size-4" ></span>
+              {{ label }}
+            </Tag>
+          </Popover>
+        </template>
+<!--        <template #clearIcon>
+          <CloseCircleOutlined @click="clearSelectedList"/>
+        </template>-->
+<!--        <template #suffixIcon>
+          <SearchOutlined style="color: #666"/>
+        </template>-->
+<!--        <template #[item]="data" v-for="item in Object.keys($slots)">
+          <slot :name="item" v-bind="data"></slot>
+        </template>-->
+      </TreeSelect>
+    </template>
   </div>
 
   <!--    <VbenPopover
