@@ -1,7 +1,7 @@
 <template>
   <Page auto-content-height>
     <BasicTable>
-      <template #toolbar>
+      <template #toolbar-tools>
         <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
       </template>
       <template #action="{ row }">

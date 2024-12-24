@@ -159,9 +159,7 @@ function createActions(row: Recordable) {
       </template>
 
       <template #action="{ row }">
-        <TableAction
-          :actions="createActions(row)"
-        />
+        <TableAction :actions="createActions(row)"/>
       </template>
     </BasicTable>
     <AppModal ref="appModalRef" @onSuccess="tableApi.reload()"/>

@@ -1,59 +1,63 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
+import { OrderNoDefaultEnum } from '#/enums/constantEnum';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import { z } from '#/adapter/form';
 
-const colProps = {
-  span: 24,
-};
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
+    treeNode: true
   },
   {
     title: '编码',
-    dataIndex: 'code',
+    field: 'code',
     width: 300,
     align: 'left',
   },
   {
     title: '修改时间',
-    dataIndex: 'updateTime',
+    field: 'updateTime',
     width: 180,
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/编码',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'pcode',
+    fieldName: 'pcode',
     label: 'pcode',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['code'],
+    }
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
-    required: true,
+    // required: true,
     component: 'Input',
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -63,14 +67,12 @@ export const formSchema: FormSchema[] = [
         max: 32,
         message: '字符长度不能大于32！',
       },
-    ],
-    colProps,
+    ],*/
   },
   {
-    field: 'code',
+    fieldName: 'code',
     label: '编码',
-    required: true,
+    // required: true,
     component: 'Input',
-    colProps,
   },
 ];

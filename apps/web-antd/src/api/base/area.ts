@@ -9,6 +9,11 @@ enum Api {
   CheckEntityExist = '/flow/base/area/checkEntityExist',
 }
 
+export const getAreasListData = (params?: any) => {
+  return requestClient.post<any>(Api.GetAreas, params);
+};
+
+
 export const getAreas = (params?: any) => {
   const result = requestClient.post<any>(Api.GetAreas, params);
   return Promise.resolve(result).then((res: any) => {

@@ -1,61 +1,37 @@
 <template>
-  <div>
-    <BasicTable @register="registerTable">
-      <template #toolbar>
-        <Authority :value="'Area:' + PerEnum.ADD">
-          <a-button type="primary" @click="handleCreate"> 新增</a-button>
-        </Authority>
+  <Page auto-content-height>
+    <BasicTable>
+      <template #toolbar-tools>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-            :actions="[
-              {
-                auth: 'Area:' + PerEnum.ADD,
-                tooltip: '添加子节点',
-                icon: 'ant-design:plus-outlined',
-                onClick: handleCreateChild.bind(null, record),
-              },
-              {
-                auth: 'Area:' + PerEnum.UPDATE,
-                tooltip: '修改',
-                icon: 'clarity:note-edit-line',
-                onClick: handleEdit.bind(null, record),
-              },
-              {
-                auth: 'Area:' + PerEnum.DELETE,
-                tooltip: '删除',
-                icon: 'ant-design:delete-outlined',
-                color: 'error',
-                onClick: (e) => {
-                  e.stopPropagation();
-                },
-                popConfirm: {
-                  title: '是否确认删除',
-                  confirm: handleDelete.bind(null, record),
-                  placement: 'left',
-                },
-              },
-            ]"
-          />
-        </template>
+      <template #action="{ row }">
+        <TableAction :actions="createActions(row)"/>
       </template>
     </BasicTable>
-    <AreaModal @register="registerModal" @success="handleSuccess" />
-  </div>
+    <AreaModal ref="areaModalRef" @success="handleSuccess"/>
+  </Page>
 </template>
 <script lang="ts" setup>
-  import { PerEnum } from '@/enums/perEnum';
-  import { Authority } from '@/components/Authority';
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { getAreas, deleteByIds, getAreasByPcode } from '#/api/base/area';
-  import { columns, searchFormSchema } from './area.data';
-  import AreaModal from './AreaModal.vue';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { useModal } from '@/components/Modal';
+import {ref} from 'vue';
+import {message, Button} from 'ant-design-vue';
 
-  const { createMessage } = useMessage();
+import {PerEnum} from '#/enums/perEnum';
+import {useAccess} from '@vben/access';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormProps} from '@vben/common-ui';
+import type {Recordable} from '@vben/types';
+import {getAreas, deleteByIds, getAreasByPcode, getAreasListData} from '#/api/base/area';
+import {columns, searchFormSchema} from './area.data';
+import AreaModal from './AreaModal.vue';
+import {Page} from "@vben/common-ui";
+import {useVbenVxeGrid} from "#/adapter/vxe-table";
+import {TableAction} from '#/components/table-action';
 
+const {hasAccessByCodes} = useAccess();
+
+const areaModalRef = ref();
+const PerPrefix = 'Area:';
+/*
   const [registerModal, { openModal, setModalProps }] = useModal();
 
   const [registerTable, { reload }] = useTable({
@@ -83,52 +59,135 @@
       dataIndex: 'action',
       fixed: false,
     },
+  });*/
+
+
+const formOptions: VbenFormProps = {
+  showCollapseButton: false,
+  submitOnEnter: true,
+  commonConfig: {
+    labelWidth: 60,
+  },
+  resetButtonOptions: {
+    show: false,
+  },
+  schema: searchFormSchema,
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+};
+
+const gridOptions: VxeGridProps<any> = {
+  columns,
+  showOverflow: true,
+  columnConfig: {resizable: true},
+  pagerConfig: {
+    enabled: false,
+  },
+  rowConfig: {
+    keyField: 'code',
+    isHover: true,
+  },
+  treeConfig: {
+    parentField: 'pcode',
+    rowField: 'code',
+    transform: true,
+  },
+  height: 'auto',
+  keepSource: true,
+  border: false,
+  stripe: true,
+  proxyConfig: {
+    ajax: {
+      query: async ({page}, formValues) => {
+        return await getAreasListData({
+          entity: formValues || {},
+        });
+      },
+    },
+  },
+};
+
+const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+
+function createActions(row: Recordable<any>) {
+  return [
+    {
+      auth: [PerPrefix + PerEnum.ADD],
+      tooltip: '添加子节点',
+      icon: 'ant-design:plus-outlined',
+      onClick: handleCreateChild.bind(null, row),
+    },
+    {
+      auth: [PerPrefix + PerEnum.UPDATE],
+      tooltip: '修改',
+      icon: 'clarity:note-edit-line',
+      onClick: handleEdit.bind(null, row),
+    },
+    {
+      auth: [PerPrefix + PerEnum.DELETE],
+      tooltip: '删除',
+      icon: 'ant-design:delete-outlined',
+      color: 'error',
+      onClick: (e) => {
+        e.stopPropagation();
+      },
+      danger: true,
+      popConfirm: {
+        title: '是否确认删除',
+        confirm: handleDelete.bind(null, row),
+        placement: 'left',
+        okButtonProps: {
+          danger: true,
+        }
+      },
+    },
+  ];
+}
+
+function handleCreate() {
+  areaModalRef.value.setData({});
+  areaModalRef.value.open();
+  areaModalRef.value.setState({
+    title: '新增区域'
   });
+}
 
-  function handleCreate() {
-    setModalProps({ title: '新增区域' });
-    openModal(true, {
-      isUpdate: false,
-    });
-  }
+function handleEdit(record: Recordable<any>, e) {
+  e.stopPropagation();
+  areaModalRef.value.setData(record);
+  areaModalRef.value.open();
+  areaModalRef.value.setState({
+    title: '修改区域'
+  });
+}
 
-  function handleEdit(record: Recordable, e) {
-    e.stopPropagation();
-    setModalProps({ title: '修改区域' });
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });
-  }
+function handleCreateChild(record: Recordable<any>, e) {
+  e.stopPropagation();
+  areaModalRef.value.setData({pcode: record.code});
+  areaModalRef.value.open();
+  areaModalRef.value.setState({
+    title: '新增【' + record.name + '】的子区域'
+  });
+}
 
-  function handleCreateChild(record: Recordable, e) {
-    e.stopPropagation();
-    setModalProps({ title: '新增【' + record.name + '】的子区域' });
-    record = { pcode: record.code };
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });
+function handleDelete(record: Recordable<any>, e) {
+  e.stopPropagation();
+  if (record.children && record.children.length > 0) {
+    message.warning('有子节点，不能删除！');
+    return;
   }
+  deleteByIds(record.code).then(() => {
+    tableApi.reload();
+  });
+}
 
-  function handleDelete(record: Recordable, e) {
-    e.stopPropagation();
-    if (record.children && record.children.length > 0) {
-      createMessage.warning('有子节点，不能删除！');
-      return;
-    }
-    deleteByIds(record.code).then(() => {
-      reload();
-    });
-  }
+function doSearch() {
+  tableApi.reload();
+}
 
-  function doSearch() {
-    reload();
-  }
-
-  function handleSuccess() {
-    setTimeout(() => {
-      reload();
-    }, 200);
-  }
+function handleSuccess() {
+  setTimeout(() => {
+    tableApi.reload();
+  }, 200);
+}
 </script>

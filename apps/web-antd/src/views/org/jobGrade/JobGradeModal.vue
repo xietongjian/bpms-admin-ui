@@ -7,6 +7,7 @@
   import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
+  import {message} from 'ant-design-vue';
 
   import { formSchema } from './jobGrade.data';
   import { saveOrUpdate } from '#/api/org/jobGrade';

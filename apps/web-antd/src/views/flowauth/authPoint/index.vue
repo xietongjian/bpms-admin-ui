@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Page auto-content-height>
     <BasicTable>
       <template #toolbar-tools>
         <Button v-if="hasAccessByCodes([PerPrefix+PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
@@ -9,9 +9,10 @@
       </template>
     </BasicTable>
     <AuthPointModal ref="authPointModalRef" @success="handleSuccess" />
-  </div>
+  </Page>
 </template>
 <script lang="ts" setup>
+  import {ref} from 'vue';
   import { PerEnum } from '#/enums/perEnum';
   import {Page} from '@vben/common-ui';
   import {useAccess} from '@vben/access';
