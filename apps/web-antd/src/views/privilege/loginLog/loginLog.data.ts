@@ -1,97 +1,82 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
-import { formatToDateTime } from '@/utils/dateUtil';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import type { VxeGridProps } from '#/adapter/vxe-table';
 
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '访问IP',
-    dataIndex: 'ip',
+    field: 'ip',
     width: 100,
     align: 'left',
   },
   {
     title: '操作人ID',
-    dataIndex: 'operationId',
+    field: 'operationId',
     width: 100,
     align: 'left',
   },
   {
     title: '操作人工号',
-    dataIndex: 'operationPerson',
+    field: 'operationPerson',
     width: 100,
     align: 'left',
   },
   {
     title: '操作人姓名',
-    dataIndex: 'operationUsername',
+    field: 'operationUsername',
     width: 100,
     align: 'left',
   },
   {
     title: '操作内容',
-    dataIndex: 'operationContent',
+    field: 'operationContent',
     width: 100,
     align: 'left',
   },
   {
     title: '操作时间',
-    dataIndex: 'operationTime',
+    field: 'operationTime',
     width: 100,
     align: 'left',
-    customRender: ({ text }) => {
-      return formatToDateTime(text);
-    },
+    // customRender: ({ text }) => {
+    //   return formatToDateTime(text);
+    // },
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/编码',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   {
-    field: 'dateRange',
+    fieldName: 'dateRange',
     label: '时间范围',
     component: 'RangePicker',
     labelWidth: 80,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'ip',
+    fieldName: 'ip',
     label: '访问ip',
     component: 'Input',
-    show: true,
   },
   {
-    field: 'operationId',
+    fieldName: 'operationId',
     label: '操作人id',
     component: 'Input',
-    show: true,
   },
   {
-    field: 'operationUsername',
+    fieldName: 'operationUsername',
     label: '操作人的姓名',
     component: 'Input',
-    show: true,
-    rules: [
+    /*rules: [
       {
         whitespace: true,
         message: '操作人的姓名不能为空！',
@@ -100,25 +85,21 @@ export const formSchema: FormSchema[] = [
         max: 32,
         message: '字符长度不能大于32！',
       },
-    ],
+    ],*/
   },
   {
-    field: 'operationPerson',
+    fieldName: 'operationPerson',
     label: '操作人姓名',
     component: 'Input',
-    show: true,
   },
   {
-    field: 'operationContent',
+    fieldName: 'operationContent',
     label: '操作内容',
     component: 'Input',
-    show: true,
   },
   {
-    field: 'operationTime',
+    fieldName: 'operationTime',
     label: '操作时间',
-    required: true,
     component: 'DatePicker',
-    show: true,
   },
 ];

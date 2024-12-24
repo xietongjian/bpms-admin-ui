@@ -1,20 +1,19 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal v-bind="$attrs" >
+    <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, useForm } from '@/components/Form';
+  import { defineEmits, defineExpose } from 'vue';
+  import {useVbenModal} from '@vben/common-ui';
   import { formSchema } from './loginLog.data';
-  import { saveOrUpdate } from '@/api/privilege/loginLog';
+  import {useVbenForm} from '#/adapter/form';
+
+  import { saveOrUpdate } from '#/api/privilege/loginLog';
 
   const emit = defineEmits(['success', 'register']);
 
-  const isUpdate = ref(true);
-
-  const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
+  /*const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
     schemas: formSchema,
     showActionButtonGroup: false,
@@ -31,18 +30,57 @@
       });
     }
   });
+*/
 
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      handleSubmit();
+    },
+  });
+
+  const [BasicForm, formApi] = useVbenForm({
+    // 所有表单项共用，可单独在表单内覆盖
+    commonConfig: {
+      // 所有表单项
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: formSchema,
+    wrapperClass: 'grid-cols-1',
+  });
+
+  // const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
+      modalApi.setState({loading: true, confirmLoading: true});
+      const valid = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
       await saveOrUpdate(values);
-      closeModal();
+      modalApi.close();
       emit('success');
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
+  defineExpose(modalApi);
 </script>

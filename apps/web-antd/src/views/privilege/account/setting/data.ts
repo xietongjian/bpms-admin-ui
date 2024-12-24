@@ -72,9 +72,9 @@ export const baseSetschemas: FormSchema[] = [
       type: 'company',
       closeOnSelect: true,
       modelValue: [{
-        id: '1', key: '1', value: '1', name: 'XXXX有限公司', label: 'XXXX有限公司', type: 'company',
+        id: '1', value: '1', type: 'company',
       },{
-        id: '2', name: 'WWWWW有限公司', type: 'company',
+        id: '2', value: '2', type: 'company',
       }]
     }
   },

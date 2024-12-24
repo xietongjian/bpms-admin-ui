@@ -2,12 +2,13 @@
 import {ref} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
+import type {Recordable} from '@vben/types';
+
 import {Page} from '@vben/common-ui';
 import {Button, Space, Image, Tag, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {getGroupListByPage, deleteByIds} from '#/api/privilege/group';
 import {TableAction} from '#/components/table-action';
-import type {Recordable} from '@vben/types';
 import GroupModal from './group-modal.vue';
 import { useAccess } from '@vben/access';
 
@@ -29,7 +30,7 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
   resetButtonOptions: {
     show: false,
   },
@@ -142,6 +143,9 @@ function createActions(record: Recordable<any>): any[] {
         title: '是否确认删除',
         confirm: handleDelete.bind(null, record),
         placement: 'left',
+        okButtonProps: {
+          danger: true
+        },
       },
     },
   ];

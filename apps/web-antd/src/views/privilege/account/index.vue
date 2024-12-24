@@ -2,11 +2,12 @@
 import {ref} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
+import type {Recordable} from '@vben/types';
+
 import {Page} from '@vben/common-ui';
 import {Button, Image, Tag, Space, Avatar, Tooltip, Popconfirm, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {getAccountPageList, deleteByIds} from '#/api/privilege/account';
-import type {Recordable} from '@vben/types';
 import {columns, searchFormSchema} from './account.data';
 import {UserOutlined} from '@ant-design/icons-vue';
 import AccountModal from './account-modal.vue';

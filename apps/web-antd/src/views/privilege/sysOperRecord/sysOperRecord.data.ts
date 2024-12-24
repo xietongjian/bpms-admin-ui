@@ -1,48 +1,52 @@
 import { BasicColumn, FormSchema } from '@/components/Table';
 import { h } from 'vue';
-import { DescItem } from '@/components/Description';
-import { formatToDateTime } from '@/utils/dateUtil';
-import { CodeEditor } from '@/components/CodeEditor';
 
-export const columns: BasicColumn[] = [
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import type { VxeGridProps } from '#/adapter/vxe-table';
+
+// import { DescItem } from '@/components/Description';
+import { formatToDateTime } from '#/utils/dateUtil';
+// import { CodeEditor } from '@/components/CodeEditor';
+
+export const columns: VxeGridProps['columns'] = [
   {
     title: '访问IP',
-    dataIndex: 'ip',
+    field: 'ip',
     width: 100,
     align: 'left',
   },
   {
     title: '操作人工号',
-    dataIndex: 'userCode',
+    field: 'userCode',
     width: 100,
     align: 'left',
   },
   {
     title: '操作人姓名',
-    dataIndex: 'userName',
+    field: 'userName',
     width: 100,
     align: 'left',
   },
   {
     title: '来源',
-    dataIndex: 'source',
+    field: 'source',
     width: 100,
     align: 'left',
   },
   {
     title: '请求方式',
-    dataIndex: 'operType',
+    field: 'operType',
     width: 100,
     align: 'left',
   },
   {
     title: '操作时间',
-    dataIndex: 'dateTime',
+    field: 'dateTime',
     width: 100,
     align: 'left',
-    customRender: ({ text }) => {
+    /*customRender: ({ text }) => {
       return formatToDateTime(text);
-    },
+    },*/
   },
 ];
 

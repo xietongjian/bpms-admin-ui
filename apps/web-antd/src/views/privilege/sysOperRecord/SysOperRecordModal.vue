@@ -8,6 +8,7 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { descriptionSchema } from './sysOperRecord.data';
   import { Description, useDescription } from '@/components/Description/index';
+  import {useVbenModal} from '@vben/common-ui';
 
   export default defineComponent({
     name: 'LoginLogModal',

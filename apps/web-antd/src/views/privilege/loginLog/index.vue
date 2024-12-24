@@ -1,50 +1,27 @@
-<template>
-  <div>
-    <BasicTable @register="registerTable">
-      <template #toolbar>
-        <Authority :value="'LoginLog:' + PerEnum.DELETE">
-          <a-button color="error" type="danger" @click="handleDeleteAll"> 删除</a-button>
-        </Authority>
-      </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-            :actions="[
-              {
-                tooltip: '删除',
-                auth: 'LoginLog:' + PerEnum.DELETE,
-                icon: 'ant-design:delete-outlined',
-                color: 'error',
-                popConfirm: {
-                  title: '是否确认删除',
-                  confirm: handleDelete.bind(null, record),
-                },
-              },
-            ]"
-          />
-        </template>
-      </template>
-    </BasicTable>
-    <LoginLogModal @register="registerModal" @success="handleSuccess" />
-  </div>
-</template>
 <script lang="ts" setup>
-  import { defineOptions } from 'vue';
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { useModal } from '@/components/Modal';
-  import { columns, searchFormSchema } from './loginLog.data';
-  import LoginLogModal from './LoginLogModal.vue';
-  import { getLoginLogListByPage, deleteByIds } from '@/api/privilege/loginLog';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { PerEnum } from '@/enums/perEnum';
-  import { Authority } from '@/components/Authority';
+import {ref} from 'vue';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormProps} from '@vben/common-ui';
+import type {Recordable} from '@vben/types';
 
-  defineOptions({
-    name: 'LoginLog',
-  });
+import {Page} from '@vben/common-ui';
+import {Button, message, Modal} from 'ant-design-vue';
+import {TableAction} from '#/components/table-action';
 
-  const { createMessage, createConfirm } = useMessage();
-  const [registerModal, { openModal }] = useModal();
+import {columns, searchFormSchema} from './loginLog.data';
+import LoginLogModal from './LoginLogModal.vue';
+import {getLoginLogListByPage, deleteByIds} from '#/api/privilege/loginLog';
+import {PerEnum} from "#/enums/perEnum";
+import {useAccess} from '@vben/access';
+import {useVbenVxeGrid} from "#/adapter/vxe-table";
+
+const {hasAccessByCodes} = useAccess();
+const [modal, contextHolder] = Modal.useModal();
+
+const loginLogModalRef = ref();
+const PerPrefix = "LoginLog:";
+
+/*
   const [registerTable, { reload, getSelectRows }] = useTable({
     title: '列表',
     api: getLoginLogListByPage,
@@ -70,47 +47,140 @@
       title: '操作',
       dataIndex: 'action',
     },
-  });
+  });*/
 
-  function handleCreate() {
-    openModal(true, {
-      isUpdate: false,
-    });
-  }
 
-  function handleEdit(record: Recordable) {
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });
-  }
+const formOptions: VbenFormProps = {
+  showCollapseButton: false,
+  submitOnEnter: true,
+  commonConfig: {
+    labelWidth: 60,
+  },
+  wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+  resetButtonOptions: {
+    show: false,
+  },
+  schema: searchFormSchema,
+};
 
-  function handleDelete(record: Recordable) {
-    deleteByIds([record.id]).then(() => {
-      reload();
-    });
-  }
-
-  function handleDeleteAll() {
-    const selectedRows = getSelectRows();
-    if (selectedRows && selectedRows.length <= 0) {
-      createMessage.warn('请选择行！');
-      return;
-    }
-    createConfirm({
-      iconType: 'warning',
-      title: '提示',
-      content: '确定要删除所选行吗？',
-      onOk: async () => {
-        const ids = selectedRows.map((item) => item.id);
-        await deleteByIds(ids).then(() => {
-          reload();
+const gridOptions: VxeGridProps<any> = {
+  checkboxConfig: {
+    highlight: true,
+    labelField: 'name',
+  },
+  columns,
+  columnConfig: {resizable: true},
+  height: 'auto',
+  keepSource: true,
+  border: false,
+  stripe: true,
+  proxyConfig: {
+    ajax: {
+      query: async ({page}, formValues) => {
+        debugger;
+        return getLoginLogListByPage({
+          query: {
+            pageNum: page.currentPage,
+            pageSize: page.pageSize,
+          },
+          entity: formValues || {},
         });
       },
-    });
-  }
+    },
+  },
+};
 
-  function handleSuccess() {
-    reload();
+const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+
+
+function handleCreate() {
+  loginLogModalRef.value.setData({});
+  loginLogModalRef.value.open();
+}
+
+function handleEdit(record: Recordable<any>) {
+  loginLogModalRef.value.setData(record);
+  loginLogModalRef.value.open();
+  loginLogModalRef.value.setState({
+    title: '编辑'
+  });
+}
+
+function handleDelete(record: Recordable<any>) {
+  deleteByIds([record.id]).then(() => {
+    tableApi.reload();
+  });
+}
+
+function handleDeleteAll() {
+  const selectedRows = tableApi.getSelectRecords();
+  if (selectedRows && selectedRows.length <= 0) {
+    message.warn('请选择行！');
+    return;
   }
+  /*modal.confirm({
+    title: 'Do you Want to delete these items?',
+    icon: h(ExclamationCircleOutlined),
+    content: h('div', { style: 'color:red;' }, 'Some descriptions'),
+    onOk() {
+      console.log('OK');
+    },
+    onCancel() {
+      console.log('Cancel');
+    },
+    class: 'test',
+  });*/
+  modal.confirm({
+    iconType: 'warning',
+    title: '提示',
+    content: '确定要删除所选行吗？',
+    onOk: async () => {
+      const ids = selectedRows.map((item) => item.id);
+      await deleteByIds(ids).then(() => {
+        tableApi.reload();
+      });
+    },
+  });
+}
+
+function handleSuccess() {
+  tableApi.reload();
+}
+
+function createActions(row: Recordable<any>): any[] {
+  return [
+    {
+      tooltip: '删除',
+      auth: [PerPrefix + PerEnum.DELETE],
+      icon: 'ant-design:delete-outlined',
+      danger: true,
+      popConfirm: {
+        title: '是否确认删除',
+        confirm: handleDelete.bind(null, row),
+        okButtonProps: {
+          danger: true,
+        }
+      },
+    },
+  ];
+}
 </script>
+
+<template>
+  <Page auto-content-height>
+    <BasicTable>
+      <template #toolbar-tools>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.DELETE])"
+                color="error" type="danger"
+                @click="handleDeleteAll"> 删除</Button>
+      </template>
+      <template #action="{ row }">
+        <TableAction
+            :actions="createActions(row)"
+        />
+      </template>
+    </BasicTable>
+    <LoginLogModal ref="loginLogModalRef"/>
+    <contextHolder />
+  </Page>
+</template>

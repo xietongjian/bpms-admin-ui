@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height >
-    <div class="bg-card h-full">
+    <div class="bg-card h-full overflow-y-auto">
       <Tabs tab-position="left" :tabBarStyle="tabBarStyle">
         <template v-for="item in settingList" :key="item.key">
           <TabPane :tab="item.name">

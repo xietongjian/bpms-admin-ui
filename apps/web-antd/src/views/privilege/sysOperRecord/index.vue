@@ -1,141 +1,181 @@
 <template>
-  <div>
-    <BasicTable @register="registerTable">
-      <template #toolbar>
-        <Authority :value="'SysOperRecord:' + PerEnum.DELETE">
-          <a-button color="error" type="danger" @click="handleDeleteAll"> 删除 </a-button>
-        </Authority>
+  <Page auto-content-height>
+    <BasicTable>
+      <template #toolbar-tools>
+        <Button v-if="hasAccessByCodes([PerPrefix+PerEnum.DELETE])" color="error" type="danger" @click="handleDeleteAll"> 删除</Button>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-            :actions="[
-              {
-                tooltip: '详情',
-                icon: 'ant-design:file-search-outlined',
-                onClick: handleDetail.bind(null, record),
-              },
-              {
-                tooltip: '删除',
-                auth: 'SysOperRecord:' + PerEnum.DELETE,
-                icon: 'ant-design:delete-outlined',
-                color: 'error',
-                popConfirm: {
-                  title: '是否确认删除',
-                  confirm: handleDelete.bind(null, record),
-                  placement: 'left',
-                },
-              },
-            ]"
-          />
-        </template>
+      <template #action="{ row }">>
+        <TableAction :actions="createActions(row)" />
       </template>
     </BasicTable>
-    <LoginLogModal @register="registerModal" @success="handleSuccess" />
-  </div>
+    <LoginLogModal ref="loginLogModalRef" @success="handleSuccess"/>
+    <contextHolder />
+  </Page>
 </template>
-<script lang="ts">
-  import { defineComponent } from 'vue';
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { useModal } from '@/components/Modal';
-  import { columns, searchFormSchema } from './sysOperRecord.data';
-  import LoginLogModal from './SysOperRecordModal.vue';
-  import { getListByPage, deleteByIds } from '@/api/privilege/sysOperRecord';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { PerEnum } from '@/enums/perEnum';
-  import { Authority } from '@/components/Authority';
-  import { PopConfirmButton } from '@/components/Button';
+<script lang="ts" setup>
+import {ref} from 'vue';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormProps} from '@vben/common-ui';
+import type {Recordable} from '@vben/types';
 
-  export default defineComponent({
-    name: 'SysOperRecord',
-    components: { PopConfirmButton, BasicTable, TableAction, LoginLogModal, Authority },
-    setup() {
-      const { createMessage, createConfirm } = useMessage();
-      const [registerModal, { openModal, setModalProps }] = useModal();
-      const [registerTable, { reload, getSelectRows }] = useTable({
-        title: '列表',
-        api: getListByPage,
-        columns,
-        formConfig: {
-          labelWidth: 120,
-          schemas: searchFormSchema,
-          showAdvancedButton: false,
-          showResetButton: false,
-          autoSubmitOnEnter: true,
-          fieldMapToTime: [['dateRange', ['startTime', 'endTime'], 'YYYY-MM-DD']],
-        },
-        rowSelection: {
-          type: 'checkbox',
-          columnWidth: 30,
-        },
-        canColDrag: true,
-        useSearchForm: true,
-        bordered: true,
-        showIndexColumn: false,
-        actionColumn: {
-          width: 60,
-          title: '操作',
-          dataIndex: 'action',
-          fixed: false,
-        },
-      });
+import {columns, searchFormSchema} from './sysOperRecord.data';
+import LoginLogModal from './SysOperRecordModal.vue';
+import {getListByPage, deleteByIds} from '#/api/privilege/sysOperRecord';
+import {useAccess} from '@vben/access';
+import {PerEnum} from "#/enums/perEnum";
+import {TableAction} from '#/components/table-action';
 
-      function handleCreate() {
-        openModal(true, {
-          isUpdate: false,
-        });
-      }
 
-      function handleDetail(record: Recordable) {
-        openModal(true, {
-          record,
-          isUpdate: true,
-        });
-        setModalProps({
-          title: '查看详情',
-          width: 850,
-        });
-      }
+import {Page} from '@vben/common-ui';
+import {useVbenVxeGrid} from "#/adapter/vxe-table";
+import {Button, Modal} from "ant-design-vue";
 
-      function handleDelete(record: Recordable) {
-        deleteByIds([record.id]).then(() => {
-          reload();
-        });
-      }
+const {hasAccessByCodes} = useAccess();
+const [modal, contextHolder] = Modal.useModal();
 
-      function handleDeleteAll() {
-        const selectedRows = getSelectRows();
-        if (selectedRows && selectedRows.length <= 0) {
-          createMessage.warn('请选择行！');
-          return;
-        }
-        createConfirm({
-          iconType: 'warning',
-          title: '提示',
-          content: '确定要删除所选行吗？',
-          onOk: async () => {
-            const ids = selectedRows.map((item) => item.id);
-            deleteByIds(ids).then(() => {
-              reload();
-            });
+const loginLogModalRef = ref();
+const PerPrefix = 'SysOperRecord:';
+
+/*const { createMessage, createConfirm } = useMessage();
+const [registerModal, { openModal, setModalProps }] = useModal();
+const [registerTable, { reload, getSelectRows }] = useTable({
+  title: '列表',
+  api: getListByPage,
+  columns,
+  formConfig: {
+    labelWidth: 120,
+    schemas: searchFormSchema,
+    showAdvancedButton: false,
+    showResetButton: false,
+    autoSubmitOnEnter: true,
+    fieldMapToTime: [['dateRange', ['startTime', 'endTime'], 'YYYY-MM-DD']],
+  },
+  rowSelection: {
+    type: 'checkbox',
+    columnWidth: 30,
+  },
+  canColDrag: true,
+  useSearchForm: true,
+  bordered: true,
+  showIndexColumn: false,
+  actionColumn: {
+    width: 60,
+    title: '操作',
+    dataIndex: 'action',
+    fixed: false,
+  },
+});*/
+
+
+const formOptions: VbenFormProps = {
+  showCollapseButton: false,
+  submitOnEnter: true,
+  commonConfig: {
+    labelWidth: 60,
+  },
+  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  resetButtonOptions: {
+    show: false,
+  },
+  schema: searchFormSchema,
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+};
+
+const gridOptions: VxeGridProps<any> = {
+  checkboxConfig: {
+    highlight: true,
+    labelField: 'name',
+  },
+  columns,
+  columnConfig: {resizable: true},
+  height: 'auto',
+  keepSource: true,
+  border: false,
+  stripe: true,
+  proxyConfig: {
+    ajax: {
+      query: async ({page}, formValues) => {
+        return await getListByPage({
+          query: {
+            pageNum: page.currentPage,
+            pageSize: page.pageSize,
           },
+          entity: formValues || {},
+        }).then(res => {
+          return Promise.resolve(res);
         });
-      }
+      },
+    },
+  },
+};
 
-      function handleSuccess() {
-        reload();
-      }
+const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
-      return {
-        PerEnum,
-        registerTable,
-        registerModal,
-        handleCreate,
-        handleDetail,
-        handleDelete,
-        handleDeleteAll,
-        handleSuccess,
-      };
+function createActions(row: Recordable<any>) {
+  return [
+    {
+      tooltip: '详情',
+      icon: 'ant-design:file-search-outlined',
+      onClick: handleDetail.bind(null, record),
+    },
+    {
+      tooltip: '删除',
+      auth: [PerPrefix + PerEnum.DELETE],
+      icon: 'ant-design:delete-outlined',
+      danger: true,
+      popConfirm: {
+        title: '是否确认删除',
+        confirm: handleDelete.bind(null, record),
+        placement: 'left',
+        okButtonProps: {
+          danger: true,
+        }
+      },
+    },
+  ];
+}
+
+function handleCreate() {
+  loginLogModalRef.value.setData({});
+  loginLogModalRef.value.open();
+}
+
+function handleDetail(record: Recordable<any>) {
+  loginLogModalRef.value.setData(record);
+  loginLogModalRef.value.open();
+  loginLogModalRef.value.setState({
+    title: '查看详情',
+  });
+}
+
+function handleDelete(record: Recordable<any>) {
+  deleteByIds([record.id]).then(() => {
+    tableApi.reload();
+  });
+}
+
+function handleDeleteAll() {
+  const selectedRows = tableApi.getSelectRecords();
+
+  if (selectedRows && selectedRows.length <= 0) {
+    message.warn('请选择行！');
+    return;
+  }
+  modal.confirm({
+    iconType: 'warning',
+    title: '提示',
+    content: '确定要删除所选行吗？',
+    onOk: async () => {
+      const ids = selectedRows.map((item) => item.id);
+      deleteByIds(ids).then(() => {
+        tableApi.reload();
+      });
     },
   });
+}
+
+function handleSuccess() {
+  tableApi.reload();
+}
+
 </script>

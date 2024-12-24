@@ -10,26 +10,8 @@ const emit = defineEmits<{
   onSuccess: [void];
 }>();
 
-const [BasicModal, modalApi] = useVbenModal({
-  draggable: true,
-  onCancel() {
-    modalApi.close();
-  },
-  onOpenChange(isOpen: boolean) {
-    if (isOpen) {
-      const values = modalApi.getData<Record<string, any>>();
-      if (values) {
-        baseFormApi.setValues(values);
-        modalApi.setState({loading: false, confirmLoading: false});
-      }
-    }
-  },
-  onConfirm() {
-    handleSubmit();
-  },
-});
 
-const [BasicForm, baseFormApi] = useVbenForm({
+const [BasicForm, formApi] = useVbenForm({
   // 所有表单项共用，可单独在表单内覆盖
   commonConfig: {
     // 所有表单项
@@ -42,13 +24,32 @@ const [BasicForm, baseFormApi] = useVbenForm({
   schema: formSchema,
   wrapperClass: 'grid-cols-1',
 });
+const [BasicModal, modalApi] = useVbenModal({
+  draggable: true,
+  onCancel() {
+    modalApi.close();
+  },
+  onOpenChange(isOpen: boolean) {
+    if (isOpen) {
+      const values = modalApi.getData<Record<string, any>>();
+      if (values) {
+        formApi.setValues(values);
+        modalApi.setState({loading: false, confirmLoading: false});
+      }
+    }
+  },
+  onConfirm() {
+    handleSubmit();
+  },
+});
+
 
 async function handleSubmit() {
   modalApi.setState({loading: true, confirmLoading: true});
-  const {valid} = await baseFormApi.validate();
+  const {valid} = await formApi.validate();
   if (valid) {
     try {
-      const values = await baseFormApi.getValues();
+      const values = await formApi.getValues();
       const {msg, success} = await saveOrUpdate(values);
       if (success) {
         message.success(msg);

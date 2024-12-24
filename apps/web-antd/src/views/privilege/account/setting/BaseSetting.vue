@@ -65,7 +65,7 @@
   async function handleSubmit() {
     const values = await (formApi.getValues());
     console.log(values);
-    message.success('更新成功！');
+    message.success(JSON.stringify(values));
   }
 </script>
 
