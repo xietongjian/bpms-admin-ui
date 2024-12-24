@@ -1,16 +1,19 @@
 <script lang="ts" setup>
-import {PerEnum} from '#/enums/perEnum';
+import {ref} from "vue";
+import {Button, message, Tag} from "ant-design-vue";
+
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import {Page, type VbenFormProps} from '@vben/common-ui';
+import type {VbenFormProps} from '@vben/common-ui';
+import type { Recordable } from '@vben/types';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import {Page} from '@vben/common-ui';
+import { TableAction } from '#/components/table-action';
+import {useAccess} from "@vben/access";
+
 import {deleteByIds, getCompaniesListData} from '#/api/org/company';
 import {columns, searchFormSchema} from './company.data';
 import CompanyModal from './company-modal.vue';
-import type { Recordable } from '@vben/types';
-import type {VxeGridProps} from '#/adapter/vxe-table';
-import {useAccess} from "@vben/access";
-import { TableAction } from '#/components/table-action';
-import {Button, message, Tag} from "ant-design-vue";
-import {ref} from "vue";
+import {PerEnum} from '#/enums/perEnum';
 
 const PerPrefix = 'Company:';
 const companyModalRef = ref();

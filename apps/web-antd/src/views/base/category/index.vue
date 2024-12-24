@@ -48,10 +48,17 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { PerEnum } from '@/enums/perEnum';
-  import { Authority } from '@/components/Authority';
+  import { PerEnum } from '#/enums/perEnum';
   import { ref, onMounted } from 'vue';
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
+
+  import {useVbenVxeGrid} from '#/adapter/vxe-table';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import type { Recordable } from '@vben/types';
+  import type {VxeGridProps} from '#/adapter/vxe-table';
+  import {Page} from '@vben/common-ui';
+  import { TableAction } from '#/components/table-action';
+  import {useAccess} from "@vben/access";
+
   import { getCategories, deleteByIds } from '#/api/base/category';
   import { columns, searchFormSchema } from './category.data';
   import CategoryModal from './CategoryModal.vue';
