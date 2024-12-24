@@ -18,12 +18,15 @@ export const columns: VxeGridProps['columns'] = [
     field: 'name',
     align: 'left',
     resizable: true,
+    minWidth: 200,
+    showHeaderOverflow: true,
   },
   {
     title: '请求方式',
     field: 'method',
     align: 'left',
     width: 90,
+    showHeaderOverflow: true,
     customRender: ({ record }) => {
       const { method } = record;
       let color = '';
@@ -43,29 +46,34 @@ export const columns: VxeGridProps['columns'] = [
     width: 150,
     align: 'left',
     resizable: true,
+    showHeaderOverflow: true,
   },
   {
     title: '所属分类',
     field: 'categoryId',
     width: 120,
     align: 'left',
+    showHeaderOverflow: true,
   },
   {
     title: '排序号',
     field: 'orderNo',
     width: 120,
     align: 'left',
+    showHeaderOverflow: true,
   },
   {
     title: '创建时间',
     field: 'createTime',
     width: 180,
+    showHeaderOverflow: true,
   },
   {
     title: '接口描述',
     field: 'remark',
     align: 'left',
     width: 180,
+    showHeaderOverflow: true,
   },
   {
     field: 'action',
