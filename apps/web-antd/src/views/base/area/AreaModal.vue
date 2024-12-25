@@ -132,8 +132,8 @@
   async function handleSubmit() {
     modalApi.setState({loading: true, confirmLoading: true});
     try {
-      const valid = await formApi.validate();
-      if(!valid){
+      const {valid} = await formApi.validate();
+      if (!valid) {
         return;
       }
       const values = await formApi.getValues();
@@ -145,6 +145,9 @@
       }else{
         message.error(msg);
       }
+    } catch (e) {
+      console.error(e);
+      message.error(e.message);
     } finally {
       modalApi.setState({loading: false, confirmLoading: false});
     }

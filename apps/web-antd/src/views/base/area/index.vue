@@ -20,7 +20,7 @@ import {useAccess} from '@vben/access';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
-import {getAreas, deleteByIds, getAreasByPcode, getAreasListData} from '#/api/base/area';
+import {getAreas, deleteByIds, getAreasByPcode, getAreasListData, deleteById} from '#/api/base/area';
 import {columns, searchFormSchema} from './area.data';
 import AreaModal from './AreaModal.vue';
 import {Page} from "@vben/common-ui";
@@ -176,18 +176,16 @@ function handleDelete(record: Recordable<any>, e) {
     message.warning('有子节点，不能删除！');
     return;
   }
-  deleteByIds(record.code).then(() => {
+  const {success, msg} = deleteById(record.code);
+  if (success) {
+    message.success(msg);
     tableApi.reload();
-  });
-}
-
-function doSearch() {
-  tableApi.reload();
+  } else {
+    message.error(msg);
+  }
 }
 
 function handleSuccess() {
-  setTimeout(() => {
-    tableApi.reload();
-  }, 200);
+  tableApi.reload();
 }
 </script>
