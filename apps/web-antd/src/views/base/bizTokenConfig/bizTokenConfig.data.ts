@@ -1,51 +1,61 @@
 import { h } from 'vue';
-import {BasicColumn, FormSchema} from '@/components/Table';
-import {FormValidPatternEnum, RemarkDefaultEnum} from '@/enums/commonEnum';
-import { CodeEditor, MODE } from '@/components/CodeEditor';
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+
+import {FormValidPatternEnum, RemarkDefaultEnum} from '#/enums/commonEnum';
+// import { CodeEditor, MODE } from '@/components/CodeEditor';
 
 const colProps = {
   span: 24,
 };
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '接口类型',
-    dataIndex: 'type',
+    field: 'type',
     width: 80,
     align: 'center',
   },
   {
     title: '名称',
-    width: 200,
-    dataIndex: 'name',
+    minWidth: 200,
+    field: 'name',
     align: 'left',
     resizable: true,
   },
 
   {
     title: '请求地址',
-    dataIndex: 'url',
+    field: 'url',
     align: 'left',
   },
   {
     title: '请求方式',
-    dataIndex: 'method',
+    field: 'method',
     width: 80,
     align: 'center',
   },
   {
     title: 'Token名称',
-    dataIndex: 'tokenName',
+    field: 'tokenName',
     align: 'left',
   },
   {
     title: 'Token键名',
-    dataIndex: 'tokenKey',
+    field: 'tokenKey',
     align: 'left',
   },
   {
     title: '备注',
-    dataIndex: 'remark',
+    field: 'remark',
     align: 'left',
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 

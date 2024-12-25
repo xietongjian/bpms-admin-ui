@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper v-loading="loadingRef" dense contentFullHeight fixedHeight>
+  <Page auto-content-height>
     <BasicTable @register="registerTable">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -7,29 +7,77 @@
         </template>
       </template>
     </BasicTable>
-
-    <BpmnPreviewModal @register="registerBpmnPreviewModal" @success="handleSuccess" />
-  </PageWrapper>
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" />
+  </Page>
 </template>
 <script lang="ts" setup>
   import { ref, nextTick } from 'vue';
 
-  import { BasicTable, useTable, TableAction, BasicColumn, ActionItem } from '@/components/Table';
+  import type {VxeGridProps} from '#/adapter/vxe-table';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import type {Recordable} from '@vben/types';
 
-  import { PageWrapper } from '@/components/Page';
+  import {Page} from '@vben/common-ui';
+  import {Button, Space, Image, Tag, message} from 'ant-design-vue';
+  import {useVbenVxeGrid} from '#/adapter/vxe-table';
+  import {TableAction} from '#/components/table-action';
 
-  import { useModal } from '@/components/Modal';
-  import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
+  import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
   import { columns, searchFormSchema } from './modelCount.data';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { useGo } from '@/hooks/web/usePage';
-  import { getModelPagerModel } from '@/api/report/modelCount';
-  import { getAllFormType } from '@/api/form/form';
 
-  const { createMessage } = useMessage();
 
-  const go = useGo();
-  const [registerModal, { openModal }] = useModal();
+  import { getModelPagerModel } from '#/api/report/modelCount';
+  import { getAllFormType } from '#/api/form/form';
+
+
+  import {PerEnum} from "#/enums/perEnum";
+  import {getGroupListByPage} from "#/api/privilege/group";
+
+
+  const bpmnPreviewModalRef = ref();
+  // const go = useGo();
+
+  const formOptions: VbenFormProps = {
+    showCollapseButton: false,
+    submitOnEnter: true,
+    commonConfig: {
+      labelWidth: 60,
+    },
+    wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+    resetButtonOptions: {
+      show: false,
+    },
+    schema: searchFormSchema,
+  };
+
+  const gridOptions: VxeGridProps<any> = {
+    columns,
+    columnConfig: {resizable: true},
+    height: 'auto',
+    keepSource: true,
+    border: false,
+    stripe: true,
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          return getModelPagerModel({
+            query: {
+              pageNum: page.currentPage,
+              pageSize: page.pageSize,
+            },
+            entity: formValues || {},
+          });
+        },
+      },
+    },
+  };
+
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+  function handleBpmnPreview(modelKey, procInstId) {
+    bpmnPreviewModalRef.value.setData({modelKey, procInstId});
+    bpmnPreviewModalRef.value.open();
+  }
+  /*const [registerModal, { openModal }] = useModal();
   const [
     registerBpmnPreviewModal,
     { openModal: openBpmnPreviewModal, setModalProps: setBpmnPreviewProps },
@@ -56,19 +104,19 @@
       title: '操作',
       dataIndex: 'action',
     },
-  });
+  });*/
 
   nextTick(() => {
-    const { updateSchema } = getForm();
-
-    getAllFormType().then((res) => {
-      updateSchema([
-        {
-          field: 'formType',
-          componentProps: { options: res },
-        },
-      ]);
-    });
+    // const { updateSchema } = getForm();
+    //
+    // getAllFormType().then((res) => {
+    //   updateSchema([
+    //     {
+    //       field: 'formType',
+    //       componentProps: { options: res },
+    //     },
+    //   ]);
+    // });
   });
 
   /**
@@ -83,7 +131,7 @@
           loading: true,
         },
       });
-      await reload(values);
+      await tableApi.reload(values);
     } catch (error) {
     } finally {
       setProps({
@@ -94,8 +142,8 @@
     }
   }
 
-  function createActions(record: Recordable, column: BasicColumn): ActionItem[] {
-    let actions: ActionItem[] = [
+  function createActions(record: Recordable<any>) {
+    return [
       {
         icon: 'ant-design:partition-outlined',
         tooltip: '流程图预览',
@@ -103,24 +151,14 @@
         onClick: handlePreview.bind(null, record),
       },
     ];
-    return actions;
   }
 
-  function handlePreview(record: Recordable) {
-    openBpmnPreviewModal(true, {
-      modelKey: record.modelKey,
-    });
-    setBpmnPreviewProps({
-      title: `预览-${record.name}`,
-      centered: true,
-      useWrapper: false,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });
+  function handlePreview(record: Recordable<any>) {
+    handleBpmnPreview({modelKey: record.modelKey});
   }
 
   function handleSuccess() {
-    reload();
+    tableApi.reload();
   }
 </script>
 

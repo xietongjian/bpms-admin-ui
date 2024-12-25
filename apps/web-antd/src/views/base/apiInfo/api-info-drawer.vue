@@ -2,12 +2,11 @@
   <BasicDrawer
       class="w-[1000px]"
       v-bind="$attrs"
-      @register="registerDrawer"
       title="接口编辑"
       showFooter
       @ok="handleSubmit"
   >
-    <BasicForm @register="registerForm" class="apiInfo_form">
+    <BasicForm class="apiInfo_form">
       <template #urlSlot="{ model, field, disabled }">
         <Input.Group compact>
           <Select
@@ -61,7 +60,6 @@ const headersRef = ref(null);
 const pathVariablesRef = ref(null);
 const queryVariablesRef = ref(null);
 
-const isUpdate = ref(true);
 const emit = defineEmits(['success'])
 
 

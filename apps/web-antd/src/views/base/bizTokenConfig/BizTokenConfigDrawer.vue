@@ -1,24 +1,25 @@
 <template>
   <BasicDrawer
-    v-bind="$attrs"
-    :title="getTitle"
-    showFooter
-    @register="registerModal"
-    @ok="handleSubmit"
+      class="w-[1000px]"
+      title="接口编辑"
+      showFooter
+      @ok="handleSubmit"
   >
-    <BasicForm @register="registerForm" />
+    <BasicForm />
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
-  import { computed, defineEmits, ref, unref } from 'vue';
-  import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
-  import { BasicForm, useForm } from '@/components/Form';
+  import { computed, defineEmits, ref, unref, defineExpose } from 'vue';
+  import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from '#/adapter/form';
+  import {FormItem, FormItemRest, message, Input, Select} from "ant-design-vue";
+
   import { formSchema } from './bizTokenConfig.data';
   import { saveOrUpdate } from '#/api/base/bizTokenConfig';
 
-  const isUpdate = ref(true);
 
   const emit = defineEmits(['success', 'register']);
+/*
 
   const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
@@ -38,17 +39,58 @@
   });
 
   const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
+*/
+
+  const [BasicDrawer, drawerApi] = useVbenDrawer({
+    onCancel() {
+      drawerApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = drawerApi.getData<Record<string, any>>();
+        if (values) {
+          formApi.setValues(values);
+          drawerApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      handleSubmit();
+    },
+  });
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: formSchema,
+    wrapperClass: 'grid-cols-1',
+  });
 
   async function handleSubmit() {
     try {
-      setDrawerProps({ confirmLoading: true });
-      const values = await validate();
+      drawerApi.setState({loading: true, confirmLoading: true});
+      const valid = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
       values.params = values.params || '{}';
-      await saveOrUpdate(values);
-      closeDrawer();
-      emit('success');
+      const {success, msg} = await saveOrUpdate(values);
+      if(success){
+        drawerApi.close();
+        emit('success');
+        message.success(msg);
+      } else {
+        message.error(msg);
+      }
     } finally {
-      setDrawerProps({ confirmLoading: false });
+      drawerApi.setState({loading: false, confirmLoading: false});
     }
   }
 </script>
