@@ -1,18 +1,21 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal >
+    <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
   import { computed, defineEmits, ref, unref } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, Rule, useForm } from '@/components/Form';
+  import {useVbenModal} from '@vben/common-ui';
+  import {message} from 'ant-design-vue';
+  import {useVbenForm} from '#/adapter/form';
+
+
   import { formSchema } from './dicType.data';
   import { checkEntityExist, saveOrUpdate } from '#/api/base/dicType';
-  import { CheckExistParams } from '#/api/model/baseModel';
   import { FormValidPatternEnum } from '#/enums/commonEnum';
 
   const emit = defineEmits(['success', 'register']);
+/*
 
   const isUpdate = ref(true);
 
@@ -95,16 +98,55 @@
   });
 
   const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
+*/
+
+
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      labelWidth: 100,
+    },
+    schema: formSchema,
+    showDefaultActions: false,
+  });
+
+  const [BasicModal, modalApi] = useVbenModal({
+    fullscreenButton: false,
+    draggable: true,
+    // onCancel: handleCancel,
+    onConfirm: handleSubmit,
+    onOpenChange: async (isOpen) => {
+      if (!isOpen) {
+        return null;
+      }
+      modalApi.setState({loading: true, confirmLoading: true});
+      const values = modalApi.getData();
+      // isUpdate.value = !!values.id;
+      await formApi.setValues(values);
+      modalApi.setState({loading: false, confirmLoading: false});
+    },
+  });
+
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
-      await saveOrUpdate(values);
-      closeModal();
-      emit('success');
+      modalApi.setState({loading: true, confirmLoading: true});
+      const {valid} = await formApi.validate();
+      if (!valid) {
+        return;
+      }
+      const values = await formApi.getValues();
+      const {success, msg} = await saveOrUpdate(values);
+      if (success){
+        modalApi.close();
+        emit('success');
+        message.success(msg);
+      }else{
+        message.error(msg);
+      }
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
+  defineExpose(modalApi);
 </script>

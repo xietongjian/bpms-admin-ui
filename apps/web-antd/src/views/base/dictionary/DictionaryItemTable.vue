@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white overflow-hidden dictionary">
+  <div class="bg-card overflow-hidden dictionary h-full">
     <BasicTable >
       <template #toolbar>
         <Authority :value="'Dictionary:' + PerEnum.ADD">
@@ -84,7 +84,8 @@
     commonConfig: {
       labelWidth: 60,
     },
-    wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+    wrapperClass: 'grid-cols-2',
+    actionWrapperClass: 'col-start-2 text-left ml-4',
     resetButtonOptions: {
       show: false,
     },

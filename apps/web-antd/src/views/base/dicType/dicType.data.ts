@@ -1,71 +1,76 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
-import { OrderNoDefaultEnum } from '#/enums/commonEnum';
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import { FormValidPatternEnum, RemarkDefaultEnum, OrderNoDefaultEnum } from '#/enums/commonEnum';
 
-const colProps = {
-  span: 24,
-};
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
   },
   {
     title: '编码',
-    dataIndex: 'code',
+    field: 'code',
     align: 'left',
   },
   {
     title: '排序',
-    dataIndex: 'orderNo',
+    field: 'orderNo',
     width: 100,
     align: 'right',
   },
   {
     title: '创建时间',
-    dataIndex: 'createTime',
+    field: 'createTime',
     width: 180,
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/编码',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
-    field: 'pid',
+    fieldName: 'pid',
     label: 'pid',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
     required: true,
     component: 'Input',
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -75,27 +80,23 @@ export const formSchema: FormSchema[] = [
         max: 64,
         message: '字符长度不能大于64！',
       },
-    ],
-    colProps,
+    ],*/
   },
   {
-    field: 'code',
+    fieldName: 'code',
     label: '编码',
-    required: true,
+    // required: true,
     component: 'Input',
-    colProps,
   },
   {
-    field: 'orderNo',
+    fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
-    required: false,
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
       min: OrderNoDefaultEnum.MIN,
       max: OrderNoDefaultEnum.MAX,
     },
-    colProps,
   },
 ];

@@ -1,63 +1,40 @@
 <template>
-  <div>
-    <BasicTable @register="registerTable">
-      <template #toolbar>
-        <Authority :value="'DicType:' + PerEnum.ADD">
-          <a-button type="primary" @click="handleCreate"> 新增</a-button>
-        </Authority>
+  <Page auto-content-height>
+    <BasicTable>
+      <template #toolbar-tools>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-            :actions="[
-              {
-                auth: 'DicType:' + PerEnum.ADD,
-                tooltip: '添加子分类',
-                icon: 'ant-design:plus-outlined',
-                onClick: handleCreateChild.bind(null, record),
-              },
-              {
-                auth: 'DicType:' + PerEnum.UPDATE,
-                tooltip: '修改',
-                icon: 'clarity:note-edit-line',
-                onClick: handleEdit.bind(null, record),
-              },
-              {
-                auth: 'DicType:' + PerEnum.DELETE,
-                tooltip: '删除',
-                icon: 'ant-design:delete-outlined',
-                color: 'error',
-                onClick: (e) => {
-                  e.stopPropagation();
-                },
-                popConfirm: {
-                  title: '是否确认删除',
-                  confirm: handleDelete.bind(null, record),
-                  placement: 'left',
-                },
-              },
-            ]"
-          />
-        </template>
+      <template #action="{ row }">
+        <TableAction :actions="createActions(row)"/>
       </template>
     </BasicTable>
-    <GetDicModal @register="registerModal" @success="handleSuccess" />
-  </div>
+    <DicTypeModal ref="dicTypeModalRef" @register="registerModal" @success="handleSuccess" />
+  </Page>
 </template>
 <script lang="ts" setup>
-  import { PerEnum } from '@/enums/perEnum';
-  import { Authority } from '@/components/Authority';
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
+  import { PerEnum } from '#/enums/perEnum';
+
+  import {useVbenVxeGrid} from '#/adapter/vxe-table';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import type { Recordable } from '@vben/types';
+  import type {VxeGridProps} from '#/adapter/vxe-table';
+  import {Page} from '@vben/common-ui';
+  import { TableAction } from '#/components/table-action';
+  import {useAccess} from "@vben/access";
+  import {Button, message, Tag} from "ant-design-vue";
+
   import { getDicTypes, deleteByIds } from '#/api/base/dicType';
 
   import { columns, searchFormSchema } from './dicType.data';
-  import GetDicModal from './DicTypeModal.vue';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { useModal } from '@/components/Modal';
+  import {ref} from "vue";
+  import DicTypeModal from './DicTypeModal.vue';
 
-  const { createMessage } = useMessage();
+  const PerPrefix = 'DicType:';
+  const dicTypeModalRef = ref();
+  const {hasAccessByCodes}  = useAccess();
 
-  const [registerModal, { openModal, setModalProps }] = useModal();
+
+  /*const [registerModal, { openModal, setModalProps }] = useModal();
   const [registerTable, { reload }] = useTable({
     title: '列表',
     api: getDicTypes,
@@ -81,51 +58,128 @@
       dataIndex: 'action',
       fixed: false,
     },
-  });
+  });*/
+
+
+  const formOptions: VbenFormProps = {
+    showCollapseButton: false,
+    submitOnEnter: true,
+    commonConfig: {
+      labelWidth: 60,
+    },
+    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+    resetButtonOptions: {
+      show: false,
+    },
+    schema: searchFormSchema,
+  };
+
+  const gridOptions: VxeGridProps<any> = {
+    checkboxConfig: {
+      highlight: true,
+      labelField: 'name',
+    },
+    columns,
+    showOverflow: true,
+    columnConfig: {resizable: true},
+    pagerConfig: {
+      enabled: false,
+    },
+    rowConfig: {
+      keyField: 'id',
+      isHover: true,
+    },
+    treeConfig: {
+      parentField: 'pid',
+      rowField: 'id',
+      transform: true,
+    },
+    height: 'auto',
+    keepSource: true,
+    border: false,
+    stripe: true,
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          return await getDicTypes({
+            entity: formValues || {},
+          });
+        },
+      },
+    },
+  };
+
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+
+  function createActions(record: Recordable<any>) {
+    return [
+      {
+        auth: [PerPrefix + PerEnum.ADD],
+        tooltip: '添加子分类',
+        icon: 'ant-design:plus-outlined',
+        onClick: handleCreateChild.bind(null, record),
+      },
+      {
+        auth: [PerPrefix + PerEnum.UPDATE],
+        tooltip: '修改',
+        icon: 'clarity:note-edit-line',
+        onClick: handleEdit.bind(null, record),
+      },
+      {
+        auth: [PerPrefix + PerEnum.DELETE],
+        tooltip: '删除',
+        icon: 'ant-design:delete-outlined',
+        danger: true,
+        onClick: (e) => {
+          e.stopPropagation();
+        },
+        popConfirm: {
+          title: '是否确认删除',
+          confirm: handleDelete.bind(null, record),
+          placement: 'left',
+          okButtonProps: {
+            danger: true,
+          }
+        },
+      },
+    ];
+  }
 
   function handleCreate() {
-    setModalProps({ title: '新增字典分类' });
-    openModal(true, {
-      isUpdate: false,
-    });
+    dicTypeModalRef.value.setData({});
+    dicTypeModalRef.value.open();
+    dicTypeModalRef.value.setState({ title: '新增字典分类' });
   }
 
-  function handleEdit(record: Recordable, e) {
+  function handleEdit(record: Recordable<any>, e) {
     e.stopPropagation();
-    setModalProps({ title: '修改字典分类' });
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });
+    dicTypeModalRef.value.setData(record);
+    dicTypeModalRef.value.open();
+    dicTypeModalRef.value.setState({ title: '修改字典分类' });
   }
 
-  function handleCreateChild(record: Recordable, e) {
+  function handleCreateChild(record: Recordable<any>, e) {
     e.stopPropagation();
-    setModalProps({ title: '新增【' + record.name + '】的子分类' });
-    record = { pid: record.id };
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });
+    dicTypeModalRef.value.setData({ pid: record.id });
+    dicTypeModalRef.value.open();
+    dicTypeModalRef.value.setState({ title: `新增【${record.name}】的子分类` });
   }
 
-  function handleDelete(record: Recordable) {
+  function handleDelete(record: Recordable<any>) {
     if (record.children && record.children.length > 0) {
-      createMessage.warning('有子节点，不能删除！');
+      message.warning('有子节点，不能删除！');
       return;
     }
     deleteByIds([record.id]).then((res) => {
-      reload();
+      tableApi.reload();
     });
   }
 
   function doSearch() {
-    reload();
+    tableApi.reload();
   }
 
   function handleSuccess() {
-    setTimeout(() => {
-      reload();
-    }, 200);
+    tableApi.reload();
   }
 </script>
