@@ -1,9 +1,9 @@
 <template>
   <div class="bg-white overflow-hidden dictionary">
-    <BasicTable @register="registerTable">
+    <BasicTable >
       <template #toolbar>
         <Authority :value="'Dictionary:' + PerEnum.ADD">
-          <a-button v-if="dictId !== ''" type="primary" @click="handleCreate">新增</a-button>
+          <Button v-if="dictId !== ''" type="primary" @click="handleCreate">新增</Button>
         </Authority>
       </template>
       <template #bodyCell="{ column, record }">
@@ -32,25 +32,29 @@
         </template>
       </template>
     </BasicTable>
-    <DictionaryItemModal @register="registerModal" @success="handleSuccess" />
+    <DictionaryItemModal ref="dictionaryItemModalRef" @success="handleSuccess" />
   </div>
 </template>
 <script lang="ts" setup>
   import { ref, defineExpose } from 'vue';
-  import { PerEnum } from '@/enums/perEnum';
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
+  import { PerEnum } from '#/enums/perEnum';
+  import type {VxeGridProps} from '#/adapter/vxe-table';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import type {Recordable} from '@vben/types';
+  import {TableAction} from '#/components/table-action';
+  import {useVbenVxeGrid} from "#/adapter/vxe-table";
+  import {Button, message} from 'ant-design-vue';
+
   import { dictionaryItemPageList, deleteItemByIds } from '#/api/base/dictionary';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { useModal } from '@/components/Modal';
 
   import { itemColumns, dictionaryItemSearchFormSchema } from './dictionary.data';
   import DictionaryItemModal from './DictionaryItemModal.vue';
-  import { Authority } from '@/components/Authority';
 
-  const { createMessage } = useMessage();
-
-  const [registerModal, { openModal, setModalProps }] = useModal();
   const dictId = ref<string>('');
+
+  const dictionaryItemModalRef = ref();
+
+ /* const [registerModal, { openModal, setModalProps }] = useModal();
   const [registerTable, { reload, setProps, setTableData }] = useTable({
     title: '字典项列表',
     api: dictionaryItemPageList,
@@ -72,11 +76,48 @@
       title: '操作',
       dataIndex: 'action',
     },
-  });
+  });*/
+
+  const formOptions: VbenFormProps = {
+    showCollapseButton: false,
+    submitOnEnter: true,
+    commonConfig: {
+      labelWidth: 60,
+    },
+    wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+    resetButtonOptions: {
+      show: false,
+    },
+    schema: dictionaryItemSearchFormSchema,
+  };
+
+  const gridOptions: VxeGridProps<any> = {
+    columns: itemColumns,
+    columnConfig: {resizable: true},
+    height: 'auto',
+    keepSource: true,
+    border: false,
+    stripe: true,
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          return dictionaryItemPageList({
+            query: {
+              pageNum: page.currentPage,
+              pageSize: page.pageSize,
+            },
+            entity: formValues || {},
+          });
+        },
+      },
+    },
+  };
+
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
   function handleCreate() {
     if (dictId.value === '') {
-      createMessage.warning('请选择数据字典！', 2);
+      message.warning('请选择数据字典！', 2);
       return;
     }
     setModalProps({ title: '新增字典项' });
@@ -89,7 +130,7 @@
   function filterByDict(param) {
     dictId.value = param;
     setProps({ searchInfo: { mainId: dictId.value } });
-    reload({ page: 1 });
+    tableApi.reload({ page: 1 });
   }
 
   function cleanTableData() {
@@ -97,7 +138,7 @@
     dictId.value = '';
   }
 
-  function handleEdit(record: Recordable) {
+  function handleEdit(record: Recordable<any>) {
     setModalProps({ title: '修改字典项' });
     openModal(true, {
       record,
@@ -105,16 +146,14 @@
     });
   }
 
-  function handleDelete(record: Recordable) {
+  function handleDelete(record: Recordable<any>) {
     deleteItemByIds(record.id).then(() => {
-      reload();
+      tableApi.reload();
     });
   }
 
   function handleSuccess() {
-    setTimeout(() => {
-      reload();
-    }, 200);
+    tableApi.reload();
   }
 
   defineExpose({ filterByDict, cleanTableData });

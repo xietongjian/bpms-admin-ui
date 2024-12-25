@@ -1,56 +1,23 @@
 <template>
-  <div>
-    <BasicTable @register="registerTable">
-      <template #toolbar>
-        <Authority :value="'Category:' + PerEnum.ADD">
-          <a-button type="primary" @click="handleCreate"> 新增</a-button>
-        </Authority>
+  <Page auto-content-height>
+    <BasicTable>
+      <template #toolbar-tools>
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-            :actions="[
-              {
-                auth: 'Category:' + PerEnum.ADD,
-                tooltip: '添加子分类',
-                icon: 'ant-design:plus-outlined',
-                onClick: handleCreateChild.bind(null, record),
-              },
-              {
-                auth: 'Category:' + PerEnum.UPDATE,
-                tooltip: '修改',
-                icon: 'clarity:note-edit-line',
-                onClick: handleEdit.bind(null, record),
-              },
-              {
-                auth: 'Category:' + PerEnum.DELETE,
-                tooltip: '删除',
-                icon: 'ant-design:delete-outlined',
-                color: 'error',
-                onClick: (e) => {
-                  e.stopPropagation();
-                },
-                popConfirm: {
-                  title: '是否确认删除',
-                  confirm: handleDelete.bind(null, record),
-                  placement: 'left',
-                },
-              },
-            ]"
-          />
-        </template>
-        <template v-else-if="column.key === 'cName'">
-          {{ companiesMap[record.companyId]?.shortName }}
-        </template>
+      <template #action="{ row }">
+        <TableAction :actions="createActions(row)"/>
+      </template>
+      <template #cName="{ row }">
+        {{ companiesMap[row.companyId]?.shortName }}
       </template>
     </BasicTable>
-    <CategoryModal @register="registerModal" @success="handleSuccess" />
-  </div>
+    <CategoryModal ref="categoryModalRef" @success="handleSuccess" />
+  </Page>
 </template>
 <script lang="ts" setup>
   import { PerEnum } from '#/enums/perEnum';
   import { ref, onMounted } from 'vue';
-
+  import { Button, message} from 'ant-design-vue';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import type {VbenFormProps} from '@vben/common-ui';
   import type { Recordable } from '@vben/types';
@@ -59,18 +26,20 @@
   import { TableAction } from '#/components/table-action';
   import {useAccess} from "@vben/access";
 
-  import { getCategories, deleteByIds } from '#/api/base/category';
+  import { getFlowCategories, deleteByIds } from '#/api/base/category';
   import { columns, searchFormSchema } from './category.data';
   import CategoryModal from './CategoryModal.vue';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { useModal } from '@/components/Modal';
-  import { getCompanies } from '#/api/org/company';
-  import { treeToList } from '@/utils/helper/treeHelper';
 
-  const { createMessage } = useMessage();
+  import {getCompaniesListData} from '#/api/org/company';
+  const {hasAccessByCodes} = useAccess();
+
+  const PerPrefix = "Category:";
+
+  const categoryModalRef = ref();
 
   const companiesMap = ref([]);
-  const [registerModal, { openModal, setModalProps }] = useModal();
+
+  /*const [registerModal, { openModal, setModalProps }] = useModal();
   const [registerTable, { reload }] = useTable({
     title: '列表',
     api: getCategories,
@@ -94,64 +63,148 @@
       dataIndex: 'action',
       fixed: false,
     },
-  });
+  });*/
+
+  const formOptions: VbenFormProps = {
+    showCollapseButton: false,
+    submitOnEnter: true,
+    commonConfig: {
+      labelWidth: 60,
+    },
+    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+    resetButtonOptions: {
+      show: false,
+    },
+    schema: searchFormSchema,
+  };
+
+  const gridOptions: VxeGridProps<any> = {
+    checkboxConfig: {
+      highlight: true,
+      labelField: 'name',
+    },
+    columns,
+    showOverflow: true,
+    columnConfig: {resizable: true},
+    pagerConfig: {
+      enabled: false,
+    },
+    rowConfig: {
+      keyField: 'id',
+      isHover: true,
+    },
+    treeConfig: {
+      parentField: 'pid',
+      rowField: 'id',
+      transform: true,
+    },
+    height: 'auto',
+    keepSource: true,
+    border: false,
+    stripe: true,
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          return await getFlowCategories({
+            entity: formValues || {},
+          });
+        },
+      },
+    },
+  };
+
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+
+
+  function createActions(row: Recordable<any>) {
+    return [
+      {
+        auth: [PerPrefix + PerEnum.ADD],
+        tooltip: '添加子分类',
+        icon: 'ant-design:plus-outlined',
+        onClick: handleCreateChild.bind(null, row),
+      },
+      {
+        auth: [PerPrefix + PerEnum.UPDATE],
+        tooltip: '修改',
+        icon: 'clarity:note-edit-line',
+        onClick: handleEdit.bind(null, row),
+      },
+      {
+        auth: [PerPrefix + PerEnum.DELETE],
+        tooltip: '删除',
+        icon: 'ant-design:delete-outlined',
+        danger: true,
+        onClick: (e) => {
+          e.stopPropagation();
+        },
+        popConfirm: {
+          title: '是否确认删除',
+          confirm: handleDelete.bind(null, row),
+          placement: 'left',
+          okButtonProps: {
+            danger: true,
+          }
+        },
+      },
+    ];
+  }
 
   onMounted(() => {
-    getCompanies().then((res) => {
-      const data = treeToList(res);
-      data.forEach((item) => {
+    getCompaniesListData().then((res) => {
+      res.forEach((item) => {
         companiesMap.value[item.id] = item;
       });
     });
   });
 
   function handleCreate(e) {
-    setModalProps({ title: '新增流程分类' });
-    openModal(true, {
-      isUpdate: false,
+    categoryModalRef.value.setData({});
+    categoryModalRef.value.open();
+    categoryModalRef.value.setState({
+      title: '新增流程分类'
     });
   }
 
-  function handleEdit(record: Recordable, e) {
+  function handleEdit(record: Recordable<any>, e) {
     e.stopPropagation();
-    setModalProps({ title: '修改流程分类' });
-    openModal(true, {
-      record,
-      isUpdate: true,
+    categoryModalRef.value.setData(record);
+    categoryModalRef.value.open();
+    categoryModalRef.value.setState({
+      title: '修改流程分类'
     });
   }
 
-  function handleCreateChild(record: Recordable, e) {
+  function handleCreateChild(record: Recordable<any>, e) {
     e.stopPropagation();
-    setModalProps({ title: '新增【' + record.name + '】的子分类' });
-    record = {
+    categoryModalRef.value.setData({
       pid: record.id,
       frontShow: 1,
-    };
-    openModal(true, {
-      record,
-      isUpdate: true,
+    });
+    categoryModalRef.value.open();
+    categoryModalRef.value.setState({
+      title: '新增【' + record.name + '】的子分类'
     });
   }
 
   function handleDelete(record: Recordable, e) {
     e.stopPropagation();
     if (record.children && record.children.length > 0) {
-      createMessage.warning('有子节点，不能删除！');
+      message.warning('有子节点，不能删除！');
       return;
     }
     deleteByIds([record.id]).then((res) => {
-      reload();
+      tableApi.reload();
     });
   }
 
   function doSearch() {
-    reload();
+    tableApi.reload();
   }
 
   function handleSuccess() {
     setTimeout(() => {
-      reload();
+      tableApi.reload();
     }, 200);
   }
 </script>

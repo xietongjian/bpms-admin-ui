@@ -74,7 +74,7 @@ import type {VbenFormProps} from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
 
 import {Page} from '@vben/common-ui';
-import {Popover, Button, Divider, Space, Tag} from 'ant-design-vue';
+import {Popover, Button, Divider, Space, Tag, message} from 'ant-design-vue';
 import {TableAction} from '#/components/table-action';
 import {useAccess} from '@vben/access';
 
@@ -83,10 +83,10 @@ import AuthFlowInfoModal from './AuthFlowInfoModal.vue';
 import {deleteByIds, getAuthPointListByPage} from '#/api/flowauth/authFlowInfo';
 import {EmpInfo} from '#/views/components/EmpInfo';
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
+const {hasAccessByCodes} = useAccess();
 
 const PerPrefix = "AuthFlowInfo:";
 
-const {hasAccessByCodes} = useAccess();
 const authFlowInfoModalRef = ref();
 
 const formOptions: VbenFormProps = {

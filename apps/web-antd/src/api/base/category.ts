@@ -10,13 +10,11 @@ enum Api {
 export async function getFlowCategories (params?: any){
   return requestClient.post<any>(Api.GetFlowCategories, { ...params });
 }
-/*
 
-export const saveOrUpdate = (params: any) => requestClient.post<any>({ url: Api.SaveOrUpdate, params });
+export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params);
 
-export const checkEntityExist = (params: CheckExistParams) =>
-  requestClient.post<boolean>({ url: Api.CheckEntityExist, params });
+export const checkEntityExist = (params: any) =>
+  requestClient.post<boolean>(Api.CheckEntityExist, params);
 
 export const deleteByIds = (params: Array<string>) =>
-  requestClient.post<any>({ url: Api.Delete, params });
-*/
+  requestClient.post<any>(Api.Delete, params);

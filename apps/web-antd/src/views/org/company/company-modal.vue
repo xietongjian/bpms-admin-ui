@@ -15,6 +15,7 @@
   const title = computed(() => {
     return isUpdate.value ? $t('pages.common.edit') : $t('pages.common.add');
   });
+
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
       labelWidth: 100,

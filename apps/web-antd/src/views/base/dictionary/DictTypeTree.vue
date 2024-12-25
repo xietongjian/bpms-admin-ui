@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white mr-0 overflow-hidden">
-    <BasicTree
+    <Tree
       title="数据分类"
       toolbar
       search
@@ -13,15 +13,15 @@
 </template>
 <script lang="ts" setup>
   import { onMounted, ref, defineEmits } from 'vue';
-  import { BasicTree, TreeItem } from '@/components/Tree';
   import { getDicTypes } from '#/api/base/dicType';
+  import {Tree} from 'ant-design-vue';
 
   const emit = defineEmits(['select']);
 
-  const treeData = ref<TreeItem[]>([]);
+  const treeData = ref<any[]>([]);
 
   async function fetch() {
-    treeData.value = (await getDicTypes()) as unknown as TreeItem[];
+    treeData.value = (await getDicTypes()) as unknown as any[];
   }
 
   function handleSelect(keys: string, e) {

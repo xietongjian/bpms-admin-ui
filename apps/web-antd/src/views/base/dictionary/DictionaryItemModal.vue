@@ -1,31 +1,65 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal >
+    <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, Rule, useForm } from '@/components/Form/index';
+  import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
+
+  import {useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from '#/adapter/form';
+
+  import {message} from 'ant-design-vue';
+
   import { dictionaryItemFormSchema } from './dictionary.data';
   import { saveOrUpdateItem, checkDictItemEntityExist } from '#/api/base/dictionary';
-  import { CheckExistParams } from '#/api/model/baseModel';
-  import { FormValidPatternEnum } from '@/enums/constantEnum';
+
+  import { FormValidPatternEnum } from '#/enums/constantEnum';
 
   const emit = defineEmits(['success', 'register']);
 
-  const isUpdate = ref(true);
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      handleSubmit();
+    },
+  });
 
-  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: dictionaryItemFormSchema,
+    wrapperClass: 'grid-cols-1',
+  });
+
+/*  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
     labelWidth: 100,
     schemas: dictionaryItemFormSchema,
     showActionButtonGroup: false,
     actionColOptions: {
       span: 23,
     },
-  });
+  });*/
 
-  const getBaseDynamicRules = (params: CheckExistParams) => {
+  /*const getBaseDynamicRules = (params: CheckExistParams) => {
     return [
       {
         trigger: 'blur',
@@ -94,19 +128,29 @@
     setFieldsValue({
       ...data.record,
     });
-  });
-
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
+  });*/
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
-      await saveOrUpdateItem(values);
-      closeModal();
-      emit('success');
+      modalApi.setState({loading: true, confirmLoading: true});
+
+      const valid = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
+      const {success, msg} = await saveOrUpdateItem(values);
+      if(success){
+        modalApi.close();
+        emit('success');
+        message.success(msg);
+      } else {
+        message.error(msg);
+      }
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
+
+  defineExpose(modalApi);
 </script>

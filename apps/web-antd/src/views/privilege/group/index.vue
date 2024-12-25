@@ -7,11 +7,12 @@ import type {Recordable} from '@vben/types';
 import {Page} from '@vben/common-ui';
 import {Button, Space, Image, Tag, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import {getGroupListByPage, deleteByIds} from '#/api/privilege/group';
 import {TableAction} from '#/components/table-action';
+
+import {getGroupListByPage, deleteByIds} from '#/api/privilege/group';
+
 import GroupModal from './group-modal.vue';
 import { useAccess } from '@vben/access';
-
 import {columns, searchFormSchema} from "./group.data";
 import SetAclModal from './SetAclModal.vue';
 import SetAccountModal from './SetAccountModal.vue';
@@ -78,7 +79,7 @@ function handleEdit(record: any) {
 }
 
 
-function handleAcl(record: Recordable) {
+function handleAcl(record: Recordable<any>) {
   setAclModalRef.value.setData(record);
   setAclModalRef.value.open();
   setAclModalRef.value.setState({

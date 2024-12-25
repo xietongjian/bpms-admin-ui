@@ -15,12 +15,8 @@
   import DictTypeTree from './DictTypeTree.vue';
   import DictionaryTable from './DictionaryTable.vue';
   import DictionaryItemTable from './DictionaryItemTable.vue';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { useModal } from '@/components/Modal';
 
-  const { createMessage } = useMessage();
-
-  const [registerModal, { openModal }] = useModal();
+  // const [registerModal, { openModal }] = useModal();
   const dictionaryRef = ref();
   const dictionaryItemRef = ref();
 

@@ -1,24 +1,25 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '@/enums/constantEnum';
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import { FormValidPatternEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
+import { checkEntityExist, checkDictItemEntityExist} from '#/api/base/dictionary';
+import {OrderNoDefaultEnum} from "#/enums/commonEnum";
 
-const colProps = {
-  span: 24,
-};
 // #######################数据字典属性配置
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
-    dataIndex: 'cname',
+    field: 'cname',
     align: 'left',
   },
   /*  {
     title: '英文名称',
-    dataIndex: 'ename',
+    field: 'ename',
     align: 'left',
   },*/
   {
     title: '编码',
-    dataIndex: 'code',
+    field: 'code',
     width: 120,
     align: 'left',
   },
@@ -26,53 +27,49 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/标识',
     },
     labelWidth: 60,
-    colProps: { span: 16 },
   },
 ];
 
 export const dictionaryFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
-    field: 'dicTypeId',
+    fieldName: 'dicTypeId',
     label: 'dicTypeId',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
-    field: 'cname',
+    fieldName: 'cname',
     label: '名称',
     component: 'Input',
-    required: true,
-    rules: [
-      {
-        whitespace: true,
-        required: true,
-        message: '名称不能为空！',
-      },
-      {
-        pattern: new RegExp('^.{1,60}$'),
-        type: 'string',
-        message: '字符长度不能大于60！',
-      },
-    ],
-    colProps,
+    rules: z
+        .string({
+          required_error: '名称不能为空！'
+        })
+        .trim()
+        .min(1, '名称不能为空！')
+        .max(60, "字符长度不能大于60！"),
   },
   /*{
-    field: 'ename',
+    fieldName: 'ename',
     label: '英文名称',
     component: 'Input',
     required: true,
@@ -95,14 +92,45 @@ export const dictionaryFormSchema: FormSchema[] = [
     ],
   },*/
   {
-    field: 'code',
+    fieldName: 'code',
     label: '编码',
     component: 'Input',
-    colProps,
+    dependencies: {
+      rules(values) {
+        const { id, code } = values;
+        return z
+            .string({
+              required_error: "编码不能为空！"
+            })
+            .min(1, "编码不能为空！")
+            .max(30, '字符长度不能大于30！')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'code',
+                      fieldValue: code || '',
+                      fieldName: '编码',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '编码已存在',
+                },
+            );
+      },
+      triggerFields: ['code'],
+    },
   },
   {
     label: '备注',
-    field: 'remark',
+    fieldName: 'remark',
     component: 'InputTextArea',
     componentProps: {
       autoSize: {
@@ -110,31 +138,35 @@ export const dictionaryFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
+    rules: z
+        .string()
+        .max(200, "字符长度不能大于200！")
+        .nullish()
+        .optional(),
   },
 ];
 
 // #######################数据字典项属性配置
-export const itemColumns: BasicColumn[] = [
+export const itemColumns: VxeGridProps['columns'] = [
   {
     title: '名称',
-    dataIndex: 'cname',
+    field: 'cname',
     align: 'left',
   },
   /*{
     title: '英文名称',
-    dataIndex: 'ename',
+    field: 'ename',
     align: 'left',
   },*/
   {
     title: '编码',
-    dataIndex: 'code',
+    field: 'code',
     width: 120,
     align: 'left',
   },
   {
     title: '排序编号',
-    dataIndex: 'orderNo',
+    field: 'orderNo',
     width: 80,
     align: 'right',
   },
@@ -142,89 +174,93 @@ export const itemColumns: BasicColumn[] = [
 
 export const dictionaryItemSearchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/标识',
     },
     labelWidth: 60,
-    colProps: { span: 16 },
   },
 ];
 
 export const dictionaryItemFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
-    field: 'mainId',
+    fieldName: 'mainId',
     label: 'mainId',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
-    field: 'cname',
+    fieldName: 'cname',
     label: '名称',
     component: 'Input',
-    required: true,
-    rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 60,
-        message: '字符长度不能大于60！',
-      },
-    ],
-    colProps,
+    rules: z
+        .string({
+          required_error: '名称不能为空！'
+        })
+        .trim()
+        .min(1, '名称不能为空！')
+        .max(60, "字符长度不能大于60！"),
   },
-  /*{
-    field: 'ename',
-    label: '英文名称',
-    component: 'Input',
-    required: true,
-    rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '英文名称不能为空！',
-      },
-      {
-        pattern: new RegExp('^[0-9a-zA-Z\-_]{1,}$'),
-        type: 'string',
-        message: '请输入英文或数字！',
-      },
-      {
-        max: 60,
-        message: '字符长度不能大于60！',
-      },
-    ],
-  },*/
   {
-    field: 'code',
+    fieldName: 'code',
     label: '编码',
     component: 'Input',
-    colProps,
+    dependencies: {
+      rules(values) {
+        const { id, code } = values;
+        return z
+            .string({
+              required_error: "编码不能为空！"
+            })
+            .min(1, "编码不能为空！")
+            .max(30, '字符长度不能大于30！')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkDictItemEntityExist({
+                      id: id,
+                      field: 'code',
+                      fieldValue: code || '',
+                      fieldName: '编码',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '编码已存在',
+                },
+            );
+      },
+      triggerFields: ['code'],
+    },
   },
   {
-    field: 'orderNo',
+    fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
-    required: false,
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
       min: OrderNoDefaultEnum.MIN,
       max: OrderNoDefaultEnum.MAX,
     },
-    colProps,
   },
 ];
