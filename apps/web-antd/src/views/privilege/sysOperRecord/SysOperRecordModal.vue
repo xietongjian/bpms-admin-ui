@@ -1,33 +1,55 @@
 <template>
   <BasicModal v-bind="$attrs" @register="registerModal">
-    <Description @register="registerDescription" class="operation-desc" />
+    <Descriptions @register="registerDescription" class="operation-desc"/>
   </BasicModal>
 </template>
-<script lang="ts">
-  import { defineComponent } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { descriptionSchema } from './sysOperRecord.data';
-  import { Description, useDescription } from '@/components/Description/index';
-  import {useVbenModal} from '@vben/common-ui';
+<script lang="ts" setup>
+import {ref, computed, unref, defineEmits, defineExpose} from 'vue';
+import {descriptionSchema} from './sysOperRecord.data';
+import {useVbenModal} from '@vben/common-ui';
 
-  export default defineComponent({
-    name: 'LoginLogModal',
-    components: { BasicModal, Description },
-    emits: ['success', 'register'],
-    setup(_, { emit }) {
-      const [registerDescription, { setDescProps }] = useDescription({
-        title: '',
-        column: 1,
-        schema: descriptionSchema,
+// import { Description, useDescription } from '@/components/Description/index';
+import {useVbenModal} from '@vben/common-ui';
+import {message, Descriptions} from 'ant-design-vue';
+
+const [BasicModal, modalApi] = useVbenModal({
+  draggable: true,
+  onCancel() {
+    modalApi.close();
+  },
+  onOpenChange(isOpen: boolean) {
+    if (isOpen) {
+      const values = modalApi.getData<Record<string, any>>();
+      if (values) {
+        // formApi.setValues(values);
+        modalApi.setState({loading: false, confirmLoading: false});
+      }
+    }
+  },
+  onConfirm() {
+    // handleSubmit();
+  },
+});
+
+/*export default defineComponent({
+  name: 'LoginLogModal',
+  components: { BasicModal, Description },
+  emits: ['success', 'register'],
+  setup(_, { emit }) {
+    const [registerDescription, { setDescProps }] = useDescription({
+      title: '',
+      column: 1,
+      schema: descriptionSchema,
+    });
+
+    const [registerModal] = useModalInner(async (data) => {
+      setDescProps({
+        data: data.record,
       });
+    });
 
-      const [registerModal] = useModalInner(async (data) => {
-        setDescProps({
-          data: data.record,
-        });
-      });
-
-      return { registerDescription, registerModal };
-    },
-  });
+    return { registerDescription, registerModal };
+  },
+});*/
+defineExpose(modalApi);
 </script>

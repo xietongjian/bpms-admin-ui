@@ -1,5 +1,5 @@
 import { BasicColumn, FormSchema } from '@/components/Table';
-import { FormValidPatternEnum } from '@/enums/constantEnum';
+import { FormValidPatternEnum } from '#/enums/commonEnum';
 
 const colProps = {
   span: 24,

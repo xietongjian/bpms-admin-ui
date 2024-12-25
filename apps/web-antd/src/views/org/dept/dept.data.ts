@@ -1,7 +1,6 @@
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
+import { OrderNoDefaultEnum, RemarkDefaultEnum,FormValidPatternEnum } from '#/enums/commonEnum';
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { checkEntityExist } from '#/api/org/dept';

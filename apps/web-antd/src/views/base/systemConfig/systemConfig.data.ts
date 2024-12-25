@@ -1,5 +1,5 @@
 import { BasicColumn, FormSchema } from '@/components/Table';
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '@/enums/constantEnum';
+import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
 
 const colProps = {
   span: 24,

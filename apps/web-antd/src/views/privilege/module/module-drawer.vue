@@ -7,7 +7,7 @@
 import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
 import { formSchema } from './module.data';
 import { saveOrUpdate, checkEntityExist } from '#/api/privilege/module';
-import { FormValidPatternEnum } from '#/enums/constantEnum';
+import { FormValidPatternEnum } from '#/enums/commonEnum';
 import {useVbenForm} from "#/adapter/form";
 import {setAccountFormSchema} from "#/views/privilege/group/group.data";
 import {useVbenModal, useVbenDrawer} from "@vben/common-ui";

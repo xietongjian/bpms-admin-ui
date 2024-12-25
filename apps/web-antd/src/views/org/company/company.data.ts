@@ -3,8 +3,7 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 
 import { getCompanyTypes } from '#/api/org/companyType';
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
+import { OrderNoDefaultEnum, RemarkDefaultEnum, FormValidPatternEnum } from '#/enums/commonEnum';
 import {checkEntityExist} from "#/api/base/app";
 
 export const columns: VxeGridProps['columns'] = [

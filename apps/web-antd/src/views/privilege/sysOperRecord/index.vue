@@ -1,17 +1,3 @@
-<template>
-  <Page auto-content-height>
-    <BasicTable>
-      <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix+PerEnum.DELETE])" color="error" type="danger" @click="handleDeleteAll"> 删除</Button>
-      </template>
-      <template #action="{ row }">>
-        <TableAction :actions="createActions(row)" />
-      </template>
-    </BasicTable>
-    <LoginLogModal ref="loginLogModalRef" @success="handleSuccess"/>
-    <contextHolder />
-  </Page>
-</template>
 <script lang="ts" setup>
 import {ref} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
@@ -28,7 +14,7 @@ import {TableAction} from '#/components/table-action';
 
 import {Page} from '@vben/common-ui';
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
-import {Button, Modal} from "ant-design-vue";
+import {Button, message, Modal} from "ant-design-vue";
 
 const {hasAccessByCodes} = useAccess();
 const [modal, contextHolder] = Modal.useModal();
@@ -73,12 +59,12 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
   resetButtonOptions: {
     show: false,
   },
+  fieldMappingTime: [['dateRange', ['startTimeStr', 'endTimeStr'], 'YYYY-MM-DD']],
   schema: searchFormSchema,
-  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
 };
 
 const gridOptions: VxeGridProps<any> = {
@@ -149,14 +135,17 @@ function handleDetail(record: Recordable<any>) {
 }
 
 function handleDelete(record: Recordable<any>) {
-  deleteByIds([record.id]).then(() => {
+  const {success, msg} = await deleteByIds([record.id]);
+  if (success) {
+    message.success(msg);
     tableApi.reload();
-  });
+  }else {
+    message.error(msg);
+  }
 }
 
 function handleDeleteAll() {
-  const selectedRows = tableApi.getSelectRecords();
-
+  const selectedRows = tableApi.grid.getCheckboxRecords();
   if (selectedRows && selectedRows.length <= 0) {
     message.warn('请选择行！');
     return;
@@ -165,11 +154,18 @@ function handleDeleteAll() {
     iconType: 'warning',
     title: '提示',
     content: '确定要删除所选行吗？',
+    okButtonProps: {
+      danger: true
+    },
     onOk: async () => {
       const ids = selectedRows.map((item) => item.id);
-      deleteByIds(ids).then(() => {
+      const {success, msg} = await deleteByIds(ids);
+      if(success){
+        message.success(msg);
         tableApi.reload();
-      });
+      }else {
+        message.error(msg);
+      }
     },
   });
 }
@@ -179,3 +175,17 @@ function handleSuccess() {
 }
 
 </script>
+<template>
+  <Page auto-content-height>
+    <BasicTable>
+      <template #toolbar-tools>
+        <Button v-if="hasAccessByCodes([PerPrefix+PerEnum.DELETE])" type="danger" @click="handleDeleteAll"> 删除</Button>
+      </template>
+      <template #action="{ row }">>
+        <TableAction :actions="createActions(row)" />
+      </template>
+    </BasicTable>
+    <LoginLogModal ref="loginLogModalRef" @success="handleSuccess"/>
+    <contextHolder />
+  </Page>
+</template>

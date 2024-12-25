@@ -1,8 +1,7 @@
 import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
+import { OrderNoDefaultEnum, RemarkDefaultEnum,FormValidPatternEnum } from '#/enums/commonEnum';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
 import {checkEntityExist} from '#/api/org/jobGradeType';
 
 import { z } from '#/adapter/form';

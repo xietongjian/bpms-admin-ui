@@ -14,7 +14,7 @@
   import { dictionaryItemFormSchema } from './dictionary.data';
   import { saveOrUpdateItem, checkDictItemEntityExist } from '#/api/base/dictionary';
 
-  import { FormValidPatternEnum } from '#/enums/constantEnum';
+  import { FormValidPatternEnum } from '#/enums/commonEnum';
 
   const emit = defineEmits(['success', 'register']);
 

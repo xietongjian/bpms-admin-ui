@@ -5,7 +5,7 @@ import { h } from 'vue';
 import { DictEnum } from '@vben/constants';
 import { FolderIcon, MenuIcon, OkButtonIcon, VbenIcon } from '@vben/icons';
 import { getPopupContainer } from '#vben/utils';
-import { OrderNoDefaultEnum } from '#/enums/constantEnum';
+import { OrderNoDefaultEnum } from '#/enums/commonEnum';
 
 import { type FormSchemaGetter, z } from '#/adapter/form';
 import { getDictOptions } from '#/utils/dict';

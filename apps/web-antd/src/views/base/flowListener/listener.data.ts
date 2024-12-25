@@ -1,7 +1,7 @@
 import { BasicColumn, FormSchema } from '@/components/Table';
 import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
-import { RemarkDefaultEnum } from '@/enums/constantEnum';
+import { RemarkDefaultEnum } from '#/enums/commonEnum';
 
 const colProps = {
   span: 24,

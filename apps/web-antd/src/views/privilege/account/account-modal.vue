@@ -111,7 +111,7 @@ defineExpose(modalApi);
   import { accountFormSchema } from './account.data';
   import { saveOrUpdate, checkEntityExist } from '@/api/privilege/account';
   import { CheckExistParams } from '@/api/model/baseModel';
-  import { FormValidPatternEnum } from '@/enums/constantEnum';
+  import { FormValidPatternEnum } from '@/enums/commonEnum';
 
   const emit = defineEmits(['success', 'register']);
 

@@ -6,7 +6,7 @@
   import { formSchema } from './positionSeq.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/org/positionSeq';
   // import { CheckExistParams } from '#/api/model/baseModel';
-  import { FormValidPatternEnum } from '#/enums/constantEnum';
+  import { FormValidPatternEnum } from '#/enums/commonEnum';
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from "#/adapter/form";
   const isUpdate = ref(true);

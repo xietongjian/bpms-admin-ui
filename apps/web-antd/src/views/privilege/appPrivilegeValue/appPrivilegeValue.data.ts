@@ -1,4 +1,4 @@
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
+import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {z} from "@vben/common-ui";

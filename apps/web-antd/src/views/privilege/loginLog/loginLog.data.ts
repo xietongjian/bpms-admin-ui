@@ -3,34 +3,40 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 
 export const columns: VxeGridProps['columns'] = [
   {
+    type: 'checkbox',
     title: '访问IP',
     field: 'ip',
-    width: 100,
+    minWidth: 100,
     align: 'left',
+    showHeaderOverflow: true,
   },
   {
     title: '操作人ID',
     field: 'operationId',
     width: 100,
     align: 'left',
+    showHeaderOverflow: true,
   },
   {
     title: '操作人工号',
     field: 'operationPerson',
     width: 100,
     align: 'left',
+    showHeaderOverflow: true,
   },
   {
     title: '操作人姓名',
     field: 'operationUsername',
     width: 100,
     align: 'left',
+    showHeaderOverflow: true,
   },
   {
     title: '操作内容',
     field: 'operationContent',
     width: 100,
     align: 'left',
+    showHeaderOverflow: true,
   },
   {
     title: '操作时间',
@@ -40,6 +46,13 @@ export const columns: VxeGridProps['columns'] = [
     // customRender: ({ text }) => {
     //   return formatToDateTime(text);
     // },
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 

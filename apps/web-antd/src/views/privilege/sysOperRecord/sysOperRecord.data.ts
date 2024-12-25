@@ -10,6 +10,7 @@ import { formatToDateTime } from '#/utils/dateUtil';
 
 export const columns: VxeGridProps['columns'] = [
   {
+    type: 'checkbox',
     title: '访问IP',
     field: 'ip',
     width: 100,

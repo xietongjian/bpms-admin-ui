@@ -1,8 +1,7 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
+import {FormValidPatternEnum, OrderNoDefaultEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-import { OrderNoDefaultEnum } from '#/enums/constantEnum';
 import {checkEntityExist, getIconCategoryTreeData} from "#/api/base/iconInfo";
 // import {uploadApi} from "#/api/sys/upload";
 

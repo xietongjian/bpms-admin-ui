@@ -2,7 +2,7 @@ import { BasicColumn, FormSchema } from '@/components/Table';
 import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
 import Icon from '@/components/Icon/Icon.vue';
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '@/enums/constantEnum';
+import { OrderNoDefaultEnum, RemarkDefaultEnum } from '@/enums/commonEnum';
 
 const colProps = {
   span: 24,

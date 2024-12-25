@@ -12,7 +12,7 @@
 
   import {dictionaryFormSchema, dictionaryItemFormSchema} from './dictionary.data';
   import { checkEntityExist, saveOrUpdate } from '#/api/base/dictionary';
-  import { FormValidPatternEnum } from '#/enums/constantEnum';
+  import { FormValidPatternEnum } from '#/enums/commonEnum';
 
   const emit = defineEmits(['success', 'register']);
 

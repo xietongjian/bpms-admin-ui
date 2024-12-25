@@ -1,8 +1,7 @@
 import { z } from '#/adapter/form';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import { RemarkDefaultEnum } from '#/enums/constantEnum';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
+import { RemarkDefaultEnum,FormValidPatternEnum } from '#/enums/commonEnum';
 import { checkEntityExist } from '#/api/privilege/group';
 
 export const columns: VxeGridProps['columns'] = [

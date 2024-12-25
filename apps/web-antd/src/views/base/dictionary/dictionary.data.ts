@@ -1,9 +1,8 @@
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import { FormValidPatternEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
+import { FormValidPatternEnum, RemarkDefaultEnum, OrderNoDefaultEnum } from '#/enums/commonEnum';
 import { checkEntityExist, checkDictItemEntityExist} from '#/api/base/dictionary';
-import {OrderNoDefaultEnum} from "#/enums/commonEnum";
 
 // #######################数据字典属性配置
 export const columns: VxeGridProps['columns'] = [

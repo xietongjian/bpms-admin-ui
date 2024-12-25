@@ -1,6 +1,6 @@
 import { h } from 'vue';
 import {BasicColumn, FormSchema} from '@/components/Table';
-import {FormValidPatternEnum, RemarkDefaultEnum} from '@/enums/constantEnum';
+import {FormValidPatternEnum, RemarkDefaultEnum} from '@/enums/commonEnum';
 import { CodeEditor, MODE } from '@/components/CodeEditor';
 
 const colProps = {

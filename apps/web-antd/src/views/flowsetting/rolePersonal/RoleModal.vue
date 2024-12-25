@@ -8,10 +8,10 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { BasicForm, Rule, useForm } from '@/components/Form/index';
   import { companyRoleFormSchema } from './rolePersonal.data';
-  import { saveOrUpdate, checkEntityExist } from '@/api/org/role';
-  import { getCompanies } from '@/api/org/company';
-  import { CheckExistParams } from '@/api/model/baseModel';
-  import { FormValidPatternEnum } from '@/enums/constantEnum';
+  import { saveOrUpdate, checkEntityExist } from '#/api/org/role';
+  import { getCompanies } from '#/api/org/company';
+  import { CheckExistParams } from '#/api/model/baseModel';
+  import { FormValidPatternEnum } from '#/enums/commonEnum';
 
   const emit = defineEmits(['success', 'register']);
 

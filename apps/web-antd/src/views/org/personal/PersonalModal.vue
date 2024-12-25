@@ -34,7 +34,7 @@
   import { message, Upload } from 'ant-design-vue';
   import { getJobGradeTree } from '#/api/org/jobGrade';
   import { getPositionInfoTree } from '#/api/org/positionInfo';
-  import { FormValidPatternEnum } from '#/enums/constantEnum';
+  import { FormValidPatternEnum } from '#/enums/commonEnum';
   import { findNode } from '#/utils/helper/treeHelper';
   import {PlusOutlined} from '@ant-design/icons-vue';
   const emit = defineEmits(['success']);

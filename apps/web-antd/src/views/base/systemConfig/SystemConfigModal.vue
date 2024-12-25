@@ -10,7 +10,7 @@
   import { formSchema } from './systemConfig.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/base/systemConfig';
   import { CheckExistParams } from '#/api/model/baseModel';
-  import { FormValidPatternEnum } from '@/enums/constantEnum';
+  import { FormValidPatternEnum } from '#/enums/commonEnum';
 
   export default defineComponent({
     name: 'SystemConfigModal',

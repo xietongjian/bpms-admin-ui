@@ -6,7 +6,7 @@
   import {useVbenModal} from '@vben/common-ui';
   import { saveOrUpdate, checkEntityExist } from '#/api/org/role';
   import { getCompanies } from '#/api/org/company';
-  import { FormValidPatternEnum } from '#/enums/constantEnum';
+  import { FormValidPatternEnum } from '#/enums/commonEnum';
   import {useVbenForm} from "#/adapter/form";
 
   const emit = defineEmits(['success'])

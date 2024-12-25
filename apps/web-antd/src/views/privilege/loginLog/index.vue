@@ -49,7 +49,6 @@ const PerPrefix = "LoginLog:";
     },
   });*/
 
-
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
   submitOnEnter: true,
@@ -60,13 +59,14 @@ const formOptions: VbenFormProps = {
   resetButtonOptions: {
     show: false,
   },
+  fieldMappingTime: [['dateRange', ['startTimeStr', 'endTimeStr'], 'YYYY-MM-DD']],
   schema: searchFormSchema,
 };
 
 const gridOptions: VxeGridProps<any> = {
   checkboxConfig: {
     highlight: true,
-    labelField: 'name',
+    labelField: 'ip',
   },
   columns,
   columnConfig: {resizable: true},
@@ -77,7 +77,6 @@ const gridOptions: VxeGridProps<any> = {
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
-        debugger;
         return getLoginLogListByPage({
           query: {
             pageNum: page.currentPage,
@@ -106,39 +105,38 @@ function handleEdit(record: Recordable<any>) {
   });
 }
 
-function handleDelete(record: Recordable<any>) {
-  deleteByIds([record.id]).then(() => {
+async function handleDelete(record: Recordable<any>) {
+  const {success, msg} = await deleteByIds([record.id]);
+  if (success) {
+    message.success(msg);
     tableApi.reload();
-  });
+  }else {
+    message.error(msg);
+  }
 }
 
 function handleDeleteAll() {
-  const selectedRows = tableApi.getSelectRecords();
+  const selectedRows = tableApi.grid.getCheckboxRecords();
   if (selectedRows && selectedRows.length <= 0) {
     message.warn('请选择行！');
     return;
   }
-  /*modal.confirm({
-    title: 'Do you Want to delete these items?',
-    icon: h(ExclamationCircleOutlined),
-    content: h('div', { style: 'color:red;' }, 'Some descriptions'),
-    onOk() {
-      console.log('OK');
-    },
-    onCancel() {
-      console.log('Cancel');
-    },
-    class: 'test',
-  });*/
   modal.confirm({
     iconType: 'warning',
     title: '提示',
     content: '确定要删除所选行吗？',
+    okButtonProps: {
+      danger: true
+    },
     onOk: async () => {
       const ids = selectedRows.map((item) => item.id);
-      await deleteByIds(ids).then(() => {
+      const {success, msg} = await deleteByIds(ids);
+      if(success){
+        message.success(msg);
         tableApi.reload();
-      });
+      }else {
+        message.error(msg);
+      }
     },
   });
 }
@@ -171,13 +169,11 @@ function createActions(row: Recordable<any>): any[] {
     <BasicTable>
       <template #toolbar-tools>
         <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.DELETE])"
-                color="error" type="danger"
+                type="danger"
                 @click="handleDeleteAll"> 删除</Button>
       </template>
       <template #action="{ row }">
-        <TableAction
-            :actions="createActions(row)"
-        />
+        <TableAction :actions="createActions(row)"/>
       </template>
     </BasicTable>
     <LoginLogModal ref="loginLogModalRef"/>

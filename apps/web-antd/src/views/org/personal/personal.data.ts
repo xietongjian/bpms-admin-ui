@@ -4,9 +4,8 @@ import { checkEntityExist } from '#/api/org/personal';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 
 // import { formatToDate, formatToDateTime } from '#/utils/dateUtil';
-import { RemarkDefaultEnum } from '#/enums/constantEnum';
+import { RemarkDefaultEnum,FormValidPatternEnum } from '#/enums/commonEnum';
 import {z} from "@vben/common-ui";
-import {FormValidPatternEnum} from "#/enums/commonEnum";
 
 export const columns: VxeGridProps['columns'] = [
   {

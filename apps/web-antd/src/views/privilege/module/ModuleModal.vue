@@ -10,7 +10,7 @@
   import { formSchema } from './module.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/privilege/module';
   import { CheckExistParams } from '#/api/model/baseModel';
-  import { FormValidPatternEnum } from '@/enums/constantEnum';
+  import { FormValidPatternEnum } from '#/enums/commonEnum';
 
   const emit = defineEmits(['success', 'register']);
 

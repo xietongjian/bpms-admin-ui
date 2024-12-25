@@ -1,9 +1,8 @@
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
-import { OrderNoDefaultEnum } from '#/enums/constantEnum';
+import { OrderNoDefaultEnum,FormValidPatternEnum } from '#/enums/commonEnum';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
 import {checkEntityExist} from "#/api/base/app";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
