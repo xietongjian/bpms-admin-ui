@@ -99,9 +99,7 @@ const gridOptions: VxeGridProps<any> = {
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
-        return await getAreasListData({
-          entity: formValues || {},
-        });
+        return await getAreasListData(formValues);
       },
     },
   },

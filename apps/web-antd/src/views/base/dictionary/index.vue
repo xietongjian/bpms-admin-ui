@@ -1,12 +1,16 @@
 <template>
-  <Page auto-content-height>
-    <DictTypeTree class="w-1/5 xl:w-1/5" @select="handleDictTypeSelect" />
+  <Page auto-content-height class="flex">
+    <DictTypeTree
+        class="w-1/5 xl:w-1/5"
+        @select="handleDictTypeSelect" />
     <DictionaryTable
       ref="dictionaryRef"
       @handle-select="handleDictSelect"
       class="w-2/5 xl:w-2/5 ml-2 mr-2"
     />
-    <DictionaryItemTable ref="dictionaryItemRef" class="w-2/5 xl:w-2/5" />
+    <DictionaryItemTable
+        ref="dictionaryItemRef"
+        class="w-2/5 xl:w-2/5" />
   </Page>
 </template>
 <script lang="ts" setup>

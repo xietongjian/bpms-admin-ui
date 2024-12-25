@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white mr-0 overflow-hidden">
+  <div class="bg-card mr-0 overflow-hidden">
     <Tree
       title="数据分类"
       toolbar

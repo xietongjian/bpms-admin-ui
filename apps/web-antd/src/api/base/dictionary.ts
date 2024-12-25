@@ -1,5 +1,4 @@
 import { requestClient } from '#/api/request';
-import { CheckExistParams } from '#/api/model/baseModel';
 
 enum Api {
   DictionaryPageList = '/flow/base/dictionary/getPagerModel',
@@ -43,8 +42,8 @@ export const deleteByIds = (params: string) => requestClient.post<any>(Api.Delet
 export const deleteItemByIds = (params: string) =>
   requestClient.post<any>(Api.DeleteItem + '/', params);
 
-export const checkEntityExist = (params: CheckExistParams) =>
+export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
-export const checkDictItemEntityExist = (params: CheckExistParams) =>
+export const checkDictItemEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckDictItemEntityExist, params);
