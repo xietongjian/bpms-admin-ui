@@ -3,13 +3,6 @@ import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 
-import { Tag } from 'ant-design-vue';
-
-import { h } from 'vue';
-
-const colProps = {
-  span: 24,
-};
 export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
@@ -17,6 +10,7 @@ export const columns: VxeGridProps['columns'] = [
     align: 'left',
     minWidth: 300,
     resizable: true,
+    slots: { default: 'name' },
   },
   {
     title: 'KEY',

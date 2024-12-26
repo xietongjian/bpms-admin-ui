@@ -52,11 +52,10 @@
             </template>
           </div>
         </template>
-
+        <template #action="{ row }">
+          <TableAction :stopButtonPropagation="true" :actions="createActions(row)" />
+        </template>
         <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'action'">
-            <TableAction :stopButtonPropagation="true" :actions="createActions(record, column)" />
-          </template>
           <template v-if="column.key === 'name'">
             <Avatar :src="record.modelIcon">
               <template #icon>
@@ -94,7 +93,7 @@
       @success="handleTaskFormSuccess"
       :closeFunc="handleCloseFunc"
     />
-    <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" @success="handleSuccess" />
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" />
     <BpmnDesignerModal ref="bpmnDesignerModalRef"
       @register="registerBpmnDesignerModal"
       @success="handleBpmnDesignerModalSuccess"
@@ -135,6 +134,8 @@
 
 
   const bpmnDesignerModalRef = ref();
+  const copyModelInfoModalRef = ref();
+  const bpmnPreviewModalRef = ref();
   // const [registerCopyModal, { openModal: openCopyModal, setModalProps: setCopyModalProps }] =
   //   useModal();
   // const [
@@ -317,10 +318,10 @@
     return Promise.resolve(true);
   }
 
-  function createActions(record: Recordable, column: BasicColumn): ActionItem[] {
-    let actions: ActionItem[] = [
+  function createActions(record: Recordable<any>) {
+    return [
       {
-        auth: 'Custom:' + PerEnum.UPDATE,
+        auth: [PerPrefix + PerEnum.UPDATE],
         icon: 'clarity:note-edit-line',
         tooltip: '修改',
         label: '',
@@ -333,7 +334,6 @@
         onClick: handlePreview.bind(null, record),
       },
     ];
-    return actions;
   }
 
   function handlePreview(record: Recordable) {
