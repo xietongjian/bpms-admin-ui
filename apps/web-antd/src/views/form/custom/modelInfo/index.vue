@@ -1,91 +1,82 @@
 <template>
   <Page auto-content-height>
-    <div class="flex flex-row h-full gap-2">
-      <div class="w-60 h-full">
+    <div class="flex flex-row w-full h-full gap-2">
+      <div class="w-80 h-full">
         <FlowCategoryTree @select="handleSelect" />
       </div>
-
-      <BasicTable
-          class="flex-1"
-          @row-click="clickRow"
-          @selection-change="changeSelection"
-          @fetch-success="fetchSuccess"
-      >
-        <template #toolbar-tools >
-          <div class="flex flex-row gap-2">
-            <Tooltip
-                v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
-                placement="bottom">
-              <template #title>
-                <span>只有状态为【待发布】的数据才能发布</span>
-              </template>
-              <Popconfirm
-                  :title="`确定要发布【${currentModelInfo.name}】流程吗？`"
-                  @confirm="handlePublish"
-                  type="primary"
-                  :disabled="!showPublishBtn"
-              >
-                <Button type="primary">发布</Button>
-              </Popconfirm>
-            </Tooltip>
-            <Tooltip
-                v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
-                placement="bottom">
-              <template #title>
-                <span>只有状态为【待发布/已发布】的数据才能停用</span>
-              </template>
-              <template >
+      <div class="flex-1 h-full">
+        <BasicTable
+                class="w-full"
+                @row-click="clickRow"
+                @selection-change="changeSelection"
+                @fetch-success="fetchSuccess"
+        >
+          <template #toolbar-tools >
+            <div class="flex flex-row gap-2">
+              <Tooltip
+                      v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
+                      placement="bottom">
+                <template #title>
+                  <span>只有状态为【待发布】的数据才能发布</span>
+                </template>
                 <Popconfirm
-                    :title="`确定要停用【${currentModelInfo.name}】流程吗？`"
-                    @confirm="handleStop"
-                    color="error"
-                    type="danger"
-                    :disabled="!showStopBtn"
+                        :title="`确定要发布【${currentModelInfo.name}】流程吗？`"
+                        @confirm="handlePublish"
+                        type="primary"
+                        :disabled="!showPublishBtn"
                 >
-                  <Button type="primary" danger>停用</Button>
+                  <Button type="primary">发布</Button>
                 </Popconfirm>
+              </Tooltip>
+              <Tooltip
+                      v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
+                      placement="bottom">
+                <template #title>
+                  <span>只有状态为【待发布/已发布】的数据才能停用</span>
+                </template>
+                <template >
+                  <Popconfirm
+                          :title="`确定要停用【${currentModelInfo.name}】流程吗？`"
+                          @confirm="handleStop"
+                          color="error"
+                          type="danger"
+                          :disabled="!showStopBtn"
+                  >
+                    <Button type="primary" danger>停用</Button>
+                  </Popconfirm>
+                </template>
+              </Tooltip>
+              <template v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])">
+                <Button type="primary" @click="handleCreate"> 新增</Button>
+                <Button type="primary" @click="handleCopy"> 复制</Button>
               </template>
-            </Tooltip>
-            <template v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])">
-              <Button type="primary" @click="handleCreate"> 新增</Button>
-              <Button type="primary" @click="handleCopy"> 复制</Button>
-            </template>
-          </div>
-        </template>
-        <template #action="{ row }">
-          <TableAction :stopButtonPropagation="true" :actions="createActions(row)" />
-        </template>
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'name'">
-            <Avatar :src="record.modelIcon">
+            </div>
+          </template>
+          <template #action="{ row }">
+            <TableAction :stopButtonPropagation="true" :actions="createActions(row)" />
+          </template>
+          <template #name="{row}">
+            <Avatar :src="row.modelIcon">
               <template #icon>
                 <PictureFilled />
               </template>
             </Avatar>
             <Tooltip placement="top" :mouseEnterDelay="0.3">
               <template #title>
-                {{ record.name }}
+                {{ row.name }}
               </template>
-              {{ record.name }}
+              {{ row.name }}
             </Tooltip>
           </template>
-          <template v-if="column.key === 'modelKey'">
-            <Tooltip placement="top" :mouseEnterDelay="0.3">
-              <template #title>
-                {{ record.modelKey }}
-              </template>
-              {{ record.modelKey }}
-            </Tooltip>
-          </template>
-          <template v-if="column.key === 'appName'">
-            <span v-if="!record.appName">未设置</span>
+          <template #appName="{row}">
+            <span v-if="!row.appName">未设置</span>
             <Tooltip v-else placement="top" :mouseEnterDelay="0.3">
-              <template #title> {{ record.appName }}【{{ record.appSn }}】 </template>
-              {{ record.appName }}
+              <template #title> {{ row.appName }}【{{ row.appSn }}】 </template>
+              {{ row.appName }}
             </Tooltip>
           </template>
-        </template>
-      </BasicTable>
+        </BasicTable>
+      </div>
     </div>
     <CopyModelInfoModal ref="copyModelInfoModalRef" @register="registerCopyModal" @success="handleSuccess" formType="custom" />
     <TaskFormDesignerModal ref="taskFormDesignerModalRef"
@@ -510,25 +501,3 @@
     tableApi.reload();
   }
 </script>
-
-<style lang="less">
-  .custom-task-table {
-    .ant-table-expanded-row {
-      .ant-table-cell {
-        .vben-basic-table {
-          .ant-table {
-            margin: 0 !important;
-          }
-        }
-      }
-    }
-  }
-</style>
-
-<style lang="less" scoped>
-  .modelInfo-roles {
-    > span {
-      margin-right: 4px;
-    }
-  }
-</style>
