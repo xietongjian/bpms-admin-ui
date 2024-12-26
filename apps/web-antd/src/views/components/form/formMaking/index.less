@@ -1,0 +1,224 @@
+.form-base-info{
+  width: 100%;
+  .ant-form-item{
+    margin-bottom: auto!important;
+    margin-left: 6px;
+  }
+
+  .ant-form-item-has-error{
+    .ant-form-item-explain{
+      position: absolute!important;
+      transition: none;
+      top: 30px;
+      z-index: 9;
+      word-break: keep-all;
+      white-space: nowrap;
+      border: 1px solid #fe6c6f;
+      background: #fff6f7;
+      padding: 4px 8px;
+      margin-top: 5px;
+      border-radius: 2px;
+      text-align: left;
+      &:before{
+        content: "";
+        position: absolute;
+        left: 20px;
+        top: 0;
+        width: 16px;
+        height: 16px;
+        box-shadow: 6px 6px 3px -5px #fe6c6f, 9px 6px 9px -9px #fe6c6f;
+        -webkit-transform: rotate(-135deg);
+        -webkit-transform: rotate(-135deg);
+        -moz-transform: rotate(135deg);
+        -ms-transform: rotate(135deg);
+        -o-transform: rotate(135deg);
+      }
+    }
+  }
+
+  .ant-form-item-has-success, .ant-form-item-is-validating {
+    .ant-form-item-control{
+      .ant-form-item-explain{
+        display:none!important;
+      }
+    }
+  }
+
+}
+.center-container{
+  >header{
+    display: flex;
+    >.action-bar{
+      flex-grow: 1;
+    }
+
+    .btn-bar{
+      .el-button--primary{
+        font-size: 0;
+      }
+      .btn-diviler, .btn-bar-action{
+        display: block;
+      }
+      .btn-bar-plat{
+        position: unset;
+        left: 0;
+        display: flex;
+        align-items: center;
+      }
+      .btn-bar-action{
+        display: flex;
+        align-items: center;
+      }
+      .el-button--primary {
+        font-size: 0;
+      }
+    }
+    .action-bar {
+      display: flex;
+      line-height: 40px;
+      .action-bar-left {
+        align-items: center;
+        width: 100%;
+        flex: 1;
+        display: flex;
+        flex-wrap: nowrap;
+        .action-bar-input{
+          flex: 1;
+          padding-right: 5px;
+        }
+        .form-category{
+          text-align: left;
+          .ant-select-selection-placeholder{
+
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width:1700px){
+  .center-container .btn-bar{
+    .btn-bar{
+      .btn-diviler, .btn-bar-action{
+        display: block;
+      }
+      .btn-bar-plat{
+        position: unset;
+        left: 0;
+      }
+    }
+  }
+}
+@media screen and (min-width: 1400px) and (max-width:1699px) {
+  .center-container {
+    .btn-bar{
+      .btn-diviler, .btn-bar-action{
+        display: block;
+      }
+      .btn-bar-plat{
+        position: unset;
+        left: 0;
+        display: flex;
+        align-items: center;
+      }
+      .btn-bar-action{
+        display: flex;
+        align-items: center;
+      }
+    }
+    .action-bar{
+      .action-bar-right {
+        width: 130px;
+        .ant-btn-link{
+          padding: 4px 6px;
+        }
+      }
+    }
+  }
+}
+@media screen and (min-width: 1200px) and (max-width:1399px) {
+  .center-container {
+    .btn-bar{
+      .btn-diviler {
+        display: none!important;;
+      }
+      .btn-bar-plat{
+        position: absolute;
+        left: 146px;
+      }
+      .btn-bar-action{
+        display: flex;
+        align-items: center;
+      }
+      .el-button--primary{
+        font-size: 0;
+      }
+    }
+    .action-bar{
+      .action-bar-right {
+        width: 72px;
+        .ant-btn-link{
+          padding: 4px 6px;
+          >span:last-child{
+            font-size: 0;
+          }
+        }
+      }
+    }
+  }
+}
+@media screen and (min-width: 960px) and (max-width:1199px) {
+  .center-container {
+    .btn-bar{
+      .btn-diviler, .btn-bar-action{
+        display: none!important;;
+      }
+      .btn-bar-plat{
+        position: absolute;
+        left: 146px;
+      }
+      .el-button--primary{
+        font-size: 0;
+      }
+    }
+    .action-bar{
+      .action-bar-right {
+        width: 72px;
+        .ant-btn-link{
+          padding: 4px 6px;
+          >span:last-child{
+            font-size: 0;
+          }
+        }
+      }
+    }
+  }
+}
+@media screen and (min-width: 268px) and (max-width:959px) {
+  .center-container {
+    .btn-bar{
+      .btn-diviler, .btn-bar-action{
+        display: none!important;;
+      }
+      .btn-bar-plat{
+        position: absolute;
+        left: 146px;
+      }
+      .el-button--primary{
+        font-size: 0;
+      }
+    }
+    .action-bar{
+      .action-bar-right {
+        width: 72px;
+        .ant-btn-link{
+          padding: 4px 6px;
+          >span:last-child{
+            font-size: 0;
+          }
+        }
+      }
+    }
+  }
+}

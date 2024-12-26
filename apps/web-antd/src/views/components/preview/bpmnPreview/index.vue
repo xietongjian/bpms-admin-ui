@@ -62,7 +62,7 @@
   } from '@ant-design/icons-vue';
   import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
 
-  import '@/assets/bpmn/viewer/lib/style.css';
+  import '#/assets/bpmn/viewer/lib/style.css';
   import { usePreferences } from '@vben/preferences';
 
   const { isDark } = usePreferences();

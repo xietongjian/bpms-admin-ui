@@ -1,5 +1,8 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { h } from 'vue';
+import { z } from '#/adapter/form';
+
 import { Tag } from 'ant-design-vue';
 import { RemarkDefaultEnum } from '#/enums/commonEnum';
 
@@ -145,36 +148,27 @@ export const formSchema: FormSchema[] = [
     label: '名称',
     required: true,
     component: 'Input',
-    rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 80,
-        message: '字符长度不能大于802！',
-      },
-    ],
-    colProps,
+
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(80, "字符长度不能大于80！")
   },
   {
     field: 'value',
     label: '值',
     required: true,
     component: 'Input',
-    rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 300,
-        message: '字符长度不能大于300！',
-      },
-    ],
-    colProps,
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(300, "字符长度不能大于300！")
   },
 
   {
@@ -187,13 +181,11 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    rules: [
-      {
-        max: 255,
-        message: '字符长度不能大于255！',
-      },
-    ],
-    colProps,
+    rules: z
+        .string()
+        .max(255, "字符长度不能大于255！")
+        .nullable()
+        .optional()
   },
 ];
 
@@ -232,6 +224,8 @@ export const propertiesFormSchema: FormSchema[] = [
     helpMessage: '监听器的属性值',
     required: false,
     component: 'Input',
+    /*
+    FIXME
     rules: [
       {
         required: false,
@@ -243,6 +237,6 @@ export const propertiesFormSchema: FormSchema[] = [
         message: '字符长度不能大于255！',
       },
     ],
-    colProps,
+    colProps,*/
   },
 ];

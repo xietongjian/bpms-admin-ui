@@ -80,7 +80,14 @@ export const formSchema: FormSchema[] = [
     label: '名称',
     required: true,
     component: 'Input',
-    rules: [
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(30, "字符长度不能大于30！")
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -90,7 +97,7 @@ export const formSchema: FormSchema[] = [
         max: 30,
         message: '字符长度不能大于30！',
       },
-    ],
+    ],*/
     colProps,
   },
   {
@@ -111,12 +118,17 @@ export const formSchema: FormSchema[] = [
     field: 'configValue',
     label: '配置Value',
     component: 'Input',
-    rules: [
+    rules: z
+        .string()
+        .max(100, "字符长度不能大于100！")
+        .nullable()
+        .optional()
+    /*rules: [
       {
         max: 100,
         message: '字符长度不能大于100！',
       },
-    ],
+    ],*/
     colProps,
   },
   {
@@ -142,12 +154,17 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    rules: [
+    rules: z
+        .string()
+        .max(1024, "字符长度不能大于1024！")
+        .nullable()
+        .optional()
+    /*rules: [
       {
         max: 1024,
         message: '字符长度不能大于1024！',
       },
-    ],
+    ],*/
     colProps,
   },
 ];

@@ -144,7 +144,14 @@ export const formSchema: FormSchema[] = [
     label: '名称',
     required: true,
     component: 'Input',
-    rules: [
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(80, "字符长度不能大于80！")
+   /* rules: [
       {
         required: true,
         whitespace: true,
@@ -154,8 +161,7 @@ export const formSchema: FormSchema[] = [
         max: 32,
         message: '字符长度不能大于80！',
       },
-    ],
-    colProps,
+    ],*/
   },
   {
     field: 'serviceId',
@@ -172,7 +178,14 @@ export const formSchema: FormSchema[] = [
     label: '请求地址',
     required: true,
     component: 'Input',
-    rules: [
+    rules: z
+        .string({
+          required_error: 'URL不能为空',
+        })
+        .trim()
+        .min(1, "URL不能为空")
+        .max(255, "字符长度不能大于255！")
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -183,7 +196,7 @@ export const formSchema: FormSchema[] = [
         message: '字符长度不能大于255！',
       },
     ],
-    colProps,
+    colProps,*/
   },
   {
     field: 'method',
@@ -306,12 +319,17 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    rules: [
+    rules: z
+        .string()
+        .max(500, "字符长度不能大于500！")
+        .nullable()
+        .optional()
+    /*rules: [
       {
         max: 500,
         message: '字符长度不能大于500！',
       },
     ],
-    colProps,
+    colProps,*/
   },
 ];

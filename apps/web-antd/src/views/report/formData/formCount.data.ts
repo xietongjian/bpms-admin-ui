@@ -58,7 +58,14 @@ export const modelInfoFormSchema: FormSchema[] = [
     label: '名称',
     component: 'Input',
     required: true,
-    rules: [
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(200, "字符长度不能大于200！")
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -68,7 +75,7 @@ export const modelInfoFormSchema: FormSchema[] = [
         max: 200,
         message: '字符长度不能大于200！',
       },
-    ],
+    ],*/
   },
   {
     fieldName: 'modelKey',
@@ -101,8 +108,14 @@ export const copyModelInfoFormSchema: FormSchema[] = [
     fieldName: 'newModelName',
     label: '新表单名称',
     component: 'Input',
-    required: true,
-    rules: [
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(200, "字符长度不能大于200！")
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -112,7 +125,7 @@ export const copyModelInfoFormSchema: FormSchema[] = [
         max: 200,
         message: '字符长度不能大于200！',
       },
-    ],
+    ],*/
   },
   {
     fieldName: 'newCategoryCode',

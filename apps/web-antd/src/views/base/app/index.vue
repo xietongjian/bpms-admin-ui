@@ -18,9 +18,11 @@ import AppModal from './app-modal.vue';
 import AppSecretKeyModal from './app-secret-key-modal.vue';
 import {deleteByIds, getAppListByPage} from '#/api/base/app';
 
+const {hasAccessByCodes} = useAccess();
 
 const PerPrefix = "App:";
-const {hasAccessByCodes} = useAccess();
+
+
 const appModalRef = ref();
 const appSecretKeyModalRef = ref();
 

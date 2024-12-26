@@ -14,11 +14,20 @@ import { initComponentAdapter } from './adapter/component';
 import App from './app.vue';
 import { router } from './router';
 
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
+import 'element-plus/theme-chalk/dark/css-vars.css';
+import zhCn from 'element-plus/es/locale/lang/zh-cn';
+import FormMakingV3 from '/public/static/form-making/dist/form-making-v3.es.js';
+import '/public/static/form-making/dist/index.css';
+import { QuillEditor } from '@vueup/vue-quill';
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 async function bootstrap(namespace: string) {
   // 初始化组件适配器
   await initComponentAdapter();
 
   const app = createApp(App);
+
 
   // 国际化 i18n 配置
   await setupI18n(app);
@@ -41,6 +50,16 @@ async function bootstrap(namespace: string) {
       useTitle(pageTitle);
     }
   });
+
+  app.use(ElementPlus, {
+    locale: zhCn,
+  });
+  app.use(FormMakingV3, {
+    locale: 'zh-cn',
+    kindEditorUrl: '/form-making/dist/lib/kindeditor',
+    aceurl: '/form-making/dist/lib/ace',
+  });
+
 
   app.mount('#app');
 }

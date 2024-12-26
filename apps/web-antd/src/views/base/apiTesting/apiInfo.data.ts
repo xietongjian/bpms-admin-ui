@@ -1,8 +1,10 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
-import Icon from '@/components/Icon/Icon.vue';
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '@/enums/commonEnum';
+
+import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
+import {z} from "@vben/common-ui";
 
 const colProps = {
   span: 24,
@@ -17,18 +19,18 @@ export const columns: BasicColumn[] = [
   {
     title: '名称',
     width: 200,
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
     resizable: true,
   },
   {
     title: 'URL',
-    dataIndex: 'url',
+    field: 'url',
     align: 'left',
   },
   {
     title: '请求方式',
-    dataIndex: 'method',
+    field: 'method',
     width: 80,
     customRender: ({ record }) => {
       const status = record.status;
@@ -40,7 +42,7 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '接口描述',
-    dataIndex: 'note',
+    field: 'note',
     align: 'left',
   },
 ];
@@ -87,18 +89,13 @@ export const apiTestingFormSchema: FormSchema[] = [
     label: '名称',
     required: true,
     component: 'Input',
-    rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 32,
-        message: '字符长度不能大于32！',
-      },
-    ],
-    colProps,
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(32, "字符长度不能大于32！")
   },
   {
     field: 'sn',
@@ -112,6 +109,15 @@ export const apiTestingFormSchema: FormSchema[] = [
     label: '系统URL',
     required: true,
     component: 'Input',
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(40, "字符长度不能大于40！")
+        .regex(new RegExp('[a-zA-z]+://[^\\s]*'), '请输入正确的URL地址！')
+    /*
     rules: [
       {
         required: true,
@@ -119,39 +125,47 @@ export const apiTestingFormSchema: FormSchema[] = [
         message: '系统URL不能为空！',
       },
       {
-        pattern: new RegExp('[a-zA-z]+://[^\\s]*'),
+        pattern: ,
         type: 'string',
-        message: '请输入正确的URL地址！',
+        message: ,
       },
       {
         max: 40,
         message: '字符长度不能大于40！',
       },
-    ],
-    colProps,
+    ],*/
+    // colProps,
   },
   {
     field: 'indexUrl',
     label: '首页URL',
     required: true,
     component: 'Input',
-    rules: [
+    rules: z
+        .string({
+          required_error: '',
+        })
+        .trim()
+        .min(1, "首页URL不能为空！")
+        .max(128, "字符长度不能大于128！")
+        .regex(new RegExp('^\\/(\\w+\\/?)+(\\.?\\w+)?$'),'请输入正确的URL地址！')
+    /*rules: [
       {
         required: true,
         whitespace: true,
-        message: '首页URL不能为空！',
+        message: '！',
       },
       {
-        pattern: new RegExp('^\\/(\\w+\\/?)+(\\.?\\w+)?$'),
+        pattern:
         type: 'string',
-        message: '请输入正确的URL地址！！',
+        message: ,
       },
       {
         max: 128,
         message: '字符长度不能大于128！',
       },
     ],
-    colProps,
+    colProps,*/
   },
   {
     field: 'image',
@@ -211,12 +225,17 @@ export const apiTestingFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    rules: [
+    rules: z
+        .string()
+        .max(500, "字符长度不能大于500！")
+        .nullable()
+        .optional()
+    /*rules: [
       {
         max: 500,
         message: '字符长度不能大于500！',
       },
-    ],
-    colProps,
+    ],*/
+    // colProps,
   },
 ];

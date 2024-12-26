@@ -102,12 +102,17 @@
                 maxRows: 8,
               }
             },
-            rules: [
+            rules: z
+                .string()
+                .max(256, "字符长度不能大于256！")
+                .nullable()
+                .optional()
+            /*rules: [
               {
                 max: 256,
                 message: '字符长度不能大于256！',
               },
-            ],
+            ],*/
           },
           {
             field: 'taskId',

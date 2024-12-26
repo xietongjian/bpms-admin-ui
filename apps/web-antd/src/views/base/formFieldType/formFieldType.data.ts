@@ -1,5 +1,7 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { FormValidPatternEnum } from '#/enums/commonEnum';
+import {z} from "@vben/common-ui";
 
 const colProps = {
   span: 24,
@@ -55,22 +57,30 @@ export const formSchema: FormSchema[] = [
     label: '控件类型',
     required: true,
     component: 'Input',
-    rules: [
+    rules: z
+        .string({
+          required_error: '不能为空',
+        })
+        .trim()
+        .min(1, "不能为空")
+        .max(30, "字符长度不能大于30！")
+        .regex(new RegExp(FormValidPatternEnum.FIELD_NAME_SN), '请输入英文或数字（以英文或下划线开头）！'),
+    /*rules: [
       {
         required: true,
         whitespace: true,
         message: '不能为空！',
       },
       {
-        pattern: new RegExp(FormValidPatternEnum.FIELD_NAME_SN),
+        pattern:
         type: 'string',
-        message: '请输入英文或数字（以英文或下划线开头）！',
+        message: ,
       },
       {
         max: 30,
         message: '字符长度不能大于30！',
       },
-    ],
+    ],*/
     colProps,
   },
   {
@@ -78,7 +88,14 @@ export const formSchema: FormSchema[] = [
     label: '表单类型',
     required: false,
     component: 'Input',
-    rules: [
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(60, "字符长度不能大于60！")
+    /*rules: [
       {
         pattern: new RegExp(FormValidPatternEnum.FIELD_NAME_SN),
         type: 'string',
@@ -89,29 +106,22 @@ export const formSchema: FormSchema[] = [
         message: '字符长度不能大于64！',
       },
     ],
-    colProps,
+    colProps,*/
   },
   {
     field: 'dbType',
     label: '数据库类型',
     required: true,
     component: 'Input',
-    rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '不能为空！',
-      },
-      {
-        pattern: new RegExp(FormValidPatternEnum.FIELD_NAME_SN),
-        type: 'string',
-        message: '请输入英文或数字（以英文或下划线开头）！',
-      },
-      {
-        max: 32,
-        message: '字符长度不能大于32！',
-      },
-    ],
+    rules: z
+        .string({
+          required_error: '不能为空！',
+        })
+        .trim()
+        .min(1, "不能为空")
+        .max(32, "字符长度不能大于32！")
+        .regex(new RegExp(FormValidPatternEnum.FIELD_NAME_SN), '请输入英文或数字（以英文或下划线开头）！'),
+
     dynamicDisabled: ({ values }) => {
       return !!values.id;
     },

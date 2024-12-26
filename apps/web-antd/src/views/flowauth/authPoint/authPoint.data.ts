@@ -77,10 +77,16 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'name',
     label: '功能点名',
-    required: true,
     component: 'Input',
     show: true,
-    rules: [
+    rules: z
+        .string({
+          required_error: '功能点名不能为空',
+        })
+        .trim()
+        .min(1, "功能点名不能为空")
+        .max(96, "字符长度不能大于96！")
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -90,7 +96,7 @@ export const formSchema: FormSchema[] = [
         max: 96,
         message: '字符长度不能大于96！',
       },
-    ],
+    ],*/
   },
   {
     fieldName: 'sn',
@@ -135,11 +141,10 @@ export const formSchema: FormSchema[] = [
       },
     },
     show: true,
-    rules: [
-      {
-        max: 1500,
-        message: '字符长度不能大于1500！',
-      },
-    ],
+    rules: z
+        .string()
+        .max(1500, "字符长度不能大于1500！")
+        .nullable()
+        .optional()
   },
 ];

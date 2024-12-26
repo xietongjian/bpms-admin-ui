@@ -417,17 +417,13 @@ export const formSchema: FormSchema[] = [
     label: '名称',
     required: true,
     component: 'Input',
-    rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 32,
-        message: '字符长度不能大于32！',
-      },
-    ],
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(32, "字符长度不能大于32！")
 
   },
   {
@@ -442,7 +438,15 @@ export const formSchema: FormSchema[] = [
     fieldName: 'url',
     label: 'URL',
     component: 'Input',
-    rules: [
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(128, "字符长度不能大于128！")
+        .regex(new RegExp('[^\/]+(\/(.+))*')),
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -457,7 +461,7 @@ export const formSchema: FormSchema[] = [
         max: 128,
         message: '字符长度不能大于128！',
       },
-    ],
+    ],*/
     dynamicDisabled: ({values})=> !!values.id,
 
   },
@@ -479,7 +483,15 @@ export const formSchema: FormSchema[] = [
     fieldName: 'component',
     label: '组件地址',
     component: 'Input',
-    rules: [
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(60, "字符长度不能大于60！")
+        .regex(new RegExp('^\\/?(\\w+\\/?)+(\\.?\\w+)?$')),
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -494,7 +506,7 @@ export const formSchema: FormSchema[] = [
         max: 128,
         message: '字符长度不能大于128！',
       },
-    ],
+    ],*/
     required: ({values}) => values.moduleType === 'menu',
     show: ({values}) => values.moduleType === 'menu',
     dynamicDisabled: ({values}) => !!values.id,
@@ -505,14 +517,22 @@ export const formSchema: FormSchema[] = [
     label: '跳转地址',
     helpMessage: '目录菜单跳转地址！',
     component: 'Input',
-    rules: [
+    rules: z
+        .string({
+          required_error: 'URL不能为空！',
+        })
+        .trim()
+        .min(1, "URL不能为空！")
+        .max(128, "字符长度不能大于128！")
+        .regex(new RegExp('[^\/]+(\/(.+))*'), "请输入正确的目录菜单跳转地址！"),
+    /*rules: [
       {
         required: false,
         whitespace: true,
         message: 'URL不能为空！',
       },
       {
-        pattern: new RegExp('[^\/]+(\/(.+))*'),
+        pattern: ,new RegExp('[^\/]+(\/(.+))*')
         type: 'string',
         message: '请输入正确的目录菜单跳转地址！',
       },
@@ -520,7 +540,7 @@ export const formSchema: FormSchema[] = [
         max: 128,
         message: '字符长度不能大于128！',
       },
-    ],
+    ],*/
     show: ({values}) => values.moduleType === 'dictionary',
 
   },

@@ -117,7 +117,7 @@ export const downloadTaskProcessDetail = (params: any) => {
 export const getProcessCountBi = async (params: any) => {
   params.num = params.dateRangeCount;
   delete params.dateRangeCount;
-  const taskCounts = await defHttp
+  const taskCounts = await requestClient
     .post<any>({ url: Api.CountLatestNumDaysTask, params: params })
     .then((res) => {
       res.forEach((item) => {
