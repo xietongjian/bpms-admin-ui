@@ -379,24 +379,18 @@ import { PerEnum } from '#/enums/perEnum';
 
   async function publish(modelKey: string) {
     loadingRef.value = true;
-    const {success, msg} =await deployForm(modelKey)
-      .then((res) => {
-        const { data } = res;
-        if (data.success) {
-          message.success(data.msg, 2);
-          tableApi.reload();
-        } else {
-          message.error(data.msg, 2);
-        }
-      })
-      .finally(() => {
-        loadingRef.value = false;
-      });
-    if (success) {
-      message.success(msg, 2);
-      tableApi.reload();
-    } else {
-      message.error(msg, 2);
+    try {
+      const {success, msg} = await deployForm(modelKey);
+      if (success) {
+        message.success(msg, 2);
+        tableApi.reload();
+      } else {
+        message.error(msg, 2);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      loadingRef.value = false;
     }
   }
 
