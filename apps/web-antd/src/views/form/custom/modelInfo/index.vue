@@ -106,18 +106,14 @@ import { PerEnum } from '#/enums/perEnum';
   import BpmnDesignerModal from '#/views/form/components/BpmnDesignerModal.vue';
   import { Avatar, Button, Popconfirm, Tooltip, message } from 'ant-design-vue';
   import { columns, searchFormSchema } from './modelInfo.data';
-  import {listColumns} from "#/views/base/app/app.data";
-  import {getAppListByPage} from "#/api/base/app";
-  // import { useMessage } from '@/hooks/web/useMessage';
 
   const PerPrefix = 'Custom:';
 
   const {hasAccessByCodes} = useAccess();
 
-
-  const bpmnDesignerModalRef = ref();
-  const copyModelInfoModalRef = ref();
-  const bpmnPreviewModalRef = ref();
+  const bpmnDesignerModalRef = ref(),
+      copyModelInfoModalRef = ref(),
+      bpmnPreviewModalRef = ref();
   // const [registerCopyModal, { openModal: openCopyModal, setModalProps: setCopyModalProps }] =
   //   useModal();
   // const [

@@ -57,10 +57,10 @@
               <save-outlined />保存
             </a-button>-->
             <Dropdown>
-              <a-button type="link" @click.prevent>
+              <Button type="link" @click.prevent>
                 <SettingOutlined />
                 更多
-              </a-button>
+              </Button>
               <template #overlay>
                 <Menu @click="handleFormSettingClick">
                   <MenuItem key="genJSON">
@@ -85,8 +85,8 @@
       @register="registerFormTemplateSelectorModal"
       @success="handleInsertTemplate"
     />
-    <CodePreviewModal @register="registerCodePreviewModal" :minHeight="200" />
-    <FormPreviewModal @register="registerFormPreviewModal" />
+    <CodePreviewModal ref="codePreviewModalRef" @register="registerCodePreviewModal" :minHeight="200" />
+    <FormPreviewModal ref="formPreviewModalRef" @register="registerFormPreviewModal" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -101,6 +101,7 @@
     Divider,
     Tooltip,
     message,
+    Button,
   } from 'ant-design-vue';
   import {
     SettingOutlined,
@@ -118,6 +119,7 @@
   // import CodePreviewModal from '#/views/components/preview/codePreview/index.vue';
   import FormPreviewModal from '#/views/components/form/formMaking/FormPreviewModal.vue';
   // import {useUserStore} from "#/store/modules/user";
+  import {useUserStore} from '@vben/stores';
 
 
   import { formBaseInfoFormSchema } from './formBaseInfo.data';
@@ -128,7 +130,7 @@
   import {formSchema} from "#/views/base/app/app.data";
 
   // const { message, createConfirm } = useMessage();
-  // const userStore = useUserStore();
+  const userStore = useUserStore();
 
   const props = defineProps({
     formType: {
@@ -304,7 +306,7 @@
   }
 
   function ctrlForm() {
-    const getBaseDynamicRules = (params: CheckExistParams) => {
+    const getBaseDynamicRules = (params: any) => {
       if (props.id) {
         return [];
       }
@@ -344,7 +346,7 @@
             }
           },
         },
-      ] as Rule[];
+      ];
     };
     if (props.formType === 'biz') {
       // 业务表单增加表单验证

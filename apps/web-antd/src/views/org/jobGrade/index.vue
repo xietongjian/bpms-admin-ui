@@ -38,11 +38,11 @@ import type {Recordable} from '@vben/types';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {getJobGrades, deleteById} from '#/api/org/jobGrade';
 import {ColPage} from '@vben/common-ui';
-// import JobGradeTypeList from '@/views/components/leftTree/JobGradeTypeList.vue';
+import JobGradeTypeList from '#/views/components/leftTree/JobGradeTypeList.vue';
 import JobGradeModal from './JobGradeModal.vue';
 import {columns, searchFormSchema} from './jobGrade.data';
 import {message, Button} from 'ant-design-vue';
-// import {getJobGradeTypes} from "#/api/org/jobGradeType";
+import {getJobGradeTypes} from "#/api/org/jobGradeType";
 import { TableAction } from '#/components/table-action';
 
 const PerPrefix = 'JobGrade:';
