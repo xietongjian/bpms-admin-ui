@@ -90,8 +90,6 @@ const gridOptions: VxeGridProps<any> = {
 };
 
 const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
-
-
 function handleCreate() {
   loginLogModalRef.value.setData({});
   loginLogModalRef.value.open();

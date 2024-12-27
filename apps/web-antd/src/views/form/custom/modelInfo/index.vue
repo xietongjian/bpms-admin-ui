@@ -1,82 +1,82 @@
 <template>
-  <Page auto-content-height>
-    <div class="flex flex-row w-full h-full gap-2">
-      <div class="w-80 h-full">
-        <FlowCategoryTree @select="handleSelect" />
-      </div>
-      <div class="flex-1 h-full">
-        <BasicTable
-                class="w-full"
-                @row-click="clickRow"
-                @selection-change="changeSelection"
-                @fetch-success="fetchSuccess"
-        >
-          <template #toolbar-tools >
-            <div class="flex flex-row gap-2">
-              <Tooltip
-                      v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
-                      placement="bottom">
-                <template #title>
-                  <span>只有状态为【待发布】的数据才能发布</span>
-                </template>
-                <Popconfirm
-                        :title="`确定要发布【${currentModelInfo.name}】流程吗？`"
-                        @confirm="handlePublish"
-                        type="primary"
-                        :disabled="!showPublishBtn"
-                >
-                  <Button type="primary">发布</Button>
-                </Popconfirm>
-              </Tooltip>
-              <Tooltip
-                      v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
-                      placement="bottom">
-                <template #title>
-                  <span>只有状态为【待发布/已发布】的数据才能停用</span>
-                </template>
-                <template >
-                  <Popconfirm
-                          :title="`确定要停用【${currentModelInfo.name}】流程吗？`"
-                          @confirm="handleStop"
-                          color="error"
-                          type="danger"
-                          :disabled="!showStopBtn"
-                  >
-                    <Button type="primary" danger>停用</Button>
-                  </Popconfirm>
-                </template>
-              </Tooltip>
-              <template v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])">
-                <Button type="primary" @click="handleCreate"> 新增</Button>
-                <Button type="primary" @click="handleCopy"> 复制</Button>
-              </template>
-            </div>
-          </template>
-          <template #action="{ row }">
-            <TableAction :stopButtonPropagation="true" :actions="createActions(row)" />
-          </template>
-          <template #name="{row}">
-            <Avatar :src="row.modelIcon">
-              <template #icon>
-                <PictureFilled />
-              </template>
-            </Avatar>
-            <Tooltip placement="top" :mouseEnterDelay="0.3">
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="true"
+      :split-line="true"
+      :resizable="true"
+      :left-collapsible="true"
+      :auto-content-height="true"
+      content-class="h-full">
+    <template #left >
+      <FlowCategoryTree @select="handleSelect" />
+    </template>
+    <div class="bg-card h-full">
+      <BasicTable >
+        <template #toolbar-tools >
+          <div class="flex flex-row gap-2">
+            <Tooltip
+                v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
+                placement="bottom">
               <template #title>
-                {{ row.name }}
+                <span>只有状态为【待发布】的数据才能发布</span>
               </template>
+              <Popconfirm
+                  :title="`确定要发布【${currentModelInfo.name}】流程吗？`"
+                  @confirm="handlePublish"
+                  type="primary"
+                  :disabled="!showPublishBtn"
+              >
+                <Button type="primary">发布</Button>
+              </Popconfirm>
+            </Tooltip>
+            <Tooltip
+                v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
+                placement="bottom">
+              <template #title>
+                <span>只有状态为【待发布/已发布】的数据才能停用</span>
+              </template>
+              <Popconfirm
+                  :title="`确定要停用【${currentModelInfo.name}】流程吗？`"
+                  @confirm="handleStop"
+                  color="error"
+                  type="danger"
+                  :disabled="!showStopBtn"
+              >
+                <Button type="primary" danger>停用</Button>
+              </Popconfirm>
+            </Tooltip>
+            <template v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])">
+              <Button type="primary" @click="handleCreate"> 新增</Button>
+              <Button type="primary" @click="handleCopy"> 复制</Button>
+            </template>
+          </div>
+        </template>
+        <template #action="{ row }">
+          <TableAction :stopButtonPropagation="true" :actions="createActions(row)" />
+        </template>
+        <template #name="{ row }">
+          <Avatar :src="row.modelIcon">
+            <template #icon>
+              <PictureFilled />
+            </template>
+          </Avatar>
+          <Tooltip placement="top" :mouseEnterDelay="0.3">
+            <template #title>
               {{ row.name }}
-            </Tooltip>
-          </template>
-          <template #appName="{row}">
-            <span v-if="!row.appName">未设置</span>
-            <Tooltip v-else placement="top" :mouseEnterDelay="0.3">
-              <template #title> {{ row.appName }}【{{ row.appSn }}】 </template>
-              {{ row.appName }}
-            </Tooltip>
-          </template>
-        </BasicTable>
-      </div>
+            </template>
+            {{ row.name }}
+          </Tooltip>
+        </template>
+        <template #appName="{row}">
+          <span v-if="!row.appName">未设置</span>
+          <Tooltip v-else placement="top" :mouseEnterDelay="0.3">
+            <template #title> {{ row.appName }}【{{ row.appSn }}】 </template>
+            {{ row.appName }}
+          </Tooltip>
+        </template>
+      </BasicTable>
     </div>
     <CopyModelInfoModal ref="copyModelInfoModalRef" @register="registerCopyModal" @success="handleSuccess" formType="custom" />
     <TaskFormDesignerModal ref="taskFormDesignerModalRef"
@@ -89,11 +89,11 @@
       @register="registerBpmnDesignerModal"
       @success="handleBpmnDesignerModalSuccess"
     />
-  </Page>
+  </ColPage>
 </template>
 <script lang="ts" setup>
-  import { PerEnum } from '#/enums/perEnum';
-  import { ref, unref, watch } from 'vue';
+import { ref, unref, watch } from 'vue';
+import { PerEnum } from '#/enums/perEnum';
   import {useAccess} from '@vben/access';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
@@ -144,8 +144,8 @@
   const taskFormData = ref<object>({});
 
   const expandedRowKeys = ref([]);
-  const currentModelInfo = ref<Recordable>({});
-  const currentCategory = ref<Recordable>({});
+  const currentModelInfo = ref<Recordable<any>>({});
+  const currentCategory = ref<Recordable<any>>({});
   const loadingRef = ref(false);
   const showPublishBtn = ref(false);
   const showStopBtn = ref(false);
@@ -191,7 +191,7 @@
       labelWidth: 60,
     },
     wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-    actionWrapperClass: 'col-span-2 col-start-3 text-left ml-4',
+    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
     resetButtonOptions: {
       show: false,
     },
@@ -199,16 +199,20 @@
   };
 
   const gridOptions: VxeGridProps<any> = {
-    checkboxConfig: {
-      highlight: true,
-      labelField: 'name',
-    },
     columns,
     columnConfig: {resizable: true},
     height: 'auto',
-    keepSource: true,
+    maxHeight: '100%',
     border: false,
+    keepSource: true,
+    autoResize: false,
     stripe: true,
+    round: false,
+    radioConfig: {
+      highlight: true,
+      labelField: 'name',
+      trigger: 'row',
+    },
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
@@ -322,25 +326,17 @@
         icon: 'ant-design:partition-outlined',
         tooltip: '流程图预览',
         label: '',
-        onClick: handlePreview.bind(null, record),
+        onClick: handleBpmnPreview.bind(null, record.modelKey),
       },
     ];
   }
 
-  function handlePreview(record: Recordable) {
-    openBpmnPreviewModal(true, {
-      modelKey: record.modelKey,
-    });
-    setBpmnPreviewProps({
-      title: `预览-${record.name}`,
-      centered: true,
-      useWrapper: false,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });
+  function handleBpmnPreview(modelKey: string) {
+    bpmnPreviewModalRef.value.setData({modelKey});
+    bpmnPreviewModalRef.value.open();
   }
 
-  function handleEdit(record: Recordable) {
+  function handleEdit(record: Recordable<any>) {
     const { modelKey, modelId, categoryCode } = record;
     const query = { modelKey, modelId, categoryCode, formType: 'custom' };
     openBpmnDesignerModal(true, { ...query });
@@ -362,28 +358,33 @@
 
   // 复制
   function handleCopy() {
-    const selectedRows = getSelectRows();
+    const selectedRows = tableApi.grid.getCheckboxRecords();
     if (selectedRows && selectedRows.length <= 0) {
       message.warn('请选择行！');
       return;
     }
-    openCopyModal(true, {
+    copyModelInfoModalRef.value.setData(selectedRows[0]);
+    copyModelInfoModalRef.value.open();
+    copyModelInfoModalRef.value.setState({
+      title: '复制【' + selectedRows[0].name + '】表单、流程',
+    });
+    /*openCopyModal(true, {
       record: selectedRows[0],
     });
     setCopyModalProps({
       title: '复制【' + selectedRows[0].name + '】表单、流程',
       width: 600,
-    });
+    });*/
   }
 
-  function publish(modelKey) {
+  async function publish(modelKey: string) {
     loadingRef.value = true;
-    deployForm(modelKey)
+    const {success, msg} =await deployForm(modelKey)
       .then((res) => {
         const { data } = res;
         if (data.success) {
           message.success(data.msg, 2);
-          reload();
+          tableApi.reload();
         } else {
           message.error(data.msg, 2);
         }
@@ -391,6 +392,12 @@
       .finally(() => {
         loadingRef.value = false;
       });
+    if (success) {
+      message.success(msg, 2);
+      tableApi.reload();
+    } else {
+      message.error(msg, 2);
+    }
   }
 
   function stop(modelKey) {
@@ -410,7 +417,7 @@
       });
   }
 
-  function handlePublish(record: Recordable) {
+  function handlePublish(record: Recordable<any>) {
     if (record.modelKey) {
       publish(record.modelKey);
     } else {
@@ -423,7 +430,7 @@
     }
   }
 
-  function handleStop(record: Recordable) {
+  function handleStop(record: Recordable<any>) {
     if (record.modelKey) {
       stop(record.modelKey);
     } else {
@@ -492,9 +499,7 @@
 
   async function handleSelect(node: any) {
     currentCategory.value = node;
-    // const { setFieldsValue } = getForm();
-    // await setFieldsValue({ categoryCode: node ? node.code : '' });
-    tableApi.reload();
+    tableApi.reload({categoryCode: node.code});
   }
 
   function handleTaskFormSuccess() {

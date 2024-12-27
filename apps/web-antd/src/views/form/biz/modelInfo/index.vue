@@ -1,35 +1,35 @@
 <template>
-  <Page auto-content-height>
-    <div class="flex flex-row h-full gap-2">
-      <div class="w-60 h-full">
-        <FlowCategoryTree @select="handleSelect" />
-      </div>
-
-      <BasicTable
-          class="flex-1"
-        @row-click="clickRow"
-        @selection-change="changeSelection"
-        @fetch-success="fetchSuccess"
-      >
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="true"
+      :split-line="true"
+      :resizable="true"
+      :left-collapsible="true"
+      :auto-content-height="true"
+      content-class="h-full">
+    <template #left >
+      <FlowCategoryTree @select="handleSelect" />
+    </template>
+    <div class="bg-card h-full">
+      <BasicTable >
         <template #toolbar-tools >
           <div class="flex flex-row gap-2">
-            <Tooltip placement="bottom">
+            <Tooltip
+                v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
+                placement="bottom">
               <template #title>
                 <span>只有状态为【待发布】的数据才能发布</span>
               </template>
-              <span>
-              <Authority :value="'Biz:' + PerEnum.PUBLISH">
-                <Popconfirm
-                    v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
-                    :title="`确定要发布【${currentModelInfo.name}】流程吗？`"
-                    :disabled="!showPublishBtn"
-                    type="primary"
-                    @confirm="handlePublish"
-                >
-                  <Button type="primary">发布</Button>
-                </Popconfirm>
-              </Authority>
-            </span>
+              <Popconfirm
+                  :title="`确定要发布【${currentModelInfo.name}】流程吗？`"
+                  @confirm="handlePublish"
+                  type="primary"
+                  :disabled="!showPublishBtn"
+              >
+                <Button type="primary">发布</Button>
+              </Popconfirm>
             </Tooltip>
             <Tooltip
                 v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
@@ -38,11 +38,11 @@
                 <span>只有状态为【待发布/已发布】的数据才能停用</span>
               </template>
               <Popconfirm
+                  :title="`确定要停用【${currentModelInfo.name}】流程吗？`"
+                  @confirm="handleStop"
                   color="error"
                   type="danger"
-                  :title="`确定要停用【${currentModelInfo.name}】流程吗？`"
                   :disabled="!showStopBtn"
-                  @confirm="handleStop"
               >
                 <Button type="primary" danger>停用</Button>
               </Popconfirm>
@@ -143,7 +143,7 @@
       @register="registerNoFormBpmnDesignerModal"
       @success="handleBpmnDesignerModalSuccess"
     />
-  </Page>
+  </ColPage>
 </template>
 <script lang="ts" setup>
   import { nextTick, ref, unref, watch } from 'vue';
@@ -167,7 +167,6 @@
   import CopyModelInfoModal from '#/views/form/components/CopyModelInfoModal.vue';
   import {BpmnPreviewModal} from '#/views/components/preview';
   import { Avatar, message, Popconfirm, Button, Badge, Tooltip, Dropdown, Menu, TypographyText } from 'ant-design-vue';
-  import { getAll } from '#/api/base/app';
   import { columns, searchFormSchema } from './modelInfo.data';
   import { PerEnum } from '#/enums/perEnum';
   import BizBpmnDesignerModal from '#/views/form/components/BizBpmnDesignerModal.vue';
@@ -195,8 +194,8 @@
   // ] = useModal();
   // const { message } = useMessage();
 
-  const currentModelInfo = ref<Recordable>({});
-  const currentCategory = ref<Recordable>({});
+  const currentModelInfo = ref<Recordable<any>>({});
+  const currentCategory = ref<Recordable<any>>({});
   const loadingRef = ref(false);
   const showPublishBtn = ref(false);
   const showStopBtn = ref(false);

@@ -40,7 +40,7 @@ export const saveFormInfo = (params: any) => {
 };
 
 export const deployForm = (params: any) =>
-  requestClient.post( Api.DeployForm + '/' + params, { isReturnNativeResponse: true });
+  requestClient.post( Api.DeployForm + '/' + params, { isTransformResponse: true });
 
 export const stopForm = (params: any) =>
   requestClient.post(Api.StopForm + '/' + params, { isReturnNativeResponse: true });

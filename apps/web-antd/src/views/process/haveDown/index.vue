@@ -11,26 +11,21 @@
           {{row.formName}}
         </TypographyLink>
       </template>
-
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'startPersonName'">
-          <EmpInfo :no="record.startPersonCode" :name="record.startPersonName" />
-        </template>
-
-        <template v-if="column.key === 'duration'">
-          {{ timeDurationFormatter(record.duration) }}
-        </template>
-
-        <template v-if="column.key === 'formName'">
-          <Tooltip placement="top" title="流程图预览">
-            <a>
-              <PartitionOutlined @click="showFlowDiagram(record.processDefinitionKey, record.processInstanceId)" class="flow-diagram-icon mr-2"/>
-            </a>
-          </Tooltip>
-          <TypographyLink @click="handleViewForm(record)">
-            {{ record.formName }}
-          </TypographyLink>
-        </template>
+      <template #formName="{ row }">
+        <Tooltip placement="top" title="流程图预览">
+          <a>
+            <PartitionOutlined @click="showFlowDiagram(row.processDefinitionKey, row.processInstanceId)" class="flow-diagram-icon mr-2"/>
+          </a>
+        </Tooltip>
+        <TypographyLink @click="handleViewForm(row)">
+          {{ row.formName }}
+        </TypographyLink>
+      </template>
+      <template #startPersonName="{ row }">
+        <EmpInfo :no="row.startPersonCode" :name="row.startPersonName" />
+      </template>
+      <template #duration="{ row }">
+        {{ timeDurationFormatter(row.duration) }}
       </template>
     </BasicTable>
     <BpmnPreviewModal ref="bpmnPreviewModalRef" />
@@ -46,7 +41,7 @@ import {ref} from 'vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
-import {Page, useVbenModal} from '@vben/common-ui';
+import {Page} from '@vben/common-ui';
   // import { BasicTable, useTable } from '@/components/Table';
   import {TypographyLink, Tooltip} from 'ant-design-vue';
   import {PartitionOutlined} from '@ant-design/icons-vue';

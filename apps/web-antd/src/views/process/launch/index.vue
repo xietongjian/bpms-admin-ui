@@ -23,6 +23,7 @@ import {
   Tree,
   TypographyLink,
 } from 'ant-design-vue';
+import {BpmnPreviewModal} from '#/views/components/preview';
 
 import { getFlowCategories } from '#/api/base/category';
 import {
@@ -47,6 +48,10 @@ const dataListLoading = ref<boolean>(false);
 const basicTreeRef = ref<any>(null);
 const currentCategory = ref<any>({});
 const InputSearch = Input.Search;
+
+const bpmnPreviewModalRef = ref();
+
+
 // const [AppModal, modalApi] = useVbenModal({
 //   connectedComponent: null,//AppInputModal,
 //   centered: true,
@@ -197,6 +202,11 @@ function handleSelect(keys: string, e) {
   searchTxt.value = '';
   fetchModelByPage();
 }
+
+function handleBpmnPreview(modelKey, procInstId) {
+  bpmnPreviewModalRef.value.setData({modelKey, procInstId});
+  bpmnPreviewModalRef.value.open();
+}
 </script>
 
 <template>
@@ -208,7 +218,7 @@ function handleSelect(keys: string, e) {
     :split-line="true"
     :resizable="true"
     :left-collapsible="true"
-    :auto-content-height="false"
+    :auto-content-height="true"
     content-class="h-full">
     <template #left>
       <div class="bg-card flex h-full w-full flex-col">
@@ -279,9 +289,7 @@ function handleSelect(keys: string, e) {
                       <Tooltip placement="top" title="流程图预览">
                         <PartitionOutlined
                           class="flow-diagram-icon"
-                          @click="
-                                showFlowDiagram(item.name, item.modelKey, '')
-                              "
+                          @click="handleBpmnPreview(item.modelKey, '')"
                         />
                       </Tooltip>
                       <TypographyLink @click="handleLaunch(item)">
@@ -349,6 +357,7 @@ function handleSelect(keys: string, e) {
           </template>
         </List>
       </div>
+      <BpmnPreviewModal ref="bpmnPreviewModalRef" />
     </div>
   </ColPage>
 </template>

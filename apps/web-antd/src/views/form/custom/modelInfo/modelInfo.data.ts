@@ -5,6 +5,7 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
 
 export const columns: VxeGridProps['columns'] = [
   {
+    type: 'radio',
     title: '名称',
     field: 'name',
     align: 'left',
@@ -72,6 +73,13 @@ export const columns: VxeGridProps['columns'] = [
     width: 150,
     align: 'center',
   },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
+  },
 ];
 
 export const formColumns: VxeGridProps['columns'] = [
@@ -115,18 +123,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称/编码',
     },
     labelWidth: 60,
-    colProps: {
-      span: 8,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
-  },
-  {
-    fieldName: 'categoryCode',
-    label: '',
-    component: 'Input',
-    show: false,
   },
 ];
 
@@ -134,7 +130,6 @@ export const modelInfoFormSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
     show: false,
   },

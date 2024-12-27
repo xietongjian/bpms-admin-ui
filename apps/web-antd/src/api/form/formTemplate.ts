@@ -61,6 +61,6 @@ export const getFormTemplateById = (id: string) =>
   requestClient.get(Api.GetFormTemplateById + '/' + id );
 
 
-export const saveOrUpdateFormCategory = (params: any) => requestClient.post( Api.SaveOrUpdateFormCategory, params ,{}, {isTransformResponse: false});
+export const saveOrUpdateFormCategory = (params: any) => requestClient.post( Api.SaveOrUpdateFormCategory, params ,{isTransformResponse: false});
 
 export const deleteFormCategoryById = (id: any) => requestClient.post(Api.DeleteFormCategoryById, [id], {isTransformResponse: false});
