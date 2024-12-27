@@ -19,7 +19,9 @@ export const formBaseInfoFormSchema: FormSchema[] = [
     fieldName: 'formName',
     label: '',
     component: 'Input',
-    required: true,
+    hideLabel: true,
+    hideRequiredMark: true,
+    formItemClass: 'pb-0 [&_div_p]:z-10 [&_div_p]:border [&_div_p]:rounded [&_div_p]:border-destructive [&_div_p]:px-2 [&_div_p]:bg-card [&_div_p]:bottom-[-33px] [&_div_p]:leading-8',
     componentProps: ({ schema, tableAction, formActionType, formModel }) => {
       return {
         placeholder: '流程名称',
@@ -50,8 +52,6 @@ export const formBaseInfoFormSchema: FormSchema[] = [
     fieldName: 'formKey',
     label: '',
     component: 'Input',
-    required: true,
-    show: false,
     componentProps: {
       placeholder: '标识(自动填充，可修改)',
       autoComplete: 'off',
@@ -75,6 +75,7 @@ export const formBaseInfoFormSchema: FormSchema[] = [
       },
     ],*/
     dependencies: {
+      show: false,
       rules(values) {
         const { id, sn } = values;
         return z

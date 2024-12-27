@@ -44,6 +44,8 @@ enum Api {
   GetCurrTaskApplyersByBusinessKey = '/flow/front/query/getCurrTaskApplyersByBusinessKey',
   UpdateCommentInfo = '/flow/front/operate/updateCommentInfo',
   CheckRevokeProcess = '/flow/front/query/checkRevokeProcess',
+  ReminderTask = '/flow/operate/reminderTask',
+
 
 }
 
@@ -62,6 +64,11 @@ export function getCustomFlowSequenceFlows(params: any) {
 // 审批
 export function complete(params: any) {
   return requestClient.post(Api.Complete, params, {isReturnNativeResponse: true});
+}
+
+// 催办
+export function reminderTask(params: any) {
+  return requestClient.post(Api.ReminderTask, params, {isTransformResponse: false});
 }
 
 // 通过任务ID查询自定义审批配置项

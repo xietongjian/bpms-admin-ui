@@ -33,7 +33,7 @@ function genMenuTree(menus){
     meta: {
       icon: 'lucide:layout-dashboard',
       order: -1,
-      title: 'aaa',
+      title: '工作台',
     },
     name: 'Dashboardccc',
     path: '/',

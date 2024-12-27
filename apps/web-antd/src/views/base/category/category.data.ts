@@ -10,22 +10,27 @@ export const columns: VxeGridProps['columns'] = [
     title: '名称',
     field: 'name',
     align: 'left',
-    minWidth: 200
+    minWidth: 200,
+    resizable: true,
+    treeNode: true
   },
   {
     title: '编码',
     field: 'code',
+    resizable: true,
     align: 'left',
   },
   {
     title: '简称',
     field: 'shortName',
+    resizable: true,
     align: 'left',
   },
   {
     title: '所属公司',
     field: 'cName',
     align: 'left',
+    resizable: true,
     slots: { default: 'cName'}
   },
   {

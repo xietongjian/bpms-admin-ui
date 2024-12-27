@@ -163,13 +163,12 @@
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
       componentProps: {
-        // class: 'w-full',
+        class: 'w-full',
       },
     },
     showDefaultActions: false,
     layout: 'horizontal',
     schema: formBaseInfoFormSchema,
-    wrapperClass: 'grid-cols-1',
   });
 
 
