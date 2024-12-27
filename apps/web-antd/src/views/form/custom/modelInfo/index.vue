@@ -25,10 +25,9 @@
               <Popconfirm
                   :title="`确定要发布【${currentModelInfo.name}】流程吗？`"
                   @confirm="handlePublish"
-                  type="primary"
                   :disabled="!showPublishBtn"
               >
-                <Button type="primary">发布</Button>
+                <Button :disabled="!showPublishBtn" type="primary">发布</Button>
               </Popconfirm>
             </Tooltip>
             <Tooltip
@@ -40,11 +39,10 @@
               <Popconfirm
                   :title="`确定要停用【${currentModelInfo.name}】流程吗？`"
                   @confirm="handleStop"
-                  color="error"
-                  type="danger"
                   :disabled="!showStopBtn"
+                  :okButtonProps="{ danger: true }"
               >
-                <Button type="primary" danger>停用</Button>
+                <Button :disabled="!showStopBtn" type="primary" danger>停用</Button>
               </Popconfirm>
             </Tooltip>
             <template v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])">
@@ -62,12 +60,7 @@
               <PictureFilled />
             </template>
           </Avatar>
-          <Tooltip placement="top" :mouseEnterDelay="0.3">
-            <template #title>
-              {{ row.name }}
-            </template>
-            {{ row.name }}
-          </Tooltip>
+          {{ row.name }}
         </template>
         <template #appName="{row}">
           <span v-if="!row.appName">未设置</span>
@@ -80,13 +73,11 @@
     </div>
     <CopyModelInfoModal ref="copyModelInfoModalRef" @register="registerCopyModal" @success="handleSuccess" formType="custom" />
     <TaskFormDesignerModal ref="taskFormDesignerModalRef"
-      @register="registerTaskFormModal"
       @success="handleTaskFormSuccess"
       :closeFunc="handleCloseFunc"
     />
     <BpmnPreviewModal ref="bpmnPreviewModalRef" />
     <BpmnDesignerModal ref="bpmnDesignerModalRef"
-      @register="registerBpmnDesignerModal"
       @success="handleBpmnDesignerModalSuccess"
     />
   </ColPage>
@@ -97,7 +88,7 @@ import { PerEnum } from '#/enums/perEnum';
   import {useAccess} from '@vben/access';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
-  import type {VxeGridProps} from '#/adapter/vxe-table';
+  import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {ColPage, Page} from '@vben/common-ui';
@@ -198,7 +189,7 @@ import { PerEnum } from '#/enums/perEnum';
     schema: searchFormSchema,
   };
 
-  const gridOptions: VxeGridProps<any> = {
+  const gridOptions: VxeGridProps = {
     columns,
     columnConfig: {resizable: true},
     height: 'auto',
@@ -216,6 +207,7 @@ import { PerEnum } from '#/enums/perEnum';
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
+          currentModelInfo.value = {};
           return await getCustomPagerModel({
             query: {
               pageNum: page.currentPage,
@@ -228,20 +220,28 @@ import { PerEnum } from '#/enums/perEnum';
     },
   };
 
-  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+  const gridEvents: VxeGridListeners = {
+    radioChange: ({row}) => {
+      clickRow(row);
+    }
+  };
 
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
 
   watch(
     () => unref(currentModelInfo),
     (v) => {
-      if (!v.modelKey) {
+      if (v.modelKey) {
+        showPublishBtn.value = true;
+        showStopBtn.value = true;
+      } else {
         showPublishBtn.value = false;
         showStopBtn.value = false;
       }
     },
   );
 
-  function reloadTaskForm(modelKey) {
+  function reloadTaskForm(modelKey: string) {
     formTableLoading.value = true;
     taskFormData.value[unref(currentModelInfo).id] = [];
     getTaskFormInfoByModelKey({ modelKey: modelKey })
@@ -358,15 +358,15 @@ import { PerEnum } from '#/enums/perEnum';
 
   // 复制
   function handleCopy() {
-    const selectedRows = tableApi.grid.getCheckboxRecords();
-    if (selectedRows && selectedRows.length <= 0) {
+    const selectedRow = tableApi.grid.getRadioRecord();
+    if (!selectedRow) {
       message.warn('请选择行！');
       return;
     }
-    copyModelInfoModalRef.value.setData(selectedRows[0]);
+    copyModelInfoModalRef.value.setData(selectedRow);
     copyModelInfoModalRef.value.open();
     copyModelInfoModalRef.value.setState({
-      title: '复制【' + selectedRows[0].name + '】表单、流程',
+      title: '复制【' + selectedRow.name + '】表单、流程',
     });
     /*openCopyModal(true, {
       record: selectedRows[0],
@@ -415,12 +415,12 @@ import { PerEnum } from '#/enums/perEnum';
     if (record.modelKey) {
       publish(record.modelKey);
     } else {
-      const selectedRows = getSelectRows();
-      if (selectedRows && selectedRows.length <= 0) {
+      const selectedRow = tableApi.grid.getRadioRecord();
+      if (selectedRow) {
         message.warn('请选择行！');
         return;
       }
-      publish(selectedRows[0].modelKey);
+      publish(selectedRow.modelKey);
     }
   }
 
@@ -428,12 +428,12 @@ import { PerEnum } from '#/enums/perEnum';
     if (record.modelKey) {
       stop(record.modelKey);
     } else {
-      const selectedRows = getSelectRows();
-      if (selectedRows && selectedRows.length <= 0) {
+      const selectedRow = tableApi.grid.getRadioRecord();
+      if (selectedRow) {
         message.warn('请选择行！');
         return;
       }
-      stop(selectedRows[0].modelKey);
+      stop(selectedRow.modelKey);
     }
   }
 
@@ -462,11 +462,10 @@ import { PerEnum } from '#/enums/perEnum';
     }
   }
 
-  function clickRow(e) {
-    const selectedRows = getSelectRows();
-    if (selectedRows.length > 0) {
-      changePublishStopBtnShow(selectedRows[0].status);
-      currentModelInfo.value = selectedRows[0];
+  function clickRow(row: Recordable<any>) {
+    if (row) {
+      changePublishStopBtnShow(row.status);
+      currentModelInfo.value = row;
     } else {
       changePublishStopBtnShow(0);
       currentModelInfo.value = {};
@@ -474,10 +473,10 @@ import { PerEnum } from '#/enums/perEnum';
   }
 
   function fetchSuccess(e) {
-    clearSelectedRowKeys();
-    const selectedRows = getSelectRows();
-    if (selectedRows && selectedRows.length > 0) {
-      currentModelInfo.value = selectedRows[0];
+    // clearSelectedRowKeys();
+    const selectedRow = tableApi.grid.getRadioRecord();
+    if (!selectedRow) {
+      currentModelInfo.value = selectedRow;
     } else {
       currentModelInfo.value = {};
     }

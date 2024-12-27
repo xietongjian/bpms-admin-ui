@@ -3,6 +3,7 @@ import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { Tag } from 'ant-design-vue';
+import { checkEntityExist } from '#/api/form/bizForm';
 
 import { h } from 'vue';
 import { OrderNoDefaultEnum } from '#/enums/commonEnum';
