@@ -1,28 +1,24 @@
 <template>
-  <BasicDrawer v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicDrawer class="xl:w-[40%] md:w-[80%]">
+    <BasicForm/>
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
 import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
 import { formSchema } from './module.data';
-import { saveOrUpdate, checkEntityExist } from '#/api/privilege/module';
-import { FormValidPatternEnum } from '#/enums/commonEnum';
+import { saveOrUpdate } from '#/api/privilege/module';
 import {useVbenForm} from "#/adapter/form";
-import {setAccountFormSchema} from "#/views/privilege/group/group.data";
-import {useVbenModal, useVbenDrawer} from "@vben/common-ui";
+import {useVbenDrawer} from "@vben/common-ui";
 
 const emit = defineEmits(['success', 'register']);
 
 const isUpdate = ref(true);
-
 
 const [BasicDrawer, drawerApi] = useVbenDrawer({
   onCancel() {
     drawerApi.close();
   },
   onOpenChange(isOpen: boolean) {
-    debugger;
     if (isOpen) {
       const values = drawerApi.getData<Record<string, any>>();
       if (values) {

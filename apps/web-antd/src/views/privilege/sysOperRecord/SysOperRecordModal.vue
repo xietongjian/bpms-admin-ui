@@ -9,7 +9,6 @@ import {descriptionSchema} from './sysOperRecord.data';
 import {useVbenModal} from '@vben/common-ui';
 
 // import { Description, useDescription } from '@/components/Description/index';
-import {useVbenModal} from '@vben/common-ui';
 import {message, Descriptions} from 'ant-design-vue';
 
 const [BasicModal, modalApi] = useVbenModal({

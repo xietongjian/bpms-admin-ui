@@ -14,9 +14,11 @@ import ModuleDrawer from './module-drawer.vue';
 import {listColumns, searchFormSchema} from "#/views/privilege/module/module.data";
 import {PerEnum} from "#/enums/perEnum";
 import { IconifyIcon } from '@vben/icons';
+import PValueSettingModal from './ModulePValueModal.vue';
+
 
 const PerPrefix = "Module:";
-const moduleDrawerRef = ref();
+const moduleDrawerRef = ref(), pValueSettingModalRef=ref();
 const {hasAccessByCodes} = useAccess();
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -80,7 +82,12 @@ function handleAdd() {
   });
 }
 
-function handleEdit(record: Recordable) {
+function handleEdit(record: Recordable<any>) {
+  moduleDrawerRef.value.setData(record);
+  moduleDrawerRef.value.open();
+  moduleDrawerRef.value.setState({
+    title: '修改'
+  });
   /*modalApi.setData(record);
   modalApi.open();
   modalApi.setState({
@@ -88,7 +95,7 @@ function handleEdit(record: Recordable) {
   });*/
 }
 
-function handleViewSecretKey(record: Recordable) {
+function handleViewSecretKey(record: Recordable<any>) {
   /*secretKeyModalApi.setData(record);
   secretKeyModalApi.open();
   secretKeyModalApi.setState({
@@ -125,15 +132,20 @@ function handleCreateChild(record: Recordable, e) {
   });
 }
 
-function handleEditPValue(record: Recordable, e) {
+function handleEditPValue(record: Recordable<any>, e) {
   e.stopPropagation();
-  openPvalueModal(true, {
+  /*openPvalueModal(true, {
     record,
     isUpdate: true,
+  });*/
+  pValueSettingModalRef.value.setData(record);
+  pValueSettingModalRef.value.open();
+  pValueSettingModalRef.value.setState({
+    title: '新建'
   });
 }
 
-function createActions(record: Recordable): any[] {
+function createActions(record: Recordable<any>): any[] {
   return [
     {
       auth: [PerPrefix + PerEnum.ADD],
@@ -157,13 +169,16 @@ function createActions(record: Recordable): any[] {
       auth: [PerPrefix + PerEnum.DELETE],
       tooltip: '删除',
       icon: 'ant-design:delete-outlined',
-      color: 'error',
+      danger: true,
       onClick: (e) => {
         e.stopPropagation();
       },
       popConfirm: {
         title: '是否确认删除',
         confirm: handleDelete.bind(null, record),
+        okButtonProps: {
+          danger: true,
+        }
       },
     },
   ];
@@ -179,8 +194,8 @@ function createActions(record: Recordable): any[] {
         </Space>
       </template>
 
-      <template #action="{record}">
-        <TableAction :actions="createActions(record)" />
+      <template #action="{ row }">
+        <TableAction :actions="createActions(row)" />
       </template>
 
       <template #name="{ row }">
@@ -205,7 +220,7 @@ function createActions(record: Recordable): any[] {
         <Tag v-else>关闭</Tag>
       </template>
     </BasicTable>
-    <ModuleModal ref="moduleModalRef" @register="registerModal" @success="handleSuccess" />
+<!--    <ModuleModal ref="moduleModalRef" @register="registerModal" @success="handleSuccess" />-->
     <ModuleDrawer ref="moduleDrawerRef" @register="registerModal" @success="handleSuccess" />
     <PValueSettingModal ref="pValueSettingModalRef" @register="registerPValueModal" @success="handleSuccess" />
   </Page>

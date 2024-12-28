@@ -1,8 +1,10 @@
 import type { VxeGridProps } from '#/adapter/vxe-table';
+import {z} from "@vben/common-ui";
+import { FormValidPatternEnum } from '#/enums/commonEnum';
 
-const colProps = {
-  span: 24,
-};
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import { checkEntityExist } from '#/api/privilege/module';
+
 export const listColumns: VxeGridProps['columns'] = [
   {
     title: '菜单名称',
@@ -65,11 +67,11 @@ export const listColumns: VxeGridProps['columns'] = [
     fixed: 'right',
     slots: { default: 'action' },
     title: '操作',
-    width: 120,
+    width: 150,
   },
 ];
 
-export const searchFormSchema: any[] = [
+export const searchFormSchema: FormSchema[] = [
   {
     component: 'Input',
     fieldName: 'keyword',
@@ -81,32 +83,36 @@ export const searchFormSchema: any[] = [
   },
 ];
 
-export const formSchema: any[] = [
+export const formSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
-    field: 'pid',
+    fieldName: 'pid',
     label: 'pid',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
-    field: 'image',
+    fieldName: 'image',
     label: '图标',
     component: 'IconPicker',
     componentProps: {
       // mode: 'svg'
     },
-    colProps,
+
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
     required: true,
     component: 'Input',
@@ -121,18 +127,48 @@ export const formSchema: any[] = [
         message: '字符长度不能大于32！',
       },
     ],*/
-    colProps,
   },
   {
-    field: 'sn',
+    fieldName: 'sn',
     label: '标识',
     required: true,
     component: 'Input',
-    dynamicDisabled: ({values})=> !!values.id,
-    colProps,
+    // dynamicDisabled: ({values})=> !!values.id,
+    dependencies: {
+      disabled: (values) => !!values.id,
+      triggerFields: ['id'],
+      rules(values) {
+        const {id, sn} = values;
+        return z.string({
+          required_error: '密码不能为空！'
+        }).min(1, '标识不能为空！')
+            .max(64, '')
+            .regex(new RegExp(FormValidPatternEnum.SN), "请输入英文或数字！")
+            .refine(
+                async (e) => {
+                    let result = false;
+                    try {
+                        result = await checkEntityExist({
+                            id: id,
+                            field: 'sn',
+                            fieldValue: sn || '',
+                            fieldName: '标识',
+                        });
+                    } catch (e) {
+                        console.error(e);
+                    }
+                    return result;
+                },
+                {
+                    message: '标识已存在',
+                },
+            );
+
+      }
+    }
   },
   {
-    field: 'url',
+    fieldName: 'url',
     label: 'URL',
     component: 'Input',
     /*rules: [
@@ -152,10 +188,10 @@ export const formSchema: any[] = [
       },
     ],*/
     dynamicDisabled: ({values})=> !!values.id,
-    colProps,
+
   },
   {
-    field: 'component',
+    fieldName: 'component',
     label: '组件地址',
     component: 'Input',
     /*rules: [
@@ -175,10 +211,10 @@ export const formSchema: any[] = [
       },
     ],*/
     dynamicDisabled: ({values})=> !!values.id,
-    colProps,
+
   },
   {
-    field: 'redirect',
+    fieldName: 'redirect',
     label: '跳转地址',
     helpMessage: '目录菜单跳转地址！',
     component: 'Input',
@@ -198,10 +234,10 @@ export const formSchema: any[] = [
         message: '字符长度不能大于128！',
       },
     ],*/
-    colProps,
+
   },
   {
-    field: 'orderNo',
+    fieldName: 'orderNo',
     label: '排序号',
     helpMessage: '数值越小越靠前！',
     component: 'InputNumber',
@@ -212,7 +248,7 @@ export const formSchema: any[] = [
     // },
   },
   {
-    field: 'status',
+    fieldName: 'status',
     label: '状态',
     required: false,
     component: 'Switch',
@@ -223,10 +259,10 @@ export const formSchema: any[] = [
       checkedChildren: '启用',
       unCheckedChildren: '禁用',
     },
-    colProps,
+
   },
   {
-    field: 'showStatus',
+    fieldName: 'showStatus',
     label: '是否显示',
     required: false,
     component: 'Switch',
@@ -237,20 +273,20 @@ export const formSchema: any[] = [
       checkedChildren: '显示',
       unCheckedChildren: '隐藏',
     },
-    colProps,
+
   },
 ];
 
 export const pValueFormSchema: any[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'pvs',
+    fieldName: 'pvs',
     label: ' ',
     required: false,
     component: 'CheckboxGroup',

@@ -1,15 +1,15 @@
 <template>
   <BasicModal
-    wrap-class-name="designer-container"
+    content-class="designer-container p-0"
     :footer="null"
     v-bind="$attrs"
     @register="registerModal"
     @open-change="handleOpenChange"
   >
     <template #title>
-      <div style="width: 100%">
+      <div class="w-full">
         <Row>
-          <Col span="8">
+          <Col span="8" class="flex items-center">
             <span v-if="!modelBaseInfo.name">新建流程</span>
             <Tooltip v-else placement="leftBottom">
               <template #title>
@@ -132,7 +132,7 @@
     </template>
     <div class="w-full h-full">
       <!-- 表单设计 -->
-      <div v-if="hideFormDesigner" v-show="currentStepValue === 0" style="height: 100%">
+      <div v-if="hideFormDesigner" v-show="currentStepValue === 0" class="h-full">
         <BpmnBaseInfo
           :id="modelId"
           ref="formDesignerRef"
@@ -154,7 +154,7 @@
       </div>
 
       <!-- 流程设计 -->
-      <div v-show="currentStepValue === 1" style="height: 100%">
+      <div v-show="currentStepValue === 1" class="h-full">
         <BpmnDesigner
           v-if="stepLoadStatus.bpmnDesigner"
           :modelId="processModelId"
@@ -166,7 +166,7 @@
       </div>
 
       <!-- 基本配置 -->
-      <div v-show="currentStepValue === 2" style="height: 100%">
+      <div v-show="currentStepValue === 2" class="h-full">
         <ModelInfoSetting
           v-if="stepLoadStatus.settingInfo"
           :modelId="processModelId"

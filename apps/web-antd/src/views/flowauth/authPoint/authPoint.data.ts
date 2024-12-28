@@ -50,7 +50,7 @@ export const columns: VxeGridProps['columns'] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -70,15 +70,17 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: '表id',
-    required: false,
     component: 'Input',
     show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id'],
+    }
   },
   {
     fieldName: 'name',
     label: '功能点名',
     component: 'Input',
-    show: true,
     rules: z
         .string({
           required_error: '功能点名不能为空',
@@ -101,38 +103,38 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'sn',
     label: '标识',
-    required: true,
     component: 'Input',
-    show: true,
+    rules: z
+      .string({
+        required_error: '标识不能为空',
+      })
+      .trim()
+      .min(1, "标识不能为空")
+      .max(64, "字符长度不能大于64！")
   },
   {
     fieldName: 'ifDefault',
     label: '是否默认',
-    required: false,
     component: 'Switch',
     componentProps: {
       checkedChildren: '是',
       unCheckedChildren: '否',
     },
-    show: true,
   },
   {
     fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
-    required: false,
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
       min: OrderNoDefaultEnum.MIN,
       max: OrderNoDefaultEnum.MAX,
     },
-    show: true,
   },
   {
     fieldName: 'remark',
     label: '备注',
-    required: false,
     component: 'Textarea',
     componentProps: {
       autoSize: {
@@ -140,7 +142,6 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    show: true,
     rules: z
         .string()
         .max(1500, "字符长度不能大于1500！")

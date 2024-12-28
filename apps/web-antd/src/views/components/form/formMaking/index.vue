@@ -1,6 +1,6 @@
 <template>
   <div class="h-full bg-card overflow-hidden making-form-container" >
-    <MakingForm ref="makingFormRef" preview style="height: 100%; min-height: 500px">
+    <MakingForm ref="makingFormRef" preview class="h-full [&_.el-footer]:hidden">
       <template #widgetconfig="{ type, data, customProps }">
         <div v-if="formType === 'custom' && useInFlowTypes.includes(type)" class="m-2">
           <div class="mb-2">扩展属性</div>

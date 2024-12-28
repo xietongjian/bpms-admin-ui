@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import {defineExpose, defineEmits} from 'vue';
 import {useVbenModal} from '@vben/common-ui';
 import {message} from 'ant-design-vue';
 import {accountFormSchema} from './account.data';
