@@ -22,20 +22,21 @@ export const formBaseInfoFormSchema: FormSchema[] = [
     hideLabel: true,
     hideRequiredMark: true,
     formItemClass: 'pb-0 [&_div_p]:z-10 [&_div_p]:border [&_div_p]:rounded [&_div_p]:border-destructive [&_div_p]:px-2 [&_div_p]:bg-card [&_div_p]:bottom-[-33px] [&_div_p]:leading-8',
-    componentProps: ({ schema, tableAction, formActionType, formModel }) => {
+    componentProps: (values) => {
       return {
         placeholder: '流程名称',
         autoComplete: 'off',
         allowClear: false,
         onChange: (e) => {
-          if (typeof e !== 'string' && !formModel.id) {
+          console.log(values);
+          if (typeof e !== 'string' && !values.id) {
             // 汉字转英文
             let value = e.target.value;
             // 将空格及特殊字符替换替换
             value = value.replace(/[^_|^\d|^\[a-zA-Z\]|^\[\u4e00-\u9fa5\]]/g, '_');
             // 是否统一为小写
             // value = value.toLowerCase();
-            formModel.formKey = pinyin.getCamelChars(value);
+            values.formKey = pinyin.getCamelChars(value);
           }
         },
       };

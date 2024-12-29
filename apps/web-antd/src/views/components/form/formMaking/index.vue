@@ -200,7 +200,6 @@
   );
 
   onMounted(() => {
-    debugger;
     if (!props.modelKey) {
       ctrlForm();
     } else {
@@ -457,7 +456,12 @@
   async function handleSave() {
     const jsonStr = makingFormRef.value.getJSON();
     const html = makingFormRef.value.getHtml();
-    const values = await validate();
+    const {valid, errors} = await formApi.validate();
+    if(!valid){
+      return Promise.reject(errors);
+    }
+
+    const values = await formApi.getValues();
 
     const jsonObj = JSON.parse(jsonStr);
 
@@ -481,7 +485,7 @@
     if (props.formType === 'custom') {
       return saveFormInfo(saveData)
         .then((res) => {
-          setFieldsValue({
+          formApi.setValues({
             id: res.formInfoId,
           });
           // emit('onSave', res);
