@@ -3,66 +3,66 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { FormValidPatternEnum } from '#/enums/commonEnum';
 import {z} from "@vben/common-ui";
 
-const colProps = {
-  span: 24,
-};
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '控件类型',
-    dataIndex: 'controlType',
-    width: 180,
+    field: 'controlType',
+    minWidth: 180,
     align: 'left',
   },
   {
     title: '表单类型',
-    dataIndex: 'makType',
+    field: 'makType',
     width: 180,
     align: 'left',
   },
   {
     title: '数据库类型',
-    dataIndex: 'dbType',
+    field: 'dbType',
     width: 180,
     align: 'left',
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
       placeholder: '请输入关键字',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["id"]
+    }
   },
   {
-    field: 'controlType',
+    fieldName: 'controlType',
     label: '控件类型',
-    required: true,
     component: 'Input',
     rules: z
         .string({
-          required_error: '不能为空',
+          required_error: '控件类型不能为空',
         })
         .trim()
-        .min(1, "不能为空")
+        .min(1, "控件类型不能为空")
         .max(30, "字符长度不能大于30！")
         .regex(new RegExp(FormValidPatternEnum.FIELD_NAME_SN), '请输入英文或数字（以英文或下划线开头）！'),
     /*rules: [
@@ -81,12 +81,10 @@ export const formSchema: FormSchema[] = [
         message: '字符长度不能大于30！',
       },
     ],*/
-    colProps,
   },
   {
-    field: 'makType',
+    fieldName: 'makType',
     label: '表单类型',
-    required: false,
     component: 'Input',
     rules: z
         .string({
@@ -109,22 +107,20 @@ export const formSchema: FormSchema[] = [
     colProps,*/
   },
   {
-    field: 'dbType',
+    fieldName: 'dbType',
     label: '数据库类型',
-    required: true,
     component: 'Input',
+    dependencies: {
+      triggerFields: ["dbType"],
+      disabled: (values)=>!!values.id
+    },
     rules: z
         .string({
-          required_error: '不能为空！',
+          required_error: '数据库类型不能为空！',
         })
         .trim()
-        .min(1, "不能为空")
+        .min(1, "数据库类型不能为空")
         .max(32, "字符长度不能大于32！")
         .regex(new RegExp(FormValidPatternEnum.FIELD_NAME_SN), '请输入英文或数字（以英文或下划线开头）！'),
-
-    dynamicDisabled: ({ values }) => {
-      return !!values.id;
-    },
-    colProps,
   },
 ];

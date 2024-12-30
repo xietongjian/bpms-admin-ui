@@ -46,8 +46,8 @@
               </Popconfirm>
             </Tooltip>
             <template v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])">
-              <Button type="primary" @click="handleCreate"> 新增</Button>
-              <Button type="primary" @click="handleCopy"> 复制</Button>
+              <Button type="primary" @click="handleCreate"> 新建 </Button>
+              <Button type="primary" @click="handleCopy"> 复制 </Button>
             </template>
           </div>
         </template>
@@ -262,9 +262,6 @@ import { PerEnum } from '#/enums/perEnum';
       categoryCode: unref(currentCategory).code,
     });
     bpmnDesignerModalRef.value.open();
-    bpmnDesignerModalRef.value.setState({
-
-    });
 
     /*openBpmnDesignerModal(true, {
       modelKey: '',
@@ -335,7 +332,10 @@ import { PerEnum } from '#/enums/perEnum';
   function handleEdit(record: Recordable<any>) {
     const { modelKey, modelId, categoryCode } = record;
     const query = { modelKey, modelId, categoryCode, formType: 'custom' };
-    openBpmnDesignerModal(true, { ...query });
+    bpmnDesignerModalRef.value.setData(query);
+    bpmnDesignerModalRef.value.open();
+
+    /*openBpmnDesignerModal(true, { ...query });
     setBpmnDesignerModalProps({
       title: `添加表单`,
       bodyStyle: { padding: '0px', margin: '0px' },
@@ -349,7 +349,7 @@ import { PerEnum } from '#/enums/perEnum';
       canFullscreen: false,
       closable: false,
       destroyOnClose: true,
-    });
+    });*/
   }
 
   // 复制
@@ -374,7 +374,6 @@ import { PerEnum } from '#/enums/perEnum';
   }
 
   async function publish(modelKey: string) {
-    loadingRef.value = true;
     try {
       const {success, msg} = await deployForm(modelKey);
       if (success) {
@@ -385,51 +384,47 @@ import { PerEnum } from '#/enums/perEnum';
       }
     } catch (e) {
       console.error(e);
-    } finally {
-      loadingRef.value = false;
     }
   }
 
-  function stop(modelKey) {
-    loadingRef.value = true;
-    stopForm(modelKey)
-      .then((res) => {
-        const { data } = res;
-        if (data.success) {
-          message.success(data.msg, 2);
-          tableApi.reload();
-        } else {
-          message.error(data.msg, 2);
-        }
-      })
-      .finally(() => {
-        loadingRef.value = false;
-      });
-  }
-
-  function handlePublish(record: Recordable<any>) {
-    if (record.modelKey) {
-      publish(record.modelKey);
-    } else {
-      const selectedRow = tableApi.grid.getRadioRecord();
-      if (selectedRow) {
-        message.warn('请选择行！');
-        return;
+  async function stop(modelKey: string) {
+    try {
+      const {success, msg} = await stopForm(modelKey);
+      if (success) {
+        message.success(msg, 2);
+        tableApi.reload();
+      } else {
+        message.error(msg, 2);
       }
-      publish(selectedRow.modelKey);
+    } catch (e) {
+      console.error(e);
     }
   }
 
-  function handleStop(record: Recordable<any>) {
+  async function handlePublish(record: Recordable<any>) {
     if (record.modelKey) {
-      stop(record.modelKey);
+      return publish(record.modelKey);
     } else {
       const selectedRow = tableApi.grid.getRadioRecord();
-      if (selectedRow) {
+
+      if (!selectedRow) {
         message.warn('请选择行！');
         return;
       }
-      stop(selectedRow.modelKey);
+      return publish(selectedRow.modelKey);
+    }
+  }
+
+  async function handleStop(record: Recordable<any>) {
+    if (record.modelKey) {
+      return stop(record.modelKey);
+    } else {
+      const selectedRow = tableApi.grid.getRadioRecord();
+      if (!selectedRow) {
+        message.warn('请选择行！');
+        return;
+      }
+      return stop(selectedRow.modelKey);
     }
   }
 

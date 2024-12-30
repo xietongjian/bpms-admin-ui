@@ -1,4 +1,5 @@
 import { requestClient } from '#/api/request';
+import {listToTree} from "#/utils/helper/treeHelper";
 
 enum Api {
   GetFlowCategories = '/flow/base/category/getCategories',
@@ -7,8 +8,17 @@ enum Api {
   CheckEntityExist = '/flow/base/category/checkEntityExist',
 }
 
-export async function getFlowCategories (params?: any){
-  return requestClient.post<any>(Api.GetFlowCategories, { ...params });
+export async function getFlowCategories (params = {}){
+  return requestClient.post<any>(Api.GetFlowCategories, params);
+}
+
+export async function getFlowCategoryTreeData (params?: any){
+  const categories = await getFlowCategories(params);
+  categories.forEach(item => {
+    item.label = item.name;
+    item.value = item.code;
+  });
+  return listToTree(categories);
 }
 
 export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params);

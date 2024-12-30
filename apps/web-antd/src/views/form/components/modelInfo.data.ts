@@ -8,6 +8,7 @@ import { checkEntityExist } from '#/api/form/bizForm';
 import { h } from 'vue';
 import { OrderNoDefaultEnum } from '#/enums/commonEnum';
 import { uploadApi } from '#/api/sys/upload';
+import {getFlowCategories, getFlowCategoryTreeData} from "#/api/base/category";
 
 const colProps = {
   span: 24,
@@ -313,40 +314,35 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
       selectType: '1',
       placeholder: '请选择单位',
     },
-    colProps,
   },
   {
     fieldName: 'authPointList',
     label: '授权功能',
     component: 'CheckboxGroup',
     required: true,
-    colProps,
   },
 
   {
     fieldName: 'superuser',
     label: '授权管理人员',
     component: 'PersonalSelector',
-    required: false,
     componentProps: {
       multiple: true,
       placeholder: '请选择人员',
     },
-    colProps,
   },
   {
     fieldName: 'skipSet',
     label: '跳过方式',
-    helpMessage: '相同节点是否跳过',
+    help: '相同节点是否跳过',
     component: 'RadioGroup',
     defaultValue: 1,
     componentProps: {},
-    colProps,
   },
   {
     fieldName: 'backFlag',
     label: '驳回跳转方式',
-    helpMessage: '驳回自动回原节点',
+    help: '驳回自动回原节点',
     component: 'RadioGroup',
     defaultValue: 0,
     componentProps: {
@@ -361,12 +357,11 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
         },
       ],
     },
-    colProps,
   },
   {
     fieldName: 'showStatus',
     label: '适用平台',
-    helpMessage: '该流程表单适用的平台',
+    help: '该流程表单适用的平台',
     required: false,
     component: 'CheckboxGroup',
     defaultValue: [],
@@ -395,13 +390,15 @@ export const copyModelInfoFormSchema: FormSchema[] = [
     fieldName: 'fromModelKey',
     label: '来源ModelKey',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['fromModelKey'],
+    }
   },
   {
     fieldName: 'newModelName',
     label: '新表单名称',
     component: 'Input',
-    required: true,
     rules: z
         .string({
           required_error: '名称不能为空',
@@ -409,33 +406,21 @@ export const copyModelInfoFormSchema: FormSchema[] = [
         .trim()
         .min(1, "名称不能为空")
         .max(60, "字符长度不能大于60！")
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 60,
-        message: '字符长度不能大于60！',
-      },
-    ],*/
   },
   {
     fieldName: 'newCategoryCode',
     label: '新分类',
-    required: true,
-    component: 'TreeSelect',
+    rules: 'selectRequired',
+    component: 'ApiTreeSelect',
     componentProps: {
+      api: getFlowCategories,
+      class: 'w-full',
+      treeDataSimpleMode: {id: 'id', pId: 'pid'},
       treeNodeFilterProp: 'name',
-      replaceFields: {
-        title: 'name',
-        key: 'code',
-        value: 'code',
-      },
+      labelField: 'name',
+      valueField: 'code',
       getPopupContainer: () => document.body,
     },
-    colProps,
   },
 ];
 
@@ -444,13 +429,15 @@ export const copyBizModelInfoFormSchema: FormSchema[] = [
     fieldName: 'fromModelKey',
     label: '来源ModelKey',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['fromModelKey'],
+    }
   },
   {
     fieldName: 'newModelName',
     label: '新表单名称',
     component: 'Input',
-    required: true,
     rules: z
         .string({
           required_error: '名称不能为空',
@@ -463,37 +450,19 @@ export const copyBizModelInfoFormSchema: FormSchema[] = [
     fieldName: 'newModelKey',
     label: '新表单Key',
     component: 'Input',
-    required: true,
     rules: z
         .string({
-          required_error: '名称不能为空',
+          required_error: 'Key不能为空！',
         })
         .trim()
-        .min(1, "名称不能为空")
+        .min(1, "Key不能为空！")
         .max(60, "字符长度不能大于60！")
         .regex(new RegExp('^[a-zA-Z_]{1,}[0-9a-zA-Z_]{1,}$'),'请输入英文或数字且以英文或下划线开头！'),
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: 'Key不能为空！',
-      },
-      {
-        pattern: new RegExp('^[a-zA-Z_]{1,}[0-9a-zA-Z_]{1,}$'),
-        type: 'string',
-        message: '请输入英文或数字且以英文或下划线开头！',
-      },
-      {
-        max: 60,
-        message: '字符长度不能大于60！',
-      },
-    ],
-    colProps,*/
   },
   {
     fieldName: 'newCategoryCode',
     label: '新分类',
-    required: true,
+    rules: 'selectRequired',
     component: 'TreeSelect',
     componentProps: {
       treeNodeFilterProp: 'name',
@@ -504,7 +473,6 @@ export const copyBizModelInfoFormSchema: FormSchema[] = [
       },
       getPopupContainer: () => document.body,
     },
-    colProps,
   },
 ];
 

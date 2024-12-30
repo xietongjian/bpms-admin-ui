@@ -4,21 +4,20 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits } from 'vue';
+  import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
+  import {message} from 'ant-design-vue';
 
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import { formCategoryFormSchema } from './formTemplate.data';
   import { getFormCategoryTreeData, saveOrUpdateFormCategory, checkTemplateCategoryEntityExist } from '#/api/form/formTemplate';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import {CheckExistParams} from "#/api/model/baseModel";
+
   import { FormValidPatternEnum } from '#/enums/commonEnum';
 
   const emit = defineEmits(['success']);
-  const { createMessage } = useMessage();
 
   const isUpdate = ref(true);
-
+/*
   const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
     schemas: formCategoryFormSchema,
@@ -102,24 +101,60 @@
       ...formData,
     });
     setModalProps({ confirmLoading: false, loading: false });
+  });*/
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      handleSubmit();
+    },
+  });
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: formCategoryFormSchema,
+    wrapperClass: 'grid-cols-1',
   });
 
   const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true, loading: true });
-      const values = await validate();
+      modalApi.setState({loading: true, confirmLoading: true});
+      const {valid} = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
       const {success, msg} = await saveOrUpdateFormCategory(values);
       if(success){
-        createMessage.success(msg);
-        closeModal();
+        message.success(msg);
+        modalApi.close();
         emit('success');
       } else{
-        createMessage.error(msg);
+        message.error(msg);
       }
     } finally {
-      setModalProps({ confirmLoading: false, loading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
 </script>

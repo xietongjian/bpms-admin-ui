@@ -1,10 +1,10 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal class="w-[600px]" v-bind="$attrs" >
+    <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { defineEmits, defineProps } from 'vue';
+  import { ref, defineEmits, defineProps, defineExpose } from 'vue';
   import {message} from 'ant-design-vue';
 
   import {useVbenModal} from '@vben/common-ui';
@@ -18,14 +18,10 @@
 
   const emit = defineEmits(['success', 'register']);
 
-  const props = defineProps({
-    formType: {
-      default: 'custom',
-      type: String,
-    },
-  });
+  const formType = ref('custom');
 
-  // const { createMessage } = useMessage();
+
+  // const { message } = useMessage();
 
   /*const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
     labelWidth: 100,
@@ -142,6 +138,9 @@
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
+        formType.value = values.formType === 0 ? 'custom' : 'biz';
+        formApi.setState({ schema: values.formType === 0 ? copyModelInfoFormSchema: copyBizModelInfoFormSchema });
+
         if (values) {
           formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
@@ -162,52 +161,35 @@
     },
     showDefaultActions: false,
     layout: 'horizontal',
-    schemas: props.formType === 'custom' ? copyModelInfoFormSchema : copyBizModelInfoFormSchema,
+    schema: [],
     wrapperClass: 'grid-cols-1',
   });
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
-      changeLoading(true);
-      if (props.formType === 'custom') {
-        copyCustForm(values).then((res) => {
-          const { data } = res;
-          if (data.success) {
-            createMessage.success(data.msg, 2);
-            closeModal();
-            emit('success');
-          } else {
-            createMessage.error(data.msg, 2);
-            changeLoading(false);
-            setModalProps({ confirmLoading: false });
-          }
-        });
+      modalApi.setState({loading: true, confirmLoading: true});
+      const {valid} = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
+      const {success, msg} =
+          formType.value === 'custom'
+          ? await copyCustForm(values)
+          : await copyBizForm(values);
+
+      if (success) {
+        message.success(msg, 2);
+        modalApi.close();
+        emit('success');
       } else {
-        copyBizForm(values)
-          .then((res) => {
-            const { data } = res;
-            if (data.success) {
-              createMessage.success(data.msg, 2);
-              closeModal();
-              emit('success');
-            } else {
-              createMessage.error(data.msg, 2);
-              setModalProps({ confirmLoading: false });
-              changeLoading(false);
-            }
-          })
-          .finally(() => {
-            setModalProps({ confirmLoading: false });
-            changeLoading(false);
-          });
+        message.error(msg, 2);
       }
     } catch (e) {
-      changeLoading(false);
-      setModalProps({ confirmLoading: false });
+      console.error(e);
     } finally {
-      setModalProps({ confirmLoading: true });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
+  defineExpose(modalApi);
 </script>

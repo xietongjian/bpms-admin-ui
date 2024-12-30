@@ -44,7 +44,7 @@ export const getJobGrades = (params: any) => {
 };
 
 export const saveOrUpdate = (params?: any) =>
-  requestClient.post<any>(Api.SaveOrUpdate, params);
+  requestClient.post<any>(Api.SaveOrUpdate, params, {isTransformResponse: false});
 
 export const batchSaveJobGradeTypeAndJobGrade = (params?: any) =>
   requestClient.post<any>(Api.BatchSaveJobGradeTypeAndJobGrade, params);

@@ -1,29 +1,35 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
-import { h } from 'vue';
-import { Switch } from 'ant-design-vue';
-import { useMessage } from '@/hooks/web/useMessage';
-import { updateStatusById } from '#/api/form/formTemplate';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+
+// import { h } from 'vue';
+// import { Switch } from 'ant-design-vue';
+// import { useMessage } from '@/hooks/web/useMessage';
+// import { updateStatusById } from '#/api/form/formTemplate';
 import {OrderNoDefaultEnum} from "#/enums/commonEnum";
 
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
+    minWidth: 200,
   },
   {
     title: '分类名称',
-    dataIndex: 'categoryCode',
+    field: 'categoryCode',
     width: 120,
     align: 'left',
     resizable: true,
+    slots: {default: 'categoryCode'}
   },
   {
     title: '状态',
-    dataIndex: 'status',
+    field: 'status',
     width: 120,
     align: 'center',
-    customRender: ({ record }) => {
+    /*customRender: ({ record }) => {
       if (!Reflect.has(record, 'pendingStatus')) {
         record.pendingStatus = false;
       }
@@ -49,29 +55,40 @@ export const columns: BasicColumn[] = [
             });
         },
       });
-    },
+    },*/
   },
   {
     title: '创建时间',
-    dataIndex: 'createTime',
+    field: 'createTime',
     width: 200,
     align: 'center',
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
 export const formCategoryFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
-    field: 'pid',
+    fieldName: 'pid',
     label: '父级分类',
     component: 'TreeSelect',
-    show: ({ values }) => {
-      return !!values.pid && !values.id;
+    dependencies: {
+      show: (values) => !!values.pid && !values.id,
+      triggerFields: ['pid']
     },
     componentProps: {
       fieldNames: {
@@ -80,12 +97,10 @@ export const formCategoryFormSchema: FormSchema[] = [
       },
       getPopupContainer: () => document.body,
     },
-    colProps: { span: 24 },
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '分类名称',
-    required: true,
     component: 'Input',
     rules: z
         .string({
@@ -107,13 +122,13 @@ export const formCategoryFormSchema: FormSchema[] = [
     ],*/
   },
   {
-    field: 'code',
+    fieldName: 'code',
     label: '标识',
-    required: true,
+    // required: true,
     component: 'Input',
   },
   {
-    field: 'orderNo',
+    fieldName: 'orderNo',
     label: '排序号',
     help: '数值越小越靠前！',
     component: 'InputNumber',
@@ -127,35 +142,27 @@ export const formCategoryFormSchema: FormSchema[] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 14, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
     component: 'Input',
-    required: true,
     rules: z
         .string({
           required_error: '名称不能为空',
@@ -177,7 +184,7 @@ export const formSchema: FormSchema[] = [
     ],*/
   },
   {
-    field: 'status',
+    fieldName: 'status',
     label: '状态',
     component: 'RadioButtonGroup',
     defaultValue: 0,
@@ -187,6 +194,5 @@ export const formSchema: FormSchema[] = [
         { label: '已生效', value: 1 },
       ],
     },
-    required: true,
   },
 ];

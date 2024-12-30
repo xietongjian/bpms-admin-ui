@@ -117,6 +117,5 @@ export const formSchema: FormSchema[] = [
       min: OrderNoDefaultEnum.MIN,
       max: OrderNoDefaultEnum.MAX,
     },
-    show: true,
   },
 ];

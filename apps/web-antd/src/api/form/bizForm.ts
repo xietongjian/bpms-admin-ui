@@ -54,7 +54,7 @@ export const stopForm = (params: any) =>
   requestClient.post(Api.StopForm + '/' + params , {}, { isReturnNativeResponse: true });
 
 export const copyBizForm = (params: any) =>
-  requestClient.post(Api.CopyForm, params, { isReturnNativeResponse: true });
+  requestClient.post(Api.CopyForm, params, { isTransformResponse: false });
 
 export const getById = (params: any) => requestClient.get(Api.GetById + '/' + params);
 

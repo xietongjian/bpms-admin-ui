@@ -1,7 +1,6 @@
 <template>
   <BasicModal
     v-bind="$attrs"
-    @register="registerModal"
     @ok="handleSubmit"
     :wrapperFooterOffset="50"
     @visible-change="handleVisibleChange"
@@ -10,7 +9,7 @@
     wrap-class-name="form-designer-container"
   >
     <template #title>
-      <div style="width: 100%">
+      <div class="w-full">
         <Row>
           <Col span="16">
             <span v-if="templateId">编辑模板 - </span>
@@ -90,26 +89,25 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, unref, defineEmits } from 'vue';
+  import { ref, unref, defineEmits, defineExpose } from 'vue';
 
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { MakingForm } from '/public/form-making';
+
+  import { MakingForm } from '/public/static/form-making';
   import { QuestionCircleOutlined, SaveOutlined } from '@ant-design/icons-vue';
   import {
     getFormCategoryListData,
     getFormTemplateById,
     saveOrUpdate
   } from '#/api/form/formTemplate';
-  import { Space, TreeSelect, InputNumber, Checkbox, Divider, Tooltip, Row, Col, Button } from 'ant-design-vue';
-  import { useInFlowTypes } from '@/views/components/form/formMaking/formMaking.data';
+  import { Space, message, TreeSelect, InputNumber, Checkbox, Divider, Tooltip, Row, Col, Button } from 'ant-design-vue';
+  import { useInFlowTypes } from '#/views/components/form/formMaking/formMaking.data';
   import {listToTree} from "#/utils/helper/treeHelper";
 
   const emit = defineEmits(['success']);
   const treeLoading = ref(true);
 
-  const { createMessage } = useMessage();
   const makingFormRef = ref(null);
   const formCategory = ref(null);
   const formCategoryRef = ref(null);
@@ -120,10 +118,26 @@
   const saveLoading = ref(false);
   const formCategoryTreeData = ref([]);
 
-  const [registerModal, { changeLoading, closeModal }] = useModalInner(async (data) => {
+  /*const [registerModal, { changeLoading, closeModal }] = useModalInner(async (data) => {
     loadData(data.id);
     formCategory.value = data.categoryCode;
     templateId.value = data.id;
+  });*/
+
+
+
+  const [BasicModal, modalApi] = useVbenModal({
+    fullscreenButton: false,
+    onOpenChange: async (isOpen) => {
+      if (!isOpen) {
+        return null;
+      }
+      modalApi.setState({loading: true, confirmLoading: true});
+      const values = modalApi.getData();
+      // isUpdate.value = !!values.id;
+      // await formApi.setValues(values);
+      modalApi.setState({loading: false, confirmLoading: false});
+    },
   });
 
   async function initFormCategoryTree() {
@@ -165,12 +179,12 @@
   async function handleSubmit() {
     const jsonStr = unref(makingFormRef).getJSON();
     if (!unref(formCategory)) {
-      createMessage.warning('请选择模板分类！');
+      message.warning('请选择模板分类！');
       unref(formCategoryRef).focus();
       return;
     }
     if (!unref(formName)) {
-      createMessage.warning('请输入模板名称！');
+      message.warning('请输入模板名称！');
       unref(formNameRef).focus();
       return;
     }
@@ -185,7 +199,7 @@
     saveOrUpdate(params)
       .then((res) => {
         templateId.value = res.id;
-        createMessage.success('保存成功！');
+        message.success('保存成功！');
 
         saveLoading.value = false;
         changeLoading(false);
@@ -202,13 +216,15 @@
     }
   }
   function handleClose() {
-    closeModal();
+    modalApi.close();
     emit('success');
   }
+
+  defineExpose(modalApi)
 </script>
 
 <style lang="less">
-  @import '../../components/form/formMaking/index.less';
+  //@import '../../components/form/formMaking/index.less';
   .form-designer-container {
     .ant-modal {
       .ant-modal-body {

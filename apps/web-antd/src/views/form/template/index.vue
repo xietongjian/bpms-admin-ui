@@ -1,109 +1,149 @@
 <template>
-  <PageWrapper contentFullHeight dense fixedHeight class="h-full">
-    <div class="p-4 h-full">
-      <SplitPane>
-        <template #left>
-          <BasicTree
-            :loading="treeLoading"
-            treeWrapperClassName="h-[calc(100%-35px)] overflow-auto h-full"
-            :clickRowToExpand="false"
-            :treeData="formCategoryTreeData"
-            @select="handleSelect"
-            ref="basicTreeRef"
-            :field-names="{title: 'name'}"
-            :actionList="treeActionList"
-          >
-            <template #headerTitle >
-              <Row align="middle" class="w-full">
-                <Col span="12">
-                  表单分类
-                </Col>
-                <Col span="12" class="text-right">
-                  <Button size="small" @click="handleCreateCategory" type="primary">新增分类</Button>
-                </Col>
-              </Row>
-            </template>
-          </BasicTree>
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="true"
+      :split-line="true"
+      :resizable="true"
+      :left-collapsible="true"
+      :auto-content-height="true"
+      content-class="h-full">
+    <template #left>
+      <Tree
+          :loading="treeLoading"
+          treeWrapperClassName="h-[calc(100%-35px)] overflow-auto h-full"
+          :clickRowToExpand="false"
+          :treeData="formCategoryTreeData"
+          @select="handleSelect"
+          ref="basicTreeRef"
+          block-node
+          :field-names="{title: 'name'}"
+          :actionList="treeActionList"
+      >
+        <template #headerTitle >
+          <Row align="middle" class="w-full">
+            <Col span="12">
+              表单分类
+            </Col>
+            <Col span="12" class="text-right">
+              <Button size="small" @click="handleCreateCategory" type="primary">新增分类</Button>
+            </Col>
+          </Row>
         </template>
-        <template #main>
-          <BasicTable @register="registerTable" class="!p-0">
-            <template #toolbar>
-              <Authority :value="'FormTemplate:' + PerEnum.ADD">
-                <a-button type="primary" @click="handleAddFormTemplate"> 新增</a-button>
-              </Authority>
-            </template>
-            <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'action'">
-                <TableAction
-                  :actions="[
-                {
-                  auth: 'FormTemplate:' + PerEnum.UPDATE,
-                  tooltip: '修改',
-                  icon: 'clarity:note-edit-line',
-                  onClick: handleEditFormTemplate.bind(null, record),
-                },
-                {
-                  auth: 'FormTemplate:' + PerEnum.DELETE,
-                  tooltip: '删除',
-                  icon: 'ant-design:delete-outlined',
-                  color: 'error',
-                  popConfirm: {
-                    title: '是否确认删除',
-                    confirm: handleDelete.bind(null, record),
-                    placement: 'left',
-                  },
-                },
-              ]"
-                />
-              </template>
-              <template v-else-if="column.key === 'categoryCode'">
-                {{ formCategoryDataMap[record.categoryCode]?.name || '-' }}
-              </template>
-            </template>
-          </BasicTable>
+      </Tree>
+    </template>
+    <div class="bg-card h-full">
+      <BasicTable >
+        <template #toolbar-tools >
+          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleAddFormTemplate"> 新增</Button>
         </template>
-      </SplitPane>
+        <template #action="{row}">
+          <TableAction :actions="createActions(row)" />
+        </template>
+        <template #categoryCode="{row}">
+          {{ formCategoryDataMap[row.categoryCode]?.name || '-' }}
+        </template>
+      </BasicTable>
     </div>
     <FormTemplateModal
-      @register="registerModal"
+      ref="formTemplateModalRef"
       :closeFunc="handleCloseFunc"
       @success="handleCloseFunc"
     />
-    <FormCategoryModal @register="registerFormCategoryModal" @success="handleCategorySuccess"/>
-  </PageWrapper>
+    <FormCategoryModal ref="formCategoryModalRef" @success="handleCategorySuccess"/>
+  </ColPage>
 </template>
 
 <script lang="ts" setup>
   import {h, ref} from 'vue';
-  import { PerEnum } from '@/enums/perEnum';
-  import SplitPane from '@/views/components/splitPane/index.vue';
-  import {PageWrapper} from '@/components/Page';
+  import { PerEnum } from '#/enums/perEnum';
+  import {useAccess} from '@vben/access';
+  import type {Recordable} from '@vben/types';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
+  import {useVbenVxeGrid} from '#/adapter/vxe-table';
+  import {ColPage, Page} from '@vben/common-ui';
+  import {TableAction} from '#/components/table-action';
 
-  import { Authority } from '@/components/Authority';
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { useModal } from '@/components/Modal';
   import { columns, searchFormSchema } from './formTemplate.data';
   import FormTemplateModal from './FormTemplateModal.vue';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { getFormTemplateList, deleteById, getFormCategoryListData, deleteFormCategoryById } from '#/api/form/formTemplate';
-  import {Button, Col, Popconfirm, Row, Tooltip} from "ant-design-vue";
-  import {BasicTree, TreeActionItem} from "@/components/Tree";
-  import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons-vue";
-  import {listToTree} from "@/utils/helper/treeHelper";
-  import FormCategoryModal from "@/views/form/template/FormCategoryModal.vue";
-  import {useLoading} from "@/components/Loading";
 
-  const { createMessage } = useMessage();
+  import { getFormTemplateList, deleteById, getFormCategoryListData, deleteFormCategoryById } from '#/api/form/formTemplate';
+  import {Button, Tree, message, Col, Popconfirm, Row, Tooltip} from "ant-design-vue";
+
+  import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons-vue";
+  import {listToTree} from "#/utils/helper/treeHelper";
+  import FormCategoryModal from "#/views/form/template/FormCategoryModal.vue";
+
+  const PerPrefix = 'FormTemplate:';
+  const {hasAccessByCodes} = useAccess();
+
+
   const treeLoading = ref(true);
   const formCategoryTreeData = ref([]);
   const currentNode = ref(undefined);
-  const [registerModal, { openModal, setModalProps }] = useModal();
+  // const [registerModal, { openModal, setModalProps }] = useModal();
   const formCategoryDataMap = ref<any>({});
-  const [registerFormCategoryModal, {openModal: openFormCategoryModal, setModalProps: setFormCategoryModalProps}] = useModal();
-  const [openFullLoading, closeFullLoading] = useLoading({
+  // const [registerFormCategoryModal, {openModal: openFormCategoryModal, setModalProps: setFormCategoryModalProps}] = useModal();
+/*  const [openFullLoading, closeFullLoading] = useLoading({
     tip: '加载中...',
-  });
-  const [registerTable, { reload, getForm }] = useTable({
+  });*/
+
+  const formOptions: VbenFormProps = {
+    showCollapseButton: false,
+    submitOnEnter: true,
+    commonConfig: {
+      labelWidth: 60,
+    },
+    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+    resetButtonOptions: {
+      show: false,
+    },
+    schema: searchFormSchema,
+  };
+
+  const gridOptions: VxeGridProps = {
+    columns,
+    columnConfig: {resizable: true},
+    height: 'auto',
+    maxHeight: '100%',
+    border: false,
+    keepSource: true,
+    autoResize: false,
+    stripe: true,
+    round: false,
+    radioConfig: {
+      highlight: true,
+      labelField: 'name',
+      trigger: 'row',
+    },
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          // currentModelInfo.value = {};
+          return await getFormTemplateList({
+            query: {
+              pageNum: page.currentPage,
+              pageSize: page.pageSize,
+            },
+            entity: formValues || {},
+          });
+        },
+      },
+    },
+  };
+
+  const gridEvents: VxeGridListeners = {
+    radioChange: ({row}) => {
+      // clickRow(row);
+    }
+  };
+
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
+
+  /*const [registerTable, { reload, getForm }] = useTable({
     title: '列表',
     api: getFormTemplateList,
     columns,
@@ -126,9 +166,34 @@
       title: '操作',
       dataIndex: 'action',
     },
-  });
+  });*/
 
-  const treeActionList: TreeActionItem[] = [
+  function createActions (row: Recordable<any>) {
+    return [
+      {
+        auth: [PerPrefix + PerEnum.UPDATE],
+        tooltip: '修改',
+        icon: 'clarity:note-edit-line',
+        onClick: handleEditFormTemplate.bind(null, row),
+      },
+      {
+        auth: [PerPrefix + PerEnum.DELETE],
+        tooltip: '删除',
+        icon: 'ant-design:delete-outlined',
+        danger: true,
+        popConfirm: {
+          title: '是否确认删除',
+          confirm: handleDelete.bind(null, row),
+          placement: 'left',
+          okButtonProps: {
+            danger: true,
+          }
+        },
+      },
+    ];
+  }
+
+  const treeActionList = [
     {
       render: (node) => {
         return h(Tooltip, {placement: 'top', title:'新建子分类'}, [
@@ -249,35 +314,33 @@
   }
 
   function handleCloseFunc() {
-    setTimeout(() => {
-      reload();
-    }, 500);
+    tableApi.reload();
   }
 
   function handleDelete(record: Recordable) {
     const status = record.status;
     if (status == 1) {
-      createMessage.warning('已生效状态不能删除！');
+      message.warning('已生效状态不能删除！');
       return;
     }
     deleteById([record.id]).then(() => {
-      reload();
+      tableApi.reload();
     });
   }
 
   async function handleDeleteCategory(node: any) {
     if(node.children && node.children.length>0){
-      createMessage.waring('该分类下有子分类，不允许删除');
+      message.waring('该分类下有子分类，不允许删除');
       return;
     }
     openFullLoading();
     try {
       const {success, msg} = await deleteFormCategoryById(node.id);
       if(success){
-        createMessage.success(msg);
+        message.success(msg);
         initFormCategoryTree();
       } else {
-        createMessage.error(msg);
+        message.error(msg);
       }
     } finally {
       closeFullLoading();
