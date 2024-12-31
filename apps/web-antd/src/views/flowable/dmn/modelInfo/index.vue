@@ -291,7 +291,10 @@ function handleCreate({key}) {
     message.warning('请选择分类！', 2);
     return;
   }
-  dmnDesignerModalRef.value.setData();
+  dmnDesignerModalRef.value.setData({
+    categoryCode: unref(currentCategory).code,
+    dmnType: key
+  });
   dmnDesignerModalRef.value.open();
   dmnDesignerModalRef.value.setState({
     title: `新建决策`,
@@ -532,12 +535,10 @@ function fetchSuccess(e) {
 }
 
 function handleSelect(node: any) {
-  debugger;
   currentCategory.value = node;
   let searchInfo = {categoryCode: node ? node.code : ''};
   tableApi.reload({searchInfo});
 }
-
 function changePublishStopBtnShow(status) {
   if (status === 2) {
     showPublishBtn.value = true;

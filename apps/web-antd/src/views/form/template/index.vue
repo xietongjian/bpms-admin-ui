@@ -9,8 +9,9 @@
       :left-collapsible="true"
       :auto-content-height="true"
       content-class="h-full">
-    <template #left>
+    <template #left class="h-full bg-card">
       <Tree
+        class="h-full"
           :loading="treeLoading"
           treeWrapperClassName="h-[calc(100%-35px)] overflow-auto h-full"
           :clickRowToExpand="false"
@@ -76,9 +77,9 @@
   import {listToTree} from "#/utils/helper/treeHelper";
   import FormCategoryModal from "#/views/form/template/FormCategoryModal.vue";
 
+  const formTemplateModalRef = ref();
   const PerPrefix = 'FormTemplate:';
   const {hasAccessByCodes} = useAccess();
-
 
   const treeLoading = ref(true);
   const formCategoryTreeData = ref([]);

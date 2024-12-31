@@ -13,6 +13,7 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称/编码',
       allowClear: true,
     },
+    slots: {default: 'formName'},
     labelWidth: 60,
   },
   {

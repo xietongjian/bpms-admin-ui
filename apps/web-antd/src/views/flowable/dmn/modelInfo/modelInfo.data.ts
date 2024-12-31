@@ -124,14 +124,12 @@ export const modelInfoFormSchema: FormSchema[] = [
         message: '字符长度不能大于200！',
       },
     ],
-    colProps,
   },
   {
     fieldName: 'modelKey',
     label: '标识',
     component: 'Input',
     required: true,
-    colProps,
   },
   {
     fieldName: 'appSn',
@@ -141,7 +139,6 @@ export const modelInfoFormSchema: FormSchema[] = [
       getPopupContainer: () => document.body,
     },
     required: true,
-    colProps,
   },
 ];
 
@@ -149,38 +146,46 @@ export const dmnBaseFormSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id'],
+    }
   },
   {
     fieldName: 'modelId',
     label: 'modelId',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['modelId'],
+    }
   },
   {
     fieldName: 'dmnType',
     label: 'dmnType',
-    required: true,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['dmnType'],
+    }
   },
   {
     fieldName: 'categoryCode',
     label: 'categoryCode',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['modelId'],
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
     labelWidth: 60,
     component: 'Input',
-    required: true,
-    rules: [
+    // required: true,
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -190,13 +195,7 @@ export const dmnBaseFormSchema: FormSchema[] = [
         max: 200,
         message: '字符长度不能大于200！',
       },
-    ],
-    colProps: {
-      lg: { span: 6, offset: 0 },
-      md: { span: 8, offset: 0 },
-      sm: { span: 12, offset: 0 },
-      xs: { span: 12, offset: 0 },
-    },
+    ],*/
   },
   {
     fieldName: 'modelKey',
@@ -207,12 +206,6 @@ export const dmnBaseFormSchema: FormSchema[] = [
     itemProps: {
       validateTrigger: ['focus', 'change'],
     },
-    colProps: {
-      lg: { span: 6, offset: 0 },
-      md: { span: 8, offset: 0 },
-      sm: { span: 12, offset: 0 },
-      xs: { span: 12, offset: 0 },
-    },
   },
   {
     fieldName: 'appSn',
@@ -220,15 +213,14 @@ export const dmnBaseFormSchema: FormSchema[] = [
     component: 'ApiSelect',
     componentProps: {
       api: getAll,
+      fieldNames: {
+        value: 'sn',
+        label: 'name'
+      },
+      class: 'w-full',
       getPopupContainer: () => document.body,
     },
     required: true,
-    colProps: {
-      lg: { span: 6, offset: 0 },
-      md: { span: 8, offset: 0 },
-      sm: { span: 12, offset: 0 },
-      xs: { span: 12, offset: 0 },
-    },
   },
   /*{
     fieldName: 'image',

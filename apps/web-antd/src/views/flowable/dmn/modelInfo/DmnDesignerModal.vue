@@ -5,7 +5,7 @@
       wrap-class-name="dmn-designer-container"
   >
     <template #title>
-      <div style="width: 100%">
+      <div class="w-full">
         <Row>
           <Col span="8">
             <span v-if="!baseModelInfo.id">
@@ -59,17 +59,14 @@
           </Col>
           <Col span="8" style="text-align: right">
             <Space>
-              <Authority :value="privilegeSn + ':' + PerEnum.PUBLISH">
-                <Popconfirm v-if="publishBtnVisibility" @confirm="handlePublish">
-                  <template #title>
-                    <div style="max-width: 300px; word-wrap: break-word; white-space: break-spaces">
-                      确定要发布【{{ baseModelInfo.name }}】流程吗？
-                    </div>
-                  </template>
-                  <a-button color="success" :disabled="saveLoading">发布</a-button>
-                </Popconfirm>
-              </Authority>
-
+              <Popconfirm v-if="hasAccessByCodes([PerPerfix + PerEnum.PUBLISH]) && publishBtnVisibility" @confirm="handlePublish">
+                <template #title>
+                  <div style="max-width: 300px; word-wrap: break-word; white-space: break-spaces">
+                    确定要发布【{{ baseModelInfo.name }}】流程吗？
+                  </div>
+                </template>
+                <Button color="success" :disabled="saveLoading">发布</Button>
+              </Popconfirm>
               <Popconfirm
                   v-if="designerStatus.finallyStatus === 3 && currentStepValue !== 3"
                   @confirm="handleSaveDmnInfo"
@@ -79,7 +76,7 @@
                     该决策【{{ baseModelInfo.name }}】已经发布，<br/>修改后需要重新发布，请确认？
                   </div>
                 </template>
-                <a-button type="primary" :disabled="saveLoading">保存</a-button>
+                <Button type="primary" :disabled="saveLoading">保存</Button>
               </Popconfirm>
               <Button
                   v-else-if="currentStepValue !== 3"
@@ -98,13 +95,15 @@
         </Row>
       </div>
     </template>
-    <BasicForm/>
-    <Divider style="margin: 0; padding: 0"/>
-    <div class="p-0">
-      <!--<div style="position:absolute; top: 0;left:0; z-index: 999; padding-left: 20px" class="">
-        <a-button type="primary" @click="handleSaveData">保存</a-button>
-      </div>-->
-      <FramePage ref="dmnDesignerRef" :frameSrc="url" @on-load-success="handleLoadSuccess"/>
+    <div class="flex flex-col h-full">
+      <BasicForm/>
+      <Divider style="margin: 0; padding: 0"/>
+      <div class="flex-1 p-0">
+        <!--<div style="position:absolute; top: 0;left:0; z-index: 999; padding-left: 20px" class="">
+          <a-button type="primary" @click="handleSaveData">保存</a-button>
+        </div>-->
+        <FramePage ref="dmnDesignerRef" :frameSrc="url" @on-load-success="handleLoadSuccess"/>
+      </div>
     </div>
   </BasicModal>
 </template>
@@ -112,6 +111,8 @@
 import {ref, computed, nextTick, defineExpose, defineEmits, unref} from 'vue';
 import {useVbenModal} from '@vben/common-ui';
 import {useVbenForm} from '#/adapter/form';
+import { useAccessStore, useUserStore } from '@vben/stores';
+
 import {
   getByModelId,
   initDmnDiagram,
@@ -149,6 +150,8 @@ import {apiCategoryFormSchema} from "#/views/base/apiInfo/apiInfo.data";
 // import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
 import {usePreferences} from '@vben/preferences';
 
+const {hasAccessByCodes} = useAccess();
+const PerPrefix = 'Dmn:';
 const {isDark} = usePreferences();
 const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
 
@@ -160,7 +163,6 @@ const currentStepValue = ref<number>(0);
 const saveLoading = ref(false);
 const baseModelInfo = ref({});
 const emit = defineEmits(['success']);
-const privilegeSn = ref('Dmn');
 const isUpdate = ref(true);
 const dmnMode = ref(0);
 const frame = ref<object>({});
@@ -190,7 +192,7 @@ const [BasicForm, formApi] = useVbenForm({
   showDefaultActions: false,
   layout: 'horizontal',
   schema: dmnBaseFormSchema,
-  wrapperClass: 'grid-cols-1',
+  wrapperClass: 'grid-cols-4',
 });
 
 const publishBtnVisibility = computed(() => {
@@ -278,24 +280,27 @@ function handleStepChange(current) {
   },
 );*/
 
-
 const [BasicModal, modalApi] = useVbenModal({
-  draggable: true,
-  onCancel() {
-    modalApi.close();
-  },
+  fullscreen: true,
+  closable: false,
+  draggable: false,
+  fullscreenButton: false,
+  showCancelButton: false,
+  footer: false,
   onOpenChange(isOpen: boolean) {
     if (isOpen) {
       const values = modalApi.getData<Record<string, any>>();
       if (values) {
         formApi.setValues(values);
         modalApi.setState({loading: false, confirmLoading: false});
+        url.value = '/static/dmn/designer/index.html?modelKey=' + (values.modelId || '');
+
       }
     }
   },
   onConfirm() {
     // await formApi.submitForm();
-    handleSubmit();
+    // handleSubmit();
   },
 });
 
@@ -331,7 +336,8 @@ function hideViewDrdBtn(frameWindow) {
 
 async function handleSaveDmnInfo() {
   saveLoading.value = true;
-  changeLoading(true);
+  modalApi.setState({loading: true, confirmLoading: true});
+
   try {
     const {valid} = await formApi.validate();
     if(!valid){
@@ -399,7 +405,8 @@ async function handleSaveDmnInfo() {
     saveLoading.value = false;
   } finally {
     saveLoading.value = false;
-    changeLoading(false);
+    modalApi.setState({loading: false, confirmLoading: false});
+
   }
 }
 
@@ -416,7 +423,8 @@ function refreshModelStatus(modelId, status, statusName) {
 }
 
 function handlePublish() {
-  changeLoading(true);
+  modalApi.setState({loading: true, confirmLoading: true});
+
   // loadingRef.value = true;
   const {modelId} = unref(baseModelInfo);
   publishDmn(modelId)
@@ -431,14 +439,18 @@ function handlePublish() {
       })
       .finally(() => {
         // loadingRef.value = false;
-        changeLoading(false);
+        modalApi.setState({loading: false, confirmLoading: false});
+
       });
 }
 
 async function initFormData(frameWindow) {
-  const {id, modelId, categoryCode} = unref(baseModelInfo);
+  // const {id, modelId, categoryCode} = unref(baseModelInfo);
+  const {id, modelId, categoryCode} = await formApi.getValues();
+
   if (modelId) {
-    changeLoading(true);
+    modalApi.setState({loading: true, confirmLoading: true});
+
     getByModelId({modelId})
         .then((res) => {
           res.name = res.modelName;
@@ -461,7 +473,7 @@ async function initFormData(frameWindow) {
           });
         })
         .finally(() => {
-          changeLoading(false);
+          modalApi.setState({loading: false, confirmLoading: false});
         });
   } else {
     if (categoryCode) {
@@ -487,7 +499,7 @@ async function initFormData(frameWindow) {
       });
       return;
     }
-    updateModelKeyValidate('');
+    // updateModelKeyValidate('');
   }
 }
 
@@ -539,7 +551,7 @@ function doCopyContent(content) {
 }
 
 function handleClose() {
-  closeModal();
+  modalApi.close();
   // dataStatusIsDraft.value = {
   //     formDesigner: false,
   //     bpmnDesigner: false,

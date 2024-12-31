@@ -11,7 +11,7 @@
           {{row.formName}}
         </TypographyLink>
       </template>
-      <template #formName="{ row }">
+<!--      <template #formName="{ row }">
         <Tooltip placement="top" title="流程图预览">
           <a>
             <PartitionOutlined @click="showFlowDiagram(row.processDefinitionKey, row.processInstanceId)" class="flow-diagram-icon mr-2"/>
@@ -20,7 +20,7 @@
         <TypographyLink @click="handleViewForm(row)">
           {{ row.formName }}
         </TypographyLink>
-      </template>
+      </template>-->
       <template #startPersonName="{ row }">
         <EmpInfo :no="row.startPersonCode" :name="row.startPersonName" />
       </template>
