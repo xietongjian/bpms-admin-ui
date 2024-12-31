@@ -35,7 +35,6 @@
   import type {VbenFormProps} from '@vben/common-ui';
   import {PerEnum} from "#/enums/perEnum";
 
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
   import {Page} from '@vben/common-ui';
   import { useRouter } from 'vue-router';
 

@@ -77,7 +77,6 @@
   import {ColPage, Page} from '@vben/common-ui';
 
   import { baseColumns, searchFormSchema } from './formCount.data';
-  import { BasicTree, TreeActionType, TreeItem } from '@/components/Tree';
   import {
     getCustomColumnsByFormId,
     getFormTree,
@@ -86,11 +85,8 @@
     getPagerModelCustomData,
   } from '#/api/report/formCount';
   import { forEach } from '#/utils/helper/treeHelper';
-  // import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
   import {BpmnPreviewModal} from '#/views/components/preview';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
-  import {listColumns} from "#/views/base/app/app.data";
-  import {getAppListByPage} from "#/api/base/app";
   import {Button, Image, Tag, message} from 'ant-design-vue';
 
   // import ProcessFormModal from '../../flowoperation/processTask/ProcessFormModal.vue';
@@ -114,7 +110,6 @@
   const basicTreeRef = ref<any>(null);
   const currentModelInfo = ref<Recordable<any>>({});
   const currentNode = ref<Recordable<any>>({});
-  const loadingRef = ref(false);
   const showPublishBtn = ref(false);
   const showStopBtn = ref(false);
 

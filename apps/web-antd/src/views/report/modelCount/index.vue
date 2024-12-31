@@ -22,7 +22,8 @@
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {TableAction} from '#/components/table-action';
 
-  import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
+  import {BpmnPreviewModal} from '#/views/components/preview';
+
   import { columns, searchFormSchema } from './modelCount.data';
 
 
