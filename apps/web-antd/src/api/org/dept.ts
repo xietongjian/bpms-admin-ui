@@ -31,8 +31,13 @@ export const getDepts = (params: any) => {
   });
 };
 
-export const getOrgListData = () => {
-  return requestClient.get<any>(Api.GetOrgTree);
+export const getOrgListData = async () => {
+  const result = await requestClient.get<any>(Api.GetOrgTree);
+  result.forEach((item: any) => {
+    item.title = item.name;
+    item.key = item.id;
+  });
+  return result;
 }
 
 export const getOrgTree = async () => {

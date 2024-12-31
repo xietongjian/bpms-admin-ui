@@ -9,8 +9,13 @@ enum Api {
   CheckEntityExist = '/flow/org/company/checkEntityExist',
 }
 
-export const getCompaniesListData = (params?: any) => {
-  return requestClient.post<any>(Api.CompanyList, params||{});
+export const getCompaniesListData = async (params?: any) => {
+  const result = await requestClient.post<any>(Api.CompanyList, params||{});
+  result.forEach((item: any) => {
+    item.title = item.cname;
+    item.key = item.id;
+  });
+  return result;
 }
 export const getCompanies = async (params?: any) => {
   const res = await getCompaniesListData(params);

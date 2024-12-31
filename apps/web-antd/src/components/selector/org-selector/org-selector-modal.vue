@@ -1,6 +1,6 @@
 <template>
   <BasicModal
-    class="w-[1000px] min-h-[400px] overflow-y-hidden"
+    class="w-[800px] min-h-[400px] overflow-y-hidden"
     contentClass="overflow-y-hidden flex flex-col flex-1 w-full"
     centered
     :title="getTitle"
@@ -32,7 +32,7 @@
           :clickRowToExpand="false"
           :treeData="treeData"
           @check="handleCheck"
-          :expanded-keys="expandedKeys"
+          :expandedKeys="expandedKeys"
           :auto-expand-parent="autoExpandParent"
           @expand="onExpand"
           @select="handleSelect"
@@ -68,11 +68,10 @@
   import { Tag, Input, Tree } from 'ant-design-vue';
   import {useVbenModal} from '@vben/common-ui';
   import type { TreeProps } from 'ant-design-vue';
+  import { listToTree, forEach } from '#/utils/helper/treeHelper';
 
-  import { searchFormSchema } from './selector.data';
   import { getOrgTree, getOrgListData } from '#/api/org/dept';
-  import { getCompanies } from '#/api/org/company';
-  import { forEach } from '#/utils/helper/treeHelper';
+  import {getCompanies, getCompaniesListData} from '#/api/org/company';
 
   const InputSearch = Input.Search;
   enum OrgSelectType {
@@ -114,18 +113,119 @@
     selectedRowKeys: [],
   });
 
-  function filterTreeNode(searchValue, node) {
-    debugger;
-    const nodeData = node.data.props || {};
-
-    return (
-      nodeData.title &&
-      nodeData.title.includes(searchValue)
-    );
+  function getFilterTree(source, list) {
+    const initData = JSON.parse(JSON.stringify(list));
+    const data = JSON.parse(JSON.stringify(source));
+    const obj = {};
+    data.forEach((item) => {
+      obj[item.id] = item;
+    });
+    //合并完整树
+    data.forEach((item) => {
+      let pid = item.pid;
+      while (pid) {
+        const parent = obj[pid];
+        if (!parent) {
+          const organParent = initData.find((item) => item.id == pid);
+          if (organParent) {
+            obj[pid] = organParent;
+            pid = organParent.pid;
+            data.push(organParent);
+          } else {
+            pid = null;
+          }
+        } else {
+          pid = null;
+        }
+      }
+    });
+    const trees = flatToTree(data, obj);
+    return {data, trees};
   }
 
+  function flatToTree(data, obj) {
+    const trees = [];
+    data.forEach((item) => {
+      const parent = obj[item.pid];
+      if (parent) {
+        if (!item.children) {
+          item.children = [];
+        }
+        (parent.children || (parent.children = [])).push(item);
+      } else {
+        trees.push(item);
+      }
+    });
+    return trees;
+  }
+
+  function getTreeIds(list) {
+    const ids = [];
+    list.map((item) => {
+      ids.push(item.id);
+    });
+    return ids;
+  }
+
+  // 过滤树并得到新树，filterArrForKey({ tree: 遍历的树, searchKey: 查询依据的key, searchValue: 查询内容 })
+  const filterArrForKey = ({ tree, searchKey, searchValue }) => {
+    if (!(tree && tree.length)) {
+      return [];
+    }
+    let newArr = [];
+    newArr = tree.map((item) => {
+      if (item?.[searchKey]?.toString()?.includes(searchValue)) {
+        return item;
+      }
+      if (item.children && item.children.length) {
+        const newChildren = filterArrForKey({
+          tree: item.children,
+          searchKey,
+          searchValue,
+        });
+        if (newChildren && newChildren.length) {
+          return {
+            ...item,
+            children: newChildren,
+          };
+        }
+        return null;
+      }
+      return null;
+    });
+    newArr = newArr.filter(item => item != null);
+    return newArr;
+  }
+
+  const search = () => {
+    const val = searchValue.value;
+    // 获取目标节点数据
+    const flatData = treeListData.value.filter((item) => {
+      return item.title.includes(val);
+    });
+
+    // 获取目标节点与之相关的数据，以及组合后新的树形结构数据
+    const {data, trees} = getFilterTree(flatData, treeListData.value);
+
+    const ids: string[] = getTreeIds(data);
+
+    nextTick(()=> {
+      treeData.value = trees;
+      if(trees){
+        spread(ids.length, 0, ids);
+      }else {
+        expandedKeys.value = [];
+      }
+    })
+  };
+
   watch(searchValue, value => {
-    const expanded = treeData.value
+    // search();
+     const res = filterArrForKey({tree: treeListData.value, searchKey: "name", searchValue: searchValue.value});
+
+     debugger;
+    treeData.value = res||[];
+    /*const expanded = treeData.value
       .map((item: TreeProps['treeData']) => {
         debugger;
         if (item.title.indexOf(value) > -1) {
@@ -138,22 +238,35 @@
     debugger;
     expandedKeys.value = expanded;
     searchValue.value = value;
-    autoExpandParent.value = true;
+    autoExpandParent.value = true;*/
   });
 
-  const getParentKey = (
-    key: string | number,
-    tree: TreeProps['treeData'],
-  ): string | number | undefined => {
+  function spread(num: number, index = 0, ids: string[]) {
+    const keys: string[] = [];
+    for (let i = 0; i < 50; i++) {
+      if (num <= 0) break;
+      num--;
+      index++;
+      keys.push(ids[index]);
+    }
+    if (num > 0) {
+      let timer = setTimeout(() => {
+        return spread(num, index, ids);
+      }, 600);
+    }
+    debugger;
+    expandedKeys.value = [...expandedKeys.value, ...keys];
+  }
+
+  const getParentKey = (id: string, tree): string | number | undefined => {
     let parentKey;
     for (let i = 0; i < tree.length; i++) {
-      debugger;
       const node = tree[i];
       if (node.children) {
-        if (node.children.some(item => item.key === key)) {
-          parentKey = node.key;
-        } else if (getParentKey(key, node.children)) {
-          parentKey = getParentKey(key, node.children);
+        if (node.children.some((item) => item.id === id)) {
+          parentKey = node.id;
+        } else if (getParentKey(id, node.children)) {
+          parentKey = getParentKey(id, node.children);
         }
       }
     }
@@ -187,10 +300,14 @@
     autoExpandParent.value = false;
   };
 
+  const treeListData = ref([]);
+
   async function initData(values) {
-    if (values.selectType === OrgSelectType.COMPANY) {
-      const res = await getCompanies();
-      treeData.value = res;
+    if (values.selectType === 'company') {
+      const list = await getCompaniesListData();
+
+      treeData.value = listToTree(list);
+      treeListData.value = listToTree(list);
       if (unref(multiSelect)) {
         setTimeout(() => {
           // getTree()?.setCheckedKeys(selectedRowKeys);
@@ -207,37 +324,9 @@
       }, 100);
     } else {
       // 部门和公司树（组织树）
-      getOrgTree()
-        .then((res) => {
-          treeData.value = res;
-          const expandKeys = [];
-          // 如果只能选择部门，则将公司的数据设置禁用
-          if (values.selectType === OrgSelectType.DEPT) {
-            forEach(res, (item) => {
-              // 只能选部门
-              item.disabled = item.sourceType === OrgSelectType.COMPANY; // 部门选择器，禁用公司的选项
-              item.sourceType === OrgSelectType.COMPANY && expandKeys.push(item.id); // 如果只能选择部门，需要将公司全部展开
-            });
-          }
-
-          treeData.value = res as unknown as TreeItem[];
-
-          if (unref(multiSelect)) {
-            setTimeout(() => {
-              // unref(treeRef)?.setCheckedKeys(selectedRowKeys);
-            }, 200);
-          } else {
-            setTimeout(() => {
-              // TODO 这里有个问题：默认展开时无法展开父节点
-              console.log(selectedRowKeys);
-              // getTree()?.setSelectedKeys(selectedRowKeys);
-            }, 200);
-          }
-          expandKeys.concat(selectedRowKeys);
-
-          // getTree()?.setExpandedKeys(expandKeys);
-        })
-        .finally(() => {});
+      const list = await getOrgListData();
+      treeData.value = listToTree(list);
+      treeListData.value = listToTree(list);
     }
   }
 

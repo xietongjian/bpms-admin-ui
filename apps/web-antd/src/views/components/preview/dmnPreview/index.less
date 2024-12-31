@@ -1,0 +1,165 @@
+/* 重置 diagram-js 相关的样式 */
+.djs-container {
+  /*!* 元素样式 *!
+  .djs-element.djs-shape .djs-visual rect {
+    stroke: var(--text-color) !important;
+    fill: var(--component-background-color) !important;
+  }
+  .djs-element.djs-shape .djs-visual text {
+    stroke: context-stroke !important;
+    fill: var(--text-color) !important;
+  }
+
+  .djs-element.djs-connection .djs-visual path {
+    stroke: var(--text-color) !important;
+  }
+  svg defs marker path {
+    fill: var(--text-color) !important;
+    stroke: var(--text-color) !important;
+  }*/
+
+  /* 拖拽时画布状态 */
+  svg.drop-not-ok {
+    background: rgba(var(--danger-1), 0.36) !important;
+  }
+  .djs-shape.connect-not-ok .djs-visual > :nth-child(1),
+  .djs-shape.drop-not-ok .djs-visual > :nth-child(1) {
+    fill: rgba(var(--danger-1), 0.36) !important;
+  }
+
+  .bts-toggle-mode {
+    display: none;
+  }
+
+  /* 物料栏 */
+  .djs-palette {
+    top: 10px;
+    left: 10px;
+    color: var(--text-color);
+    background-color: var(--component-background-color);
+    .entry {
+      color: var(--text-color);
+    }
+    &.open {
+      opacity: 0.4;
+      transition: all ease 0.2s;
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  /* 上下文菜单 */
+  .djs-context-pad .entry {
+    color: var(--text-color);
+    background-color: var(--component-background-color);
+    box-shadow: unset;
+  }
+
+  /* popup 菜单 */
+  .djs-popup {
+    color: var(--text-color);
+    background-color: var(--component-background-color);
+  }
+  .djs-popup-search input {
+    border-color: var(--color-fill-4);
+    background-color: var(--color-fill-2);
+    transition: all 0.1s cubic-bezier(0, 0, 1, 1);
+    &:hover {
+      border-color: rgb(var(--primary-6));
+      background-color: var(--color-neutral-1);
+    }
+    &:focus {
+      border-color: rgb(var(--primary-6));
+      background-color: var(--color-neutral-1);
+    }
+  }
+  .djs-popup-body .entry-header {
+    color: var(--text-color);
+  }
+
+  /* label 编辑框 */
+  .djs-direct-editing-parent {
+    color: var(--text-color) !important;
+    border-color: rgb(var(--primary-6)) !important;
+    background-color: var(--color-neutral-1) !important;
+  }
+
+  /* minimap */
+  .djs-minimap {
+    left: 10px;
+    bottom: 10px;
+    top: unset;
+    right: unset;
+    background-color: var(--component-background-color);
+    &.open {
+      border-color: var(--border-color);
+    }
+  }
+  .djs-minimap .toggle {
+    display: none;
+  }
+}
+html[data-theme='dark'] .djs-container {
+  /* popup 菜单 */
+  .djs-popup {
+    .entry.selected {
+      background-color: var(--color-bg-2);
+    }
+  }
+  /* 拖拽时画布状态 */
+  svg.new-parent {
+    background: var(--color-bg-2) !important;
+  }
+  .djs-shape.new-parent .djs-visual > :nth-child(1) {
+    fill: var(--color-bg-2) !important;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* decision table 样式 */
+.dmn-decision-table-container {
+  --decision-table-properties-color: var(--text-color);
+  --input-color: var(--text-color);
+  --select-options-color: var(--text-color);
+  --table-head-clause-color: var(--text-color);
+  --table-head-variable-color: var(--text-color);
+  --table-cell-color: var(--text-color);
+  --context-menu-color: var(--text-color);
+  --simple-mode-button-color: var(--text-color);
+  --form-control-label-color: var(--text-color);
+  --allowed-values-placeholder-color: var(--text-color);
+  --view-drd-button-color: var(--text-color);
+  --hint-invalid-color: rgb(var(--danger-6));
+  //--hint-button-color: @primary-color;
+
+  --decision-table-background-color: var(--component-background-color);
+  --select-options-background-color: var(--component-background-color);
+  --context-menu-background-color: var(--component-background-color);
+  --simple-mode-button-background-color: var(--component-background-color);
+  --table-row-alternative-background-color: var(--component-background-color);
+  --view-drd-button-background-color: var(--component-background-color);
+
+  --input-border-color: var(--border-color);
+  --context-menu-border-color: var(--border-color);
+  --view-drd-button-border-color: var(--border-color);
+  //--input-focus-border-color: @primary-color;
+  --input-invalid-border-color: rgb(var(--danger-6));
+
+  color: var(--text-color);
+}
+html[data-theme='dark'] .dmn-decision-table-container {
+  --context-menu-group-entry-hover-background-color: var(--color-bg-2);
+  --view-drd-button-hover-background-color: var(--color-bg-2);
+  --table-cell-border-color: var(--border-color);
+}

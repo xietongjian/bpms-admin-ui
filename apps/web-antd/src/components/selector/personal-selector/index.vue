@@ -2,7 +2,6 @@
   <div>
     <Select
       :value="selectorListRef"
-      v-bind="attrs"
       style="width: 100%"
       :open="false"
       :mode="selectMode"
@@ -43,15 +42,14 @@
       </template>
     </Select>
 
-    <PersonalSelectorModal @register="registerPersonalModal" @change="handleChange" />
+    <PersonalSelectorModal ref="personalSelectorModalRef" @change="handleChange" />
   </div>
 </template>
-<script lang="ts">
-  import { defineComponent, ref, watch, unref, onMounted } from 'vue';
+<script lang="ts" setup>
+  import { ref, watch, unref, onMounted, defineProps } from 'vue';
   import PersonalSelectorModal from './PersonalSelectorModal.vue';
   import Icon from '#/components/Icon/Icon.vue';
   import { Tooltip, Select, Tag } from 'ant-design-vue';
-
 
   import {
     SearchOutlined,
@@ -59,10 +57,100 @@
     UserOutlined,
     CloseOutlined,
   } from '@ant-design/icons-vue';
-  import { selectorContainerProps } from './props';
   import { EmpInfo } from '#/views/components/EmpInfo';
 
-  export default defineComponent({
+  const personalSelectorModalRef = ref();
+  const props = defineProps({
+
+  })
+  const emit = defineEmits([]);
+
+  // const attrs = useAttrs();
+/*  const [
+    registerPersonalModal,
+    { openModal: openPersonalSelector, setModalProps: setPersonalModalProps },
+  ] = useModal();*/
+  const selectorListRef = ref<any[]>([]);
+  const selectorValue = ref<any[]>([]);
+  const selectMode = ref<string>('');
+
+  onMounted(() => {
+    // if (props.multiple) {
+    //   selectMode.value = 'multiple';
+    // } else {
+    //   selectMode.value = '';
+    // }
+  });
+
+  watch(
+      () => props.value,
+      (value = []) => {
+        value &&
+        value.forEach((item) => {
+          item.label = item.name;
+          item.key = item.code;
+        });
+        selectorListRef.value = value;
+      },
+      { immediate: true },
+  );
+
+  function handleChange(items: any[]) {
+    items &&
+    items.forEach((item) => {
+      item.value = item.code;
+      item.label = item.name;
+      item.key = item.code;
+      item.title = item.name;
+    });
+    selectorListRef.value = items || [];
+    emit('change', selectorListRef.value);
+  }
+
+  function clearSelectedList(e) {
+    e.stopPropagation();
+    selectorListRef.value = [];
+    emit('change', selectorListRef.value);
+  }
+
+  function changeSelectItem(items: any[]) {
+    const result =
+        items &&
+        items.map((item) => {
+          return { code: item.key, name: item.label, ...item };
+        });
+    selectorListRef.value = result;
+    emit('change', result);
+  }
+
+  // 选择弹窗
+  function openSelectorModal(record: Recordable) {
+    if (unref(attrs).disabled) {
+      return;
+    }
+    // 加载已选择的数据
+    openPersonalSelector(true, {
+      selectorProps: {
+        ...props,
+        defaultSelectedOrgKeys: props.defaultSelectedOrgKeys,
+        selectedList: selectorListRef.value,
+      },
+    });
+    let title = props.title;
+    if (!title) {
+      title = `选择人员`;
+    }
+
+    setPersonalModalProps({
+      title,
+      width: 850,
+      centered: true,
+      showOkBtn: true,
+      showCancelBtn: true,
+    });
+  }
+
+  /*export default defineComponent({
     name: 'PersonalSelector',
     components: {
       SearchOutlined,
@@ -80,90 +168,7 @@
     emits: ['change'],
 
     setup(props, { emit, attr }) {
-      const attrs = useAttrs();
-      const [
-        registerPersonalModal,
-        { openModal: openPersonalSelector, setModalProps: setPersonalModalProps },
-      ] = useModal();
-      const selectorListRef = ref<any[]>([]);
-      const selectorValue = ref<any[]>([]);
-      const selectMode = ref<string>('');
 
-      onMounted(() => {
-        if (props.multiple) {
-          selectMode.value = 'multiple';
-        } else {
-          selectMode.value = '';
-        }
-      });
-
-      watch(
-        () => props.value,
-        (value = []) => {
-          value &&
-            value.forEach((item) => {
-              item.label = item.name;
-              item.key = item.code;
-            });
-          selectorListRef.value = value;
-        },
-        { immediate: true },
-      );
-
-      function handleChange(items: any[]) {
-        items &&
-          items.forEach((item) => {
-            item.value = item.code;
-            item.label = item.name;
-            item.key = item.code;
-            item.title = item.name;
-          });
-        selectorListRef.value = items || [];
-        emit('change', selectorListRef.value);
-      }
-
-      function clearSelectedList(e) {
-        e.stopPropagation();
-        selectorListRef.value = [];
-        emit('change', selectorListRef.value);
-      }
-
-      function changeSelectItem(items: any[]) {
-        const result =
-          items &&
-          items.map((item) => {
-            return { code: item.key, name: item.label, ...item };
-          });
-        selectorListRef.value = result;
-        emit('change', result);
-      }
-
-      // 选择弹窗
-      function openSelectorModal(record: Recordable) {
-        if (unref(attrs).disabled) {
-          return;
-        }
-        // 加载已选择的数据
-        openPersonalSelector(true, {
-          selectorProps: {
-            ...props,
-            defaultSelectedOrgKeys: props.defaultSelectedOrgKeys,
-            selectedList: selectorListRef.value,
-          },
-        });
-        let title = props.title;
-        if (!title) {
-          title = `选择人员`;
-        }
-
-        setPersonalModalProps({
-          title,
-          width: 850,
-          centered: true,
-          showOkBtn: true,
-          showCancelBtn: true,
-        });
-      }
 
       return {
         attrs,
@@ -177,16 +182,5 @@
         selectMode,
       };
     },
-  });
+  });*/
 </script>
-<style lang="less">
-  .personal-multiple-tag {
-    height: 23px;
-    line-height: 22px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    .ant-tag-close-icon {
-      font-size: inherit;
-    }
-  }
-</style>

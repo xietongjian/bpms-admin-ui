@@ -11,7 +11,7 @@ import type { Component, SetupContext } from 'vue';
 import { h } from 'vue';
 
 import { ApiComponent, globalShareState, IconPicker } from '@vben/common-ui';
-import { OrgSelector } from '#/components/selector';
+import { OrgSelector, PersonalSelector } from '#/components/selector';
 
 
 import { $t } from '@vben/locales';
@@ -140,6 +140,16 @@ async function initComponentAdapter() {
     OrgSelector: (props, { attrs, slots }) => {
       return h(
         OrgSelector,
+        {
+          ...props,
+          ...attrs
+        },
+        slots,
+      );
+    },
+    PersonalSelector: (props, { attrs, slots }) => {
+      return h(
+        PersonalSelector,
         {
           ...props,
           ...attrs

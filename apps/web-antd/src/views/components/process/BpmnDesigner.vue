@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, unref, onMounted, nextTick, defineExpose, watch } from 'vue';
+import {ref, unref, onMounted, nextTick, defineExpose, watch, computed} from 'vue';
   import { Spin } from 'ant-design-vue';
   import { getViewportOffset } from '#/utils/domUtils';
   // import { useWindowSizeFn } from '@vben/hooks';
@@ -16,8 +16,12 @@
   // import { getToken } from '@/utils/auth';
   import { getBpmnByModelId } from '#/api/flowable/bpmn/modelInfo';
   // import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
+  import { usePreferences } from '@vben/preferences';
 
-  const { isDark } = useDarkModeTheme();
+
+const { isDark } = usePreferences();
+const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
+
 
   const bpmnModeler = ref<any>();
   const issuesMap = ref({});

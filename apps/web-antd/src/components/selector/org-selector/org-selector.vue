@@ -23,9 +23,12 @@ interface Props {
     type: 'org' | 'company' | 'dept',
     default: 'org',
   },
-  selectorMode: {
-    type: 'default' | 'dialog',
-    default: 'default'
+  /**
+   * 是否弹窗选择数据
+   */
+  selectOnModal: {
+    type: boolean,
+    default: false
   },
   placeholder: {
     type: string,
@@ -47,7 +50,7 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'org',
   closeOnSelect: true,
   modelValue: [],
-  selectorMode: 'default',
+  selectOnModal: false,
 });
 
 const selectorDataList = ref([]);
@@ -86,7 +89,7 @@ watch(
 );
 
 onMounted(() => {
-  if (props.selectorMode === 'default') {
+  if (!props.selectOnModal) {
     initData();
   }
 });
@@ -98,6 +101,7 @@ enum OrgSelectType {
 }
 
 async function initData() {
+  debugger;
   if (props.type === 'company') {
     const res = await getCompanyTreeData();
     treeData.value = res;
@@ -122,7 +126,7 @@ async function initData() {
         treeData.value = res;
         const expandKeys = [];
         // 如果只能选择部门，则将公司的数据设置禁用
-        if (values.selectType === OrgSelectType.DEPT) {
+        if (props.selectType === OrgSelectType.DEPT) {
           forEach(res, (item) => {
             // 只能选部门
             item.disabled = item.sourceType === OrgSelectType.COMPANY; // 部门选择器，禁用公司的选项
@@ -132,17 +136,17 @@ async function initData() {
 
         treeData.value = res as unknown as TreeItem[];
 
-        if (unref(multiple)) {
-          setTimeout(() => {
-            // unref(treeRef)?.setCheckedKeys(selectedRowKeys);
-          }, 200);
-        } else {
-          setTimeout(() => {
-            // TODO 这里有个问题：默认展开时无法展开父节点
-            console.log(selectedRowKeys);
-            // getTree()?.setSelectedKeys(selectedRowKeys);
-          }, 200);
-        }
+        // if (unref(props.multiple)) {
+        //   setTimeout(() => {
+        //     // unref(treeRef)?.setCheckedKeys(selectedRowKeys);
+        //   }, 200);
+        // } else {
+        //   setTimeout(() => {
+        //     // TODO 这里有个问题：默认展开时无法展开父节点
+        //     console.log(selectedRowKeys);
+        //     // getTree()?.setSelectedKeys(selectedRowKeys);
+        //   }, 200);
+        // }
         expandKeys.concat(selectedRowKeys);
 
         // getTree()?.setExpandedKeys(expandKeys);
@@ -152,14 +156,17 @@ async function initData() {
 }
 
 function openSelectorModal() {
-  orgSelectorModalRef.value.setData(modelValue.value);
+  orgSelectorModalRef.value.setData({
+    values: modelValue.value,
+    selectType: props.type
+  });
   orgSelectorModalRef.value.open();
 }
 
 </script>
 <template>
   <div class="w-full">
-    <template v-if="selectorMode === 'dialog'">
+    <template v-if="selectOnModal">
       <Select
         ref="selectorRef"
         :value="selectorDataList"

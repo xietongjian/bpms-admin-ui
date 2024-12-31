@@ -70,7 +70,25 @@ export const baseSetschemas: FormSchema[] = [
       placeholder: '请选择组织',
       multiple: true,
       type: 'company',
-      closeOnSelect: true,
+      closeOnSelect: false,
+      selectOnModal: false,
+      modelValue: [{
+        id: '1', value: '1', type: 'company',
+      },{
+        id: '2', value: '2', type: 'company',
+      }]
+    }
+  },
+  {
+    fieldName: 'testOrgSelectorModal',
+    component: 'OrgSelector',
+    label: '测试组织选择',
+    componentProps: {
+      placeholder: '请选择组织',
+      multiple: true,
+      type: 'org',
+      closeOnSelect: false,
+      selectOnModal: true,
       modelValue: [{
         id: '1', value: '1', type: 'company',
       },{
