@@ -11,7 +11,7 @@
       content-class="h-full">
     <template #left>
       <div class="h-full bg-card">
-        <JobGradeTypeList class="w-1/4 xl:w-1/5" @select="handleSelect"/>
+        <JobGradeTypeList class="w-full" @select="handleSelect"/>
       </div>
     </template>
     <BasicTable>
