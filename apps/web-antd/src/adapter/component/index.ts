@@ -3,19 +3,13 @@
  * 可用于 vben-form、vben-modal、vben-drawer 等组件使用,
  */
 
-import type { BaseFormComponentType } from '@vben/common-ui';
-
 import type { CustomComponentType } from '#/components/form/types';
-
+import type { BaseFormComponentType } from '@vben/common-ui';
 import type { Component, SetupContext } from 'vue';
-import { h } from 'vue';
 
-import { ApiComponent, globalShareState, IconPicker } from '@vben/common-ui';
 import { OrgSelector, PersonalSelector } from '#/components/selector';
-
-
+import { ApiComponent, globalShareState, IconPicker } from '@vben/common-ui';
 import { $t } from '@vben/locales';
-
 import {
   AutoComplete,
   Button,
@@ -40,6 +34,7 @@ import {
   TreeSelect,
   Upload,
 } from 'ant-design-vue';
+import { h } from 'vue';
 
 // import { registerComponent } from '#/components/component-map';
 
@@ -81,8 +76,7 @@ export type ComponentType =
   | 'TreeSelect'
   | 'Upload'
   | BaseFormComponentType
-  | CustomComponentType
-    ;
+  | CustomComponentType;
 
 async function initComponentAdapter() {
   const components: Partial<Record<ComponentType, Component>> = {
@@ -142,7 +136,7 @@ async function initComponentAdapter() {
         OrgSelector,
         {
           ...props,
-          ...attrs
+          ...attrs,
         },
         slots,
       );
@@ -152,7 +146,7 @@ async function initComponentAdapter() {
         PersonalSelector,
         {
           ...props,
-          ...attrs
+          ...attrs,
         },
         slots,
       );
