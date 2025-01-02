@@ -1,124 +1,127 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
 
-export const timerJobColumns: BasicColumn[] = [
+export const timerJobColumns: VxeGridProps['columns'] = [
   {
     title: '流程标题',
-    dataIndex: 'processName',
+    field: 'processName',
     align: 'left',
     width: 300,
     resizable: true,
   },
   {
     title: '节点名称',
-    dataIndex: 'elementName',
+    field: 'elementName',
     align: 'left',
     width: 200,
     resizable: true,
   },
   {
     title: '所属系统',
-    dataIndex: 'tenantId',
+    field: 'tenantId',
     align: 'left',
     width: 150,
     resizable: true,
   },
   {
     title: '执行时间',
-    dataIndex: 'duedate',
+    field: 'duedate',
     align: 'left',
     width: 180,
     resizable: true,
   },
   {
     title: '流程实例ID',
-    dataIndex: 'processInstanceId',
+    field: 'processInstanceId',
     align: 'left',
     width: 200,
     resizable: true,
   },
   {
     title: '流程定义ID',
-    dataIndex: 'processDefinitionId',
+    field: 'processDefinitionId',
     align: 'left',
     width: 200,
     resizable: true,
   },
   {
     title: '类型',
-    dataIndex: 'jobType',
+    field: 'jobType',
     align: 'left',
     width: 100,
     resizable: true,
   },
   {
     title: '提交时间',
-    dataIndex: 'createTime',
+    field: 'createTime',
     width: 180,
     align: 'left',
     sorter: true,
   },
 ];
 
-export const deadLetterJobColumns: BasicColumn[] = [
+export const deadLetterJobColumns: VxeGridProps['columns'] = [
   {
     title: '流程标题',
-    dataIndex: 'processName',
+    field: 'processName',
     align: 'left',
     width: 300,
     resizable: true,
   },
   {
     title: '节点名称',
-    dataIndex: 'elementName',
+    field: 'elementName',
     align: 'left',
     width: 200,
     resizable: true,
   },
   {
     title: '所属系统',
-    dataIndex: 'tenantId',
+    field: 'tenantId',
     align: 'left',
     width: 150,
     resizable: true,
   },
   {
     title: '流程实例ID',
-    dataIndex: 'processInstanceId',
+    field: 'processInstanceId',
     align: 'left',
     width: 200,
     resizable: true,
   },
   {
     title: '流程定义ID',
-    dataIndex: 'processDefinitionId',
+    field: 'processDefinitionId',
     align: 'left',
     width: 200,
     resizable: true,
   },
   {
     title: '执行时间',
-    dataIndex: 'duedate',
+    field: 'duedate',
     align: 'left',
     width: 180,
     resizable: true,
   },
   {
     title: '类型',
-    dataIndex: 'jobType',
+    field: 'jobType',
     align: 'left',
     width: 100,
     resizable: true,
   },
   {
     title: '异常信息',
-    dataIndex: 'exceptionMessage',
+    field: 'exceptionMessage',
     align: 'left',
     width: 200,
     resizable: true,
   },
   {
     title: '提交时间',
-    dataIndex: 'createTime',
+    field: 'createTime',
     width: 180,
     align: 'left',
     sorter: true,
@@ -127,7 +130,7 @@ export const deadLetterJobColumns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'processName',
+    fieldName: 'processName',
     label: '流程标题',
     component: 'Input',
     componentProps: {
@@ -142,7 +145,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'processInstanceId',
+    fieldName: 'processInstanceId',
     label: '流程实例ID',
     component: 'Input',
     componentProps: {
@@ -157,7 +160,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'tenantId',
+    fieldName: 'tenantId',
     label: '系统',
     component: 'Select',
     colProps: {
@@ -172,25 +175,25 @@ export const searchFormSchema: FormSchema[] = [
 
 export const timerJobFormSchema: FormSchema[] = [
   {
-    field: 'jobId',
+    fieldName: 'jobId',
     label: 'ID',
     component: 'Input',
     show: false,
   },
   {
-    field: 'processName',
+    fieldName: 'processName',
     label: '流程名称',
     component: 'Input',
     slot: 'processNameRender',
   },
   {
-    field: 'elementName',
+    fieldName: 'elementName',
     label: '节点名称',
     component: 'Input',
     slot: 'elementNameRender',
   },
   {
-    field: 'duedate',
+    fieldName: 'duedate',
     label: '执行时间',
     component: 'DatePicker',
     componentProps: {

@@ -23,10 +23,9 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { approveBackToStepFormSchema, backToStepTableColumns } from './action.data';
-  import { Button, Tag, Table } from 'ant-design-vue';
-  import { backToStep, backToSubmitter, getBackToStepNodes } from '@/api/flowoperation/processTask';
+  import { Button, Tag, Table, message } from 'ant-design-vue';
+  import { backToStep, backToSubmitter, getBackToStepNodes } from '#/api/flowoperation/processTask';
   import { useGo } from '@/hooks/web/usePage';
-  import { useMessage } from '@/hooks/web/useMessage';
   import { ResultEnum } from '@/enums/httpEnum';
 
   export default defineComponent({
@@ -40,7 +39,6 @@
       const selectedKeys = ref([]);
       const selectedRows = ref([]);
       const backToStepNodeTableRef = ref();
-      const { createMessage } = useMessage();
       const go = useGo();
 
       const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
@@ -106,21 +104,21 @@
               .then((res) => {
                 const result = res.data;
                 if (result.code === ResultEnum.SUCCESS) {
-                  createMessage.success(result.msg);
+                  message.success(result.msg);
                   closeCurrModal();
                 } else {
-                  createMessage.error(result.msg);
+                  message.error(result.msg);
                 }
                 genLoading(false);
               })
               .catch(() => {
-                createMessage.error('网络异常，请稍后再试！');
+                message.error('网络异常，请稍后再试！');
               })
               .finally(() => {
                 genLoading(false);
               });
           } else {
-            createMessage.error('请选择要驳回的节点!');
+            message.error('请选择要驳回的节点!');
             genLoading(false);
             return;
           }

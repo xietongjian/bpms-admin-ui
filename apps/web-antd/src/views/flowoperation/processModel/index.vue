@@ -25,17 +25,15 @@
     deleteByIds,
     publishBpmn,
     stopBpmn,
-  } from '@/api/flowable/bpmn/modelInfo';
+  } from '#/api/flowable/bpmn/modelInfo';
   import { PageWrapper } from '@/components/Page';
   import FlowCategoryTree from '@/views/components/leftTree/FlowCategoryTree.vue';
 
   import { useModal } from '@/components/Modal';
   import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
-  import { getAll } from '@/api/base/app';
+  import { getAll } from '#/api/base/app';
   import { columns, searchFormSchema } from './modelInfo.data';
-  import { useMessage } from '@/hooks/web/useMessage';
-
-  const { createMessage } = useMessage();
+  import {Button, message} from 'ant-design-vue'
 
   const [
     registerBpmnPreviewModal,
@@ -84,7 +82,7 @@
 
   function handleCreate() {
     if (!unref(currentCategory).code) {
-      createMessage.warning('请选择分类！', 2);
+      message.warning('请选择分类！', 2);
       return;
     }
     openModal(true, {
@@ -165,7 +163,7 @@
 
   function handleDelete(record: Recordable) {
     deleteByIds([record.id]).then((res) => {
-      reload();
+      tableApi.reload();
     });
   }
 
@@ -173,8 +171,8 @@
     loadingRef.value = true;
     publishBpmn(record.modelId)
       .then((res) => {
-        reload();
-        createMessage.success('发布成功！', 2);
+        tableApi.reload();
+        message.success('发布成功！', 2);
       })
       .finally(() => {
         loadingRef.value = false;
@@ -185,7 +183,7 @@
     loadingRef.value = true;
     stopBpmn(record.modelId)
       .then((res) => {
-        reload();
+        tableApi.reload();
       })
       .finally(() => {
         loadingRef.value = false;
@@ -193,7 +191,7 @@
   }
 
   function handleSuccess() {
-    reload();
+    tableApi.reload();
   }
 
   function handleSelect(node: any) {

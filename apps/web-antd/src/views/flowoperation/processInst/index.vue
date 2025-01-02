@@ -85,17 +85,17 @@
     changeProcInstActive,
     executeProcessInstance,
     findProcessinstancesPagerModel,
-  } from '@/api/flowoperation/processInst';
+  } from '#/api/flowoperation/processInst';
   import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
   import ProcessNodeSelectionModal from '@/views/flowoperation/processTask/components/ProcessNodeSelectionModal.vue';
   import ProcessVersionSelectionModal from '@/views/flowoperation/processInst/ProcessVersionSelectionModal.vue';
-  import { getAll } from '@/api/base/app';
+  import { getAll } from '#/api/base/app';
 
   import { columns, searchFormSchema } from './processInst.data';
   import ApproveHistoryModal from './ApproveHistoryModal.vue';
   import ProcessStatus from '@/views/components/process/ProcessStatus.vue';
   import FlowPropertiesModal from './FlowPropertiesModal.vue';
-  import { EmpInfo } from '@/components/EmpInfo';
+  import { EmpInfo } from '#/views/components/EmpInfo';
   import {
     CopyOutlined,
     ExclamationCircleOutlined,
@@ -104,19 +104,17 @@
   } from '@ant-design/icons-vue';
   import { copyText } from '@/utils/copyTextToClipboard';
   import ProcessFormModal from '../processTask/ProcessFormModal.vue';
-  import { Modal, Tooltip, Segmented, Badge } from 'ant-design-vue';
+  import { Modal, Tooltip, Segmented, Badge, message, Button } from 'ant-design-vue';
   import { useModal } from '@/components/Modal';
   import { useRequest } from '@vben/hooks';
   import { PerEnum } from '@/enums/perEnum';
 
-  import { backToStep, restartProcessInstance, stopProcess } from '@/api/flowoperation/processTask';
-  import { useMessage } from '@/hooks/web/useMessage';
+  import { backToStep, restartProcessInstance, stopProcess } from '#/api/flowoperation/processTask';
   import { useLoading } from '@/components/Loading';
   import ProcessVariablesModal from '@/views/flowoperation/processInst/ProcessVariablesModal.vue';
 
   defineOptions({ name: 'ProcessInst' });
 
-  const { createMessage } = useMessage();
   const [openFullLoading, closeFullLoading] = useLoading({
     tip: '执行中...',
   });
@@ -186,7 +184,7 @@
 
   useRequest(
     () => {
-      reload();
+      tableApi.reload();
       return Promise.resolve({});
     },
     {
@@ -264,10 +262,10 @@
           .then((res) => {
             const { data } = res;
             if (data.success) {
-              createMessage.success(data.msg);
-              reload();
+              message.success(data.msg);
+              tableApi.reload();
             } else {
-              createMessage.error(data.msg);
+              message.error(data.msg);
             }
           })
           .finally(() => {
@@ -296,15 +294,15 @@
           .then((res) => {
             const { data } = res;
             if (data.success) {
-              createMessage.success(data.msg);
-              reload();
+              message.success(data.msg);
+              tableApi.reload();
             } else {
-              createMessage.error(data.msg);
+              message.error(data.msg);
             }
           })
           .catch((e) => {
             console.error(e);
-            createMessage.error(stateName + '流程失败！');
+            message.error(stateName + '流程失败！');
           })
           .finally(() => {
             closeFullLoading();
@@ -325,7 +323,7 @@
       onOk() {
         openFullLoading();
         executeProcessInstance(record.processInstanceId)
-          .then(() => reload())
+          .then(() => tableApi.reload())
           .finally(() => closeFullLoading());
       },
     });
@@ -404,7 +402,7 @@
         },
       },
     ]);
-    reload();
+    tableApi.reload();
   }
 
   function getTableActions(record) {

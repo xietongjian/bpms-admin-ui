@@ -175,9 +175,9 @@
     moveDeadLetterJobToExecutableJobByJobIds,
     queryDeadLetterJobPagerModel,
     queryTimerJobPagerModel,
-  } from '@/api/flowoperation/processJob';
+  } from '#/api/flowoperation/processJob';
   import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
-  import { getAll } from '@/api/base/app';
+  import { getAll } from '#/api/base/app';
   import { useLoading } from '@/components/Loading';
   import { timerJobColumns, deadLetterJobColumns, searchFormSchema } from './processJob.data';
   import ApproveHistoryModal from '../processInst/ApproveHistoryModal.vue';
@@ -186,7 +186,7 @@
   import { CopyOutlined, PartitionOutlined, HighlightOutlined } from '@ant-design/icons-vue';
   import { copyText } from '@/utils/copyTextToClipboard';
   import { useMessage } from '@/hooks/web/useMessage';
-  import { Tooltip, Tabs, Badge, Button, Space } from 'ant-design-vue';
+  import { Tooltip, Tabs, Badge, Button, Space, message } from 'ant-design-vue';
   import { useModal } from '@/components/Modal';
   import { useRequest } from '@vben/hooks';
   import { PerEnum } from '@/enums/perEnum';
@@ -200,7 +200,6 @@
   const dataCount = ref<object>({ timerJobCount: 0, DeadLetterJobCount: 0 });
   const selectedRowsCount = ref(0);
   const appObjs = ref({});
-  const { createMessage, createConfirm } = useMessage();
   const [openFullLoading, closeFullLoading] = useLoading({
     tip: '执行中...',
   });
@@ -368,13 +367,13 @@
       .then((res) => {
         const { data, success, msg } = res.data;
         if (success) {
-          createMessage.success(msg);
+          message.success(msg);
           setTimeout(() => {
             handleChangeTab();
             closeFullLoading();
           }, 1000);
         } else {
-          createMessage.error(msg);
+          message.error(msg);
         }
       })
       .catch((e) => {
@@ -388,7 +387,7 @@
   function handleBatchExe() {
     const selectedRows = getSelectRows();
     if (selectedRows && selectedRows.length <= 0) {
-      createMessage.warn('请选择行！');
+      message.warn('请选择行！');
       return;
     }
     createConfirm({

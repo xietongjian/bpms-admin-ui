@@ -1,6 +1,9 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
 
-import { getProcessStatusEnums } from '@/api/flowoperation/processInst';
+import { getProcessStatusEnums } from '#/api/flowoperation/processInst';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
 
 let processStatus = [];
 const processStatusObj = {};
@@ -12,57 +15,57 @@ getProcessStatusEnums().then((res) => {
   });
 });
 
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '流程标题',
-    dataIndex: 'formName',
+    field: 'formName',
     align: 'left',
     width: 300,
     resizable: true,
   },
   {
     title: '流程实例ID',
-    dataIndex: 'processInstanceId',
+    field: 'processInstanceId',
     align: 'left',
     width: 200,
     resizable: true,
   },
   {
     title: '业务单号',
-    dataIndex: 'businessKey',
+    field: 'businessKey',
     align: 'left',
     width: 200,
     resizable: true,
   },
   {
     title: '状态',
-    dataIndex: 'processStatusName',
+    field: 'processStatusName',
     width: 100,
     align: 'center',
   },
   {
     title: '提交单位',
-    dataIndex: 'startedUserComName',
+    field: 'startedUserComName',
     align: 'left',
     width: 200,
     resizable: true,
   },
   {
     title: '提交部门',
-    dataIndex: 'startedUserDeptName',
+    field: 'startedUserDeptName',
     align: 'left',
     width: 100,
     resizable: true,
   },
   {
     title: '提交人',
-    dataIndex: 'startedUserName',
+    field: 'startedUserName',
     width: 100,
     align: 'center',
   },
   {
     title: '提交时间',
-    dataIndex: 'startTime',
+    field: 'startTime',
     width: 180,
     align: 'left',
     sorter: true,
@@ -71,7 +74,7 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -86,7 +89,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'businessKey',
+    fieldName: 'businessKey',
     label: '业务单号',
     component: 'Input',
     componentProps: {
@@ -101,7 +104,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'processInstanceId',
+    fieldName: 'processInstanceId',
     label: '流程实例ID',
     component: 'Input',
     componentProps: {
@@ -116,7 +119,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'appSn',
+    fieldName: 'appSn',
     label: '系统',
     component: 'Select',
     colProps: {
@@ -128,7 +131,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'processDefinitionKey',
+    fieldName: 'processDefinitionKey',
     label: '流程模板',
     component: 'ModelInfoSelector',
     componentProps: {
@@ -145,7 +148,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'companyId',
+    fieldName: 'companyId',
     label: '提交单位',
     component: 'OrgSelector',
     componentProps: {
@@ -161,7 +164,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'deptId',
+    fieldName: 'deptId',
     label: '提交部门',
     component: 'OrgSelector',
     componentProps: {
@@ -177,7 +180,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'startedUserIds',
+    fieldName: 'startedUserIds',
     label: '提交人',
     component: 'PersonalSelector',
     componentProps: {
@@ -193,7 +196,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'dateRange',
+    fieldName: 'dateRange',
     label: '时间范围',
     component: 'RangePicker',
     colProps: {
@@ -205,7 +208,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'processStatus',
+    fieldName: 'processStatus',
     label: '状态',
     component: 'ApiSelect',
     componentProps: {
@@ -226,7 +229,7 @@ export const searchFormSchema: FormSchema[] = [
 
 export const processNodeSelectionFormSchema: FormSchema[] = [
   {
-    field: 'activityIds',
+    fieldName: 'activityIds',
     label: '选择节点',
     required: true,
     ifShow: true,
@@ -238,11 +241,11 @@ export const processNodeSelectionFormSchema: FormSchema[] = [
     colProps: { span: 24 },
   },
   {
-    field: 'message',
+    fieldName: 'message',
     required: false,
     ifShow: false,
     label: '干预信息',
-    component: 'InputTextArea',
+    component: 'Textarea',
     colProps: { span: 24 },
     rules: [
       {
@@ -262,7 +265,7 @@ export const processNodeSelectionFormSchema: FormSchema[] = [
 
 export const processVersionSelectionFormSchema: FormSchema[] = [
   {
-    field: 'version',
+    fieldName: 'version',
     label: '版本',
     required: true,
     component: 'Select',
@@ -273,7 +276,7 @@ export const processVersionSelectionFormSchema: FormSchema[] = [
     colProps: { span: 24 },
   },
   {
-    field: 'params',
+    fieldName: 'params',
     required: false,
     label: '参数',
     slot: 'paramsList',

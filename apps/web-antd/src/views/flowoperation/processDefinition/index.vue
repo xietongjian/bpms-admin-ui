@@ -71,25 +71,23 @@
 
   import { BasicTable, useTable, TableAction } from '@/components/Table';
 
-  import { getModelInfoPageList, stopBpmn } from '@/api/flowable/bpmn/modelInfo';
+  import { getModelInfoPageList, stopBpmn } from '#/api/flowable/bpmn/modelInfo';
   import { PageWrapper } from '@/components/Page';
   import FlowCategoryTree from '@/views/components/leftTree/FlowCategoryTree.vue';
 
   import { useModal } from '@/components/Modal';
   import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
-  import { getAll } from '@/api/base/app';
+  import { getAll } from '#/api/base/app';
   import {
     findHisProcessDefinitionPagerModel,
     suspendProcessDefinition,
     activateProcessDefinition,
     loadXmlByProcessDefinitionId,
-  } from '@/api/flowoperation/processDefinition';
+  } from '#/api/flowoperation/processDefinition';
   import { columns, hisDefinitionColumns, searchFormSchema } from './processDefinition.data';
-  import { useMessage } from '@/hooks/web/useMessage';
   import CodePreviewModal from '@/views/components/preview/codePreview/index.vue';
   import { useLoading } from '@/components/Loading';
-
-  const { createMessage } = useMessage();
+  import {message, Button} from 'ant-design-vue'
 
   const [
     registerBpmnPreviewModal,
@@ -237,12 +235,12 @@
       .then((res) => {
         const { success, msg } = res.data;
         if (success) {
-          createMessage.success(msg, 2);
+          message.success(msg, 2);
           itemRecord.suspensionState = itemRecord.suspensionState === 1 ? 2 : 1;
           updateTableDataRecord(itemRecord.id, itemRecord);
           //reloadSubTable()
         } else {
-          createMessage.error(msg, 2);
+          message.error(msg, 2);
         }
       })
       .finally(() => {
@@ -258,9 +256,9 @@
         if (success) {
           itemRecord.suspensionState = itemRecord.suspensionState === 1 ? 2 : 1;
           updateTableDataRecord(itemRecord.id, itemRecord);
-          createMessage.success(msg, 2);
+          message.success(msg, 2);
         } else {
-          createMessage.error(msg, 2);
+          message.error(msg, 2);
         }
       })
       .finally(() => {
@@ -272,7 +270,7 @@
     loadingRef.value = true;
     stopBpmn(record.modelId)
       .then((res) => {
-        reload();
+        tableApi.reload();
       })
       .finally(() => {
         loadingRef.value = false;
@@ -280,7 +278,7 @@
   }
 
   function handleSuccess() {
-    reload();
+    tableApi.reload();
   }
 
   function handleSelect(node: any) {

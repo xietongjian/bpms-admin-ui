@@ -64,7 +64,7 @@
 </template>
 <script lang="ts" setup>
   import { ref, defineProps, defineEmits, nextTick, defineExpose } from 'vue';
-  import { Space, Spin, Button } from 'ant-design-vue';
+  import { Space, Spin, Button, message } from 'ant-design-vue';
   import { useModal } from '@/components/Modal';
   import ApproveSelectorPersonalModal from './ApproveSelectorPersonalModal.vue';
   import ApproveCustomApproveSettingModal from './ApproveCustomApproveSettingModal.vue';
@@ -78,7 +78,7 @@
     claimTask,
     holdTask,
     getCustomApproveSettings,
-  } from '@/api/flowoperation/processTask';
+  } from '#/api/flowoperation/processTask';
   import { useMessage } from '@/hooks/web/useMessage';
   import { ResultEnum } from '@/enums/httpEnum';
   import {approveMsgSchemas} from "@/views/process/components/action.data";
@@ -124,7 +124,6 @@
     { openModal: openApproveBackToStepModal, setModalProps: setApproveBackToStepModalProps },
   ] = useModal();
 
-  const { createMessage } = useMessage();
   const approveMsg = ref<string>('');
 
   // 审批操作处理
@@ -158,10 +157,10 @@
               .then((res) => {
                 const result = res.data;
                 if (result.success) {
-                  createMessage.success(result.msg);
+                  message.success(result.msg);
                   emit('success');
                 } else {
-                  createMessage.error(result.msg);
+                  message.error(result.msg);
                   emit('changeLoading', false);
                 }
               })
@@ -179,7 +178,7 @@
               approveComplete();
             } else {
               console.error(validRes.msg);
-              validRes.msg && createMessage.error(validRes.msg);
+              validRes.msg && message.error(validRes.msg);
               emit('changeLoading', false);
             }
           });
@@ -203,10 +202,10 @@
       .then((res) => {
         const result = res.data;
         if (result.code === ResultEnum.SUCCESS) {
-          createMessage.success(result.msg);
+          message.success(result.msg);
           emit('success');
         } else {
-          createMessage.error(result.msg);
+          message.error(result.msg);
         }
       })
       .finally(() => {
@@ -221,10 +220,10 @@
       .then((res) => {
         const result = res.data;
         if (result.code === ResultEnum.SUCCESS) {
-          createMessage.success(result.msg);
+          message.success(result.msg);
           emit('success');
         } else {
-          createMessage.error(result.msg);
+          message.error(result.msg);
         }
       })
       .finally(() => {
@@ -239,10 +238,10 @@
       .then((res) => {
         const result = res.data;
         if (result.code === ResultEnum.SUCCESS) {
-          createMessage.success(result.msg);
+          message.success(result.msg);
           emit('success');
         } else {
-          createMessage.error(result.msg);
+          message.error(result.msg);
         }
       })
       .catch(() => {})
@@ -257,10 +256,10 @@
       .then((res) => {
         const result = res.data;
         if (result.code === ResultEnum.SUCCESS) {
-          createMessage.success(result.msg);
+          message.success(result.msg);
           emit('success');
         } else {
-          createMessage.error(result.msg);
+          message.error(result.msg);
         }
       })
       .catch(() => {})
@@ -278,11 +277,11 @@
     stopProcess({ processInstanceId: procInstId, taskId: taskId, message: approveMsg||""}).then(res=>{
       const result = res.data;
       if(result.success){
-        createMessage.success(result.msg, 1, ()=>{
+        message.success(result.msg, 1, ()=>{
           emit('success');
         });
       }else{
-        createMessage.error(result.msg)
+        message.error(result.msg)
         emit('success');
       }
     }).catch(()=>{

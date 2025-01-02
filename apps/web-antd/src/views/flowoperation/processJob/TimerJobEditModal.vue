@@ -15,12 +15,10 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { timerJobFormSchema } from './processJob.data';
-  import { updateDuedateById } from '@/api/flowoperation/processJob';
+  import { updateDuedateById } from '#/api/flowoperation/processJob';
   import { useMessage } from '@/hooks/web/useMessage';
 
   const emit = defineEmits(['success', 'register']);
-
-  const { createMessage } = useMessage();
 
   const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
@@ -44,11 +42,11 @@
       const res = await updateDuedateById(values);
       const { data, success, msg } = res.data;
       if (success) {
-        createMessage.success(msg);
+        message.success(msg);
         emit('success');
         closeModal();
       } else {
-        createMessage.error(msg);
+        message.error(msg);
       }
     } finally {
       setModalProps({ confirmLoading: false });

@@ -2,14 +2,14 @@ import { FormSchema } from '@/components/Table';
 
 export const customFormSchema: FormSchema[] = [
   {
-    field: 'type',
+    fieldName: 'type',
     label: '类型',
     component: 'Input',
     defaultValue: 0,
     show: false,
   },
   {
-    field: 'sourceModel',
+    fieldName: 'sourceModel',
     label: '源流程',
     component: 'ModelInfoSelector',
     required: true,
@@ -27,7 +27,7 @@ export const customFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'categoryCode',
+    fieldName: 'categoryCode',
     label: '目标分类',
     required: true,
     component: 'TreeSelect',
@@ -46,14 +46,14 @@ export const customFormSchema: FormSchema[] = [
 
 export const bizFormSchema: FormSchema[] = [
   {
-    field: 'type',
+    fieldName: 'type',
     label: '类型',
     component: 'Input',
     defaultValue: 1,
     show: false,
   },
   {
-    field: 'sourceModel',
+    fieldName: 'sourceModel',
     label: '源流程',
     component: 'ModelInfoSelector',
     required: true,
@@ -71,7 +71,7 @@ export const bizFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'categoryCode',
+    fieldName: 'categoryCode',
     label: '目标分类',
     required: true,
     component: 'TreeSelect',
@@ -87,7 +87,7 @@ export const bizFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'targetModelInfo',
+    fieldName: 'targetModelInfo',
     label: '目标流程',
     required: false,
     show: false,
@@ -107,14 +107,14 @@ export const bizFormSchema: FormSchema[] = [
 
 export const customTaskFormSchema: FormSchema[] = [
   {
-    field: 'type',
+    fieldName: 'type',
     label: '类型',
     component: 'Input',
     defaultValue: 0,
     show: false,
   },
   {
-    field: 'sourceModel',
+    fieldName: 'sourceModel',
     label: '源流程',
     component: 'ModelInfoSelector',
     required: true,
@@ -132,7 +132,7 @@ export const customTaskFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'categoryCode',
+    fieldName: 'categoryCode',
     label: '目标分类',
     required: true,
     component: 'TreeSelect',

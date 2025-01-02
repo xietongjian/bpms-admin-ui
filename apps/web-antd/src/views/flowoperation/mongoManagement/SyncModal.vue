@@ -18,7 +18,7 @@
     syncFlowCommentInfo,
     syncFlowExtendHisprocinst,
     syncHiIdEntityLink,
-  } from '@/api/flowoperation/MongoManagement';
+  } from '#/api/flowoperation/MongoManagement';
 
   defineOptions({ name: 'SyncModal' });
 

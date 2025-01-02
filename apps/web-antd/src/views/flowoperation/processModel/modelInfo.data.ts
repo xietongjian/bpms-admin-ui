@@ -1,41 +1,44 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
 import { Tag } from 'ant-design-vue';
 
 import { h } from 'vue';
 
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
   },
   {
     title: 'KEY',
-    dataIndex: 'modelKey',
+    field: 'modelKey',
     width: 100,
     align: 'left',
   },
   {
     title: '分类名称',
-    dataIndex: 'categoryName',
+    field: 'categoryName',
     width: 100,
     align: 'left',
   },
   {
     title: '系统',
-    dataIndex: 'appName',
+    field: 'appName',
     width: 100,
     align: 'left',
   },
   {
     title: '应用范围',
-    dataIndex: 'appliedRangeName',
+    field: 'appliedRangeName',
     width: 100,
     align: 'left',
   },
   {
     title: '状态',
-    dataIndex: 'statusName',
+    field: 'statusName',
     width: 70,
     align: 'center',
     customRender: ({ record }) => {
@@ -55,7 +58,7 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '更新时间',
-    dataIndex: 'updateTime',
+    field: 'updateTime',
     width: 120,
     align: 'left',
   },
@@ -63,7 +66,7 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -78,7 +81,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'appSn',
+    fieldName: 'appSn',
     label: '系统',
     component: 'Select',
     labelWidth: 60,
@@ -93,21 +96,21 @@ export const searchFormSchema: FormSchema[] = [
 
 export const modelInfoFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'categoryCode',
+    fieldName: 'categoryCode',
     label: 'ID',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
     component: 'Input',
     required: true,
@@ -124,13 +127,13 @@ export const modelInfoFormSchema: FormSchema[] = [
     ],
   },
   {
-    field: 'modelKey',
+    fieldName: 'modelKey',
     label: '标识',
     component: 'Input',
     required: true,
   },
   {
-    field: 'appSn',
+    fieldName: 'appSn',
     label: '所属系统',
     component: 'Select',
     componentProps: {

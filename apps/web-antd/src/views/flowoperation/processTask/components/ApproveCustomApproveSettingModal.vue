@@ -16,9 +16,8 @@
     turnTask,
     reviewTask,
     complete,
-  } from '@/api/flowoperation/processTask';
+  } from '#/api/flowoperation/processTask';
   import { useGo } from '@/hooks/web/usePage';
-  import { useMessage } from '@/hooks/web/useMessage';
   import { ResultEnum } from '@/enums/httpEnum';
 
   const nextUserPrefix = 'next_user__';
@@ -29,7 +28,6 @@
     setup(_, { emit }) {
       // const isUpdate = ref(true);
       const selectorTypeRef = ref('');
-      const { createMessage } = useMessage();
       const go = useGo();
 
       const [registerForm, { setFieldsValue, resetSchema, updateSchema, resetFields, validate }] =
@@ -158,16 +156,16 @@
             .then((res) => {
               const result = res.data;
               if (result.success) {
-                createMessage.success(result.msg);
+                message.success(result.msg);
                 // go("/process/todo");
                 alert('操作成功后关闭窗口');
               } else {
-                createMessage.error(result.msg || defaultMsg);
+                message.error(result.msg || defaultMsg);
               }
               setModalProps({ confirmLoading: false });
             })
             .catch(() => {
-              createMessage.error(defaultMsg);
+              message.error(defaultMsg);
             });
         } catch (e) {
           setModalProps({ confirmLoading: false });

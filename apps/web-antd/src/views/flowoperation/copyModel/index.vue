@@ -111,7 +111,7 @@
     copyCustomProcess,
     copyBizProcess,
     getModelInfoByModelKey,
-  } from '@/api/flowoperation/copyModelToProd';
+  } from '#/api/flowoperation/copyModelToProd';
   import { findNode } from '@/utils/helper/treeHelper';
   import { PerEnum } from '@/enums/perEnum';
   import { Authority } from '@/components/Authority';
@@ -131,7 +131,6 @@
   const bizResult = ref({});
   const copyCustomLoading = ref<boolean>(false);
   const copyBizLoading = ref<boolean>(false);
-  const { createMessage, createConfirm } = useMessage();
   const syncCategories = ref([]);
 
   // 自定义表单
@@ -306,7 +305,7 @@
         copyCustomProcess(values)
           .then((res) => {
             const resData = res.data;
-            // createMessage.success(resData.msg);
+            // message.success(resData.msg);
             // resetCustomFields();
             customResult.value = resData;
           })
@@ -356,7 +355,7 @@
           .then((res) => {
             const resData = res.data;
             bizResult.value = resData;
-            // createMessage.success(resData.msg);
+            // message.success(resData.msg);
             // resetBizFields();
           })
           .catch((e) => {

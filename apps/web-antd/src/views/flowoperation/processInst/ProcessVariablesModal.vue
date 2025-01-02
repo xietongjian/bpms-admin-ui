@@ -10,7 +10,7 @@
   import {
     compensateProcessInstanceVariables,
     getProcessInstanceVariables,
-  } from '@/api/flowoperation/processInst';
+  } from '#/api/flowoperation/processInst';
   import JsonVariablesEditor from '@/components/JsonVariables/JsonVariablesEditor.vue';
 
   defineOptions({ name: 'ProcessVariablesModal' });

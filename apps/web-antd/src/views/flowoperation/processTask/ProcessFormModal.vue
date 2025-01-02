@@ -182,24 +182,26 @@
 </template>
 <script lang="ts" setup>
   import { ref, unref, reactive, onMounted, watch, computed, defineEmits, nextTick, shallowRef } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { Button, Dropdown, Menu, Space, Tabs, Textarea, Popconfirm } from 'ant-design-vue';
-  import { CollapseContainer } from '@/components/Container';
-  import { Description, useDescription } from '@/components/Description/index';
-  import { useMessage } from '@/hooks/web/useMessage';
+  import {useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from '#/adapter/form';
+
+  import { Button, Dropdown, Menu, Space, Descriptions, Collapse, message,Tabs, Textarea, Popconfirm } from 'ant-design-vue';
+  // import { CollapseContainer } from '@/components/Container';
+  // import { Description, useDescription } from '@/components/Description/index';
+
   import ApproveActionButtons from './components/ApproveActionButtons.vue';
-  import { getCommentInfosByProcessInstanceId } from '@/api/flowable/bpmn/modelInfo';
+  import { getCommentInfosByProcessInstanceId } from '#/api/flowable/bpmn/modelInfo';
   import {
     getBizInfoVoByModelKey,
     getCustomFormInfoVoByModelKeyAndBusinessKey,
     getProdModelInfoByModelKeyAndProcInstId,
     getCurrTaskApplyersByProcessInstanceId, saveOrUpdateReadInfo,
-  } from '@/api/flowoperation/processTask';
-  import { GenerateForm } from '/public/form-making';
-  import ApproveHistoryList from '@/views/components/process/ApproveHistoryList.vue';
-  import CurrentApprover from '@/views/components/process/CurrentApprover.vue';
-  import { getBizDataInfoByBusinessKeyAndModelKey } from '@/api/form/bizForm';
-  import { getStartHeadInfoVoByProcessInstanceId } from '@/api/flowoperation/processInst';
+  } from '#/api/flowoperation/processTask';
+  import { GenerateForm } from '/public/static/form-making';
+  import ApproveHistoryList from '#/views/components/process/ApproveHistoryList.vue';
+  import CurrentApprover from '#/views/components/process/CurrentApprover.vue';
+  import { getBizDataInfoByBusinessKeyAndModelKey } from '#/api/form/bizForm';
+  import { getStartHeadInfoVoByProcessInstanceId } from '#/api/flowoperation/processInst';
   import { formBaseDataSchema } from './processForm.data';
   import printJS from 'print-js';
   import {
@@ -209,15 +211,15 @@
     MinusOutlined,
     PlusOutlined,
   } from '@ant-design/icons-vue';
-  import { BpmnPresetViewer } from '@/assets/bpmn/viewer/lib/bpmn-viewer.js';
+  import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
   import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
-  import { updateCustomFormData } from '@/api/process/customForm';
+  import { updateCustomFormData } from '#/api/process/customForm';
   import {useUserStore} from "@/store/modules/user";
-  import {useRequest} from "@vben/hooks";
-  import { useModal } from '@/components/Modal';
-  import {checkRevokeProcess, revokeProcess, reminderTask} from "@/api/process/process";
+  // import {useRequest} from "@vben/hooks";
+  // import { useModal } from '@/components/Modal';
+  import {checkRevokeProcess, revokeProcess, reminderTask} from "#/api/process/process";
   import ApproveSelectorPersonalModal from './components/ApproveSelectorPersonalModal.vue';
-  import {EmpInfo} from '@/components/EmpInfo';
+  import {EmpInfo} from '#/views/components/EmpInfo';
 
   // 人员选择弹窗
   const [registerApproveSelectorPersonalModal, { openModal: openApproveSelectorPersonalSelector, setModalProps: setApproveSelectorPersonalModalProps }] = useModal();
@@ -250,7 +252,6 @@
   const baseFormInfo = ref({});
   const flowBaseInfo = ref({});
   const formType = ref(0);
-  const { createMessage } = useMessage();
   const params = ref({});
   const showOperation = ref(false);
   const formEditable = ref(false);
@@ -413,9 +414,9 @@
     });
     if (success) {
       reminderMsg.value = '';
-      createMessage.success(msg);
+      message.success(msg);
     } else {
-      createMessage.error(msg);
+      message.error(msg);
     }
   }
   /**
@@ -426,7 +427,7 @@
     try {
       const {msg, success} = await revokeProcess({processInstanceId: procInstId, taskId});
       if (success) {
-        createMessage.success(msg);
+        message.success(msg);
         checkAuthPointer(flowBaseInfo.value?.authPoints);
         loadCommentList();
         if (!showOperation.value) {
@@ -435,11 +436,11 @@
           currentApproverList.value = [];
         }
       } else {
-        createMessage.error(msg);
+        message.error(msg);
       }
     } catch (e) {
       console.error(e);
-      createMessage.error('撤回流程异常！' + e.message);
+      message.error('撤回流程异常！' + e.message);
     }
   }
 
@@ -638,7 +639,7 @@
           errorMsg.value = '未获取到表单结构数据，请确认！';
         }
       } else {
-        createMessage.error(result.msg);
+        message.error(result.msg);
       }
     });
   }
@@ -773,7 +774,7 @@
 
   // 表单验证错误提示
   function formValidateMsg(msg) {
-    createMessage.warn(msg);
+    message.warn(msg);
     const isError = document.querySelector('.fm-form .is-error');
     if (isError) {
       isError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -843,7 +844,7 @@
           // 判断是否有doSaveForm事件
           const eventExists = validEventExists('doSaveForm');
           if (!eventExists) {
-            createMessage.error('未找到动作【doSaveForm】');
+            message.error('未找到动作【doSaveForm】');
             return Promise.reject(
               "未找到动作【doSaveForm】。\n提示：\n1、请在表单中添加【doSaveForm】动作；\n2、该动作需要返回【Promise.resolve({success: true, msg: '保存成功', code: '100'})】对象。",
             );

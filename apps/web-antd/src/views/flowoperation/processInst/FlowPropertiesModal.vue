@@ -26,7 +26,7 @@
   import { Row, Col, Empty } from 'ant-design-vue';
   import { JsonPreview } from '@/components/CodeEditor';
 
-  import { getVariablesByProcessInstanceId } from '@/api/flowoperation/processInst';
+  import { getVariablesByProcessInstanceId } from '#/api/flowoperation/processInst';
 
   const variableData = ref();
 

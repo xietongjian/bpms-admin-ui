@@ -168,10 +168,15 @@ function handleEdit(record: Recordable<any>) {
   });
 }
 
-function handleDelete(record: Recordable<any>) {
-  deleteByIds([record.id]).then(() => {
+async function handleDelete(record: Recordable<any>) {
+  const {success, msg} = await deleteByIds([record.id]);
+  if(success) {
     tableApi.reload();
-  });
+    message.success(msg);
+  } else {
+    message.error(msg);
+  }
+  return Promise.resolve(true);
 }
 
 function handleSuccess() {

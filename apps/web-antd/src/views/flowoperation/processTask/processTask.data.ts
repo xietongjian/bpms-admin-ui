@@ -1,78 +1,89 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
 
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '流程标题',
-    dataIndex: 'formName',
+    field: 'formName',
     align: 'left',
-    width: 300,
+    minWidth: 300,
     resizable: true,
+    slots: {default: 'formName'}
   },
   {
     title: '提交人',
-    dataIndex: 'startPersonName',
+    field: 'startPersonName',
     width: 100,
     align: 'center',
+    slots: {default: 'startPersonName'}
   },
   {
     title: '任务名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
     width: 200,
     resizable: true,
   },
   {
     title: '待办人',
-    dataIndex: 'assigneeName',
+    field: 'assigneeName',
     align: 'center',
+    minWidth: 200,
+    slots: {default: 'assigneeName'}
   },
   {
     title: '停留时间',
-    dataIndex: 'stayHour',
+    field: 'stayHour',
     align: 'left',
   },
   {
     title: '状态',
     width: 100,
-    dataIndex: 'processStatusName',
+    field: 'processStatusName',
     align: 'center',
+    slots: {default: 'processStatusName'}
   },
   {
     title: '所属系统',
-    dataIndex: 'appName',
+    field: 'appName',
     align: 'left',
   },
   {
     title: '任务ID',
-    dataIndex: 'taskId',
+    field: 'taskId',
     align: 'left',
     width: 200,
     resizable: true,
+    slots: {default: 'taskId'}
   },
   {
     title: '业务单号',
-    dataIndex: 'businessKey',
+    field: 'businessKey',
     align: 'left',
     width: 200,
     resizable: true,
+    slots: {default: 'businessKey'}
   },
   {
     title: '流程实例ID',
-    dataIndex: 'processInstanceId',
+    field: 'processInstanceId',
     align: 'left',
     width: 200,
     resizable: true,
+    slots: {default: 'processInstanceId'}
   },
   {
     title: '任务创建时间',
-    dataIndex: 'createTime',
+    field: 'createTime',
     sorter: true,
     width: 150,
     align: 'center',
   },
   {
     title: '流程发起时间',
-    dataIndex: 'processStartTime',
+    field: 'processStartTime',
     sorter: true,
     width: 150,
     align: 'center',
@@ -81,7 +92,7 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'formName',
+    fieldName: 'formName',
     label: '流程标题',
     component: 'Input',
     componentProps: {
@@ -95,7 +106,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'formName',
+    fieldName: 'formName',
     label: '节点名称',
     component: 'Input',
     componentProps: {
@@ -109,7 +120,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'businessKey',
+    fieldName: 'businessKey',
     label: '业务单号',
     component: 'Input',
     componentProps: {
@@ -123,7 +134,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'processInstanceId',
+    fieldName: 'processInstanceId',
     label: '流程实例ID',
     component: 'Input',
     componentProps: {
@@ -137,7 +148,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'userCode',
+    fieldName: 'userCode',
     label: '待办人',
     component: 'PersonalSelector',
     componentProps: {
@@ -151,7 +162,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'appSn',
+    fieldName: 'appSn',
     label: '系统',
     component: 'Select',
     colProps: {
@@ -165,13 +176,13 @@ export const searchFormSchema: FormSchema[] = [
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
     show: false,
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
     required: true,
     component: 'Input',
@@ -188,13 +199,13 @@ export const formSchema: FormSchema[] = [
     ],
   },
   {
-    field: 'sn',
+    fieldName: 'sn',
     label: '标识',
     required: true,
     component: 'Input',
   },
   {
-    field: 'url',
+    fieldName: 'url',
     label: '系统URL',
     required: true,
     component: 'Input',
@@ -216,7 +227,7 @@ export const formSchema: FormSchema[] = [
     ],
   },
   {
-    field: 'indexUrl',
+    fieldName: 'indexUrl',
     label: '首页URL',
     required: true,
     component: 'Input',
@@ -238,20 +249,20 @@ export const formSchema: FormSchema[] = [
     ],
   },
   {
-    field: 'image',
+    fieldName: 'image',
     label: '图标',
     required: false,
     component: 'IconPicker',
   },
   {
-    field: 'orderNo',
+    fieldName: 'orderNo',
     label: '排序号',
     helpMessage: '数值越小越靠前！',
     required: false,
     component: 'InputNumber',
   },
   {
-    field: 'status',
+    fieldName: 'status',
     label: '状态',
     required: false,
     component: 'Switch',
@@ -263,7 +274,7 @@ export const formSchema: FormSchema[] = [
   },
   {
     label: '备注',
-    field: 'note',
+    fieldName: 'note',
     component: 'InputTextArea',
     rules: [
       {

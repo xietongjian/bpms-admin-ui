@@ -1,15 +1,15 @@
-/**
- * @desc mongoManagement.data
- * @author DragonTeam <https://www.bpmport.com>
- * @since 2024/9/28 18:58
- */
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import { z } from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+
 import { FormSchema } from '@/components/Form';
 import { BasicColumn } from '@/components/Table';
 
 export const SyncForm: FormSchema[] = [
   {
     label: '时间选择',
-    field: 'date',
+    fieldName: 'date',
     required: true,
     component: 'DatePicker',
     componentProps: {
@@ -21,22 +21,22 @@ export const SyncForm: FormSchema[] = [
   },
 ];
 
-export const mongoJobColumns: BasicColumn[] = [
+export const mongoJobColumns: VxeGridProps['columns'] = [
   {
     title: '任务',
-    dataIndex: 'label',
+    field: 'label',
     align: 'left',
     width: 240,
   },
   {
     title: '开始时间',
-    dataIndex: 'startTime',
+    field: 'startTime',
     align: 'left',
     width: 200,
   },
   {
     title: '截止时间',
-    dataIndex: 'endTime',
+    field: 'endTime',
     align: 'left',
     width: 200,
   },

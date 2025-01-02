@@ -8,7 +8,7 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import ApproveHistoryList from '@/views/components/process/ApproveHistoryList.vue';
 
-  import { getCommentInfosByProcessInstanceId } from '@/api/flowable/bpmn/modelInfo';
+  import { getCommentInfosByProcessInstanceId } from '#/api/flowable/bpmn/modelInfo';
 
   const historyList = ref([]);
   const approvalHistoryLoading = ref(false);

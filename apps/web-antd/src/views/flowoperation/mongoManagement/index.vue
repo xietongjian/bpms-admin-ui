@@ -25,7 +25,7 @@
     clearFlowCommentInfo,
     clearFlowExtendHisprocinst,
     clearHiIdEntityLink,
-  } from '@/api/flowoperation/MongoManagement';
+  } from '#/api/flowoperation/MongoManagement';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { BasicTable, useTable } from '@/components/Table';
   import { mongoJobColumns } from '@/views/flowoperation/mongoManagement/mongoManagement.data';

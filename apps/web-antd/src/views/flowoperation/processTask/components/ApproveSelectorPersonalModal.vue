@@ -8,18 +8,18 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { approveActionFormSchema } from './action.data';
+  import {message} from 'ant-design-vue'
   import {
     afterAddSign,
     beforeAddSign,
     delegateTask,
     turnTask,
     reviewTask,
-  } from '@/api/flowoperation/processTask';
+  } from '#/api/flowoperation/processTask';
   import { useMessage } from '@/hooks/web/useMessage';
 
   const emit = defineEmits(['success', 'register']);
   const selectorTypeRef = ref('');
-  const { createMessage } = useMessage();
   const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
     labelWidth: 100,
     schemas: approveActionFormSchema,
@@ -107,16 +107,16 @@
             .then((res) => {
               const result = res.data;
               if (result.success) {
-                createMessage.success(result.msg);
+                message.success(result.msg);
                 closeCurrModal();
               } else {
-                createMessage.error(result.msg || defaultMsg);
+                message.error(result.msg || defaultMsg);
                 setModalProps({ confirmLoading: false });
                 changeLoading(false);
               }
             })
             .catch(() => {
-              createMessage.error(defaultMsg);
+              message.error(defaultMsg);
               setModalProps({ confirmLoading: false });
               changeLoading(false);
             })
@@ -128,16 +128,16 @@
             .then((res) => {
               const result = res.data;
               if (result.success) {
-                createMessage.success(result.msg);
+                message.success(result.msg);
                 closeCurrModal();
               } else {
-                createMessage.error(result.msg || defaultMsg);
+                message.error(result.msg || defaultMsg);
                 setModalProps({ confirmLoading: false });
                 changeLoading(false);
               }
             })
             .catch(() => {
-              createMessage.error(defaultMsg);
+              message.error(defaultMsg);
               setModalProps({ confirmLoading: false });
               changeLoading(false);
             })
@@ -149,16 +149,16 @@
             .then((res) => {
               const result = res.data;
               if (result.success) {
-                createMessage.success(result.msg);
+                message.success(result.msg);
                 closeCurrModal();
               } else {
-                createMessage.error(result.msg || defaultMsg);
+                message.error(result.msg || defaultMsg);
                 setModalProps({ confirmLoading: false });
                 changeLoading(false);
               }
             })
             .catch(() => {
-              createMessage.error(defaultMsg);
+              message.error(defaultMsg);
               setModalProps({ confirmLoading: false });
               changeLoading(false);
             })
@@ -170,15 +170,15 @@
             beforeAddSign(params).then(res => {
               const result = res.data;
               if (result.success) {
-                createMessage.success(result.msg, 1, () => {
+                message.success(result.msg, 1, () => {
                   closeCurrModal();
                 })
                 // go("/process/todo");
               } else {
-                createMessage.error(result.msg || defaultMsg)
+                message.error(result.msg || defaultMsg)
               }
             }).catch(() => {
-              createMessage.error(defaultMsg)
+              message.error(defaultMsg)
             }).finally(() => {
               setModalProps({confirmLoading: false, loading: false});
             });
@@ -186,14 +186,14 @@
             afterAddSign(params).then(res => {
               const result = res.data;
               if (result.success) {
-                createMessage.success(result.msg, 1, () => {
+                message.success(result.msg, 1, () => {
                   closeCurrModal();
                 })
               } else {
-                createMessage.error(result.msg || defaultMsg)
+                message.error(result.msg || defaultMsg)
               }
             }).catch(() => {
-              createMessage.error(defaultMsg)
+              message.error(defaultMsg)
             }).finally(() => {
               setModalProps({confirmLoading: false, loading: false});
             });
@@ -205,16 +205,16 @@
             .then((res) => {
               const result = res.data;
               if (result.success) {
-                createMessage.success(result.msg);
+                message.success(result.msg);
                 closeCurrModal();
               } else {
-                createMessage.error(result.msg || defaultMsg);
+                message.error(result.msg || defaultMsg);
                 setModalProps({ confirmLoading: false });
                 changeLoading(false);
               }
             })
             .catch(() => {
-              createMessage.error(defaultMsg);
+              message.error(defaultMsg);
               setModalProps({ confirmLoading: false });
               changeLoading(false);
             })
@@ -227,16 +227,16 @@
               const result = res.data;
               if (result.success) {
                 debugger
-                createMessage.success(result.msg);
+                message.success(result.msg);
                 closeCurrModal();
               } else {
-                createMessage.error(result.msg || defaultMsg);
+                message.error(result.msg || defaultMsg);
                 setModalProps({ confirmLoading: false });
                 changeLoading(false);
               }
             })
             .catch(() => {
-              createMessage.error(defaultMsg);
+              message.error(defaultMsg);
               setModalProps({ confirmLoading: false });
               changeLoading(false);
             })

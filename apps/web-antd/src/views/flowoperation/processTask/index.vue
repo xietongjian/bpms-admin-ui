@@ -1,124 +1,82 @@
 <template>
-  <div>
+  <Page auto-content-height>
     <BasicTable @register="registerTable">
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-            :actions="[
-              {
-                label: '',
-                tooltip: '查看表单',
-                icon: 'ant-design:pic-right-outlined',
-                onClick: handleViewForm.bind(null, record),
-              },
-              {
-                icon: 'ant-design:partition-outlined',
-                tooltip: '流程图预览',
-                onClick: handlePreview.bind(null, record),
-              },
-              {
-                auth: 'ProcessTask:' + PerEnum.UPDATE,
-                icon: 'ant-design:play-circle-filled',
-                tooltip: '执行',
-                label: '',
-                color: 'success',
-                popConfirm: {
-                  title: '确认执行吗?',
-                  confirm: handleExe.bind(null, record),
-                },
-              },
-            ]"
-            :dropDownActions="[
-              {
-                label: '审批变量',
-                icon: 'ant-design:profile-outlined',
-                onClick: handleViewFlowProperties.bind(null, record),
-              },
-              {
-                label: '审批记录',
-                icon: 'ant-design:history-outlined',
-                onClick: handleViewApproveHistory.bind(null, record),
-              },
-              {
-                auth: 'ProcessTask:' + PerEnum.UPDATE,
-                icon: 'ant-design:stop-twotone',
-                tooltip: '终止',
-                label: '终止',
-                color: 'error',
-                onClick: handleStop.bind(null, record),
-              },
-            ]"
-          />
-        </template>
-
-        <template v-else-if="column.key === 'formName'">
-          <Tooltip title="查看流程图">
-            <a>
-              <PartitionOutlined @click="handlePreview(record)" />
-            </a>
-          </Tooltip>
-
-          <Tooltip placement="topLeft" :mouseEnterDelay="0.3">
-            <template #title>
-              {{ record.formName }}
-            </template>
-            {{ record.formName }}
-          </Tooltip>
-        </template>
-
-        <template v-else-if="column.key === 'assigneeName'">
-          <div class="text-right">
-            <Space>
-              <EmpInfo :no="record.assignee" :name="record.assigneeName" />
-              <Authority :value="'ProcessTask:' + PerEnum.UPDATE">
-                <a-button size="small" type="error" @click="handleChangeAssignee(record)"
-                  >变更</a-button
-                >
-              </Authority>
-            </Space>
-          </div>
-        </template>
-
-        <template v-else-if="column.key === 'taskId'">
-          <a @click="doCopyContent(record.taskId)"><CopyOutlined /></a>
-          {{ record.taskId }}
-        </template>
-
-        <template v-else-if="column.key === 'businessKey'">
-          <a v-if="!!record.businessKey" @click="doCopyContent(record.businessKey)"><CopyOutlined /></a>
-          {{ record.businessKey || '' }}
-        </template>
-
-        <template v-else-if="column.key === 'processInstanceId'">
-          <a @click="doCopyContent(record.processInstanceId)"><CopyOutlined /></a>
-          {{ record.processInstanceId }}
-        </template>
-
-        <template v-else-if="column.key === 'startPersonName'">
-          <EmpInfo :no="record.startPersonCode" :name="record.startPersonName" />
-        </template>
-
-        <template v-if="column.key === 'processStatusName'">
-          <ProcessStatus :value="record.processStatus" :text="record.processStatusName" />
-        </template>
+      <template #action="{ row }">
+        <TableAction
+            :actions="createActions(row)"
+            :dropDownActions="createDropDownActions(row)"
+        />
       </template>
+
+      <template #formName="{ row }">
+        <Tooltip title="查看流程图">
+          <a>
+            <PartitionOutlined @click="handlePreview(row)" />
+          </a>
+        </Tooltip>
+
+        <Tooltip placement="topLeft" :mouseEnterDelay="0.3">
+          <template #title>
+            {{ row.formName }}
+          </template>
+          {{ row.formName }}
+        </Tooltip>
+      </template>
+
+      <template #assigneeName="{ row }">
+        <div class="text-right">
+          <Space>
+            <EmpInfo :no="row.assignee" :name="row.assigneeName" />
+            <Authority :value="'ProcessTask:' + PerEnum.UPDATE">
+              <a-button size="small" type="error" @click="handleChangeAssignee(row)"
+              >变更</a-button
+              >
+            </Authority>
+          </Space>
+        </div>
+      </template>
+
+      <template #taskId="{ row }">
+        <a @click="doCopyContent(row.taskId)"><CopyOutlined /></a>
+        {{ row.taskId }}
+      </template>
+
+      <template #businessKey="{ row }">
+        <a v-if="!!row.businessKey" @click="doCopyContent(row.businessKey)"><CopyOutlined /></a>
+        {{ row.businessKey || '' }}
+      </template>
+
+      <template #processInstanceId="{ row }">
+        <a @click="doCopyContent(row.processInstanceId)"><CopyOutlined /></a>
+        {{ row.processInstanceId }}
+      </template>
+
+      <template #startPersonName="{ row }">
+        <EmpInfo :no="row.startPersonCode" :name="row.startPersonName" />
+      </template>
+
+      <template #processStatusName="{ row }">
+        <ProcessStatus :value="row.processStatus" :text="row.processStatusName" />
+      </template>
+
     </BasicTable>
-    <BpmnPreviewModal @register="registerBpmnPreviewModal" @success="handleSuccess" />
-    <PersonalSelectorModal
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" @success="handleSuccess" />
+    <PersonalSelectorModal ref="personalSelectorModalRef"
       @register="registerPersonalModal"
       @change="handleSettingPersonalSuccess"
     />
-    <FlowPropertiesModal @register="registerFlowPropertiesModal" />
-    <ApproveHistoryModal @register="registerApproveHistoryModal" />
-    <ProcessFormModal
+    <FlowPropertiesModal ref="flowPropertiesModalRef" @register="registerFlowPropertiesModal" />
+    <ApproveHistoryModal ref="approveHistoryModalRef" @register="registerApproveHistoryModal" />
+    <ProcessFormModal ref="processFormModalRef"
       @register="registerProcessFormModal"
       @reload="handleProcessFormVisibleChange"
     />
-  </div>
+  </Page>
 </template>
 <script lang="ts" setup>
   import { createVNode, nextTick, ref, unref } from 'vue';
   import { useVbenVxeGrid } from '#/adapter/vxe-table';
+  import type {Recordable} from '@vben/types';
   import type {VxeGridProps} from '#/adapter/vxe-table';
   import type {VbenFormProps} from '@vben/common-ui';
   import {Page} from '@vben/common-ui';
@@ -129,7 +87,7 @@
     updateAssignee,
   } from '#/api/flowoperation/processTask';
   import {BpmnPreviewModal} from '#/views/components/preview';
-  import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
+  // import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
   import FlowPropertiesModal from '../processInst/FlowPropertiesModal.vue';
   import { getAll } from '#/api/base/app';
   import { columns, searchFormSchema } from './processTask.data';
@@ -140,15 +98,22 @@
     PartitionOutlined,
     ExclamationCircleOutlined,
   } from '@ant-design/icons-vue';
-  import { Tooltip, Space, Modal } from 'ant-design-vue';
+  import { Tooltip, Space, Modal, Button, message } from 'ant-design-vue';
   import { PerEnum } from '#/enums/perEnum';
-  import { EmpInfo } from '@/components/EmpInfo';
-  import { useRequest } from '@vben/hooks';
+  import {EmpInfo} from '#/views/components/EmpInfo';
+  // import { useRequest } from '@vben/hooks';
+  import {useAccess} from "@vben/access";
+  import {TableAction} from '#/components/table-action';
+
   import ProcessStatus from '#/views/components/process/ProcessStatus.vue';
+  import {getPagerModel} from "#/api/form/bizForm";
 
   defineOptions({ name: 'ProcessTask' });
+  const PerPrefix = 'ProcessTask:';
+  const {hasAccessByCodes} = useAccess();
+
   // 人员选择弹窗
-  const [
+  /*const [
     registerPersonalModal,
     { openModal: openPersonalSelector, setModalProps: setPersonalModalProps },
   ] = useModal();
@@ -156,8 +121,6 @@
   const [openFullLoading, closeFullLoading] = useLoading({
     tip: '执行中...',
   });
-  const { createMessage } = useMessage();
-
   const [registerApproveHistoryModal, { openModal: openApproveHistoryModal, setModalProps }] =
     useModal();
   const [
@@ -171,9 +134,9 @@
   const [
     registerBpmnPreviewModal,
     { openModal: openBpmnPreviewModal, setModalProps: setBpmnPreviewProps },
-  ] = useModal();
+  ] = useModal();*/
 
-  const [registerTable, { getForm, reload }] = useTable({
+  /*const [registerTable, { getForm, reload }] = useTable({
     title: '',
     size: 'small',
     api: getPagerModelRunTasks,
@@ -204,38 +167,81 @@
       title: '操作',
       dataIndex: 'action',
     },
-  });
+  });*/
 
-  useRequest(
-    () => {
-      reload();
-      return Promise.resolve({});
+
+  const formOptions: VbenFormProps = {
+    showCollapseButton: false,
+    submitOnEnter: true,
+    commonConfig: {
+      labelWidth: 60,
     },
-    {
-      refreshOnWindowFocus: true,
+    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    actionWrapperClass: 'col-span-2 col-start-3 text-left ml-4',
+    resetButtonOptions: {
+      show: false,
     },
-  );
+    schema: searchFormSchema,
+  };
+
+  const gridOptions: VxeGridProps<any> = {
+    checkboxConfig: {
+      highlight: true,
+      labelField: 'name',
+    },
+    columns,
+    columnConfig: {resizable: true},
+    height: 'auto',
+    keepSource: true,
+    border: false,
+    stripe: true,
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          return await getPagerModelRunTasks({
+            query: {
+              pageNum: page.currentPage,
+              pageSize: page.pageSize,
+            },
+            entity: formValues || {},
+          });
+        },
+      },
+    },
+  };
+
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+
+  /*  useRequest(
+      () => {
+        tableApi.reload();
+        return Promise.resolve({});
+      },
+      {
+        refreshOnWindowFocus: true,
+      },
+    );*/
 
   // 人员选择后回调
   function handleSettingPersonalSuccess(selectedPersonal) {
     if (selectedPersonal.length === 0) {
-      createMessage.warning('请选择变更人员！');
+      message.warning('请选择变更人员！');
       return;
     }
-    openFullLoading();
+    // openFullLoading();
     const personals = selectedPersonal.map((item) => item.code);
     updateAssignee({ userId: personals[0], taskId: unref(currentTask).taskId })
       .then((res) => {
         const { data } = res;
         if (data.success) {
-          createMessage.success(data.msg, 2);
+          message.success(data.msg, 2);
         } else {
-          createMessage.error(data.msg, 2);
+          message.error(data.msg, 2);
         }
       })
       .finally(() => {
-        closeFullLoading();
-        reload();
+        // closeFullLoading();
+        tableApi.reload();
       });
   }
 
@@ -252,15 +258,15 @@
   });
 
   function handleExe(record: Recordable) {
-    openFullLoading();
+    // openFullLoading();
     completeBackStage({ taskId: record.taskId, processInstanceId: record.processInstanceId })
       .then((res) => {
         const { data } = res;
         if (data.success) {
-          createMessage.success(data.msg);
-          reload();
+          message.success(data.msg);
+          tableApi.reload();
         } else {
-          createMessage.error(data.msg);
+          message.error(data.msg);
         }
       })
       .finally(() => {
@@ -284,10 +290,10 @@
           .then((res) => {
             const { data } = res;
             if (data.success) {
-              createMessage.success(data.msg);
-              reload();
+              message.success(data.msg);
+              tableApi.reload();
             } else {
-              createMessage.error(data.msg);
+              message.error(data.msg);
             }
           })
           .finally(() => {
@@ -371,12 +377,68 @@
     });
   }
 
+
+  function createActions (row: Recordable<any>) {
+    return [
+      {
+        label: '',
+        tooltip: '查看表单',
+        icon: 'ant-design:pic-right-outlined',
+        onClick: handleViewForm.bind(null, row),
+      },
+      {
+        icon: 'ant-design:partition-outlined',
+        tooltip: '流程图预览',
+        onClick: handlePreview.bind(null, row),
+      },
+      {
+        auth: [PerPrefix + PerEnum.UPDATE],
+        icon: 'ant-design:play-circle-filled',
+        tooltip: '执行',
+        label: '',
+        popConfirm: {
+          title: '确认执行吗?',
+          confirm: handleExe.bind(null, row),
+          okButtonProps: {
+
+          }
+        },
+      },
+    ];
+  }
+
+  function createDropDownActions (row: Recordable<any>) {
+    return [
+      {
+        label: '审批变量',
+        icon: 'ant-design:profile-outlined',
+        onClick: handleViewFlowProperties.bind(null, row),
+      },
+      {
+        label: '审批记录',
+        icon: 'ant-design:history-outlined',
+        onClick: handleViewApproveHistory.bind(null, row),
+      },
+      {
+        auth: [PerPrefix + PerEnum.UPDATE],
+        icon: 'ant-design:stop-twotone',
+        tooltip: '终止',
+        label: '终止',
+        danger: true,
+        onClick: handleStop.bind(null, row),
+        okButtonProps: {
+          danger: true
+        }
+      },
+    ];
+  }
+
   function handleSuccess() {
-    reload();
+    tableApi.reload();
   }
 
   function handleCloseFunc() {
-    reload();
+    tableApi.reload();
     return Promise.resolve(true);
   }
 
@@ -386,7 +448,7 @@
 
   function handleProcessFormVisibleChange() {
     setTimeout(() => {
-      reload();
+      tableApi.reload();
     }, 200);
   }
 </script>

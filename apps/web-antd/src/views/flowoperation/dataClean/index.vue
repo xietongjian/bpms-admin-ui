@@ -95,7 +95,7 @@
     cleanByModelKeys,
     cleanByProcInstIds, deleteModelByModelKey,
     syncModel,
-  } from '@/api/flowoperation/dataClean';
+  } from '#/api/flowoperation/dataClean';
   import { HeatMapOutlined } from '@ant-design/icons-vue';
 
   import { ResultEnum } from '@/enums/httpEnum';
@@ -108,7 +108,6 @@
   const deleteModelByModelKeyLoading = ref<boolean>(false);
   const bpmnModelSyncLoading = ref<boolean>(false);
   const dmnModelSyncLoading = ref<boolean>(false);
-  const { createMessage, createConfirm } = useMessage();
 
   const [registerBizKeyForm, { validate: validateBizKeyForm, setProps }] = useForm({
     labelWidth: 150,
@@ -158,9 +157,9 @@
           .then((res) => {
             const resData = res.data;
             if (resData.code === ResultEnum.SUCCESS) {
-              createMessage.success(resData.msg);
+              message.success(resData.msg);
             } else {
-              createMessage.error(resData.msg);
+              message.error(resData.msg);
             }
           })
           .finally(() => {
@@ -185,9 +184,9 @@
           .then((res) => {
             const resData = res.data;
             if (resData.code === ResultEnum.SUCCESS) {
-              createMessage.success(resData.msg);
+              message.success(resData.msg);
             } else {
-              createMessage.error(resData.msg);
+              message.error(resData.msg);
             }
           })
           .finally(() => {
@@ -212,9 +211,9 @@
           .then((res) => {
             const resData = res.data;
             if (resData.code === ResultEnum.SUCCESS) {
-              createMessage.success(resData.msg);
+              message.success(resData.msg);
             } else {
-              createMessage.error(resData.msg);
+              message.error(resData.msg);
             }
           })
           .finally(() => {
@@ -243,9 +242,9 @@
           .then((res) => {
             const {success, msg} = res.data;
             if (success) {
-              createMessage.success(msg);
+              message.success(msg);
             } else {
-              createMessage.error(msg);
+              message.error(msg);
             }
           })
           .finally(() => {
@@ -270,9 +269,9 @@
           .then((res) => {
             const resData = res.data;
             if (resData.code === ResultEnum.SUCCESS) {
-              createMessage.success(resData.msg);
+              message.success(resData.msg);
             } else {
-              createMessage.error(resData.msg);
+              message.error(resData.msg);
             }
           })
           .finally(() => {
@@ -296,9 +295,9 @@
           .then((res) => {
             const resData = res.data;
             if (resData.code === ResultEnum.SUCCESS) {
-              createMessage.success(resData.msg);
+              message.success(resData.msg);
             } else {
-              createMessage.error(resData.msg);
+              message.error(resData.msg);
             }
           })
           .finally(() => {

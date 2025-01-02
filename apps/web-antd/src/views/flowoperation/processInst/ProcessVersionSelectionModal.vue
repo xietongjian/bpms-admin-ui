@@ -12,7 +12,7 @@
   import {
     changeProcessInstanceVersion,
     getProcessInstanceVersions,
-  } from '@/api/flowoperation/processInst';
+  } from '#/api/flowoperation/processInst';
   import { Input, Button, Empty, FormItemRest } from 'ant-design-vue';
   import { PopConfirmButton } from '@/components/Button';
 

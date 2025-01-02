@@ -2,7 +2,7 @@ import { FormSchema } from '@/components/Table';
 
 export const bizKeyFormSchema: FormSchema[] = [
   {
-    field: 'bizKeys',
+    fieldName: 'bizKeys',
     label: '业务表单Key',
     component: 'Input',
     required: true,
@@ -20,7 +20,7 @@ export const bizKeyFormSchema: FormSchema[] = [
 ];
 export const procInstIdFormSchema: FormSchema[] = [
   {
-    field: 'procInstIds',
+    fieldName: 'procInstIds',
     label: '流程ProcInstId',
     component: 'Input',
     required: true,
@@ -39,7 +39,7 @@ export const procInstIdFormSchema: FormSchema[] = [
 
 export const modelKeyFormSchema: FormSchema[] = [
   {
-    field: 'modelKeys',
+    fieldName: 'modelKeys',
     label: '流程ModelKey',
     component: 'Input',
     required: true,
@@ -58,7 +58,7 @@ export const modelKeyFormSchema: FormSchema[] = [
 
 export const deleteModelByModelKeyFormSchema: FormSchema[] = [
   {
-    field: 'modelKey',
+    fieldName: 'modelKey',
     label: '流程ModelKey',
     component: 'Input',
     required: true,
