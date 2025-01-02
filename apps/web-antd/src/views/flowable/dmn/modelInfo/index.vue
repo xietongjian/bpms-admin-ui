@@ -321,9 +321,18 @@ function handleCreate({key}) {
   });*/
 }
 
-function handleViewXml(record: Recordable, e) {
+async function handleViewXml(record: Recordable<any>, e) {
   e.stopPropagation();
-  getByModelId({modelId: record.modelId}).then((res) => {
+
+  const res = await getByModelId({modelId: record.modelId});
+
+  codePreviewModalRef.value.setData({code: res.modelXml, type: 'xml'});
+  codePreviewModalRef.value.open();
+  codePreviewModalRef.value.setState({
+    title: `查看【${record.name}】的XML`,
+  });
+
+  /*getByModelId({modelId: record.modelId}).then((res) => {
     openCodePreviewModal(true, {
       record: {code: res.modelXml, type: 'xml'},
       isUpdate: false,
@@ -336,7 +345,7 @@ function handleViewXml(record: Recordable, e) {
       showOkBtn: false,
       cancelText: '关闭',
     });
-  });
+  });*/
 }
 
 function handleSimulate(record: Recordable, e) {
@@ -373,9 +382,9 @@ function handlePreview(record: Recordable, e) {
   });
 }
 
-function createActions(record: Recordable, column: BasicColumn): ActionItem[] {
+function createActions(record: Recordable<any>){
   const {status} = record;
-  let actions: ActionItem[] = [
+  let actions = [
     /*{
     icon: 'ant-design:play-square-outlined',
     tooltip: '模拟',
@@ -389,7 +398,7 @@ function createActions(record: Recordable, column: BasicColumn): ActionItem[] {
       onClick: handlePreview.bind(null, record),
     },
     {
-      auth: 'Dmn:' + PerEnum.UPDATE,
+      auth: [PerPrefix + PerEnum.UPDATE],
       icon: 'clarity:note-edit-line',
       tooltip: '编辑决策',
       label: '',
@@ -424,71 +433,62 @@ function createActions(record: Recordable, column: BasicColumn): ActionItem[] {
 }
 
 // FIXME 删除决策引擎的接口暂未实现
-function handleDelete(record: Recordable) {
-  deleteByIds([record.id]).then((res) => {
-    reload();
-  });
-}
-
-function publish(modelId) {
-  loadingRef.value = true;
-  publishDmn(modelId)
-      .then((res) => {
-        const {data} = res;
-        if (data.success) {
-          message.success(data.msg, 2);
-          reload();
-        } else {
-          message.error(data.msg, 2);
-        }
-      })
-      .finally(() => {
-        loadingRef.value = false;
-      });
-}
-
-function stop(id) {
-  loadingRef.value = true;
-  stopDmn(id)
-      .then((res) => {
-        const {data} = res;
-        if (data.success) {
-          message.success(data.msg, 2);
-          handleSuccess();
-        } else {
-          message.error(data.msg, 2);
-        }
-      })
-      .finally(() => {
-        loadingRef.value = false;
-      });
-}
-
-function handlePublish(record: Recordable) {
-  loadingRef.value = true;
-  if (record.modelId) {
-    publish(record.modelId);
-  } else {
-    const selectedRows = getSelectRows();
-    if (selectedRows && selectedRows.length <= 0) {
-      message.warn('请选择行！');
-      return;
-    }
-    publish(selectedRows[0].modelId);
+async function handleDelete(record: Recordable<any>) {
+  const {success, msg} = await deleteByIds([record.id]);
+  if (success) {
+    tableApi.reload();
+    message.success(msg);
   }
 }
 
-function handleStop(record: Recordable) {
+async function publish(modelId) {
+  loadingRef.value = true;
+  const {success, msg} = await publishDmn(modelId);
+  if (success) {
+    message.success(msg, 2);
+    tableApi.reload();
+  } else {
+    message.error(msg, 2);
+  }
+
+}
+
+async function stop(id) {
+  loadingRef.value = true;
+  const {success, msg} = await stopDmn(id);
+  if (success) {
+    message.success(msg, 2);
+    handleSuccess();
+  } else {
+    message.error(msg, 2);
+  }
+}
+
+async function handlePublish(record: Recordable<any>) {
   loadingRef.value = true;
   if (record.modelId) {
-    stop(record.id);
+    return publish(record.modelId);
   } else {
-    const selectedRows = getSelectRows();
-    if (selectedRows && selectedRows.length <= 0) {
+    const selectedRow = tableApi.grid.getRadioRecord();
+    if (!selectedRow) {
       message.warn('请选择行！');
       return;
     }
-    stop(selectedRows[0].id);
+    return publish(selectedRow.modelId);
+  }
+}
+
+async function handleStop(record: Recordable<any>) {
+  loadingRef.value = true;
+  if (record.modelId) {
+    return stop(record.id);
+  } else {
+    const selectedRow = tableApi.grid.getRadioRecord();
+    if (!selectedRow) {
+      message.warn('请选择行！');
+      return;
+    }
+    return stop(selectedRow.id);
   }
 }
 
@@ -515,13 +515,13 @@ function handleEditDmn(record: Recordable) {
 }
 
 function handleEditDmn1(record: Recordable) {
-  go({name: 'DmnDesigner', query: {modelId: record.modelId, id: record.id}});
+  // go({name: 'DmnDesigner', query: {modelId: record.modelId, id: record.id}});
   // go("/flowable/dmn/designer?modelId=" + record.modelId + "&id=" + record.id);
 }
 
 function handleSuccess() {
   let searchInfo = {categoryCode: unref(currentCategory).code || ''};
-  reload({searchInfo});
+  tableApi.reload({searchInfo});
 }
 
 function fetchSuccess(e) {

@@ -1,82 +1,87 @@
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import { h } from 'vue';
 import { z } from '#/adapter/form';
-
-import { Tag } from 'ant-design-vue';
 import { RemarkDefaultEnum } from '#/enums/commonEnum';
 
-const colProps = {
-  span: 24,
-};
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
+  {
+    title: '名称',
+    field: 'name',
+    align: 'left',
+    type: 'expand',
+    slots: {
+      content: 'expandContent',
+    }
+  },
   {
     title: '监听类型',
-    dataIndex: 'listenerType',
+    field: 'listenerType',
     width: 180,
     align: 'left',
   },
   {
     title: '类型',
-    dataIndex: 'type',
+    field: 'type',
     width: 180,
     align: 'left',
   },
   {
-    title: '名称',
-    dataIndex: 'name',
-    align: 'left',
-  },
-  {
     title: '值',
-    dataIndex: 'value',
+    field: 'value',
     align: 'left',
   },
   {
     title: '备注',
-    dataIndex: 'remark',
+    field: 'remark',
     align: 'left',
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
-export const propertiesColumns: BasicColumn[] = [
+export const propertiesColumns: VxeGridProps['columns'] = [
   {
     title: 'ID',
-    dataIndex: 'id',
-    ifShow: false,
+    field: 'id',
+    visible: false,
   },
   {
     title: 'listenerId',
-    dataIndex: 'listenerId',
-    ifShow: false,
+    field: 'listenerId',
+    visible: false,
   },
   {
     title: '操作',
-    dataIndex: 'option',
+    field: 'option',
     align: 'center',
     width: 100,
   },
   {
     title: '名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
     //edit: true,
     //editable: true,
-    editComponent: 'Input',
-    editComponentProps: {
+    // editComponent: 'Input',
+   /* editComponentProps: {
       size: 'small',
-    },
+    },*/
   },
   {
     title: '值',
-    dataIndex: 'value',
+    field: 'value',
     align: 'left',
   },
   {
     title: '类型',
-    dataIndex: 'type',
+    field: 'type',
     align: 'left',
-    customRender: ({ record }) => {
+/*    customRender: ({ record }) => {
       let text = '未知';
       let color = 'default';
       if (record.type === 'string') {
@@ -87,66 +92,54 @@ export const propertiesColumns: BasicColumn[] = [
         color = 'processing';
       }
       return h(Tag, { color: color }, () => text);
-    },
+    },*/
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'listenerType',
+    fieldName: 'listenerType',
     label: '监听类型',
     component: 'Select',
     labelWidth: 80,
-    colProps: {
-      span: 4,
-      lg: { span: 4, offset: 0 },
-      sm: { span: 6, offset: 0 },
-      xs: { span: 8, offset: 0 },
-    },
   },
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/标识',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id'],
+    }
   },
   {
-    field: 'listenerType',
+    fieldName: 'listenerType',
     label: '监听类型',
-    required: true,
     component: 'RadioGroup',
-    colProps,
+    rules: 'selectRequired',
   },
   {
-    field: 'type',
+    fieldName: 'type',
     label: '类型',
-    required: true,
     component: 'RadioGroup',
     defaultValue: 'class',
-    colProps,
+    rules: 'selectRequired'
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
-    required: true,
     component: 'Input',
 
     rules: z
@@ -158,23 +151,22 @@ export const formSchema: FormSchema[] = [
         .max(80, "字符长度不能大于80！")
   },
   {
-    field: 'value',
+    fieldName: 'value',
     label: '值',
-    required: true,
     component: 'Input',
     rules: z
         .string({
-          required_error: '名称不能为空',
+          required_error: '值不能为空',
         })
         .trim()
-        .min(1, "名称不能为空")
+        .min(1, "值不能为空")
         .max(300, "字符长度不能大于300！")
   },
 
   {
     label: '备注',
-    field: 'remark',
-    component: 'InputTextArea',
+    fieldName: 'remark',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -191,39 +183,55 @@ export const formSchema: FormSchema[] = [
 
 export const propertiesFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id'],
+    }
   },
   {
-    field: 'listenerId',
+    fieldName: 'listenerId',
     label: 'listenerId',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['listenerId'],
+    }
   },
   {
-    field: 'type',
+    fieldName: 'type',
     label: '类型',
-    required: true,
     component: 'RadioGroup',
     defaultValue: 'string',
-    colProps,
+    rules: "selectRequired"
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
-    helpMessage: '监听器的属性名',
-    required: true,
+    help: '监听器的属性名',
     component: 'Input',
-    colProps,
+    rules: z
+        .string({
+          required_error: '属性名不能为空',
+        })
+        .trim()
+        .min(1, "属性名不能为空")
+        .max(80, "字符长度不能大于80！")
   },
   {
-    field: 'value',
+    fieldName: 'value',
     label: '值',
-    helpMessage: '监听器的属性值',
-    required: false,
+    help: '监听器的属性值',
     component: 'Input',
+    rules: z
+        .string({
+          required_error: '属性值不能为空',
+        })
+        .trim()
+        .min(1, "属性值不能为空")
+        .max(80, "字符长度不能大于80！")
     /*
     FIXME
     rules: [

@@ -24,11 +24,44 @@
         />
       </div>
       <div class="flex-1 overflow-y-auto mt-2">
+        <Transfer
+            show-search
+            :filter-option="filterOption"
+            v-model:target-keys="targetKeys"
+            class="tree-transfer"
+            :data-source="dataSource"
+            :render="item => item.title"
+            :show-select-all="false"
+            @search="handleSearch"
+        >
+          <template #children="{ direction, selectedKeys, onItemSelect }">
+            <Tree
+                v-if="direction === 'left'"
+                block-node
+                checkable
+                check-strictly
+                default-expand-all
+                :checked-keys="[...selectedKeys, ...targetKeys]"
+                :tree-data="treeData"
+                @check="
+                  (_, props) => {
+                    onChecked(props, [...selectedKeys, ...targetKeys], onItemSelect);
+                  }
+                "
+                @select="
+                  (_, props) => {
+                    onChecked(props, [...selectedKeys, ...targetKeys], onItemSelect);
+                  }
+                "
+            />
+          </template>
+        </Transfer>
         <Tree
           ref="treeRef"
           title="组织"
           search
           block-node
+          show-search
           :clickRowToExpand="false"
           :treeData="treeData"
           @check="handleCheck"
@@ -65,14 +98,17 @@
     unref,
     nextTick,
   } from 'vue';
-  import { Tag, Input, Tree } from 'ant-design-vue';
+  import { Tag, Input, Tree, Transfer } from 'ant-design-vue';
   import {useVbenModal} from '@vben/common-ui';
-  import type { TreeProps } from 'ant-design-vue';
   import { listToTree, forEach } from '#/utils/helper/treeHelper';
+  import type { TransferProps, TreeProps } from 'ant-design-vue';
 
   import { getOrgTree, getOrgListData } from '#/api/org/dept';
   import {getCompanies, getCompaniesListData} from '#/api/org/company';
+  const targetKeys = ref<string[]>([]);
+  const transferDataSource: TransferProps['dataSource'] = [];
 
+  const dataSource = ref(transferDataSource);
   const InputSearch = Input.Search;
   enum OrgSelectType {
     COMPANY = '1',
@@ -99,7 +135,26 @@
 
   const expandedKeys = ref<(string | number)[]>([]);
   const autoExpandParent = ref<boolean>(true);
+  const filterOption = (inputValue: string, option: any) => {
+    debugger;
+    return option.title.indexOf(inputValue) > -1;
+  };
 
+  const handleSearch = (dir: string, value: string) => {
+    debugger;
+    console.log('search:', dir, value);
+  };
+  function isChecked(selectedKeys: (string | number)[], eventKey: string | number) {
+    return selectedKeys.indexOf(eventKey) !== -1;
+  }
+  const onChecked = (
+      e: Parameters<TreeProps['onCheck']>[1] | Parameters<TreeProps['onSelect']>[1],
+      checkedKeys: string[],
+      onItemSelect: (n: any, c: boolean) => void,
+  ) => {
+    const { eventKey } = e.node;
+    onItemSelect(eventKey, !isChecked(checkedKeys, eventKey));
+  };
   function getTree() {
     const tree = unref(treeRef);
     if (!tree) {
@@ -218,6 +273,26 @@
       }
     })
   };
+
+  function multiFilterTree(tree, name, isOpen) {
+    const filteredNodes = [];
+    for (const node of tree) {
+      const isNameMatch = name === null || (typeof name === 'string' && node.name.includes(name));
+      const isOpenMatch = isOpen === null || node.isOpen === isOpen;
+
+      if (isNameMatch && isOpenMatch) {
+        const children = multiFilterTree(node.children, name, isOpen);
+        filteredNodes.push({ ...node, children: children.length > 0 ? children : [] });
+      } else {
+        const children = multiFilterTree(node.children, name, isOpen);
+        if (children.length > 0) {
+          filteredNodes.push({ ...node, children });
+        }
+      }
+    }
+    return filteredNodes;
+  }
+
 
   watch(searchValue, value => {
     // search();

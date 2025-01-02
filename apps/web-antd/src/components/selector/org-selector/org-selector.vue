@@ -197,6 +197,7 @@ function openSelectorModal() {
     <template  v-else>
       <TreeSelect
           ref="selectorRef"
+          popupClassName="border !block"
           v-model:value="currentSelect"
           :placeholder="placeholder"
           class="w-full "

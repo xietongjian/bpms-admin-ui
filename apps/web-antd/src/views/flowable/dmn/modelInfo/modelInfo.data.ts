@@ -7,14 +7,12 @@ import { Tag } from 'ant-design-vue';
 import { getAll } from '#/api/base/app';
 import { h } from 'vue';
 
-const colProps = {
-  span: 24,
-};
 export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
     field: 'name',
     align: 'left',
+    minWidth: 200,
   },
   {
     title: 'KEY',
@@ -45,7 +43,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'statusName',
     width: 70,
     align: 'center',
-    customRender: ({ record }) => {
+/*    customRender: ({ record }) => {
       const { status, statusName } = record;
       let color = '';
       if (~~status === 2) {
@@ -58,13 +56,20 @@ export const columns: VxeGridProps['columns'] = [
         color = 'gray';
       }
       return h(Tag, { color: color }, () => statusName);
-    },
+    },*/
   },
   {
     title: '更新时间',
     field: 'updateTime',
     width: 120,
     align: 'left',
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
