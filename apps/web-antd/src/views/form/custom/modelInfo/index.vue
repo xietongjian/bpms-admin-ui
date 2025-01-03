@@ -86,11 +86,11 @@
 import { ref, unref, watch } from 'vue';
 import { PerEnum } from '#/enums/perEnum';
   import {useAccess} from '@vben/access';
-  import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
+import type {Recordable} from '@vben/types';
   import {ColPage, Page} from '@vben/common-ui';
   import {TableAction} from '#/components/table-action';
 
