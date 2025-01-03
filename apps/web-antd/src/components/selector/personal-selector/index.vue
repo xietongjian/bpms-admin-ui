@@ -48,8 +48,9 @@
 <script lang="ts" setup>
   import { ref, watch, unref, onMounted, defineProps } from 'vue';
   import PersonalSelectorModal from './PersonalSelectorModal.vue';
-  import Icon from '#/components/Icon/Icon.vue';
+  // import Icon from '#/components/Icon/Icon.vue';
   import { Tooltip, Select, Tag } from 'ant-design-vue';
+  import type {Recordable} from '@vben/types';
 
   import {
     SearchOutlined,

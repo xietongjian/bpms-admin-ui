@@ -1,7 +1,7 @@
 <template>
   <div class="h-full h-full">
-    <Spin wrapperClassName="custom-spin-container" :spinning="loading" size="large">
-      <iframe class="w-full h-full border-0" :src="frameSrc" ref="frameRef"></iframe>
+    <Spin wrapperClassName="h-full w-full custom-spin-container" :spinning="loading" size="large">
+      <iframe class="!w-full !h-full border-0" :src="frameSrc" ref="frameRef"></iframe>
     </Spin>
   </div>
 </template>

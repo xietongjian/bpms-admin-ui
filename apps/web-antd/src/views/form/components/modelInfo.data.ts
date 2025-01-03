@@ -124,12 +124,12 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     show: false,
   },
   {
-    field: 'basicTitle',
+    fieldName: 'basicTitle',
     slot: 'basicTitle',
     colProps,
   },
   {
-    field: 'showName',
+    fieldName: 'showName',
     label: '名称/编号',
     slot: 'showTitle',
     colProps,
@@ -238,7 +238,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
   {
     fieldName: 'processDockingNo',
     label: '流程BP',
-    helpMessage: '流程对接人',
+    help: '流程对接人',
     component: 'PersonalSelector',
     required: true,
     componentProps: {
@@ -253,7 +253,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
   {
     fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
@@ -289,7 +289,6 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     fieldName: 'modelIcon',
     label: '图标',
     component: 'SysIconPicker',
-    show: true,
     componentProps: {
       mode: 'svg',
     },

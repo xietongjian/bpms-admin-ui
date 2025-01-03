@@ -336,6 +336,6 @@ function handleSelect(keys, e) {
   fetchPageList({});
 }
 
-defineExpose(defineExpose);
+defineExpose(modalApi);
 </script>
 

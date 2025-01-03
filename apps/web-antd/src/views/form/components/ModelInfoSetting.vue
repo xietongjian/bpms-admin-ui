@@ -10,7 +10,7 @@
         @click="handleMenuClick"
       />
     </div>
-    <ScrollContainer
+    <div
       v-loading="loadingRef"
       id="modelInfoSettingScrollId"
       ref="modelInfoSettingScrollRef"
@@ -38,12 +38,12 @@
           </Space>
         </template>
       </BasicForm>
-      <div style="height: 100px"></div>
-    </ScrollContainer>
+      <div class="h-25"></div>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
-  import { defineComponent, ref, unref, watch, onMounted, computed, nextTick } from 'vue';
+  import { defineComponent, ref, unref, watch, onMounted, defineEmits, defineExpose, computed, nextTick } from 'vue';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps} from '#/adapter/vxe-table';
@@ -59,6 +59,8 @@
   // import { ScrollContainer } from '@/components/Container';
 
   import { FormValidPatternEnum } from '#/enums/commonEnum';
+  import {useVbenForm} from "#/adapter/form";
+  import {formSchema} from "#/views/org/jobGrade/jobGrade.data";
   defineComponent({
     name: 'ModelInfoSetting',
   });
@@ -125,6 +127,19 @@
     return scroll;
   };
 
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: modelInfoSettingFormSchema,
+    wrapperClass: 'grid-cols-1',
+  });
+  /*
   const [registerForm, { setFieldsValue, updateSchema, validate, clearValidate, scrollToField }] = useForm({
     labelWidth: 150,
     schemas: modelInfoSettingFormSchema,
@@ -132,7 +147,7 @@
     showSubmitButton: false,
     showAdvancedButton: false,
     scrollToFirstError: true
-  });
+  });*/
 
   function handleMenuClick(event) {
     nextTick(() => {
@@ -195,7 +210,7 @@
           },
         ]);
         if (!props.modelId) {
-          setFieldsValue({
+          formApi.setValues({
             authPointList: defaultAuthPointList,
           });
         }
@@ -217,7 +232,7 @@
     if (props.modelId) {
       loadFormData(props.modelId);
     } else {
-      setFieldsValue({
+      formApi.setValues({
         formType: unref(currentFormType) === 'bizNoForm' ? 2 : 1,
         showStatus: showStatusList.map((item) => item.value),
       });
@@ -226,7 +241,7 @@
 
   function initFormSchema() {
     if (props.formType !== 'custom') {
-      const getBaseDynamicRules = (params: CheckExistParams) => {
+      const getBaseDynamicRules = (params: any) => {
         if (props.modelId) {
           return [];
         }
@@ -425,7 +440,7 @@
           res.showStatus = [];
         }
 
-        setFieldsValue({
+        formApi.setValues({
           modelKey: res.modelKey,
           name: res.name,
           categoryCode: res.categoryCode,
@@ -457,7 +472,11 @@
     try {
       // formType 0:自定义；1：业务
       loadingRef.value = true;
-      const values = await validate();
+      const {valid} = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
       // 适用单位（公司）
       if (values.applyCompanies && values.applyCompanies.length > 0) {
         let applyCompanies = values.applyCompanies.map((item) => {
