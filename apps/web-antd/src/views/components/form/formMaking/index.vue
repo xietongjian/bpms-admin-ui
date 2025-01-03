@@ -90,7 +90,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, ref, toRefs, unref, nextTick, watch, defineProps, defineExpose } from 'vue';
+  import { onMounted, ref, toRefs, unref, nextTick, watch, defineProps, defineEmits, defineExpose } from 'vue';
   import {
     Space,
     InputNumber,

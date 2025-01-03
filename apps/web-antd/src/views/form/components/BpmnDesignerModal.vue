@@ -3,7 +3,6 @@
     content-class="designer-container p-0"
     :footer="null"
     v-bind="$attrs"
-    @register="registerModal"
     @open-change="handleOpenChange"
   >
     <template #title>
@@ -68,16 +67,14 @@
           </Col>
           <Col span="8" style="text-align: right">
             <Space>
-              <Authority :value="privilegeSn + ':' + PerEnum.PUBLISH">
-                <Popconfirm v-if="publishBtnVisibility" @confirm="handlePublish">
-                  <template #title>
-                    <div style="max-width: 300px; word-wrap: break-word; white-space: break-spaces">
-                      确定要发布【{{ modelBaseInfo.name }}】流程吗？
-                    </div>
-                  </template>
-                  <a-button color="success" :disabled="saveLoading">发布</a-button>
-                </Popconfirm>
-              </Authority>
+              <Popconfirm v-if="hasAccessByCodes([PerPerfix + PerEnum.PUBLISH]) && publishBtnVisibility" @confirm="handlePublish">
+                <template #title>
+                  <div style="max-width: 300px; word-wrap: break-word; white-space: break-spaces">
+                    确定要发布【{{ modelBaseInfo.name }}】流程吗？
+                  </div>
+                </template>
+                <Button color="success" :disabled="saveLoading">发布</Button>
+              </Popconfirm>
 
               <Tag
                 v-if="
@@ -179,8 +176,8 @@
       <div v-show="currentStepValue === 3">
         <Result status="success" title="发布成功" sub-title="流程已发布！">
           <template #extra>
-            <a-button key="continue" @click="handleContinueEdit"> 继续编辑 </a-button>
-            <a-button key="back" type="primary" @click="handleClose"> 返回列表 </a-button>
+            <Button key="continue" @click="handleContinueEdit"> 继续编辑 </Button>
+            <Button key="back" type="primary" @click="handleClose"> 返回列表 </Button>
           </template>
         </Result>
       </div>
@@ -191,7 +188,6 @@
 <script lang="ts" setup>
   import { onMounted, ref, unref, computed, defineExpose } from 'vue';
   import BpmnDesigner from '#/views/components/process/BpmnDesigner.vue';
-  import { useProcessSettingStore } from '#/store/processSetting';
   import {
     getByModelId,
     loadFormBpmnStatus,
@@ -200,18 +196,7 @@
     deployForm,
   } from '#/api/flowable/bpmn/modelInfo';
   import {
-    Badge,
-    Button,
-    Space,
-    Tooltip,
-    Row,
-    Col,
-    Steps,
-    Tag,
-    Popconfirm,
-    Result,
-    message,
-    TypographyText,
+    Modal, Badge, Button, Space, Tooltip, Row, Col, Steps, Tag, Popconfirm, Result, message, TypographyText,
   } from 'ant-design-vue';
   import ModelInfoSetting from '#/views/form/components/ModelInfoSetting.vue';
   import FormDesigner from '#/views/components/form/formMaking/index.vue';
@@ -219,6 +204,7 @@
   import {useAccess} from '@vben/access';
 
   import { PerEnum } from '#/enums/perEnum';
+  import { useProcessSettingStore } from '#/store';
 
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
@@ -227,7 +213,9 @@
   // import { useAppStore } from '@/store/modules/app';
   const {hasAccessByCodes} = useAccess();
 
+  const [modal, contextHolder] = Modal.useModal();
 
+  const PerPerfix = 'Biz:';
   // const appStore = useAppStore();
 
   // 0保存成功，1保存中，2保存失败
@@ -239,7 +227,7 @@
   const emit = defineEmits(['success']);
   const currentStepValue = ref<number>(0);
   const publishLastStepValue = ref<number>(0);
-  const processSettingStore = useProcessSettingStore();
+  const {getDesignerCurrentStepValue, setDesignerStepObj} = useProcessSettingStore();
   // const { hasPermission } = usePermission();
 
   const designerStatus = ref({
@@ -370,7 +358,8 @@
 
   function initData(data) {
     // 从缓存中获取当前编辑的步骤
-    const currentStep = processSettingStore?.getDesignerCurrentStepValue(data.modelId);
+    const currentStep = getDesignerCurrentStepValue(data.modelId);
+    debugger;
     currentStepValue.value = currentStep;
     saveLoading.value = false;
 
@@ -416,6 +405,15 @@
     onCancel() {
       modalApi.close();
     },
+    onClosed() {
+      dataStatusIsDraft.value = {
+        formDesigner: false,
+        bpmnDesigner: false,
+        settingInfo: false,
+        finallyStatus: false,
+      };
+      emit('success');
+    },
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
@@ -432,26 +430,27 @@
     },
   });
 
-  function publish(modelKey) {
+  function changeLoading(loading) {
+    modalApi.setState({loading: loading, confirmLoading: loading});
+  }
+
+  async function publish(modelKey) {
     changeLoading(true);
     saveLoading.value = true;
-    deployForm({ modelKey, formType: unref(formType) })
-      .then((res) => {
-        const { data } = res;
-        if (data.success) {
-          message.success({ content: data.msg, style: { marginTop: '40px' } });
-          publishLastStepValue.value = currentStepValue.value;
-          currentStepValue.value = 3;
-        } else {
-          message.error({ content: data.msg, style: { marginTop: '40px' } });
-        }
-        saveLoading.value = false;
+    try {
+      const {success, msg} = await deployForm({modelKey, formType: unref(formType)});
+      if (success) {
+        message.success({content: msg, style: {marginTop: '40px'}});
+        publishLastStepValue.value = currentStepValue.value;
+        currentStepValue.value = 3;
         refreshStatus();
-      })
-      .finally(() => {
-        saveLoading.value = false;
-        changeLoading(false);
-      });
+      } else {
+        message.error({content: msg, style: {marginTop: '40px'}});
+      }
+    } finally {
+      saveLoading.value = false;
+      changeLoading(false);
+    }
   }
 
   function handleContinueEdit() {
@@ -507,7 +506,7 @@
       const errorLen = Object.keys(issues).length;
       getBpmnModelXml().then((res) => {
         if (errorLen > 0) {
-          createConfirm({
+          modal.confirm({
             iconType: 'warning',
             title: '温馨提示',
             content: `目前流程图存在 ${errorLen} 个错误, 确定要保存吗？`,
@@ -616,7 +615,6 @@
     return formDesignerRef.value
       .handleSave()
       .then((res) => {
-        debugger;
         modelBaseInfo.value.name = res.modelName;
         processModelId.value = res.modelId;
         processModelName.value = res.modelName;
@@ -650,7 +648,7 @@
             // 如果验证成功直接保存
             saveBpmnModelInfoBase(data);
           } else {
-            createConfirm({
+            modal.confirm({
               iconType: 'warning',
               title: '温馨提示',
               content: `${res.msg}`,
@@ -703,19 +701,12 @@
     if (unref(processModelId)) {
       const stepSettingObj = Object.assign({});
       stepSettingObj[`modelId_${unref(processModelId)}`] = current;
-      processSettingStore.setDesignerStepObj(stepSettingObj);
+      setDesignerStepObj(stepSettingObj);
     }
   }
 
   function handleClose() {
     modalApi.close();
-    dataStatusIsDraft.value = {
-      formDesigner: false,
-      bpmnDesigner: false,
-      settingInfo: false,
-      finallyStatus: false,
-    };
-    emit('success');
   }
 
   // 加载三个步骤的状态

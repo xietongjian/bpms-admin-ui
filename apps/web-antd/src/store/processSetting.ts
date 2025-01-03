@@ -1,58 +1,64 @@
 import { reactive } from 'vue';
 
 import { defineStore } from 'pinia';
-
+import {
+  StorageManager,
+  isBoolean,
+  isFunction
+} from '@vben/utils';
 import { PROCESS_SETTING_KEY } from '#/enums/cacheEnum';
+
+// import { setItem, getItem } from '@vben-core/shared/cache';
+
+
 // import { createLocalStorage } from '#/utils/cache';
 // import { PROCESS_SETTING_CACHE_TIME } from '#/settings/encryptionSetting';
 import { toRaw } from 'vue';
 
 // const localMemory = createLocalStorage({ timeout: PROCESS_SETTING_CACHE_TIME }); //new Memory(PROCESS_SETTING_CACHE_TIME);
-
+const storageManager = new StorageManager({
+  prefix: PROCESS_SETTING_KEY,
+});
 interface ProcessSettingState {
-  setting: {
-    // 表单/流程设计步骤条状态缓存
-    designerStepObj: {};
-  };
+  /**
+   * 表单/流程设计步骤条状态缓存
+   */
+  designerStepObj: {};
+}
+interface ProcessState {
+  setting: ProcessSettingState;
 }
 
-export const useProcessSettingStore = defineStore({
-  id: 'process-setting',
-  state: (): ProcessSettingState => {
-    return {
-      setting: {} //localMemory.get(PROCESS_SETTING_KEY),
-    };
-  },
-  getters: {
-    getProcessSetting(state) {
-      return state.setting;
-    },
-    getDesignerStepObj(state) {
-      return state.setting.designerStepObj;
-    },
-    getDesignerCurrentStepValue(state) {
-      return (modelId: string) => {
-        return state.setting?.designerStepObj &&
-          state.setting?.designerStepObj[`modelId_${modelId}`]
-          ? state.setting?.designerStepObj[`modelId_${modelId}`]
-          : 0;
-      };
-    },
-  },
+/**
+ * @zh_CN 流程设计相关
+ */
+export const useProcessSettingStore = defineStore("processSetting",{
   actions: {
+    getDesignerStepObj() {
+      return this.setting.designerStepObj;
+    },
+    getDesignerCurrentStepValue(modelId: string) {
+      return this.setting?.designerStepObj &&
+      this.setting?.designerStepObj[`modelId_${modelId}`]
+          ? this.setting?.designerStepObj[`modelId_${modelId}`]
+          : 0;
+    },
     setProcessSetting(setting: Object) {
       this.setting = Object.assign({}, this.setting, setting);
-      localMemory.set(PROCESS_SETTING_KEY, toRaw(this.setting));
+      storageManager.setItem(PROCESS_SETTING_KEY, toRaw(this.setting));
     },
     setDesignerStepObj(currentStepValueObj: Object) {
       this.setProcessSetting(
-        Object.assign({}, this.setting, {
-          designerStepObj: {
-            ...this.setting?.designerStepObj,
-            ...currentStepValueObj,
-          },
-        }),
+          Object.assign({}, this.setting, {
+            designerStepObj: {
+              ...this.setting?.designerStepObj,
+              ...currentStepValueObj,
+            },
+          }),
       );
-    },
+    }
   },
+  state: (): ProcessState => ({
+    setting: storageManager.getItem(PROCESS_SETTING_KEY),
+  })
 });

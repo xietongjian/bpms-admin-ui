@@ -1,10 +1,10 @@
 <template>
   <div class="flow-variable-setting">
     <div class="px-6 pt-2 flex justify-end">
-      <a-button type="link" @click="downloadTemplate">下载模板</a-button>
-      <a-button class="ml-2" type="link" @click="openUploadModal">导入</a-button>
+      <Button type="link" @click="downloadTemplate">下载模板</Button>
+      <Button class="ml-2" type="link" @click="openUploadModal">导入</Button>
     </div>
-    <VxeBasicTable :loading="true" class="variable-table" ref="tableRef" v-bind="gridOptions">
+    <BasicTable :loading="true" class="variable-table" ref="tableRef" v-bind="gridOptions">
       <template #action="{ row }">
         <TableAction outside :actions="createActions(row)" />
       </template>
@@ -12,7 +12,7 @@
         <Tag v-if="row.innerVariable" color="#87d068">是</Tag>
         <Tag v-else>否</Tag>
       </template>
-    </VxeBasicTable>
+    </BasicTable>
 
     <div style="width: 500px; margin: auto">
       <a-button
@@ -38,7 +38,7 @@
     getProcessVariableByModelKey,
     saveOrUpdateProcessVariable,
   } from '#/api/flowable/bpmn/modelInfo';
-  import { Tag } from 'ant-design-vue';
+  import { Tag, Button } from 'ant-design-vue';
   import { TableAction } from '#/components/table-action';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
@@ -152,7 +152,7 @@
       ],
     },
   });
-
+  const [BasicTable, tableApi] = useVbenVxeGrid({gridOptions});
   async function loadData() {
     if (!props.modelKey) {
       return;

@@ -435,9 +435,7 @@ import { PerEnum } from '#/enums/perEnum';
   }
 
   function handleBpmnDesignerModalSuccess() {
-    setTimeout(() => {
-      tableApi.reload();
-    }, 500);
+    tableApi.reload();
   }
 
   function changePublishStopBtnShow(status) {

@@ -172,7 +172,7 @@ export const deployForm = (params: any) =>
     (params.formType === 'custom' ? Api.DeployCustomForm : Api.DeployBizForm) +
         '/' +
         params.modelKey,{},
-    { isReturnNativeResponse: true }
+    { isTransformResponse: false }
   );
 
 export const getInitBpmnXml = (params: any) => {

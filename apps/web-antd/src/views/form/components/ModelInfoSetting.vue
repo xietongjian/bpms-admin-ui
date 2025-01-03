@@ -92,7 +92,6 @@
     },
   ];
   const loadingRef = ref(false);
-  const { createMessage } = useMessage();
   const selectedKeys = ref<string[]>(['basicTitleId']);
   const modelInfoSettingScrollRef = ref<Nullable<any>>(null);
 
@@ -512,11 +511,11 @@
 
       const {data: {data, success, msg}} = await saveOrUpdate(values);
       if (success && data) {
-        createMessage.success({ content: msg, style: { marginTop: '40px' } });
+        message.success({ content: msg, style: { marginTop: '40px' } });
         loadFormData(data.modelId);
         return Promise.resolve(data);
       } else {
-        createMessage.error(msg);
+        message.error(msg);
         return Promise.reject(msg);
       }
     } catch (e) {

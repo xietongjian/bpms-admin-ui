@@ -145,9 +145,12 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     colProps: {
       span: 12,
     },
-    show: ({ values }) => {
-      return values.formType !== 0;
-    },
+    dependencies: {
+      show(values) {
+        return values.formType !== 0;
+      },
+      triggerFields: [''],
+    }
   },
   {
     fieldName: 'modelKey',
@@ -157,12 +160,15 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     colProps: {
       span: 12,
     },
-    show: ({ values }) => {
-      return values.formType !== 0;
-    },
-    dynamicDisabled: ({ values }) => {
-      return !!values.id;
-    },
+    dependencies: {
+      show(values) {
+        return values.formType !== 0;
+      },
+      disabled(values){
+        return !!values.id;
+      } ,
+      triggerFields: [''],
+    }
   },
   {
     fieldName: 'appSn',
@@ -173,8 +179,14 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
       treeNodeFilterProp: 'name',
       getPopupContainer: () => document.body,
     },
-    dynamicDisabled: ({ values }) => {
-      return values.version > 0;
+    dependencies: {
+      show(values) {
+        return values.formType !== 0;
+      },
+      disabled(values){
+        return values.version > 0;
+      } ,
+      triggerFields: [''],
     },
     colProps: {
       span: 12,
@@ -276,7 +288,6 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
   {
     fieldName: 'modelIcon',
     label: '图标',
-    required: false,
     component: 'SysIconPicker',
     show: true,
     componentProps: {
@@ -362,7 +373,6 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     fieldName: 'showStatus',
     label: '适用平台',
     help: '该流程表单适用的平台',
-    required: false,
     component: 'CheckboxGroup',
     defaultValue: [],
     componentProps: {
