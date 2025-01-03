@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4">
+  <Page auto-content-height class="p-4">
     <div class="p-4 bg-white !pb-2">
       <BasicForm class="job-search-form" @register="registerSearchForm" />
     </div>
@@ -165,18 +165,28 @@
     <FlowPropertiesModal @register="registerFlowPropertiesModal" />
     <BpmnPreviewModal @register="registerBpmnPreviewModal" />
     <TimerJobEditModal @register="registerTimerJobEditModal" @success="handleChangeTab" />
-  </div>
+  </Page>
 </template>
 <script lang="ts" setup>
   import { nextTick, ref } from 'vue';
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
+  import { PerEnum } from '#/enums/perEnum';
+  import {useAccess} from '@vben/access';
+  import type {Recordable} from '@vben/types';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
+
+  import {useVbenVxeGrid} from '#/adapter/vxe-table';
+  import {ColPage, Page} from '@vben/common-ui';
+  import {TableAction} from '#/components/table-action';
+
+
   import {
     getJobsCount,
     moveDeadLetterJobToExecutableJobByJobIds,
     queryDeadLetterJobPagerModel,
     queryTimerJobPagerModel,
   } from '#/api/flowoperation/processJob';
-  import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
+  import {BpmnPreviewModal} from '#/views/components/preview';
   import { getAll } from '#/api/base/app';
   import { useLoading } from '@/components/Loading';
   import { timerJobColumns, deadLetterJobColumns, searchFormSchema } from './processJob.data';
@@ -185,11 +195,10 @@
   import TimerJobEditModal from './TimerJobEditModal.vue';
   import { CopyOutlined, PartitionOutlined, HighlightOutlined } from '@ant-design/icons-vue';
   import { copyText } from '@/utils/copyTextToClipboard';
-  import { useMessage } from '@/hooks/web/useMessage';
   import { Tooltip, Tabs, Badge, Button, Space, message } from 'ant-design-vue';
   import { useModal } from '@/components/Modal';
-  import { useRequest } from '@vben/hooks';
-  import { PerEnum } from '@/enums/perEnum';
+  // import { useRequest } from '@vben/hooks';
+  // import { PerEnum } from '@/enums/perEnum';
   import { Authority } from '@/components/Authority';
   import { BasicForm, Rule, useForm } from '@/components/Form/index';
 

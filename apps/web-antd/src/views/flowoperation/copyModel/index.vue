@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="不同环境的流程、表单拷贝" contentFullHeight>
+  <Page auto-content-height title="不同环境的流程、表单拷贝" contentFullHeight>
     <Alert type="warning" show-icon>
       <template #icon>
         <HeatMapOutlined style="color: orangered" />
@@ -94,16 +94,24 @@
         </Authority>
       </div>
     </CollapseContainer>
-  </PageWrapper>
+  </Page>
 </template>
 <script lang="ts" setup>
   import { ref, unref, onMounted, nextTick } from 'vue';
+  import { PerEnum } from '#/enums/perEnum';
+  import {useAccess} from '@vben/access';
+  import type {Recordable} from '@vben/types';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
+
+  import {useVbenVxeGrid} from '#/adapter/vxe-table';
+  import {ColPage, Page} from '@vben/common-ui';
+  import {TableAction} from '#/components/table-action';
+
   import { BasicForm, useForm } from '@/components/Form/index';
   import { CollapseContainer } from '@/components/Container/index';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { PageWrapper } from '@/components/Page';
   import { customFormSchema, bizFormSchema } from './copyModel.data';
-  import { Alert, Progress, Tag, Space } from 'ant-design-vue';
+  import { Alert, Progress, Tag, Space, success } from 'ant-design-vue';
   import { ArrowRightOutlined, HeatMapOutlined } from '@ant-design/icons-vue';
 
   import {
@@ -112,9 +120,8 @@
     copyBizProcess,
     getModelInfoByModelKey,
   } from '#/api/flowoperation/copyModelToProd';
-  import { findNode } from '@/utils/helper/treeHelper';
-  import { PerEnum } from '@/enums/perEnum';
-  import { Authority } from '@/components/Authority';
+  import { findNode } from '#/utils/helper/treeHelper';
+  const {hasAccessByCodes} = useAccess();
 
   const envConst = {
     dev: '开发环境',

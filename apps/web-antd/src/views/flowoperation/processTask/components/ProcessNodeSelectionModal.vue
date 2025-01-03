@@ -23,7 +23,6 @@
 
   const emit = defineEmits(['success', 'register']);
 
-  const { message } = useMessage();
   const { isDark } = useDarkModeTheme();
   const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Page auto-content-height>
     <BasicTable class="proc-inst-table" @register="registerTable">
       <template #toolbar>
         <Segmented
@@ -75,11 +75,21 @@
       @success="handleReload"
     />
     <ProcessVariablesModal @register="registerProcessVariableModal" @success="handleReload" />
-  </div>
+  </Page>
 </template>
 
 <script lang="ts" setup>
   import { nextTick, createVNode, ref } from 'vue';
+  import { PerEnum } from '#/enums/perEnum';
+  import {useAccess} from '@vben/access';
+  import type {Recordable} from '@vben/types';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
+
+  import {useVbenVxeGrid} from '#/adapter/vxe-table';
+  import {ColPage, Page} from '@vben/common-ui';
+  import {TableAction} from '#/components/table-action';
+
   import { BasicTable, useTable, TableAction } from '@/components/Table';
   import {
     changeProcInstActive,
@@ -107,7 +117,6 @@
   import { Modal, Tooltip, Segmented, Badge, message, Button } from 'ant-design-vue';
   import { useModal } from '@/components/Modal';
   import { useRequest } from '@vben/hooks';
-  import { PerEnum } from '@/enums/perEnum';
 
   import { backToStep, restartProcessInstance, stopProcess } from '#/api/flowoperation/processTask';
   import { useLoading } from '@/components/Loading';

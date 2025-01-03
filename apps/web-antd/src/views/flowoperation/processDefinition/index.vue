@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper v-loading="loadingRef" dense contentFullHeight fixedHeight contentClass="flex">
+  <Page auto-content-height v-loading="loadingRef" dense contentFullHeight fixedHeight contentClass="flex">
     <FlowCategoryTree class="w-1/4 xl:w-1/5" @select="handleSelect" />
     <BasicTable @register="registerTable" class="process-definition w-3/4 xl:w-4/5">
       <template #bodyCell="{ column, record }">
@@ -61,22 +61,28 @@
       </template>
     </BasicTable>
 
-    <BpmnPreviewModal @register="registerBpmnPreviewModal" />
-    <CodePreviewModal @register="registerCodePreviewModal" :minHeight="200" />
-  </PageWrapper>
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" />
+    <CodePreviewModal ref="codePreviewModalRef" @register="registerCodePreviewModal" :minHeight="200" />
+  </Page>
 </template>
 <script lang="ts" setup>
-  import { PerEnum } from '@/enums/perEnum';
   import { ref, unref, nextTick } from 'vue';
 
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
+  import { PerEnum } from '#/enums/perEnum';
+  import {useAccess} from '@vben/access';
+  import type {Recordable} from '@vben/types';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
+
+  import {useVbenVxeGrid} from '#/adapter/vxe-table';
+  import {ColPage, Page} from '@vben/common-ui';
+
+  import {TableAction} from '#/components/table-action';
 
   import { getModelInfoPageList, stopBpmn } from '#/api/flowable/bpmn/modelInfo';
-  import { PageWrapper } from '@/components/Page';
   import FlowCategoryTree from '@/views/components/leftTree/FlowCategoryTree.vue';
 
-  import { useModal } from '@/components/Modal';
-  import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
+  import {BpmnPreviewModal} from '#/views/components/preview';
   import { getAll } from '#/api/base/app';
   import {
     findHisProcessDefinitionPagerModel,

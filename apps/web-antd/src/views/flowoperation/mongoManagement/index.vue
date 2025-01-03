@@ -4,9 +4,17 @@
    * @author DragonTeam <https://www.bpmport.com>
    * @since 2024/9/28 18:33
    */
+  import { PerEnum } from '#/enums/perEnum';
+  import {useAccess} from '@vben/access';
+  import type {Recordable} from '@vben/types';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
+
+  import {useVbenVxeGrid} from '#/adapter/vxe-table';
+  import {ColPage, Page} from '@vben/common-ui';
+  import {TableAction} from '#/components/table-action';
 
   import { DatePicker, Modal } from 'ant-design-vue';
-  import { PageWrapper } from '@/components/Page';
   import { CollapseContainer } from '@/components/Container';
   import { createVNode, ref } from 'vue';
   import {
@@ -204,7 +212,7 @@
 </script>
 
 <template>
-  <PageWrapper title="历史数据管理" contentFullHeight>
+  <Page auto-content-height title="历史数据管理" contentFullHeight>
     <CollapseContainer title="全量数据同步">
       <div class="pt-2 pb-2 flex justify-start items-center">
         <span class="ml-2">起止时间：</span>
@@ -239,5 +247,5 @@
         </template>
       </template>
     </BasicTable>
-  </PageWrapper>
+  </Page>
 </template>

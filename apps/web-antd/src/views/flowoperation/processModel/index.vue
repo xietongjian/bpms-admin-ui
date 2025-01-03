@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper v-loading="loadingRef" dense contentFullHeight fixedHeight contentClass="flex">
+  <Page auto-content-height v-loading="loadingRef" dense contentFullHeight fixedHeight contentClass="flex">
     <FlowCategoryTree class="w-1/4 xl:w-1/5" @select="handleSelect" />
     <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5">
       <template #toolbar>
@@ -13,12 +13,22 @@
     </BasicTable>
 
     <BpmnPreviewModal @register="registerBpmnPreviewModal" @success="handleSuccess" />
-  </PageWrapper>
+  </Page>
 </template>
 <script lang="ts" setup>
   import { ref, unref, nextTick } from 'vue';
 
   import { BasicTable, useTable, TableAction, BasicColumn, ActionItem } from '@/components/Table';
+  import { PerEnum } from '#/enums/perEnum';
+  import {useAccess} from '@vben/access';
+  import type {Recordable} from '@vben/types';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
+
+  import {useVbenVxeGrid} from '#/adapter/vxe-table';
+  import {ColPage, Page} from '@vben/common-ui';
+  import {TableAction} from '#/components/table-action';
+
 
   import {
     getModelInfoPageList,

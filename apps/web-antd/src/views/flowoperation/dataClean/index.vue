@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper title="数据清理" contentFullHeight>
+  <Page auto-content-height title="数据清理" contentFullHeight>
     <Alert type="warning" show-icon>
       <template #icon>
         <HeatMapOutlined style="color: orangered" />
@@ -80,16 +80,14 @@
         </Authority>
       </div>
     </CollapseContainer>
-  </PageWrapper>
+  </Page>
 </template>
 <script lang="ts" setup>
   import { ref, onMounted } from 'vue';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { CollapseContainer } from '@/components/Container/index';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { PageWrapper } from '@/components/Page';
   import { bizKeyFormSchema, procInstIdFormSchema, modelKeyFormSchema, deleteModelByModelKeyFormSchema } from './dataClean.data';
-  import { Alert, Space } from 'ant-design-vue';
+  import { Alert, Space, message } from 'ant-design-vue';
   import {
     cleanByBizKeys,
     cleanByModelKeys,
@@ -98,9 +96,7 @@
   } from '#/api/flowoperation/dataClean';
   import { HeatMapOutlined } from '@ant-design/icons-vue';
 
-  import { ResultEnum } from '@/enums/httpEnum';
-  import { PerEnum } from '@/enums/perEnum';
-  import { Authority } from '@/components/Authority';
+  import { PerEnum } from '#/enums/perEnum';
 
   const cleanByBizKeyLoading = ref<boolean>(false);
   const cleanByProcInstIdLoading = ref<boolean>(false);
