@@ -193,7 +193,6 @@
   // import { useAppStore } from '@/store/modules/app';
   const {hasAccessByCodes} = useAccess();
 
-  const [modal, contextHolder] = Modal.useModal();
   const { isSupported, copy, copied } = useClipboard({ legacy: true });
 
   const PerPerfix = 'Biz:';
@@ -337,22 +336,21 @@
     modelBaseInfo.value = {};
   });*/
 
-  function initData(data) {
+  async function initData(params) {
     // 从缓存中获取当前编辑的步骤
-    const currentStep = getDesignerCurrentStepValue(data.modelId);
-    debugger;
+    const currentStep = getDesignerCurrentStepValue(params.modelId);
     currentStepValue.value = currentStep;
     saveLoading.value = false;
 
-    modelKey.value = data.modelKey;
+    modelKey.value = params.modelKey;
     // formType: custom/biz
-    formType.value = data.formType;
-    processModelId.value = data.modelId;
-    modelId.value = data.modelId;
-    categoryCode.value = data.categoryCode;
+    formType.value = params.formType;
+    processModelId.value = params.modelId;
+    modelId.value = params.modelId;
+    categoryCode.value = params.categoryCode;
 
     // 如果是新增
-    if (!data.modelId) {
+    if (!params.modelId) {
       stepsDisabled.value = { formDesigner: false, bpmnDesigner: true, settingInfo: true };
     } else {
       stepsDisabled.value = { formDesigner: false, bpmnDesigner: false, settingInfo: false };
@@ -364,15 +362,14 @@
       bpmnDesigner: currentStep === 1,
       settingInfo: currentStep === 2,
     };
-    if (data.modelId) {
-      getByModelId(data.modelId)
-          .then((res) => {
-            modelBaseInfo.value = res;
-            processModelName.value = res.name;
-          })
-          .catch(() => {
-            console.error('通过ModelId查询modelInfo失败！');
-          });
+    if (params.modelId) {
+      try {
+        const res = await getByModelId(params.modelId);
+        modelBaseInfo.value = res;
+        processModelName.value = res.name;
+      } catch (e) {
+        console.error('通过ModelId查询modelInfo失败！');
+      }
     }
     modelBaseInfo.value = {};
   }
@@ -444,10 +441,8 @@
     }
   }
 
-  const getBpmnModelXml = () => {
-    return bpmnDesignerFrameRef.value.getBpmnXml().then((res) => {
-      return Promise.resolve(res);
-    });
+  async function getBpmnModelXml() {
+    return bpmnDesignerFrameRef.value.getBpmnXml();
   };
   const getIssuesMap = () => {
     return bpmnDesignerFrameRef.value.getIssuesMap();
@@ -478,31 +473,31 @@
   //   });
   // }
 
-  function handleSave() {
+  async function handleSave() {
+    debugger;
     if (currentStepValue.value === 0) {
       saveFormDesignerInfo();
     }
     if (currentStepValue.value === 1) {
       const issues = getIssuesMap();
       const errorLen = Object.keys(issues).length;
-      getBpmnModelXml().then((res) => {
-        if (errorLen > 0) {
-          modal.confirm({
-            iconType: 'warning',
-            title: '温馨提示',
-            content: `目前流程图存在 ${errorLen} 个错误, 确定要保存吗？`,
-            onOk: () => {
-              saveBpmnModelInfo(res);
-            },
-            onCancel: () => {
-              changeLoading(false);
-              saveLoading.value = false;
-            },
-          });
-        } else {
-          saveBpmnModelInfo(res);
-        }
-      });
+      const {xml} = await getBpmnModelXml();
+      if (errorLen > 0) {
+        Modal.confirm({
+          iconType: 'warning',
+          title: '温馨提示',
+          content: `目前流程图存在 ${errorLen} 个错误, 确定要保存吗？`,
+          onOk: () => {
+            saveBpmnModelInfo(xml);
+          },
+          onCancel: () => {
+            changeLoading(false);
+            saveLoading.value = false;
+          },
+        });
+      } else {
+        saveBpmnModelInfo(xml);
+      }
     }
     if (currentStepValue.value === 2) {
       saveBaseInfo();
@@ -570,28 +565,26 @@
     return modelXml;
   };
 
-  const saveBpmnModelInfoBase = (data) => {
-    data.modelXml = validXmlModelKey(data.modelXml);
+  async function saveBpmnModelInfoBase(params: any) {
+    params.modelXml = validXmlModelKey(params.modelXml);
 
-    saveBpmnModel(data)
-      .then((res) => {
-        if (res.success) {
-          message.success({ content: '保存成功！', style: { marginTop: '40px' } });
-        } else {
-          message.error(res.msg);
-        }
-        changeLoading(false);
-        saveLoading.value = false;
-        refreshStatus();
-      })
-      .catch((e) => {
-        console.error(e);
-        changeLoading(false);
-        saveLoading.value = false;
-      });
-  };
+    try {
+      const {success, msg} = await saveBpmnModel(params);
+      if (success) {
+        message.success({content: '保存成功！', style: {marginTop: '40px'}});
+      } else {
+        message.error(msg);
+      }
+      refreshStatus();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      changeLoading(false);
+      saveLoading.value = false;
+    }
+  }
 
-  const saveFormDesignerInfo = () => {
+  async function saveFormDesignerInfo () {
     saveLoading.value = true;
     return formDesignerRef.value
       .handleSave()
@@ -613,46 +606,46 @@
       });
   };
 
-  const saveBpmnModelInfo = (res) => {
-    const { xml } = res;
-    const data = {
+  async function saveBpmnModelInfo (xml) {
+    const params = {
       modelId: unref(processModelId),
       // categoryCode: unref(categoryCode),
       modelXml: xml,
     };
     saveLoading.value = true;
     changeLoading(true);
-    validateBpmnModel(data)
-      .then((res) => {
-        if (res.success) {
-          if (res.data) {
-            // 如果验证成功直接保存
-            saveBpmnModelInfoBase(data);
-          } else {
-            modal.confirm({
-              iconType: 'warning',
-              title: '温馨提示',
-              content: `${res.msg}`,
-              onOk: () => {
-                saveBpmnModelInfoBase(data);
-              },
-              onCancel: () => {
-                changeLoading(false);
-                saveLoading.value = false;
-              },
-            });
-          }
-        } else {
-          message.error(res.msg);
-          changeLoading(false);
-          saveLoading.value = false;
-        }
-      })
-      .catch((e) => {
-        message.error('调用验证Bpmn的XML时出现异常！' + e);
+
+    try {
+      const {success, data, msg} = await validateBpmnModel(params);
+      if(!success){
+        message.error(msg);
+        changeLoading(false);
         saveLoading.value = false;
-      });
-  };
+        return;
+      }
+      if (data) {
+        // 如果验证成功直接保存
+        await saveBpmnModelInfoBase(params);
+      } else {
+        Modal.confirm({
+          iconType: 'warning',
+          title: '温馨提示',
+          content: `${msg}`,
+          onOk: () => {
+            saveBpmnModelInfoBase(params);
+          },
+          onCancel: () => {
+            changeLoading(false);
+            saveLoading.value = false;
+          },
+        });
+      }
+    } catch (e) {
+      message.error('调用验证Bpmn的XML时出现异常！' + e);
+      saveLoading.value = false;
+    } finally {
+    }
+  }
 
   onMounted(() => {});
 
@@ -721,7 +714,7 @@
     );
   }
 
-  const handleNext = () => {
+  async function handleNext() {
     if (unref(designerStatus).finallyStatus === 3) {
       unref(currentStepValue) <= 2 && currentStepValue.value++;
       handleStepChange(unref(currentStepValue));
@@ -736,18 +729,16 @@
       return;
     }
     if (unref(currentStepValue) === 1) {
-      getBpmnModelXml().then((res) => {
-        saveBpmnModelInfo(res);
-        setTimeout(() => {
-          unref(currentStepValue) <= 2 && currentStepValue.value++;
-          handleStepChange(unref(currentStepValue));
-        }, 300);
-      });
+      const {xml} = await getBpmnModelXml();
+      await saveBpmnModelInfo(xml);
+      unref(currentStepValue) <= 2 && currentStepValue.value++;
+      handleStepChange(unref(currentStepValue));
       return;
     }
     unref(currentStepValue) <= 2 && currentStepValue.value++;
     handleStepChange(unref(currentStepValue));
-  };
+  }
+
   const handlePrev = () => {
     // 如果已发布后 - 返回上一步则跳转到发布前的那个步骤
     if (unref(currentStepValue) === 3) {

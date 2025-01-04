@@ -1,10 +1,10 @@
 <template>
-  <div class="model-info-setting model-info-setting-wrapper">
-    <div class="left">
+  <div class="flex flex-row max-w-[1200px] model-info-setting model-info-setting-wrapper">
+    <div class="!w-[200px] h-full border-r">
       <Menu
         id="modelInfoSettingMenu"
         v-model:selectedKeys="selectedKeys"
-        style="width: 100%"
+        class="w-full !border-e-0"
         mode="inline"
         :items="items"
         @click="handleMenuClick"
@@ -14,12 +14,14 @@
       v-loading="loadingRef"
       id="modelInfoSettingScrollId"
       ref="modelInfoSettingScrollRef"
-      class="right"
+      class="right h-full overflow-y-auto overflow-x-hidden"
     >
-      <BasicForm @register="registerForm">
+      <BasicForm>
         <template #basicTitle>
-          <BasicTitle style="font-size: 18px" :span="true" class="mt-4 mb-0"> 基础信息 </BasicTitle>
-          <Divider class="mt-1 mb-0" />
+<!--          <BasicTitle style="font-size: 18px" :span="true" class="mt-4 mb-0"> 基础信息 </BasicTitle>-->
+          <Divider orientation="left" orientation-margin="0px" class="mt-1 mb-0 !font-bold !size-18">
+            基础信息
+          </Divider>
         </template>
         <template #privilegeTitle>
           <BasicTitle style="font-size: 18px" :span="true" class="mt-4 mb-0"> 权限配置 </BasicTitle>
@@ -350,7 +352,8 @@
     initFormSchema();
   });
 
-  function loadFormData(modelId) {
+  async function loadFormData(modelId) {
+    // debugger;
     loadingRef.value = true;
     // 获取数据回显
     getByModelId(modelId)
@@ -403,7 +406,7 @@
           });
         const authPointList = JSON.parse(res.authPointList);
 
-        await updateSchema([
+        await formApi.updateSchema([
           {
             field: 'processDockingNo',
             componentProps: {
@@ -463,7 +466,7 @@
           appSn: res.appSn,
           version: res.version,
         });
-        clearValidate();
+        // formApi.clearValidate();
       })
       .finally(() => {
         loadingRef.value = false;
@@ -562,8 +565,6 @@
     border: 1px solid var(--border-color);
     border-top: 0;
     height: 100%;
-    overflow-y: auto;
-    max-width: 1200px;
     margin: auto;
     display: flex;
     > .left {

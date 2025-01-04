@@ -105,28 +105,35 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id'],
+    }
   },
   {
     fieldName: 'version',
     label: 'version',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id'],
+    }
   },
   {
     fieldName: 'formType',
     label: 'formType',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id'],
+    }
   },
   {
     fieldName: 'basicTitle',
+    hideLabel: true,
     slot: 'basicTitle',
-    colProps,
+    formItemClass: 'm-0 p-0',
   },
   {
     fieldName: 'showName',

@@ -141,23 +141,15 @@ export const getByModelId = (params: any) => requestClient.get(Api.GetByModelId 
 
 export const deleteByIds = (params: Array<string>) => requestClient.post(Api.Delete, params);
 
-export const checkEntityExist = (params: CheckExistParams) =>
+export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>( Api.CheckEntityExist, params);
 
 export const validateBpmnModel = (params: Object) =>
-  requestClient
-    .post<any>(Api.ValidateBpmnModel, params, { }, { isReturnNativeResponse: true })
-    .then((res) => {
-      return Promise.resolve(res.data);
-    });
+  requestClient.post<any>(Api.ValidateBpmnModel, params, { isTransformResponse: false });
 
 export const saveBpmnModel = (params: any) => {
   params.modelXml = Base64.encode(params.modelXml);
-  return requestClient
-    .post<any>(Api.SaveBpmnModel, params, { isReturnNativeResponse: true })
-    .then((res) => {
-      return Promise.resolve(res.data);
-    });
+  return requestClient.post<any>(Api.SaveBpmnModel, params, { isTransformResponse: false });
 };
 
 export const getModelInfoByModelKey = (params: any) =>
