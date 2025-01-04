@@ -1,16 +1,11 @@
 <template>
-  <BasicModal
-    content-class="designer-container p-0"
-    :footer="null"
-    v-bind="$attrs"
-    @open-change="handleOpenChange"
-  >
+  <BasicModal content-class="designer-container p-0" >
     <template #title>
       <div class="w-full">
         <Row>
           <Col span="8" class="flex items-center">
             <span v-if="!modelBaseInfo.name">新建流程</span>
-            <Tooltip v-else placement="leftBottom">
+            <Tooltip :zIndex="10000" v-else placement="buttom">
               <template #title>
                 {{ modelBaseInfo.name }}
               </template>
@@ -23,7 +18,7 @@
                 processModelKey
               }}</TypographyText>
               -
-              <Tag :color="finallyStatusStyle.color">{{ finallyStatusStyle.statusName }}</Tag>
+              <Tag :color="finallyStatusStyle.color">{{ finallyStatusStyle.statusName||'草稿' }}</Tag>
             </Tooltip>
           </Col>
           <Col span="8">
@@ -76,22 +71,6 @@
                 <Button color="success" :disabled="saveLoading">发布</Button>
               </Popconfirm>
 
-              <Tag
-                v-if="
-                  bpmnDesignerAutoSaveSwitch == '1' &&
-                  autoSaveStatus !== -1 &&
-                  currentStepValue === 1 &&
-                  designerStatus.finallyStatus !== 3
-                "
-                :color="
-                  autoSaveStatus === 1 ? 'processing' : autoSaveStatus === 0 ? 'success' : 'error'
-                "
-              >
-                <span v-if="autoSaveStatus === 1">正在保存...</span>
-                <span v-if="autoSaveStatus === 0">保存成功</span>
-                <span v-if="autoSaveStatus === 2">保存失败</span>
-              </Tag>
-
               <Popconfirm
                 v-if="designerStatus.finallyStatus === 3 && currentStepValue !== 3"
                 @confirm="handleSave"
@@ -107,20 +86,19 @@
                 v-else-if="currentStepValue !== 3"
                 type="primary"
                 @click="handleSave"
-                :loading="saveLoading"
-              >
+                :loading="saveLoading">
                 保存
               </Button>
 
-              <Button :disabled="currentStepValue === 0 || saveLoading" @click="handlePrev"
-                >上一步</Button
-              >
+              <Button :disabled="currentStepValue === 0 || saveLoading" @click="handlePrev">
+                上一步
+              </Button>
               <Button
                 :disabled="currentStepValue > 1 || saveLoading"
                 type="primary"
-                @click="handleNext"
-                >下一步</Button
-              >
+                @click="handleNext">
+                下一步
+              </Button>
               <Button type="default" @click="handleClose">关闭</Button>
             </Space>
           </Col>
@@ -210,10 +188,13 @@
   import {useVbenForm} from '#/adapter/form';
   // import { copyText } from '#/utils/copyTextToClipboard';
   import { getXMLAttribute, updateXMLAttribute } from '#/utils/domUtils';
+  import { useClipboard } from '@vueuse/core';
+
   // import { useAppStore } from '@/store/modules/app';
   const {hasAccessByCodes} = useAccess();
 
   const [modal, contextHolder] = Modal.useModal();
+  const { isSupported, copy, copied } = useClipboard({ legacy: true });
 
   const PerPerfix = 'Biz:';
   // const appStore = useAppStore();
@@ -785,9 +766,11 @@
     }
   }
 
-  function doCopyContent(content) {
-    copyText(content);
+  function doCopyContent(content: string) {
+    copy(content);
+    message.success('已拷贝到剪切板！');
   }
+
   defineExpose({
     handleSave,
     ...modalApi

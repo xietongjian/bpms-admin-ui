@@ -82,7 +82,6 @@
     </MakingForm>
     <FormTemplateSelectorModal
       ref="formTemplateSelectorModalRef"
-      @register="registerFormTemplateSelectorModal"
       @success="handleInsertTemplate"
     />
     <CodePreviewModal ref="codePreviewModalRef" @register="registerCodePreviewModal" :minHeight="200" />
@@ -90,7 +89,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, ref, toRefs, unref, nextTick, watch, defineProps, defineEmits, defineExpose } from 'vue';
+  import { onMounted, ref, toRefs, unref, nextTick, watch, createVNode, defineProps, defineEmits, defineExpose } from 'vue';
   import {
     Space,
     InputNumber,
@@ -101,6 +100,7 @@
     Divider,
     Tooltip,
     message,
+    Modal,
     Button,
   } from 'ant-design-vue';
   import {
@@ -122,14 +122,15 @@
   import {useUserStore} from '@vben/stores';
 
 
+
   import { formBaseInfoFormSchema } from './formBaseInfo.data';
   import { FormValidPatternEnum } from '#/enums/commonEnum';
 
   import { useInFlowTypes } from '#/views/components/form/formMaking/formMaking.data';
   import {useVbenForm} from "#/adapter/form";
-  import {formSchema} from "#/views/base/app/app.data";
 
-  // const { message, createConfirm } = useMessage();
+  const formTemplateSelectorModalRef = ref();
+
   const userStore = useUserStore();
 
   const props = defineProps({
@@ -206,7 +207,7 @@
       fetch();
     }
     nextTick(() => {
-      // window['currentUser'] = userStore.getUserInfo;
+      window['currentUser'] = userStore.userInfo;
     });
   });
 
@@ -430,23 +431,22 @@
         handlePreviewCode('html')
         break;*/
       case 'import':
-        openFormTemplateSelectorModal(true, {});
-        setFormTemplateSelectorModalProps({
-          title: '插入模板',
-          width: 1000,
-          centered: true,
-          minHeight: 400,
+        formTemplateSelectorModalRef.value.setData({});
+        formTemplateSelectorModalRef.value.open();
+        formTemplateSelectorModalRef.value.setState({
+          title: '插入模板'
         });
         break;
       case 'clear':
-        createConfirm({
-          iconType: 'warning',
+        Modal.confirm({
+          icon: createVNode(QuestionCircleOutlined),
           content: '确定要清空设计器吗？',
           onOk() {
             unref(makingFormRef).clear();
           },
+          okType: 'primary',
           okButtonProps: {
-            type: 'danger',
+            danger: true,
           },
         });
         break;

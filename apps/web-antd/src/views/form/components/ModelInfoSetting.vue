@@ -57,6 +57,7 @@
   import { message, Space, TypographyText, Menu, Divider } from 'ant-design-vue';
   // import { copyText } from '@/utils/copyTextToClipboard';
   // import { ScrollContainer } from '@/components/Container';
+  import { useClipboard } from '@vueuse/core';
 
   import { FormValidPatternEnum } from '#/enums/commonEnum';
   import {useVbenForm} from "#/adapter/form";
@@ -64,6 +65,7 @@
   defineComponent({
     name: 'ModelInfoSetting',
   });
+  const { isSupported, copy, copied } = useClipboard({ legacy: true });
 
   const props = defineProps({
     modelId: {

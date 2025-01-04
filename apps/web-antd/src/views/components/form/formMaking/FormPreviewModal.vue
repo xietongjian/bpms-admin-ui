@@ -1,5 +1,6 @@
 <template>
   <BasicModal
+    class="w-[800px]"
     v-bind="$attrs"
     @register="registerModal"
     :wrapperFooterOffset="0"
@@ -11,7 +12,7 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { nextTick, ref, unref } from 'vue';
+  import { nextTick, ref, unref, defineExpose } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import {message} from 'ant-design-vue';
@@ -56,4 +57,5 @@
       unref(generateFormRef).refresh();
     });
   }
+  defineExpose(modalApi)
 </script>

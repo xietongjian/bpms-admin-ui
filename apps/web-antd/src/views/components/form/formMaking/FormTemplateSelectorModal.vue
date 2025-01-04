@@ -1,20 +1,16 @@
 <template>
-  <BasicModal
-    v-bind="$attrs"
-    @register="registerModal"
-    :defaultFullscreen="false"
-    wrap-class-name="form-template-modal "
-  >
-    <Row class="h-full">
-      <Col span="4">
-        <BasicTree
-            :loading="treeLoading"
-            treeWrapperClassName="h-[calc(100%-35px)] overflow-auto h-full"
-            :clickRowToExpand="false"
-            :treeData="formCategoryTreeData"
-            @select="handleSelect"
-            ref="basicTreeRef"
-            :field-names="{title: 'name'}"
+  <BasicModal class="w-[800px] min-h-[500px]">
+    <div class="flex flex-row">
+      <div class="w-[200px]">
+        <Tree
+          :loading="treeLoading"
+          treeWrapperClassName="h-[calc(100%-35px)] overflow-auto h-full"
+          :clickRowToExpand="false"
+          :treeData="formCategoryTreeData"
+          @select="handleSelect"
+          block-node
+          ref="basicTreeRef"
+          :field-names="{title: 'name'}"
         >
           <template #headerTitle >
             <Row align="middle" class="w-full">
@@ -23,74 +19,81 @@
               </Col>
             </Row>
           </template>
-        </BasicTree>
-      </Col>
-      <Col span="20">
-        <div :class="`${prefixCls}__content`">
-          <div style="margin: 10px 10px 0">
-            <a-input-search
-                style="width: 500px"
-                v-model:value="formTemplateKeyword"
-                placeholder="请输入关键字"
-                enter-button
-                @search="onSearch"
+        </Tree>
+      </div>
+      <div class="flex-1">
+        <div>
+          <div class="m-0">
+            <InputSearch
+              style="width: 500px"
+              allow-clear
+              v-model:value="formTemplateKeyword"
+              placeholder="请输入关键字"
+              enter-button
+              @search="onSearch"
             />
           </div>
-          <Divider style="margin: 10px" />
-          <List v-if="templateList.length > 0" :pagination="pagination">
-            <Row :gutter="8">
+          <Divider class="mt-3" />
+          <List
+            :grid="{ gutter: 4, xs: 1, sm: 2, md: 3, lg: 3, xl: 3, xxl: 3 }"
+            :data-source="templateList"
+            v-if="templateList.length > 0"
+            :pagination="pagination">
+            <template #renderItem="{ item }">
+              <ListItem class="!p-0">
+                <Card class="w-full" bodyStyle="padding: 8px" :hoverable="true" >
+                  <div :class="`${prefixCls}__card-detail`">
+                    <GenerateForm
+                      class="h-[180px] w-[100px] overflow-auto"
+                      :data="item.formJson"
+                    />
+                    <div style="margin: 5px; font-size: 14px; font-weight: bold">
+                      {{ item.name }}
+                      <template v-if="formCategoryDataMap[item.categoryCode]">
+                        - <Tag style="font-weight: initial; font-size: 12px;">{{formCategoryDataMap[item.categoryCode]?.name}}</Tag>
+                      </template>
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <Space>
+                      <Button size="small" type="primary" @click="handleFormPreview(item.formJson)">
+                        预览
+                      </Button>
+                      <Button size="small" type="primary" @click="handleInsertTemplate(item, 'insert')">
+                        插入
+                      </Button>
+                      <Button size="small" type="primary" @click="handleInsertTemplate(item, 'replace')">
+                        覆盖
+                      </Button>
+                    </Space>
+                  </div>
+                </Card>
+              </ListItem>
+            </template>
+<!--            <Row :gutter="8">
               <template v-for="item in templateList" :key="item.id">
                 <Col :span="8">
-                  <ListItem>
-                    <Card style="width: 100%" :hoverable="true" :class="`${prefixCls}__card`">
-                      <div :class="`${prefixCls}__card-detail`">
-                        <GenerateForm
-                            style="height: 100%; height: 100px; overflow: auto"
-                            :data="item.formJson"
-                        />
-                        <div style="margin: 5px; font-size: 14px; font-weight: bold">
-                          {{ item.name }}
-                          <template v-if="formCategoryDataMap[item.categoryCode]">
-                            - <Tag style="font-weight: initial; font-size: 12px;">{{formCategoryDataMap[item.categoryCode]?.name}}</Tag>
-                          </template>
-                        </div>
-                      </div>
-                      <div :class="`${prefixCls}__action-overlay`">
-                        <Space>
-                          <Button type="primary" @click="handleFormPreview(item.formJson)">
-                            预览
-                          </Button>
-                          <Button type="primary" @click="handleInsertTemplate(item, 'insert')">
-                            插入
-                          </Button>
-                          <Button type="primary" @click="handleInsertTemplate(item, 'replace')">
-                            覆盖
-                          </Button>
-                        </Space>
-                      </div>
-                    </Card>
-                  </ListItem>
+
                 </Col>
               </template>
-            </Row>
+            </Row>-->
           </List>
           <div v-else style="margin: 80px">
             <Empty />
           </div>
         </div>
-      </Col>
-    </Row>
-    <FormPreviewModal @register="registerFormPreviewModal" />
+      </div>
+    </div>
+    <FormPreviewModal ref="formPreviewModalRef" />
   </BasicModal>
 </template>
 <script lang="ts" setup>
   import { ref, unref, defineEmits } from 'vue';
-  import {message} from 'ant-design-vue';
 
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
 
-  import { Button, Tag, Space, Card, Row, Col, List, Empty, Divider } from 'ant-design-vue';
+  import { message, Tree, Input, InputSearch, Button, Tag, Space, Card, Modal, Row, Col, List, Empty, Divider } from 'ant-design-vue';
   import { GenerateForm } from '/public/static/form-making';
   import {getFormCategoryListData, getFormTemplateList} from '#/api/form/formTemplate';
   import FormPreviewModal from '#/views/components/form/formMaking/FormPreviewModal.vue';
@@ -102,7 +105,7 @@
   const formCategoryTreeData = ref([]);
 
   const prefixCls = 'template-list';
-
+  const formPreviewModalRef = ref();
   const ListItem = List.Item;
   const emit = defineEmits(['success']);
 
@@ -124,21 +127,21 @@
     },
   });
 
-
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
     onCancel() {
       modalApi.close();
     },
+    footer: null,
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
           initFormCategoryTree();
-          loadData(data.formId);
-          modelKey.value = data.modelKey;
-          categoryCode.value = data.categoryCode;
-          formInfoId.value = data.formId;
+          loadData(values.formId);
+          modelKey.value = values.modelKey;
+          categoryCode.value = values.categoryCode;
+          formInfoId.value = values.formId;
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -189,29 +192,37 @@
     }
   }
 
-  function loadData(current = 1) {
-    changeLoading(true);
-    getFormTemplateList({
-      keyword: formTemplateKeyword.value,
-      categoryCode: unref(currentNode)?.code,
-      pageSize: unref(pagination).defaultPageSize,
-      pageNum: current,
-      status: 1,
-    })
-      .then((res) => {
-        res.rows.forEach((item) => {
-          item.formJson = JSON.parse(item.formJson);
-        });
-        pagination.value.total = res.total;
-        templateList.value = res.rows;
-      })
-      .finally(() => {
-        changeLoading(false);
-      });
+  async function loadData(current = 1) {
+    modalApi.setState({loading: true, confirmLoading: true});
+
+    const params = {
+      entity: {
+        keyword: formTemplateKeyword.value,
+        categoryCode: unref(currentNode)?.code,
+        status: 1,
+      },
+      query: {
+        pageSize: unref(pagination).defaultPageSize,
+        pageNum: current,
+      }
+    };
+
+    const res = await getFormTemplateList(params);
+    res.rows.forEach((item) => {
+      item.formJson = JSON.parse(item.formJson);
+    });
+    pagination.value.total = res.total;
+    templateList.value = res.rows;
+    modalApi.setState({loading: false, confirmLoading: false});
   }
 
   function handleFormPreview(formJson) {
-    openFormPreviewModal(true, {
+    formPreviewModalRef.value.setData(formJson);
+    formPreviewModalRef.value.open();
+    formPreviewModalRef.value.setState({
+      title: '预览'
+    });
+    /*openFormPreviewModal(true, {
       formJson,
     });
     setFormPreviewModalProps({
@@ -223,7 +234,7 @@
       showOkBtn: false,
       showCancelBtn: true,
       cancelText: '关闭',
-    });
+    });*/
   }
 
   function onSearch() {
@@ -232,23 +243,24 @@
 
   function handleInsertTemplate(record, type) {
     if (type === 'replace') {
-      createConfirm({
+      Modal.confirm({
         iconType: 'warning',
         content: '确定要覆盖吗？',
         onOk() {
           setTimeout(() => {
             emit('success', record, type);
           }, 300);
-          closeModal();
+          modalApi.close();
         },
       });
     } else {
       setTimeout(() => {
         emit('success', record, type);
       }, 300);
-      closeModal();
+      modalApi.close();
     }
   }
+  defineExpose(modalApi);
 </script>
 
 <style lang="less">
