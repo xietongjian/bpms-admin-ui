@@ -66,7 +66,7 @@
     },
   });
 
-  function handleCreate(record: Recordable) {
+  function handleCreate(record: Recordable<any>) {
     setModalProps({ title: '新增菜单', centered: true });
     openModal(true, {
       record,
@@ -105,7 +105,7 @@
     });
   }
 
-  function handleDelete(record: Recordable) {
+  function handleDelete(record: Recordable<any>) {
     if (record.children && record.children.length > 0) {
       createMessage.warning('有子节点，不能删除！');
       return;

@@ -69,7 +69,7 @@ function handleSuccess() {
   }, 200);
 }
 
-function createActions(record: Recordable) {
+function createActions(record: Recordable<any>) {
   return [
     {
       auth: [PerPrefix + PerEnum.UPDATE],

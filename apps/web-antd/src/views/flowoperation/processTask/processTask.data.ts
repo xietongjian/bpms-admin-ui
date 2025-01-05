@@ -37,6 +37,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '停留时间',
     field: 'stayHour',
     align: 'left',
+    minWidth: 100,
   },
   {
     title: '状态',
@@ -49,6 +50,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '所属系统',
     field: 'appName',
     align: 'left',
+    minWidth: 140,
   },
   {
     title: '任务ID',
@@ -87,6 +89,13 @@ export const columns: VxeGridProps['columns'] = [
     sorter: true,
     width: 150,
     align: 'center',
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 

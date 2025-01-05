@@ -133,12 +133,12 @@ function createActions(record: any) {
   ];
 }
 
-function handleSetPassword(record: Recordable) {
+function handleSetPassword(record: Recordable<any>) {
   passwordModalRef.value.setData(record);
   passwordModalRef.value.open();
 }
 
-function handleSetGroup(record: Recordable) {
+function handleSetGroup(record: Recordable<any>) {
   setGroupModalRef.value.setData(record);
   setGroupModalRef.value.open();
 /*  openSetGroupModal(true, {
@@ -347,28 +347,28 @@ function previewImageVisibleChange(visible, prevVisible) {
     });
   }
 
-  function handleEdit(record: Recordable) {
+  function handleEdit(record: Recordable<any>) {
     openModal(true, {
       record,
       isUpdate: true,
     });
   }
 
-  function handleSetPassword(record: Recordable) {
+  function handleSetPassword(record: Recordable<any>) {
     openPasswordModal(true, {
       record,
       isUpdate: true,
     });
   }
 
-  function handleSetGroup(record: Recordable) {
+  function handleSetGroup(record: Recordable<any>) {
     openSetGroupModal(true, {
       record,
       isUpdate: true,
     });
   }
 
-  function handleDelete(record: Recordable) {
+  function handleDelete(record: Recordable<any>) {
     deleteByIds([record.id]).then((res) => {
       reload();
     });

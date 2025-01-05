@@ -201,7 +201,7 @@
     }
   }
 
-  function handleViewForm(record: Recordable) {
+  function handleViewForm(record: Recordable<any>) {
     record.allowsOperation = activeKey.value === 'todo';
     openProcessFormModal(true, {
       record,

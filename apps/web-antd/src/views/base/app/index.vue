@@ -105,7 +105,7 @@ async function handleDelete(record: any) {
     message.error(e.message);
   }
 }
-function createActions(row: Recordable) {
+function createActions(row: Recordable<any>) {
   return [
     {
       auth: [PerPrefix + PerEnum.QUERY],

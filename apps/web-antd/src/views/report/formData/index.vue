@@ -1,57 +1,59 @@
 <template>
   <Page auto-content-height>
-    <div class="p-4 h-full">
-      <BasicTable
-        @register="registerTable"
+    <BasicTable
         @row-click="clickRow"
         @selection-change="changeSelection"
         @fetch-success="fetchSuccess"
-        class="!pt-0 !pl-0 !pr-0 !pb-0"
-      >
-        <template #toolbar>
-          <a-button type="primary" @click="handleLaunch"> 发起表单 </a-button>
-          <a-button type="default" @click="handleExport"> 导出Excel </a-button>
-        </template>
+    >
+      <template #toolbar>
+        <a-button type="primary" @click="handleLaunch"> 发起表单 </a-button>
+        <a-button type="default" @click="handleExport"> 导出Excel </a-button>
+      </template>
 
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'action'">
-            <TableAction
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'action'">
+          <TableAction
               :actions="createActions(record)"
-            />
-          </template>
+          />
         </template>
-      </BasicTable>
-    </div>
+      </template>
+    </BasicTable>
     <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" />
-    <ProcessFormModal @register="registerProcessFormModal" />
-    <LaunchModal @register="registerLaunchModal" @success="handleSuccess" />
+    <ProcessFormModal ref="processFormModalRef" @register="registerProcessFormModal" />
+    <LaunchModal ref="launchModalRef" @register="registerLaunchModal" @success="handleSuccess" />
 
   </Page>
 </template>
 <script lang="ts" setup>
   import { ref, unref, watch, nextTick, onMounted } from 'vue';
   import type { Recordable } from '@vben/types';
-  import type {VxeGridProps} from '#/adapter/vxe-table';
+  import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
   import type {VbenFormProps} from '@vben/common-ui';
   import {PerEnum} from "#/enums/perEnum";
+  import {TableAction} from '#/components/table-action';
 
   import {Page} from '@vben/common-ui';
   import { useRouter } from 'vue-router';
+  import { Avatar, Button, Popconfirm, Tooltip, message } from 'ant-design-vue';
 
   import { baseColumns, searchFormSchema } from './formCount.data';
   // import { BasicTree, TreeActionType, TreeItem } from '@/components/Tree';
   import {
-    getCustomColumnsByFormCode,
+    // getCustomColumnsByFormCode,
     getCustomColumnsByFormId,
     getFormTree,
     exportExcel,
-    getPagerModelCustomData, exportExcelByCode,
+    getPagerModelCustomData,
+    exportExcelByCode,
   } from '#/api/report/formCount';
   import { forEach } from '#/utils/helper/treeHelper';
   import {BpmnPreviewModal} from '#/views/components/preview';
   import ProcessFormModal from '../../flowoperation/processTask/ProcessFormModal.vue';
   import {downloadBlob} from "#/utils/file/download";
   import LaunchModal from '#/views/process/actions/LaunchModal.vue';
+  import {columns} from "#/views/form/custom/modelInfo/modelInfo.data";
+  import {getCustomPagerModel} from "#/api/form/customForm";
+  import {useVbenVxeGrid} from "#/adapter/vxe-table";
 
   const { currentRoute } = useRouter();
 
@@ -81,7 +83,7 @@
   const showStopBtn = ref(false);
   const formCode = ref('');
 
-  const [
+  /*const [
     registerTable,
     {
       getForm,
@@ -117,7 +119,62 @@
       title: '操作',
       dataIndex: 'action',
     },
-  });
+  });*/
+
+
+  const formOptions: VbenFormProps = {
+    showCollapseButton: false,
+    submitOnEnter: true,
+    commonConfig: {
+      labelWidth: 60,
+    },
+    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+    resetButtonOptions: {
+      show: false,
+    },
+    schema: searchFormSchema,
+  };
+
+  const gridOptions: VxeGridProps = {
+    columns: baseColumns,
+    columnConfig: {resizable: true},
+    height: 'auto',
+    maxHeight: '100%',
+    border: false,
+    keepSource: true,
+    autoResize: false,
+    stripe: true,
+    round: false,
+    radioConfig: {
+      highlight: true,
+      labelField: 'name',
+      trigger: 'row',
+    },
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          currentModelInfo.value = {};
+          return await getCustomPagerModel({
+            query: {
+              pageNum: page.currentPage,
+              pageSize: page.pageSize,
+            },
+            entity: formValues || {},
+          });
+        },
+      },
+    },
+  };
+
+  const gridEvents: VxeGridListeners = {
+    radioChange: ({row}) => {
+      // clickRow(row);
+    }
+  };
+
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
+
 
   function handleLaunch() {
     if(!formCode.value){
@@ -143,7 +200,7 @@
     });
   }
 
-  function createActions(record: Recordable) {
+  function createActions(record: Recordable<any>) {
     return [
       {
         label: '',
@@ -163,7 +220,7 @@
    *  自定义搜索功能
    **/
   async function doSearchFunc() {
-    const { setProps } = getForm();
+    const { setProps } = tableApi.formApi;
     if (!formCode.value) {
       message.warning('表单标识不能为空！');
       return;
@@ -216,6 +273,7 @@
   }
 
   onMounted(() => {
+    debugger;
     const { path } = unref(currentRoute);
     formCode.value = path.substring(path.lastIndexOf('/') + 1);
     fetchFormData();
@@ -230,7 +288,7 @@
     },
   );
 
-  function handleViewForm(record: Recordable) {
+  function handleViewForm(record: Recordable<any>) {
     record.processInstanceId = record.proc_inst_id;
     record.businessKey = record.code;
     record.processDefinitionKey = record.model_key;
@@ -248,7 +306,7 @@
     });
   }
 
-  function handlePreview(record: Recordable) {
+  function handlePreview(record: Recordable<any>) {
     openBpmnPreviewModal(true, {
       modelKey: record.model_key,
       procInstId: record.proc_inst_id,
@@ -280,7 +338,7 @@
   }
 
   function handleSuccess() {
-    reload();
+    tableApi.reload();
   }
 
   function changePublishStopBtnShow(status) {
@@ -350,12 +408,12 @@
   }
 
   function getFormData() {
-    const { validate } = getForm();
+    const { validate } = tableApi.formApi;
     const values = validate();
     // values.formId = formCode.value;
     values.code = formCode.value;
     setProps({ searchInfo: values });
-    reload();
+    tableApi.reload();
     return;
   }
 </script>

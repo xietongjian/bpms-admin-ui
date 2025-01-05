@@ -224,7 +224,7 @@
   import { usePreferences } from '@vben/preferences';
 
   // 人员选择弹窗
-  const [registerApproveSelectorPersonalModal, { openModal: openApproveSelectorPersonalSelector, setModalProps: setApproveSelectorPersonalModalProps }] = useModal();
+  // const [registerApproveSelectorPersonalModal, { openModal: openApproveSelectorPersonalSelector, setModalProps: setApproveSelectorPersonalModalProps }] = useModal();
   const { isDark } = usePreferences();
   const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
 
@@ -309,7 +309,7 @@
     },
     onConfirm() {
       // await formApi.submitForm();
-      handleSubmit();
+      // handleSubmit();
     },
   });
 

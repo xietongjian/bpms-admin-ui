@@ -9,6 +9,8 @@ enum Api {
   DownloadFormCount = '/flow/form/customExcel/downloadData', // 查询待办，已办
   GetPagerModelCustomData = '/flow/form/customExcel/getPagerModelCustomData', // 导出发起的
   DownloadTaskProcessDetail = '/flow/report/count/downloadTaskProcessDetail', // 导出待办，已办
+  DownloadFormCountByCode = '/flow/form/customExcel/downloadDataByCode', // 导出表单数据
+
 }
 
 export const getFormTree = () => {
@@ -96,3 +98,14 @@ export const downloadTaskProcessDetail = (params: any) => {
 
   return Promise.resolve('success');
 };
+
+export const exportExcelByCode = (params: any) => {
+  if (params.userNo && params.userNo.length > 0) {
+    params.userNo = params.userNo[0].code;
+  }
+
+  return requestClient.post<any>(Api.DownloadFormCountByCode, params,
+      {responseType: 'blob', isTransformResponse: false },
+  );
+};
+

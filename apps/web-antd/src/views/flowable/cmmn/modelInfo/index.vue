@@ -149,7 +149,7 @@
     return actions;
   }
 
-  function handlePreview(record: Recordable) {
+  function handlePreview(record: Recordable<any>) {
     openBpmnPreviewModal(true, {
       name: record.name,
       modelKey: record.modelKey,
@@ -164,7 +164,7 @@
     });
   }
 
-  function handleEdit(record: Recordable) {
+  function handleEdit(record: Recordable<any>) {
     openModal(true, {
       record,
       isUpdate: true,
@@ -175,13 +175,13 @@
     go('/flowable/bpmn/designer?modelId=XXXXXXXXXXXXXXXXXXXXXXXX');
   }
 
-  function handleDelete(record: Recordable) {
+  function handleDelete(record: Recordable<any>) {
     deleteByIds([record.id]).then((res) => {
       reload();
     });
   }
 
-  function handlePublish(record: Recordable) {
+  function handlePublish(record: Recordable<any>) {
     loadingRef.value = true;
     publishBpmn(record.modelId)
       .then((res) => {
@@ -193,7 +193,7 @@
       });
   }
 
-  function handleStop(record: Recordable) {
+  function handleStop(record: Recordable<any>) {
     loadingRef.value = true;
     stopBpmn(record.modelId)
       .then((res) => {

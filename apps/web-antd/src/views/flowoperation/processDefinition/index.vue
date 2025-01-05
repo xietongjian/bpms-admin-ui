@@ -179,7 +179,7 @@
     getAll().then((res) => {
       updateSchema([
         {
-          field: 'appSn',
+          fieldName: 'appSn',
           componentProps: { options: res, labelField: 'id' },
         },
       ]);
@@ -199,7 +199,7 @@
     });
   }
 
-  function handleDefPreview(record: Recordable) {
+  function handleDefPreview(record: Recordable<any>) {
     openBpmnPreviewModal(true, {
       modelKey: record.key,
     });
@@ -235,7 +235,7 @@
       });
   }
 
-  function handleSuspend(record: Recordable, itemRecord: Recordable) {
+  function handleSuspend(record: Recordable<any>, itemRecord: Recordable<any>) {
     setLoading(true);
     suspendProcessDefinition({ id: itemRecord.id })
       .then((res) => {
@@ -254,7 +254,7 @@
       });
   }
 
-  function handleActivate(record: Recordable, itemRecord: Recordable) {
+  function handleActivate(record: Recordable<any>, itemRecord: Recordable<any>) {
     setLoading(true);
     activateProcessDefinition({ id: itemRecord.id })
       .then((res) => {
@@ -272,7 +272,7 @@
       });
   }
 
-  function handleStop(record: Recordable) {
+  function handleStop(record: Recordable<any>) {
     loadingRef.value = true;
     stopBpmn(record.modelId)
       .then((res) => {

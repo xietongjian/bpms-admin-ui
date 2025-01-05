@@ -103,7 +103,7 @@ function handleViewSecretKey(record: Recordable<any>) {
   });*/
 }
 
-async function handleDelete(record: Recordable) {
+async function handleDelete(record: Recordable<any>) {
   try {
     /*const result = await deleteByIds([record.id]);
     const {success, msg} = result;

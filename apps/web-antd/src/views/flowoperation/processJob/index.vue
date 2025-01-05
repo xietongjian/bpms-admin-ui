@@ -358,7 +358,7 @@
 
     await updateSchema([
       {
-        field: 'tenantId',
+        fieldName: 'tenantId',
         componentProps: { options: appList, labelField: 'id' },
       },
     ]);
@@ -410,11 +410,11 @@
     });
   }
 
-  function handleExe(record: Recordable) {
+  function handleExe(record: Recordable<any>) {
     batchExe([record.id]);
   }
 
-  function handleViewApproveHistory(record: Recordable) {
+  function handleViewApproveHistory(record: Recordable<any>) {
     openApproveHistoryModal(true, {
       record,
       isUpdate: true,
@@ -428,7 +428,7 @@
     });
   }
 
-  function handleViewFlowProperties(record: Recordable) {
+  function handleViewFlowProperties(record: Recordable<any>) {
     openFlowPropertiesModal(true, {
       record,
     });
@@ -441,7 +441,7 @@
     });
   }
 
-  function handlePreview(record: Recordable) {
+  function handlePreview(record: Recordable<any>) {
     openBpmnPreviewModal(true, {
       modelKey: record.processDefinitionId.substring(0, record.processDefinitionId.indexOf(':')),
       procInstId: record.processInstanceId,

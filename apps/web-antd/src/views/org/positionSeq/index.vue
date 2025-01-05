@@ -122,7 +122,7 @@ function handleCreateChild(record: Recordable, e) {
   });
 }
 
-function handleDelete(record: Recordable) {
+function handleDelete(record: Recordable<any>) {
   if (record.children && record.children.length > 0) {
     createMessage.warning('有子节点，不能删除！');
     return;
@@ -142,7 +142,7 @@ function handleSuccess() {
   }, 200);
 }
 
-function createActions(record: Recordable) {
+function createActions(record: Recordable<any>) {
   return [
     {
       auth: [PerPrefix + PerEnum.ADD],

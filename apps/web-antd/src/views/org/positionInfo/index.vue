@@ -131,7 +131,7 @@ function handleSelect(node: any) {
   tableApi.reload({searchInfo});
 }
 
-function createActions(record: Recordable) {
+function createActions(record: Recordable<any>) {
   return [
     {
       auth: [PerPrefix + PerEnum.UPDATE],

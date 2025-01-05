@@ -18,64 +18,60 @@
             :dropDownActions="getTableDownActions(row)"
         />
       </template>
-      <template #bodyCell="{ column, record }">
+      <template #processInstanceId="{row}">
+        <a @click="doCopyContent(row.processInstanceId)"><CopyOutlined /></a>
+        {{ row.processInstanceId }}
+      </template>
 
+      <template #businessKey="{row}">
+        <a v-if="!!row.businessKey" @click="doCopyContent(row.businessKey)"><CopyOutlined /></a>
+        {{ row.businessKey || '' }}
+      </template>
 
-        <template v-else-if="column.key === 'processInstanceId'">
-          <a @click="doCopyContent(record.processInstanceId)"><CopyOutlined /></a>
-          {{ record.processInstanceId }}
-        </template>
+      <template #startedUserName="{row}">
+        <EmpInfo :no="row.startedUserId" :name="row.startedUserName" />
+      </template>
 
-        <template v-else-if="column.key === 'businessKey'">
-          <a v-if="!!record.businessKey" @click="doCopyContent(record.businessKey)"><CopyOutlined /></a>
-          {{ record.businessKey || '' }}
-        </template>
+      <template #formName="{row}">
+        <Tooltip title="查看流程图">
+          <a>
+            <PartitionOutlined @click="handlePreview(record)" />
+          </a>
+        </Tooltip>
+        <Tooltip placement="topLeft" :mouseEnterDelay="0.3">
+          <template #title>
+            {{ row.formName }}
+          </template>
+          {{ row.formName }}
+        </Tooltip>
+      </template>
 
-        <template v-else-if="column.key === 'startedUserName'">
-          <EmpInfo :no="record.startedUserId" :name="record.startedUserName" />
-        </template>
-
-        <template v-if="column.key === 'formName'">
-          <Tooltip title="查看流程图">
-            <a>
-              <PartitionOutlined @click="handlePreview(record)" />
-            </a>
-          </Tooltip>
-          <Tooltip placement="topLeft" :mouseEnterDelay="0.3">
-            <template #title>
-              {{ record.formName }}
-            </template>
-            {{ record.formName }}
-          </Tooltip>
-        </template>
-
-        <template v-if="column.key === 'processStatusName'">
-          <Badge v-if="record.suspensionState === 2">
-            <template #count>
-              <Tooltip title="已挂起">
-                <PauseCircleFilled style="color: #f5222d" />
-              </Tooltip>
-            </template>
-            <ProcessStatus :value="record.processStatus" :text="record.processStatusName" />
-          </Badge>
-          <ProcessStatus v-else :value="record.processStatus" :text="record.processStatusName" />
-        </template>
+      <template #processStatusName="{row}">
+        <Badge v-if="row.suspensionState === 2">
+          <template #count>
+            <Tooltip title="已挂起">
+              <PauseCircleFilled style="color: #f5222d" />
+            </Tooltip>
+          </template>
+          <ProcessStatus :value="row.processStatus" :text="row.processStatusName" />
+        </Badge>
+        <ProcessStatus v-else :value="row.processStatus" :text="row.processStatusName" />
       </template>
     </BasicTable>
 
-    <ApproveHistoryModal @register="registerApproveHistoryModal" />
-    <FlowPropertiesModal @register="registerFlowPropertiesModal" />
-    <BpmnPreviewModal @register="registerBpmnPreviewModal" />
-    <ProcessFormModal @register="registerProcessFormModal" />
-    <ProcessNodeSelectionModal
+    <ApproveHistoryModal ref="approveHistoryModalRef"  @register="registerApproveHistoryModal" />
+    <FlowPropertiesModal ref="flowPropertiesModalRef"  @register="registerFlowPropertiesModal" />
+    <BpmnPreviewModal ref="bpmnPreviewModalRef"  @register="registerBpmnPreviewModal" />
+    <ProcessFormModal ref="processFormModalRef"  @register="registerProcessFormModal" />
+    <ProcessNodeSelectionModal ref="processNodeSelectionModalRef"
       @register="registerProcessNodeSelectionModal"
       @success="handleReload"
     />
-    <ProcessVersionSelectionModal
+    <ProcessVersionSelectionModal ref="processVersionSelectionModalRef"
       @register="registerProcessVersionSelectionModal"
       @success="handleReload"
     />
-    <ProcessVariablesModal @register="registerProcessVariableModal" @success="handleReload" />
+    <ProcessVariablesModal ref="processVariablesModalRef"  @register="registerProcessVariableModal" @success="handleReload" />
   </Page>
 </template>
 
@@ -123,6 +119,14 @@
   // import { useLoading } from '@/components/Loading';
   import ProcessVariablesModal from '#/views/flowoperation/processInst/ProcessVariablesModal.vue';
   import {getCustomPagerModel} from "#/api/form/customForm";
+
+  const approveHistoryModalRef = ref(),
+      flowPropertiesModalRef = ref(),
+      bpmnPreviewModalRef = ref(),
+      processFormModalRef = ref(),
+      processNodeSelectionModalRef = ref(),
+      processVersionSelectionModalRef = ref(),
+      processVariablesModalRef = ref();
 
   const { isSupported, copy, copied } = useClipboard({ legacy: true });
 
@@ -208,7 +212,8 @@
 
 
   const formOptions: VbenFormProps = {
-    showCollapseButton: false,
+    showCollapseButton: true,
+    collapsed: true,
     submitOnEnter: true,
     commonConfig: {
       labelWidth: 60,
@@ -262,19 +267,22 @@
 
 
   nextTick(() => {
-    const { updateSchema } = getForm();
+    const { updateSchema } = tableApi.formApi;
     getAll().then((res) => {
       updateSchema([
         {
-          field: 'appSn',
+          fieldName: 'appSn',
           componentProps: { options: res, labelField: 'id' },
         },
       ]);
     });
   });
 
-  function handleViewForm(record: Recordable) {
-    openProcessFormModal(true, {
+  function handleViewForm(record: Recordable<any>) {
+    processFormModalRef.value.setData(record);
+    processFormModalRef.value.open();
+    processFormModalRef.value.setState({title: `查看流程【${record.formName}】的表单`});
+    /*openProcessFormModal(true, {
       record,
     });
     setProcessFormModalProps({
@@ -284,10 +292,10 @@
       centered: true,
       cancelText: '关闭',
       maskClosable: false,
-    });
+    });*/
   }
 
-  function handleViewApproveHistory(record: Recordable) {
+  function handleViewApproveHistory(record: Recordable<any>) {
     openApproveHistoryModal(true, {
       record,
       isUpdate: true,
@@ -302,7 +310,7 @@
   }
 
   // 查看
-  function handleViewFlowProperties(record: Recordable) {
+  function handleViewFlowProperties(record: Recordable<any>) {
     openFlowPropertiesModal(true, {
       record,
     });
@@ -315,7 +323,7 @@
   }
 
   // 终止
-  function handleStop(record: Recordable) {
+  function handleStop(record: Recordable<any>) {
     Modal.confirm({
       title: '警告！',
       icon: createVNode(ExclamationCircleOutlined),
@@ -345,7 +353,7 @@
   }
 
   // 挂起/激活实例
-  function handleChangePState(record: Recordable) {
+  function handleChangePState(record: Recordable<any>) {
     const stateName = record.suspensionState === 1 ? '挂起' : '激活';
     Modal.confirm({
       title: '警告！',
@@ -381,7 +389,7 @@
   }
 
   // 执行实例
-  function execute(record: Recordable) {
+  function execute(record: Recordable<any>) {
     Modal.confirm({
       title: '警告！',
       icon: createVNode(ExclamationCircleOutlined),
@@ -399,7 +407,7 @@
   }
 
   // 预览流程图
-  function handlePreview(record: Recordable) {
+  function handlePreview(record: Recordable<any>) {
     openBpmnPreviewModal(true, {
       modelKey: record.modelKey,
       procInstId: record.processInstanceId,
@@ -414,7 +422,7 @@
   }
 
   // 干预
-  function handleIntervention(record: Recordable) {
+  function handleIntervention(record: Recordable<any>) {
     openProcessNodeSelectionModal(true, {
       title: '流程干预',
       helpMessage: '请选择绿色的已流转过节点，双击元素取消选中',
@@ -437,7 +445,7 @@
   }
 
   // 复活
-  function handleRevival(record: Recordable) {
+  function handleRevival(record: Recordable<any>) {
     openProcessNodeSelectionModal(true, {
       title: '流程复活',
       helpMessage: '请选择复活到哪个任务节点，双击元素取消选中',
@@ -448,12 +456,12 @@
   }
 
   // 版本切换
-  function handleChangeVersion(record: Recordable) {
+  function handleChangeVersion(record: Recordable<any>) {
     openProcessVersionSelectionModal(true, { record });
   }
 
   // 变量补偿
-  function handleChangeVariable(record: Recordable) {
+  function handleChangeVariable(record: Recordable<any>) {
     openProcessVariableModal(true, { record });
   }
 
@@ -462,10 +470,10 @@
   }
 
   async function handleReload(value) {
-    const { updateSchema } = getForm();
+    const { updateSchema } = tableApi.formApi;
     await updateSchema([
       {
-        field: 'processStatus',
+        fieldName: 'processStatus',
         componentProps: {
           disabled: value === 'running',
         },

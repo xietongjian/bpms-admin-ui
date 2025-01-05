@@ -492,7 +492,7 @@ async function handleStop(record: Recordable<any>) {
   }
 }
 
-function handleEditDmn(record: Recordable) {
+function handleEditDmn(record: Recordable<any>) {
   openDmnDesignerModal(true, {
     isUpdate: true,
     record: {modelId: record.modelId, id: record.id, dmnType: record.dmnType},
@@ -514,7 +514,7 @@ function handleEditDmn(record: Recordable) {
   });
 }
 
-function handleEditDmn1(record: Recordable) {
+function handleEditDmn1(record: Recordable<any>) {
   // go({name: 'DmnDesigner', query: {modelId: record.modelId, id: record.id}});
   // go("/flowable/dmn/designer?modelId=" + record.modelId + "&id=" + record.id);
 }

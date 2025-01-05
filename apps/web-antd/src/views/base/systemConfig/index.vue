@@ -161,28 +161,28 @@
     });
   }
 
-  function showDelBtn(record: Recordable) {
+  function showDelBtn(record: Recordable<any>) {
     return record.configSn.indexOf('SYS_') === -1;
   }
 
-  function showUploadBtn(record: Recordable) {
+  function showUploadBtn(record: Recordable<any>) {
     return record.configSn.lastIndexOf('_IMG') !== -1;
   }
 
-  function handleEdit(record: Recordable) {
+  function handleEdit(record: Recordable<any>) {
     openModal(true, {
       record,
       isUpdate: true,
     });
   }
 
-  function handleDelete(record: Recordable) {
+  function handleDelete(record: Recordable<any>) {
     deleteByIds([record.id]).then(() => {
       reload();
     });
   }
 
-  function handleUpload(record: Recordable) {}
+  function handleUpload(record: Recordable<any>) {}
 
   function handleSuccess() {
     setTimeout(() => {

@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height>
-    <div class="p-4 bg-white" style="padding-bottom: 0">
+    <div class="p-4 bg-card" style="padding-bottom: 0">
       <BasicForm class="" @register="registerSearchForm" />
     </div>
 

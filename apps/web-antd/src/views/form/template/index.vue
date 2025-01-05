@@ -292,7 +292,7 @@
     setEditModalProps('添加模板');
   }
 
-  function handleEditFormTemplate(record: Recordable) {
+  function handleEditFormTemplate(record: Recordable<any>) {
     openModal(true, record);
     setEditModalProps('编辑模板');
   }
@@ -318,7 +318,7 @@
     tableApi.reload();
   }
 
-  function handleDelete(record: Recordable) {
+  function handleDelete(record: Recordable<any>) {
     const status = record.status;
     if (status == 1) {
       message.warning('已生效状态不能删除！');

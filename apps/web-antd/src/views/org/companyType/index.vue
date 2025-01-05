@@ -91,7 +91,7 @@ function handleCreateChild(record: Recordable<any>, e) {
   });
 }
 
-function handleDelete(record: Recordable) {
+function handleDelete(record: Recordable<any>) {
   if (record.children && record.children.length > 0) {
     message.warning('有子节点，不能删除！');
     return;

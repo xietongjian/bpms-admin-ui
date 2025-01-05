@@ -246,18 +246,18 @@
   }
 
   nextTick(() => {
-    const { updateSchema } = getForm();
+    const { updateSchema } = tableApi.formApi;
     getAll().then((res) => {
       updateSchema([
         {
-          field: 'appSn',
+          fieldName: 'appSn',
           componentProps: { options: res, labelField: 'id' },
         },
       ]);
     });
   });
 
-  function handleExe(record: Recordable) {
+  function handleExe(record: Recordable<any>) {
     // openFullLoading();
     completeBackStage({ taskId: record.taskId, processInstanceId: record.processInstanceId })
       .then((res) => {
@@ -274,7 +274,7 @@
       });
   }
 
-  function handleStop(record: Recordable) {
+  function handleStop(record: Recordable<any>) {
     Modal.confirm({
       title: '警告！',
       icon: createVNode(ExclamationCircleOutlined),
@@ -303,7 +303,7 @@
     });
   }
 
-  function handleViewApproveHistory(record: Recordable) {
+  function handleViewApproveHistory(record: Recordable<any>) {
     openApproveHistoryModal(true, {
       record,
       isUpdate: true,
@@ -317,7 +317,7 @@
     });
   }
 
-  function handleViewForm(record: Recordable) {
+  function handleViewForm(record: Recordable<any>) {
     record.allowsOperation = true;
     openProcessFormModal(true, {
       record,
@@ -332,7 +332,7 @@
     });
   }
 
-  function handleViewFlowProperties(record: Recordable) {
+  function handleViewFlowProperties(record: Recordable<any>) {
     openFlowPropertiesModal(true, {
       record,
     });
@@ -345,7 +345,7 @@
     });
   }
 
-  function handlePreview(record: Recordable) {
+  function handlePreview(record: Recordable<any>) {
     openBpmnPreviewModal(true, {
       modelKey: record.modelKey,
       procInstId: record.processInstanceId,
@@ -359,7 +359,7 @@
     });
   }
 
-  function handleChangeAssignee(record: Recordable) {
+  function handleChangeAssignee(record: Recordable<any>) {
     currentTask.value = record;
     openPersonalSelector(true, {
       selectorProps: {

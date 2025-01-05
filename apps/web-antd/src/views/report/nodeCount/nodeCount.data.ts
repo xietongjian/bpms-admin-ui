@@ -1,46 +1,42 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import { z } from '#/adapter/form';
 
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '模板名称',
-    dataIndex: 'modelName',
+    field: 'modelName',
     align: 'left',
   },
   {
     title: '人员姓名',
-    dataIndex: 'personalName',
+    field: 'personalName',
     align: 'center',
   },
   {
     title: '角色名称',
-    dataIndex: 'roleNames',
+    field: 'roleNames',
     align: 'left',
   },
   {
     title: '角色标识',
-    dataIndex: 'roleSn',
+    field: 'roleSn',
     align: 'left',
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'userNo',
+    fieldName: 'userNo',
     label: '人员',
     component: 'PersonalSelector',
     componentProps: {
       placeholder: '请选择人员',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   /*{
-    field: 'roleSn',
+    fieldName: 'roleSn',
     label: '角色',
     helpMessage:'组件暂未开发',
     component: 'Input',

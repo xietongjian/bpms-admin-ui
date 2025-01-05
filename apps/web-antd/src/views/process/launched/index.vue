@@ -210,7 +210,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
       });*/
   }
 
-  function handleViewForm(record: Recordable) {
+  function handleViewForm(record: Recordable<any>) {
     openProcessFormModal(true, {
       record,
     });

@@ -90,7 +90,7 @@ watch(
 
 onMounted(() => {
   if (!props.selectOnModal) {
-    initData();
+    // initData();
   }
 });
 
@@ -147,7 +147,7 @@ async function initData() {
         //     // getTree()?.setSelectedKeys(selectedRowKeys);
         //   }, 200);
         // }
-        expandKeys.concat(selectedRowKeys);
+        // expandKeys.concat(selectedRowKeys);
 
         // getTree()?.setExpandedKeys(expandKeys);
       })

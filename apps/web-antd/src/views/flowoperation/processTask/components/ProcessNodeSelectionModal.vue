@@ -1,6 +1,8 @@
 <script setup lang="ts">
   import { defineExpose, computed, defineEmits, ref, shallowRef } from 'vue';
   // import { BasicModal, useModalInner } from '@/components/Modal';
+  import {useVbenModal} from '@vben/common-ui';
+
   import { BpmnViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
   // import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
   import { Row, Col, message } from 'ant-design-vue';
@@ -23,7 +25,7 @@
 
   const multiple = ref(false);
   const navigatedViewer = shallowRef<NavigatedViewer>();
-  const bpmnViewer = shallowRef<ComponentInstance<typeof BpmnViewer>>();
+  const bpmnViewer = shallowRef<any>();
 
   const historyActivityIds = shallowRef<string[]>([]);
   const selectedActivityIds = shallowRef<string[]>([]);

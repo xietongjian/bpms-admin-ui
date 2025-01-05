@@ -4,7 +4,7 @@
   import {message} from 'ant-design-vue';
 
   // import { BasicModal, useModalInner } from '@/components/Modal';
-  import { ComponentInstance, nextTick, ref, shallowRef, defineExpose } from 'vue';
+  import { nextTick, ref, shallowRef, defineExpose } from 'vue';
   import {
     compensateProcessInstanceVariables,
     getProcessInstanceVariables,
@@ -16,7 +16,7 @@
   const presetVariables = ref<any[]>([]);
   const disabledKeys = ref<string[]>([]);
   const processInstanceId = ref<string>('');
-  const variablesEditor = shallowRef<ComponentInstance<typeof JsonVariablesEditor>>();
+  const variablesEditor = shallowRef<any>();
 
   /*const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(
     async (data) => {

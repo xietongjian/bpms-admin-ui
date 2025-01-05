@@ -1,20 +1,17 @@
 <script setup lang="ts">
-  /**
-   * @desc index
-   * @author DragonTeam <https://www.bpmport.com>
-   * @since 2024/10/10 13:46
-   */
-
   import { RadioGroup, RadioButton, Card } from 'ant-design-vue';
   import { onMounted, ref } from 'vue';
   import dayjs from 'dayjs';
-  import { BasicForm, useForm } from '@/components/Form';
+  import type {VxeGridProps} from '#/adapter/vxe-table';
+  import type {VbenFormProps} from '@vben/common-ui';
+  import type {Recordable} from '@vben/types';
   import { searchFormSchema } from './processInstanceCount.data';
   import OneYearPie from './components/OneYearPie.vue';
-  import OneDayLine from '@/views/report/processInstanceCount/components/OneDayLine.vue';
-  import SevenDaysBar from '@/views/report/processInstanceCount/components/SevenDaysBar.vue';
-  import MonthlyBar from '@/views/report/processInstanceCount/components/MonthlyBar.vue';
-  import ThreeMonthlyPie from '@/views/report/processInstanceCount/components/ThreeMonthlyPie.vue';
+  import OneDayLine from '#/views/report/processInstanceCount/components/OneDayLine.vue';
+  import SevenDaysBar from '#/views/report/processInstanceCount/components/SevenDaysBar.vue';
+  import MonthlyBar from '#/views/report/processInstanceCount/components/MonthlyBar.vue';
+  import ThreeMonthlyPie from '#/views/report/processInstanceCount/components/ThreeMonthlyPie.vue';
+  import {useVbenForm} from "#/adapter/form";
 
   defineOptions({ name: 'ProcessInstanceCount' });
 
@@ -23,13 +20,25 @@
     date: dayjs().format('YYYY-MM-DD'),
   });
 
-  const [registerSearchForm, { setFieldsValue, updateSchema, getFieldsValue }] = useForm({
+/*  const [registerSearchForm, { setFieldsValue, updateSchema, getFieldsValue }] = useForm({
     labelWidth: 80,
     schemas: searchFormSchema,
     showResetButton: false,
     submitButtonOptions: { text: '统计' },
     actionColOptions: { span: 24 },
     submitFunc: resetSearch,
+  });*/
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: searchFormSchema,
+    wrapperClass: 'grid-cols-1',
   });
 
   async function resetData() {

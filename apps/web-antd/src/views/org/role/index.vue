@@ -143,7 +143,7 @@ function handleCreate() {
   });
 }
 
-function handleEdit(record: Recordable) {
+function handleEdit(record: Recordable<any>) {
   openModal(true, {
     record,
     isUpdate: true,
@@ -151,7 +151,7 @@ function handleEdit(record: Recordable) {
 }
 
 // 人员选择弹窗
-function handleSettingCompany(record: Recordable) {
+function handleSettingCompany(record: Recordable<any>) {
   const selectedList =
       record.companies &&
       record.companies.map((item) => {

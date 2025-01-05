@@ -323,7 +323,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
     });
   }
 
-  function handleDelete(record: Recordable) {
+  function handleDelete(record: Recordable<any>) {
     if (record.children && record.children.length > 0) {
       createMessage.warning('有子节点，不能删除！');
       return;
@@ -333,7 +333,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
     });
   }
 
-  function handleDeletePersonal(record: Recordable) {
+  function handleDeletePersonal(record: Recordable<any>) {
     deleteById(record.id)
       .then(() => {
         reloadRolePersonal(unref(currentRole).id, '');

@@ -329,7 +329,7 @@
     });
   }
 
-  function createActions(record: Recordable): ActionItem[] {
+  function createActions(record: Recordable<any>): ActionItem[] {
     return [
       {
         auth: 'Biz:' + PerEnum.UPDATE,
@@ -347,7 +347,7 @@
     ];
   }
 
-  function handlePreview(record: Recordable) {
+  function handlePreview(record: Recordable<any>) {
     openBpmnPreviewModal(true, {
       modelKey: record.modelKey,
     });
@@ -360,7 +360,7 @@
     });
   }
 
-  function handleEdit(record: Recordable) {
+  function handleEdit(record: Recordable<any>) {
     const { modelKey, modelId, categoryCode, formType } = record;
     const query = {
       modelKey,
@@ -428,7 +428,7 @@
       });
   }
 
-  function handlePublish(record: Recordable) {
+  function handlePublish(record: Recordable<any>) {
     if (record.modelKey) {
       publish(record.modelKey);
     } else {
@@ -441,7 +441,7 @@
     }
   }
 
-  function handleStop(record: Recordable) {
+  function handleStop(record: Recordable<any>) {
     if (record.modelKey) {
       stop(record.modelKey);
     } else {

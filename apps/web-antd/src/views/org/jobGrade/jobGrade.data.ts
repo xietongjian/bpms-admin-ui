@@ -23,6 +23,13 @@ export const columns: VxeGridProps['columns'] = [
     width: 100,
     align: 'right',
   },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
+  },
   /*{
     title: '创建人',
     field: 'creator',

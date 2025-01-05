@@ -142,7 +142,7 @@ function handleBpmnPreview(modelKey, procInstId) {
   bpmnPreviewModalRef.value.open();
 }
 
-  function handleViewForm(record: Recordable) {
+  function handleViewForm(record: Recordable<any>) {
     openProcessFormModal(true, {
       record,
     });
