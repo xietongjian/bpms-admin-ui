@@ -96,8 +96,8 @@
   import { ref, watch, defineProps } from 'vue';
   import { UserOutlined, CheckOutlined, StopOutlined } from '@ant-design/icons-vue';
   import { List, Avatar, Tag, Space, Row, Col } from 'ant-design-vue';
-  import { EmpInfo } from '@/components/EmpInfo';
-  import { getFormatCode } from '@/utils';
+  import {EmpInfo} from '#/views/components/EmpInfo';
+  import { getFormatCode } from '#/utils';
 
   const props = defineProps({
     historyList: {

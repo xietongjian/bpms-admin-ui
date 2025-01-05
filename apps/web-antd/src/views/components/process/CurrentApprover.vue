@@ -69,8 +69,8 @@
   import {defineProps} from 'vue';
   import {UserOutlined, CheckCircleOutlined, QuestionCircleOutlined} from '@ant-design/icons-vue';
   import {AvatarGroup, Tooltip, Avatar, Space, Badge} from 'ant-design-vue';
-  import {CollapseContainer} from '@/components/Container/index';
-  import {EmpInfo} from '@/components/EmpInfo';
+  // import {CollapseContainer} from '@/components/Container/index';
+  import {EmpInfo} from '#/views/components/EmpInfo';
 
   const props = defineProps({
     approverList: {

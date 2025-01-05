@@ -1,7 +1,7 @@
 <template>
   <Page auto-content-height>
     <BasicTable class="proc-inst-table" @register="registerTable">
-      <template #toolbar>
+      <template #toolbar-tools>
         <Segmented
           class="data-type-switch"
           @change="handleReload"
@@ -12,13 +12,14 @@
           ]"
         />
       </template>
+      <template #action="{row}">
+        <TableAction
+            :actions="getTableActions(row)"
+            :dropDownActions="getTableDownActions(row)"
+        />
+      </template>
       <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-            :actions="getTableActions(record)"
-            :dropDownActions="getTableDownActions(record)"
-          />
-        </template>
+
 
         <template v-else-if="column.key === 'processInstanceId'">
           <a @click="doCopyContent(record.processInstanceId)"><CopyOutlined /></a>
@@ -88,22 +89,22 @@
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {ColPage, Page} from '@vben/common-ui';
-  import {TableAction} from '#/components/table-action';
+  import { TableAction } from '#/components/table-action';
 
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
   import {
     changeProcInstActive,
     executeProcessInstance,
     findProcessinstancesPagerModel,
   } from '#/api/flowoperation/processInst';
-  import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
-  import ProcessNodeSelectionModal from '@/views/flowoperation/processTask/components/ProcessNodeSelectionModal.vue';
-  import ProcessVersionSelectionModal from '@/views/flowoperation/processInst/ProcessVersionSelectionModal.vue';
+  import ProcessNodeSelectionModal from '#/views/flowoperation/processTask/components/ProcessNodeSelectionModal.vue';
+  import ProcessVersionSelectionModal from '#/views/flowoperation/processInst/ProcessVersionSelectionModal.vue';
   import { getAll } from '#/api/base/app';
+  import {BpmnPreviewModal} from '#/views/components/preview';
+  import { useClipboard } from '@vueuse/core';
 
   import { columns, searchFormSchema } from './processInst.data';
   import ApproveHistoryModal from './ApproveHistoryModal.vue';
-  import ProcessStatus from '@/views/components/process/ProcessStatus.vue';
+  import ProcessStatus from '#/views/components/process/ProcessStatus.vue';
   import FlowPropertiesModal from './FlowPropertiesModal.vue';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import {
@@ -112,25 +113,28 @@
     PartitionOutlined,
     PauseCircleFilled,
   } from '@ant-design/icons-vue';
-  import { copyText } from '@/utils/copyTextToClipboard';
+  // import { copyText } from '@/utils/copyTextToClipboard';
   import ProcessFormModal from '../processTask/ProcessFormModal.vue';
   import { Modal, Tooltip, Segmented, Badge, message, Button } from 'ant-design-vue';
-  import { useModal } from '@/components/Modal';
-  import { useRequest } from '@vben/hooks';
+  // import { useModal } from '@/components/Modal';
+  // import { useRequest } from '@vben/hooks';
 
   import { backToStep, restartProcessInstance, stopProcess } from '#/api/flowoperation/processTask';
-  import { useLoading } from '@/components/Loading';
-  import ProcessVariablesModal from '@/views/flowoperation/processInst/ProcessVariablesModal.vue';
+  // import { useLoading } from '@/components/Loading';
+  import ProcessVariablesModal from '#/views/flowoperation/processInst/ProcessVariablesModal.vue';
+  import {getCustomPagerModel} from "#/api/form/customForm";
+
+  const { isSupported, copy, copied } = useClipboard({ legacy: true });
 
   defineOptions({ name: 'ProcessInst' });
 
-  const [openFullLoading, closeFullLoading] = useLoading({
-    tip: '执行中...',
-  });
+  // const [openFullLoading, closeFullLoading] = useLoading({
+  //   tip: '执行中...',
+  // });
 
   const procInstDataType = ref('running');
 
-  const [
+  /*const [
     registerProcessFormModal,
     { openModal: openProcessFormModal, setModalProps: setProcessFormModalProps },
   ] = useModal();
@@ -149,8 +153,8 @@
   const [registerProcessVersionSelectionModal, { openModal: openProcessVersionSelectionModal }] =
     useModal();
   const [registerProcessVariableModal, { openModal: openProcessVariableModal }] = useModal();
-
-  const [registerTable, { getForm, reload }] = useTable({
+*/
+ /* const [registerTable, { getForm, reload }] = useTable({
     size: 'small',
     api: findProcessinstancesPagerModel,
     columns,
@@ -190,8 +194,9 @@
       dataIndex: 'action',
     },
   });
+  */
 
-  useRequest(
+/*  useRequest(
     () => {
       tableApi.reload();
       return Promise.resolve({});
@@ -199,7 +204,62 @@
     {
       refreshOnWindowFocus: true,
     },
-  );
+  );*/
+
+
+  const formOptions: VbenFormProps = {
+    showCollapseButton: false,
+    submitOnEnter: true,
+    commonConfig: {
+      labelWidth: 60,
+    },
+    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+    resetButtonOptions: {
+      show: false,
+    },
+    schema: searchFormSchema,
+  };
+
+  const gridOptions: VxeGridProps = {
+    columns,
+    columnConfig: {resizable: true},
+    height: 'auto',
+    maxHeight: '100%',
+    border: false,
+    keepSource: true,
+    autoResize: false,
+    stripe: true,
+    round: false,
+    radioConfig: {
+      highlight: true,
+      labelField: 'name',
+      trigger: 'row',
+    },
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          currentModelInfo.value = {};
+          return await findProcessinstancesPagerModel({
+            query: {
+              pageNum: page.currentPage,
+              pageSize: page.pageSize,
+            },
+            entity: formValues || {},
+          });
+        },
+      },
+    },
+  };
+
+  const gridEvents: VxeGridListeners = {
+    radioChange: ({row}) => {
+      clickRow(row);
+    }
+  };
+
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
+
 
   nextTick(() => {
     const { updateSchema } = getForm();
@@ -510,15 +570,5 @@
 </script>
 
 <style lang="less">
-  .proc-inst-table {
-    .vben-basic-table-header__toolbar {
-      justify-content: flex-start;
-    }
-    .data-type-switch {
-      .ant-segmented-item-selected {
-        background: @button-primary-color;
-        color: @white;
-      }
-    }
-  }
+
 </style>

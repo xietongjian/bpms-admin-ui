@@ -1,5 +1,5 @@
 <template>
-  <BasicModal >
+  <BasicModal class="w-[800px]" >
     <BasicForm />
   </BasicModal>
 </template>

@@ -1,17 +1,15 @@
 <script setup lang="ts">
-  /**
-   * @desc ProcessVariablesModal
-   * @author DragonTeam <https://www.bpmport.com>
-   * @since 2024/9/11 15:26
-   */
+  import {useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from '#/adapter/form';
+  import {message} from 'ant-design-vue';
 
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { ComponentInstance, nextTick, ref, shallowRef } from 'vue';
+  // import { BasicModal, useModalInner } from '@/components/Modal';
+  import { ComponentInstance, nextTick, ref, shallowRef, defineExpose } from 'vue';
   import {
     compensateProcessInstanceVariables,
     getProcessInstanceVariables,
   } from '#/api/flowoperation/processInst';
-  import JsonVariablesEditor from '@/components/JsonVariables/JsonVariablesEditor.vue';
+  // import JsonVariablesEditor from '#/components/JsonVariables/JsonVariablesEditor.vue';
 
   defineOptions({ name: 'ProcessVariablesModal' });
 
@@ -20,7 +18,7 @@
   const processInstanceId = ref<string>('');
   const variablesEditor = shallowRef<ComponentInstance<typeof JsonVariablesEditor>>();
 
-  const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(
+  /*const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(
     async (data) => {
       setModalProps({ confirmLoading: true, title: '变量补偿', width: 1000 });
       changeLoading(true);
@@ -38,7 +36,28 @@
       changeLoading(false);
       setModalProps({ confirmLoading: false });
     },
-  );
+  );*/
+
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          // formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      // handleSubmit();
+    },
+  });
 
   async function handleSubmit() {
     try {
@@ -47,7 +66,7 @@
         return;
       }
 
-      setModalProps({ confirmLoading: true });
+      modalApi.setState({loading: true, confirmLoading: true});
       const requestBody: any = {};
 
       for (const item of presetVariables.value) {
@@ -56,13 +75,14 @@
 
       await compensateProcessInstanceVariables(processInstanceId.value, requestBody);
 
-      closeModal();
+      modalApi.close();
     } catch (e) {
       console.error(e);
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
+  defineExpose(modalApi)
 </script>
 
 <template>

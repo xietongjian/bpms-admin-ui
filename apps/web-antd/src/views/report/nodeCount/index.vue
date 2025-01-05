@@ -41,17 +41,16 @@
 <script lang="ts" setup>
   import { nextTick } from 'vue';
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
-  import { getAll } from '@/api/base/app';
+  import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
+  import { getAll } from '#/api/base/app';
   import { useLoading } from '@/components/Loading';
-  import { useMessage } from '@/hooks/web/useMessage';
   import { columns, searchFormSchema } from './nodeCount.data';
-  import ApproveHistoryModal from '@/views/flowoperation/processInst/ApproveHistoryModal.vue';
-  import FlowPropertiesModal from '@/views/flowoperation/processInst/FlowPropertiesModal.vue';
-  import { EmpInfo } from '@/components/EmpInfo';
+  import ApproveHistoryModal from '#/views/flowoperation/processInst/ApproveHistoryModal.vue';
+  import FlowPropertiesModal from '#/views/flowoperation/processInst/FlowPropertiesModal.vue';
+  import {EmpInfo} from '#/views/components/EmpInfo';
   import { useModal } from '@/components/Modal';
-  import { exportExcel, getModelByNodeReportQueryVo } from '@/api/report/nodeCount';
-  import { downloadBlob, downloadByOnlineUrl, downloadByUrl } from '@/utils/file/download';
+  import { exportExcel, getModelByNodeReportQueryVo } from '#/api/report/nodeCount';
+  import { downloadBlob, downloadByOnlineUrl, downloadByUrl } from '#/utils/file/download';
 
   const { createMessage } = useMessage();
   const [openFullLoading, closeFullLoading] = useLoading({

@@ -87,24 +87,12 @@ export const formSchema: FormSchema[] = [
     label: '表单类型',
     component: 'Input',
     rules: z
-        .string({
-          required_error: '名称不能为空',
-        })
+        .string()
         .trim()
         .min(1, "名称不能为空")
         .max(60, "字符长度不能大于60！")
-    /*rules: [
-      {
-        pattern: new RegExp(FormValidPatternEnum.FIELD_NAME_SN),
-        type: 'string',
-        message: '请输入英文或数字（以英文或下划线开头）！',
-      },
-      {
-        max: 64,
-        message: '字符长度不能大于64！',
-      },
-    ],
-    colProps,*/
+      .regex(new RegExp(FormValidPatternEnum.FIELD_NAME_SN), '请输入英文或数字（以英文或下划线开头）！')
+      .optional(),
   },
   {
     fieldName: 'dbType',

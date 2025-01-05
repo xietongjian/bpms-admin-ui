@@ -1,20 +1,16 @@
 <script setup lang="ts">
-  /**
-   * @desc ProcessVersionSelectionModal
-   * @author DragonTeam <https://www.bpmport.com>
-   * @since 2024/9/9 16:14
-   */
+import { defineEmits, ref, defineExpose } from 'vue';
+import {useVbenModal} from '@vben/common-ui';
 
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, useForm } from '@/components/Form';
-  import { defineEmits, ref } from 'vue';
-  import { processVersionSelectionFormSchema } from '@/views/flowoperation/processInst/processInst.data';
+import {useVbenForm} from '#/adapter/form';
+  import { processVersionSelectionFormSchema } from '#/views/flowoperation/processInst/processInst.data';
   import {
     changeProcessInstanceVersion,
     getProcessInstanceVersions,
   } from '#/api/flowoperation/processInst';
-  import { Input, Button, Empty, FormItemRest } from 'ant-design-vue';
-  import { PopConfirmButton } from '@/components/Button';
+  import { Input, message, Button, Empty, FormItemRest } from 'ant-design-vue';
+import {formSchema} from "#/views/org/jobGrade/jobGrade.data";
+  // import { PopConfirmButton } from '@/components/Button';
 
   defineOptions({ name: 'ProcessVersionSelectionModal' });
 
@@ -23,16 +19,50 @@
   const processInstanceId = ref('');
   const paramsList = ref<{ key: string; value: string }[]>([]);
 
-  const [registerForm, { setFieldsValue, resetFields, updateSchema, validate }] = useForm({
+/*  const [registerForm, { setFieldsValue, resetFields, updateSchema, validate }] = useForm({
     labelWidth: 100,
     schemas: processVersionSelectionFormSchema,
     showActionButtonGroup: false,
     actionColOptions: {
       span: 23,
     },
-  });
+  });*/
 
-  const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(
+
+const [BasicForm, formApi] = useVbenForm({
+  commonConfig: {
+    componentProps: {
+      // class: 'w-full',
+    },
+  },
+  showDefaultActions: false,
+  layout: 'horizontal',
+  schema: processVersionSelectionFormSchema,
+  wrapperClass: 'grid-cols-1',
+});
+
+
+const [BasicModal, modalApi] = useVbenModal({
+  draggable: true,
+  onCancel() {
+    modalApi.close();
+  },
+  onOpenChange(isOpen: boolean) {
+    if (isOpen) {
+      const values = modalApi.getData<Record<string, any>>();
+      if (values) {
+        formApi.setValues(values);
+        modalApi.setState({loading: false, confirmLoading: false});
+      }
+    }
+  },
+  onConfirm() {
+    // await formApi.submitForm();
+    handleSubmit();
+  },
+});
+
+  /*const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(
     async (data) => {
       setModalProps({ confirmLoading: false, title: '版本切换' });
       changeLoading(true);
@@ -55,10 +85,9 @@
           },
         },
       ]);
-
       changeLoading(false);
     },
-  );
+  );*/
 
   function handleAppendParam() {
     paramsList.value.push({ key: '', value: '' });
@@ -94,6 +123,7 @@
       setModalProps({ confirmLoading: false });
     }
   }
+  defineExpose(modalApi)
 </script>
 
 <template>

@@ -132,16 +132,19 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
   {
     fieldName: 'basicTitle',
     hideLabel: true,
-    slot: 'basicTitle',
+    component: 'Input',
+    // slot: 'basicTitle',
     formItemClass: 'm-0 p-0',
   },
   {
     fieldName: 'showName',
     label: '名称/编号',
-    slot: 'showTitle',
-    colProps,
-    show: ({ values }) => {
-      return values.formType === 0;
+    component: 'Input',
+    dependencies: {
+      show(values, form) {
+        return values.formType === 0;
+      },
+      triggerFields: ['showName'],
     },
   },
   {
@@ -195,9 +198,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
       } ,
       triggerFields: [''],
     },
-    colProps: {
-      span: 12,
-    },
+    wrapperClass: 'w-full'
   },
   {
     fieldName: 'categoryCode',
@@ -208,9 +209,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
       treeNodeFilterProp: 'name',
       getPopupContainer: () => document.body,
     },
-    colProps: {
-      span: 12,
-    },
+    wrapperClass: 'w-full'
   },
   {
     fieldName: 'flowOwnerNo',
@@ -224,9 +223,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
         debugger;
       },
     },
-    colProps: {
-      span: 12,
-    },
+    wrapperClass: 'w-full'
   },
   {
     fieldName: 'ownDeptId',
@@ -238,9 +235,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
       selectType: '2',
       placeholder: '请选择流程归属部门',
     },
-    colProps: {
-      span: 12,
-    },
+    wrapperClass: 'w-full'
   },
   {
     fieldName: 'processDockingNo',
@@ -253,9 +248,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
       multiple: false,
       placeholder: '请选择人员',
     },
-    colProps: {
-      span: 12,
-    },
+    wrapperClass: 'w-full'
   },
   {
     fieldName: 'orderNo',
@@ -267,9 +260,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
       min: OrderNoDefaultEnum.MIN,
       max: OrderNoDefaultEnum.MAX,
     },
-    colProps: {
-      span: 12,
-    },
+    wrapperClass: 'w-full'
   },
   /*{
     fieldName: 'modelIcon',

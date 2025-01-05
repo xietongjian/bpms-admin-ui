@@ -68,8 +68,6 @@ const [BasicForm, formApi] = useVbenForm({
   wrapperClass: 'grid-cols-1',
 });
 
-const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
-
 async function handleSubmit() {
   try {
     modalApi.setState({loading: true, confirmLoading: true});

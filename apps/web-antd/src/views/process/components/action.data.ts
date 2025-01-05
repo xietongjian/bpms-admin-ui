@@ -1,23 +1,24 @@
-import { BasicColumn } from '@/components/Table';
-import { FormSchema } from '@/components/Table';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+
 const colProps = {
   span: 22,
 };
-export const backToStepTableColumns: BasicColumn[] = [
+export const backToStepTableColumns: VxeGridProps['columns'] = [
   {
     title: '节点名称',
-    dataIndex: 'nodeName',
+    field: 'nodeName',
     align: 'left',
   },
   {
     title: '审批人姓名',
-    dataIndex: 'userName',
+    field: 'userName',
     width: 120,
     align: 'left',
   },
   {
     title: '审批人工号',
-    dataIndex: 'userCode',
+    field: 'userCode',
     width: 120,
     align: 'left',
   },
@@ -25,7 +26,7 @@ export const backToStepTableColumns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -38,21 +39,21 @@ export const searchFormSchema: FormSchema[] = [
 
 export const approveActionFormSchema: FormSchema[] = [
   {
-    field: 'actionType',
+    fieldName: 'actionType',
     label: 'actionType',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'taskId',
+    fieldName: 'taskId',
     label: 'taskId',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'procInstId',
+    fieldName: 'procInstId',
     label: 'procInstId',
     required: false,
     component: 'Input',
@@ -60,7 +61,7 @@ export const approveActionFormSchema: FormSchema[] = [
   },
 
   {
-    field: 'actionPersonal',
+    fieldName: 'actionPersonal',
     label: '选择操作人员',
     colProps,
     component: 'PersonalSelector',
@@ -71,7 +72,7 @@ export const approveActionFormSchema: FormSchema[] = [
   },
 
   {
-    field: 'signType',
+    fieldName: 'signType',
     component: 'Checkbox',
     label: ' ',
     colProps,
@@ -80,7 +81,7 @@ export const approveActionFormSchema: FormSchema[] = [
   },
 
   {
-    field: 'message',
+    fieldName: 'message',
     label: '审批意见',
     colProps,
     component: 'InputTextArea',
@@ -101,21 +102,21 @@ export const approveActionFormSchema: FormSchema[] = [
 
 export const fetchBackMessageFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'id',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'taskId',
+    fieldName: 'taskId',
     label: 'taskId',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'message',
+    fieldName: 'message',
     label: '审批意见',
     colProps,
     component: 'InputTextArea',
@@ -136,21 +137,21 @@ export const fetchBackMessageFormSchema: FormSchema[] = [
 
 export const approveBackToStepFormSchema: FormSchema[] = [
   {
-    field: 'actionType',
+    fieldName: 'actionType',
     label: 'actionType',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'taskId',
+    fieldName: 'taskId',
     label: 'taskId',
     required: false,
     component: 'Input',
     show: false,
   },
   {
-    field: 'procInstId',
+    fieldName: 'procInstId',
     label: 'procInstId',
     required: false,
     component: 'Input',
@@ -158,7 +159,7 @@ export const approveBackToStepFormSchema: FormSchema[] = [
   },
 
   {
-    field: 'message',
+    fieldName: 'message',
     label: '驳回意见',
     component: 'InputTextArea',
     required: true,
@@ -177,7 +178,7 @@ export const approveBackToStepFormSchema: FormSchema[] = [
     }
   },
   {
-    field: 'backToStepNodeList',
+    fieldName: 'backToStepNodeList',
     label: '选择驳回节点',
     colProps,
     component: 'Input',
@@ -189,7 +190,7 @@ export const approveBackToStepFormSchema: FormSchema[] = [
 
 export const approveMsgSchemas: FormSchema[] = [
   {
-    field: 'approveMsg',
+    fieldName: 'approveMsg',
     label: '',
     required: true,
     component: 'InputTextArea',

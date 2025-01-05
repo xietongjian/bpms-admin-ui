@@ -87,7 +87,7 @@
     getMyProcessDetail,
     getTaskProcessDetail,
   } from '#/api/report/flowCount';
-  import {Page} from "@vben/common-ui/src";
+  import {Page} from "@vben/common-ui";
   import {formSchema, listColumns} from "#/views/base/app/app.data";
   import {getAppListByPage} from "#/api/base/app";
 

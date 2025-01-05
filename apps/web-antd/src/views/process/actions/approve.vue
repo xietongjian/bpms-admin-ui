@@ -58,7 +58,7 @@
     getCurrTaskApplyersByBusinessKey
   } from "@/api/process/process";
   import {useUserStore} from "@/store/modules/user";
-  import {EmpInfo} from '@/components/EmpInfo';
+  import {EmpInfo} from '#/views/components/EmpInfo';
   import { useMessage } from '@/hooks/web/useMessage';
   import {useRequest} from "@vben/hooks";
 

@@ -51,6 +51,7 @@
   </div>
 
   <ApproveSelectorPersonalModal
+      ref="approveSelectorPersonalModalRef"
     @register="registerApproveSelectorPersonalModal"
     @success="closeFormModal"
   />
@@ -60,7 +61,7 @@
     @saveForm="handleSaveForm"
     @success="closeFormModal"
   />
-  <ApproveBackToStepModal @register="registerApproveBackToStepModal" @success="closeFormModal" />
+  <ApproveBackToStepModal ref="approveBackToStepModalRef" @register="registerApproveBackToStepModal" @success="closeFormModal" />
 </template>
 <script lang="ts" setup>
   import { ref, defineProps, defineEmits, nextTick, defineExpose } from 'vue';
@@ -69,7 +70,8 @@
   import ApproveSelectorPersonalModal from './ApproveSelectorPersonalModal.vue';
   import ApproveCustomApproveSettingModal from './ApproveCustomApproveSettingModal.vue';
   import ApproveBackToStepModal from './ApproveBackToStepModal.vue';
-  import { BasicForm, useForm } from '@/components/Form/index';
+  // import { BasicForm, useForm } from '@/components/Form/index';
+  import {useVbenForm} from '#/adapter/form';
 
   import {
     complete,
@@ -80,8 +82,13 @@
     getCustomApproveSettings,
   } from '#/api/flowoperation/processTask';
   // import { useMessage } from '@/hooks/web/useMessage';
-  import { ResultEnum } from '@/enums/httpEnum';
-  import {approveMsgSchemas} from "@/views/process/components/action.data";
+  // import { ResultEnum } from '@/enums/httpEnum';
+  import {approveMsgSchemas} from "#/views/process/components/action.data";
+  import {formSchema} from "#/views/org/jobGrade/jobGrade.data";
+
+  const approveSelectorPersonalModalRef = ref(),
+      approveCustomApproveSettingRef = ref(),
+      approveBackToStepModalRef = ref();
 
   const emit = defineEmits(['success', 'changeLoading', 'approveSaveForm']);
   const props = defineProps({
@@ -94,24 +101,36 @@
       default: {},
     },
   })
-  const approveCustomApproveSettingRef = ref();
 
   // 人员选择弹窗
-  const [
+  /*const [
     registerApproveSelectorPersonalModal,
     {
       openModal: openApproveSelectorPersonalSelector,
       setModalProps: setApproveSelectorPersonalModalProps,
     },
-  ] = useModal();
-  const [registerApproveMsgForm, {resetFields, setFieldsValue, getFieldsValue, validateFields }] = useForm({
+  ] = useModal();*/
+/*  const [registerApproveMsgForm, {resetFields, setFieldsValue, getFieldsValue, validateFields }] = useForm({
       labelWidth: 0,
       schemas: approveMsgSchemas,
       className: 'approve-msg-form',
       showActionButtonGroup: false
+  });*/
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: approveMsgSchemas,
+    wrapperClass: 'grid-cols-1',
   });
+
   // 自定义审批配置弹窗
-  const [
+/*  const [
     registerCustomApproveSettingModal,
     {
       openModal: openCustomApproveSettingModal,
@@ -122,7 +141,7 @@
   const [
     registerApproveBackToStepModal,
     { openModal: openApproveBackToStepModal, setModalProps: setApproveBackToStepModalProps },
-  ] = useModal();
+  ] = useModal();*/
 
   const approveMsg = ref<string>('');
 

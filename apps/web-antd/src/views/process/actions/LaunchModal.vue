@@ -83,7 +83,7 @@
   import { BasicModal, useModal, useModalInner } from '@/components/Modal';
   import { useMessage } from '@/hooks/web/useMessage';
   import ApprovalHistory from '@/views/process/components/ApprovalHistory.vue';
-  import { EmpInfo } from '@/components/EmpInfo';
+  import {EmpInfo} from '#/views/components/EmpInfo';
   import { updateCustomFormData } from '@/api/process/customForm';
   import { useGo } from '@/hooks/web/usePage';
 

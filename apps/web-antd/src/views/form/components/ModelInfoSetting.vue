@@ -24,12 +24,15 @@
           </Divider>
         </template>
         <template #privilegeTitle>
-          <BasicTitle style="font-size: 18px" :span="true" class="mt-4 mb-0"> 权限配置 </BasicTitle>
-          <Divider class="mt-1 mb-0" />
+<!--          <BasicTitle style="font-size: 18px" :span="true" class="mt-4 mb-0"> 权限配置 </BasicTitle>-->
+          <Divider orientation="left" orientation-margin="0px" class="mt-1 mb-0 !font-bold !size-18">
+            权限配置
+          </Divider>
         </template>
 
-        <template #showTitle="{ model }">
-          <Space style="font-weight: bold">
+        <template #showName="slotProps">
+          {{slotProps}}
+<!--          <Space style="font-weight: bold">
             <TypographyText @click="doCopyContent(model['name'])">
               {{ model['name'] || '-' }}
             </TypographyText>
@@ -37,7 +40,7 @@
             <TypographyText @click="doCopyContent(model['modelKey'])">
               {{ model['modelKey'] || '-' }}
             </TypographyText>
-          </Space>
+          </Space>-->
         </template>
       </BasicForm>
       <div class="h-25"></div>
@@ -170,7 +173,7 @@
 
   async function initDefaultData() {
     getAppliedRange().then(async (res) => {
-      await updateSchema([
+      await formApi.updateSchema([
         {
           field: 'appliedRange',
           componentProps: { options: res },
@@ -179,7 +182,7 @@
       ]);
     });
     getSkipSet().then(async (res) => {
-      await updateSchema([
+      await formApi.updateSchema([
         {
           field: 'skipSet',
           componentProps: { options: res },
@@ -193,7 +196,7 @@
         if (currentFormType.value !== 'custom') {
           res = res.filter((item) => item.sn !== 'flow');
         }
-        await updateSchema([
+        await formApi.updateSchema([
           {
             field: 'appSn',
             dynamicDisabled: currentFormType.value === 'custom',
@@ -207,7 +210,7 @@
     getAll()
       .then(async (res) => {
         const defaultAuthPointList = res.filter(item => item.ifDefault === 1).map(item => item.sn);
-        await updateSchema([
+        await formApi.updateSchema([
           {
             field: 'authPointList',
             componentProps: { options: res },
@@ -222,7 +225,7 @@
       .finally(() => {});
     // 加载分类
     getFlowCategories().then(res => {
-      updateSchema([
+      formApi.updateSchema([
         {
           field: 'categoryCode',
           defaultValue: props.categoryCode || null,
@@ -288,7 +291,7 @@
         ] as Rule[];
       };
       // 业务表单增加表单验证
-      updateSchema([
+      formApi.updateSchema([
         {
           field: 'modelKey',
           dynamicRules: () => {
@@ -335,7 +338,7 @@
                     };
                   });
                 }
-                setFieldsValue({
+                formApi.setValues({
                   ownDeptId: ownDept,
                 });
               }
@@ -408,13 +411,13 @@
 
         await formApi.updateSchema([
           {
-            field: 'processDockingNo',
+            fieldName: 'processDockingNo',
             componentProps: {
               options: dockings,
             },
           },
           {
-            field: 'flowOwnerNo',
+            fieldName: 'flowOwnerNo',
             componentProps: {
               options: owner,
             },
@@ -432,7 +435,7 @@
           },
         },*/
           {
-            field: 'superuser',
+            fieldName: 'superuser',
             componentProps: {
               options: superuser,
             },
@@ -553,7 +556,7 @@
     }
   }
   function doCopyContent(content) {
-    copyText(content);
+    copy(content);
   }
 
   defineExpose({

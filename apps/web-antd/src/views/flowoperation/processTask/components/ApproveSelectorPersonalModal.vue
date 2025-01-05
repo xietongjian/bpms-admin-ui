@@ -5,8 +5,9 @@
 </template>
 <script lang="ts" setup>
   import { ref, defineEmits } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, useForm } from '@/components/Form/index';
+  import {useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from '#/adapter/form';
+  // import { BasicForm, useForm } from '@/components/Form/index';
   import { approveActionFormSchema } from './action.data';
   import {message} from 'ant-design-vue'
   import {
@@ -16,19 +17,32 @@
     turnTask,
     reviewTask,
   } from '#/api/flowoperation/processTask';
+  import {formSchema} from "#/views/org/jobGrade/jobGrade.data";
 
   const emit = defineEmits(['success', 'register']);
   const selectorTypeRef = ref('');
-  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
+  /*const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
     labelWidth: 100,
     schemas: approveActionFormSchema,
     showActionButtonGroup: false,
     actionColOptions: {
       span: 23,
     },
+  });*/
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: approveActionFormSchema,
+    wrapperClass: 'grid-cols-1',
   });
 
-  const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
+  /*const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
     async (data) => {
       await resetFields();
       setModalProps({confirmLoading: false, loading: false});
@@ -79,7 +93,30 @@
       });
       setModalProps({ confirmLoading: false });
     },
-  );
+  );*/
+
+
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          // formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      // handleSubmit();
+    },
+  });
+
 
   function closeCurrModal() {
     setModalProps({ confirmLoading: false });

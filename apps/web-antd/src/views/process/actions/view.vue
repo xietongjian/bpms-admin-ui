@@ -51,7 +51,7 @@
   import { useMessage } from '@/hooks/web/useMessage';
   import {getProdModelInfoByModelKeyAndProcInstId, getCurrTaskApplyersByBusinessKey} from "@/api/process/process";
   import {useUserStore} from "@/store/modules/user";
-  import {EmpInfo} from '@/components/EmpInfo';
+  import {EmpInfo} from '#/views/components/EmpInfo';
   import {isEmpty} from "@/utils/is";
 
   export default defineComponent({

@@ -25,7 +25,6 @@ import {ColPage, Page} from '@vben/common-ui';
   import { getListByPage } from '#/api/base/formFieldType';
   import { columns, searchFormSchema } from './formFieldType.data';
   import FormFieldTypeModal from './FormFieldTypeModal.vue';
-import {getJobGrades} from "#/api/org/jobGrade";
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
 
 const formFieldTypeModalRef = ref();
@@ -101,7 +100,7 @@ function createActions (row: Recordable<any>) {
   return [
     {
       auth: [PerPrefix + PerEnum.UPDATE],
-      tooltip: '修改',
+      tooltip: '编辑',
       icon: 'clarity:note-edit-line',
       onClick: handleEdit.bind(null, row),
     },
@@ -117,9 +116,10 @@ function createActions (row: Recordable<any>) {
   }
 
   function handleEdit(record: Recordable<any>) {
-    openModal(true, {
-      record,
-      isUpdate: true,
+    formFieldTypeModalRef.value.setData(record);
+    formFieldTypeModalRef.value.open();
+    formFieldTypeModalRef.value.setState({
+      title: '编辑'
     });
   }
 

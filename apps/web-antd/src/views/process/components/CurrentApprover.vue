@@ -28,7 +28,7 @@
   import { ApartmentOutlined, ClockCircleOutlined, UserOutlined } from '@ant-design/icons-vue';
   import { Avatar, Space, Tag, Row, Col } from 'ant-design-vue';
   import { CollapseContainer } from '@/components/Container/index';
-  import {EmpInfo} from '@/components/EmpInfo';
+  import {EmpInfo} from '#/views/components/EmpInfo';
 
   export default defineComponent({
     name: 'CurrentApprover',

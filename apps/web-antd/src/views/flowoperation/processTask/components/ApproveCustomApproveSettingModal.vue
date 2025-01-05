@@ -5,10 +5,13 @@
 </template>
 <script lang="ts">
   import { defineComponent, ref, computed, unref } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, useForm } from '@/components/Form/index';
+  // import { BasicModal, useModalInner } from '@/components/Modal';
+  // import { BasicForm, useForm } from '@/components/Form/index';
+  import {useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from '#/adapter/form';
+
   import { approveActionFormSchema } from './action.data';
-  import { Button, Tag } from 'ant-design-vue';
+  import { Button, Tag, message } from 'ant-design-vue';
   import {
     afterAddSign,
     beforeAddSign,
@@ -17,8 +20,8 @@
     reviewTask,
     complete,
   } from '#/api/flowoperation/processTask';
-  import { useGo } from '@/hooks/web/usePage';
-  import { ResultEnum } from '@/enums/httpEnum';
+  // import { useGo } from '@/hooks/web/usePage';
+  // import { ResultEnum } from '#/enums/httpEnum';
 
   const nextUserPrefix = 'next_user__';
   export default defineComponent({

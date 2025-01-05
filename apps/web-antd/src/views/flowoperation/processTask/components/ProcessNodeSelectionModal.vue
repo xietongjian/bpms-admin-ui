@@ -1,30 +1,25 @@
 <script setup lang="ts">
-  /**
-   * @desc ProcessNodeSelectionModal
-   * @author DragonTeam <https://www.bpmport.com>
-   * @since 2024/9/6 16:02
-   */
-
-  import { ComponentInstance, computed, defineEmits, ref, shallowRef } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BpmnViewer } from '@/assets/bpmn/viewer/lib/bpmn-viewer.js';
-  import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
+  import { defineExpose, computed, defineEmits, ref, shallowRef } from 'vue';
+  // import { BasicModal, useModalInner } from '@/components/Modal';
+  import { BpmnViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
+  // import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
   import { Row, Col, message } from 'ant-design-vue';
   import NavigatedViewer from 'bpmn-js/lib/NavigatedViewer';
   import {
     getBpmnByModelKey,
     getHighLightedNodeVoByProcessInstanceId,
   } from '#/api/flowable/bpmn/modelInfo';
-  import { BasicForm, useForm } from '@/components/Form';
-  import { processNodeSelectionFormSchema } from '@/views/flowoperation/processInst/processInst.data';
+  // import { BasicForm, useForm } from '@/components/Form';
+  import { processNodeSelectionFormSchema } from '#/views/flowoperation/processInst/processInst.data';
   import { is } from 'bpmn-js/lib/util/ModelUtil';
+  import {useVbenForm} from "#/adapter/form";
 
   defineOptions({ name: 'ProcessNodeSelectionModal' });
 
   const emit = defineEmits(['success', 'register']);
 
-  const { isDark } = useDarkModeTheme();
-  const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
+  // const { isDark } = useDarkModeTheme();
+  // const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
 
   const multiple = ref(false);
   const navigatedViewer = shallowRef<NavigatedViewer>();
@@ -86,16 +81,28 @@
     selectedActivityIds.value = [element.id];
   }
 
-  const [registerForm, { setFieldsValue, resetFields, validate, updateSchema }] = useForm({
+/*  const [registerForm, { setFieldsValue, resetFields, validate, updateSchema }] = useForm({
     labelWidth: 100,
     schemas: processNodeSelectionFormSchema,
     showActionButtonGroup: false,
     actionColOptions: {
       span: 24,
     },
+  });*/
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: processNodeSelectionFormSchema,
+    wrapperClass: 'grid-cols-1',
   });
 
-  const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
+  /*const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
     async (data) => {
       try {
         changeLoading(true);
@@ -158,7 +165,27 @@
         changeLoading(false);
       }
     },
-  );
+  );*/
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          // formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      // handleSubmit();
+    },
+  });
 
   async function handleSubmit() {
     try {
@@ -189,6 +216,7 @@
       setModalProps({ confirmLoading: false });
     }
   }
+  defineExpose(modalApi)
 </script>
 
 <template>
@@ -216,7 +244,7 @@
 </template>
 
 <style lang="less">
-  @import '@/assets/bpmn/viewer/lib/style.css';
+  //@import '@/assets/bpmn/viewer/lib/style.css';
   .bpmn-container-fill {
     min-height: inherit;
     position: relative;

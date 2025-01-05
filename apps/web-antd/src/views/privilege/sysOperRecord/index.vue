@@ -134,7 +134,7 @@ function handleDetail(record: Recordable<any>) {
   });
 }
 
-function handleDelete(record: Recordable<any>) {
+async function handleDelete(record: Recordable<any>) {
   const {success, msg} = await deleteByIds([record.id]);
   if (success) {
     message.success(msg);

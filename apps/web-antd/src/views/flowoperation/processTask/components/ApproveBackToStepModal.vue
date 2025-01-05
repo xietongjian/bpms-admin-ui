@@ -18,49 +18,45 @@
     </BasicForm>
   </BasicModal>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
   import { defineComponent, ref, computed, unref } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, useForm } from '@/components/Form/index';
+  import {useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from '#/adapter/form';
   import { approveBackToStepFormSchema, backToStepTableColumns } from './action.data';
   import { Button, Tag, Table, message } from 'ant-design-vue';
   import { backToStep, backToSubmitter, getBackToStepNodes } from '#/api/flowoperation/processTask';
-  import { useGo } from '@/hooks/web/usePage';
-  import { ResultEnum } from '@/enums/httpEnum';
+  import {formSchema} from "#/views/org/jobGrade/jobGrade.data";
+  // import { useGo } from '@/hooks/web/usePage';
+  // import { ResultEnum } from '@/enums/httpEnum';
 
-  export default defineComponent({
-    name: 'ApproveBackToStepModal',
-    components: { BasicModal, BasicForm, Table, Button, Tag },
-    emits: ['success', 'register'],
-    setup(_, { emit }) {
-      // const isUpdate = ref(true);
-      const backToStepNodeList = ref([]);
-      const backToStepNodeListLoading = ref(false);
-      const selectedKeys = ref([]);
-      const selectedRows = ref([]);
-      const backToStepNodeTableRef = ref();
-      const go = useGo();
+  // const isUpdate = ref(true);
+  const backToStepNodeList = ref([]);
+  const backToStepNodeListLoading = ref(false);
+  const selectedKeys = ref([]);
+  const selectedRows = ref([]);
+  const backToStepNodeTableRef = ref();
+  // const go = useGo();
 
-      const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
-        labelWidth: 100,
-        schemas: approveBackToStepFormSchema,
-        showActionButtonGroup: false,
-        actionColOptions: {
-          span: 23,
-        },
-      });
+  /*const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
+    labelWidth: 100,
+    schemas: approveBackToStepFormSchema,
+    showActionButtonGroup: false,
+    actionColOptions: {
+      span: 23,
+    },
+  });
 
-      const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
-        async (data) => {
-          await resetFields();
-          genLoading(false);
-          const { taskId, procInstId, message } = data.selectorProps;
-          selectedKeys.value = [];
-          selectedRows.value = [];
-          setModalProps({ title: '驳回' });
+  const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
+      async (data) => {
+        await resetFields();
+        genLoading(false);
+        const { taskId, procInstId, message } = data.selectorProps;
+        selectedKeys.value = [];
+        selectedRows.value = [];
+        setModalProps({ title: '驳回' });
 
-          backToStepNodeListLoading.value = true;
-          getBackToStepNodes({ taskId })
+        backToStepNodeListLoading.value = true;
+        getBackToStepNodes({ taskId })
             .then((res) => {
               backToStepNodeList.value = res;
               backToStepNodeListLoading.value = false;
@@ -69,89 +65,109 @@
               backToStepNodeListLoading.value = false;
             });
 
-          setFieldsValue({
-            taskId,
-            procInstId,
-            message,
-          });
-        },
-      );
+        setFieldsValue({
+          taskId,
+          procInstId,
+          message,
+        });
+      },
+  );*/
 
-      function closeCurrModal() {
-        genLoading(false);
-        closeModal();
-        emit('success');
-      }
 
-      function genLoading(status) {
-        setModalProps({ confirmLoading: status });
-        changeLoading(status);
-      }
-
-      async function handleSubmit() {
-        try {
-          genLoading(true);
-          const values = await validate();
-          const params = {
-            taskId: values.taskId,
-            processInstanceId: values.procInstId,
-            message: values.message,
-          };
-
-          if (unref(selectedKeys) && unref(selectedKeys).length > 0) {
-            params['distFlowElementId'] = unref(selectedKeys)[0];
-            backToStep(params)
-              .then((res) => {
-                const result = res.data;
-                if (result.code === ResultEnum.SUCCESS) {
-                  message.success(result.msg);
-                  closeCurrModal();
-                } else {
-                  message.error(result.msg);
-                }
-                genLoading(false);
-              })
-              .catch(() => {
-                message.error('网络异常，请稍后再试！');
-              })
-              .finally(() => {
-                genLoading(false);
-              });
-          } else {
-            message.error('请选择要驳回的节点!');
-            genLoading(false);
-            return;
-          }
-        } catch (e) {
-          genLoading(false);
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
         }
       }
-
-      function changeSelect(e) {
-        selectedRows.value = unref(backToStepNodeList).filter((item) => item.nodeId === e[0]);
-        selectedKeys.value = e;
-      }
-      function customRow(record, index) {
-        return {
-          onClick: () => {
-            selectedKeys.value = [record.nodeId];
-            selectedRows.value = [record];
-          },
-        };
-      }
-
-      return {
-        customRow,
-        backToStepNodeTableRef,
-        registerModal,
-        backToStepTableColumns,
-        backToStepNodeList,
-        registerForm,
-        selectedKeys,
-        changeSelect,
-        handleSubmit,
-        backToStepNodeListLoading,
-      };
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      handleSubmit();
     },
   });
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: approveBackToStepFormSchema,
+    wrapperClass: 'grid-cols-1',
+  });
+
+  function closeCurrModal() {
+    genLoading(false);
+    closeModal();
+    emit('success');
+  }
+
+  function genLoading(status) {
+    setModalProps({ confirmLoading: status });
+    changeLoading(status);
+  }
+
+  async function handleSubmit() {
+    try {
+      genLoading(true);
+      const values = await validate();
+      const params = {
+        taskId: values.taskId,
+        processInstanceId: values.procInstId,
+        message: values.message,
+      };
+
+      if (unref(selectedKeys) && unref(selectedKeys).length > 0) {
+        params['distFlowElementId'] = unref(selectedKeys)[0];
+        backToStep(params)
+            .then((res) => {
+              const result = res.data;
+              if (result.code === ResultEnum.SUCCESS) {
+                message.success(result.msg);
+                closeCurrModal();
+              } else {
+                message.error(result.msg);
+              }
+              genLoading(false);
+            })
+            .catch(() => {
+              message.error('网络异常，请稍后再试！');
+            })
+            .finally(() => {
+              genLoading(false);
+            });
+      } else {
+        message.error('请选择要驳回的节点!');
+        genLoading(false);
+        return;
+      }
+    } catch (e) {
+      genLoading(false);
+    }
+  }
+
+  function changeSelect(e) {
+    selectedRows.value = unref(backToStepNodeList).filter((item) => item.nodeId === e[0]);
+    selectedKeys.value = e;
+  }
+  function customRow(record, index) {
+    return {
+      onClick: () => {
+        selectedKeys.value = [record.nodeId];
+        selectedRows.value = [record];
+      },
+    };
+  }
+
+  defineExpose(modalApi);
 </script>

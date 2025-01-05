@@ -22,15 +22,18 @@
 </template>
 <script lang="ts" setup>
   import { ref } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { Row, Col, Empty } from 'ant-design-vue';
-  import { JsonPreview } from '@/components/CodeEditor';
+  import {useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from '#/adapter/form';
+
+  // import { BasicModal, useModalInner } from '@/components/Modal';
+  import { Row, Col, Empty, message } from 'ant-design-vue';
+  // import { JsonPreview } from '@/components/CodeEditor';
 
   import { getVariablesByProcessInstanceId } from '#/api/flowoperation/processInst';
 
   const variableData = ref();
 
-  const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
+  /*const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
     async (data) => {
       setModalProps({
         width: 1000,
@@ -45,11 +48,42 @@
           changeLoading(false);
         });
     },
-  );
+  );*/
+
+
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          const { processInstanceId: procInstId } = values;
+          getVariablesByProcessInstanceId({ processInstanceId: procInstId })
+            .then((res) => {
+              variableData.value = res;
+            })
+            .finally(() => {
+              // changeLoading(false);
+            });
+          // formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      // handleSubmit();
+    },
+  });
+
 </script>
 <style lang="less">
   .code-viewer-bg {
-    background: mix(@trigger-dark-bg-color, #ccc, 80%);
+    //background: mix(@trigger-dark-bg-color, #ccc, 80%);
   }
   .flow-properties-container {
     .ant-modal {

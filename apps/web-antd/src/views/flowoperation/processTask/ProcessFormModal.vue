@@ -181,7 +181,7 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, unref, reactive, onMounted, watch, computed, defineEmits, nextTick, shallowRef } from 'vue';
+  import { ref, unref, reactive, onMounted, watch, computed, defineEmits, defineExpose, nextTick, shallowRef } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
 
@@ -212,17 +212,21 @@
     PlusOutlined,
   } from '@ant-design/icons-vue';
   import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
-  import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
+  // import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
   import { updateCustomFormData } from '#/api/process/customForm';
-  import {useUserStore} from "@/store/modules/user";
+  // import {useUserStore} from "@/store/modules/user";
   // import {useRequest} from "@vben/hooks";
   // import { useModal } from '@/components/Modal';
   import {checkRevokeProcess, revokeProcess, reminderTask} from "#/api/process/process";
   import ApproveSelectorPersonalModal from './components/ApproveSelectorPersonalModal.vue';
   import {EmpInfo} from '#/views/components/EmpInfo';
+  import { useUserStore } from '@vben/stores';
+  import { usePreferences } from '@vben/preferences';
 
   // 人员选择弹窗
   const [registerApproveSelectorPersonalModal, { openModal: openApproveSelectorPersonalSelector, setModalProps: setApproveSelectorPersonalModalProps }] = useModal();
+  const { isDark } = usePreferences();
+  const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
 
   const reminderAuthPointer = ref(null);
   const turnReadAuthPointer = ref(null);
@@ -239,10 +243,9 @@
   const emit = defineEmits(['reload', 'visible-change']);
 
   const TabPane = Tabs.TabPane;
-  const { isDark } = useDarkModeTheme();
   const bpmnViewer = shallowRef();
 
-  const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
+  // const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
   const defaultZoom = ref<number>(1);
   const isFitView = ref<boolean>(false);
   const approveActionButtonsRef = ref();
@@ -283,13 +286,34 @@
     procInstId: '',
   });
 
-  const [registerDescription] = useDescription({
-    data: baseFormInfo,
-    bordered: false,
-    schema: formBaseDataSchema,
+  // const [registerDescription] = useDescription({
+  //   data: baseFormInfo,
+  //   bordered: false,
+  //   schema: formBaseDataSchema,
+  // });
+
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          // formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      handleSubmit();
+    },
   });
 
-  const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
+  /*const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
     async (data) => {
       activeViewKey.value = 'viewForm';
       reminderMsg.value = '';
@@ -360,7 +384,7 @@
         changeLoading(false);
       }
     },
-  );
+  );*/
 
   const currentApproverListLoading = ref(false);
 
@@ -863,6 +887,8 @@
         });
     }
   }
+
+  defineExpose(modalApi)
 </script>
 
 <style lang="less">
@@ -925,7 +951,7 @@
 </style>
 
 <style lang="less">
-  @import '@/assets/bpmn/viewer/lib/style.css';
+  //@import '@/assets/bpmn/viewer/lib/style.css';
   .form-bpmn-container {
     padding: 0;
     position: relative;
