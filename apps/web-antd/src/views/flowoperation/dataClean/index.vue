@@ -2,7 +2,7 @@
   <Page auto-content-height title="数据清理" contentFullHeight>
     <Alert type="warning" show-icon>
       <template #icon>
-        <HeatMapOutlined style="color: orangered" />
+        <HeatMapOutlined style="color: orangered"/>
       </template>
       <!--      <template #message>
         <Space>
@@ -18,294 +18,378 @@
       </template>
     </Alert>
 
+    <!--    <Collapse >
+          <CollapsePanel key="1" header="通过业务表单Key清理">
+            <p>
+
+            </p>
+          </CollapsePanel>
+        </Collapse>-->
+
     <CollapseContainer class="mt-4" title="通过业务表单Key清理">
-      <BasicForm @register="registerBizKeyForm" loading="true" />
-      <div class="p-4" style="padding-top: 0; padding-left: 150px">
-        <Authority :value="'DataClean:' + PerEnum.UPDATE">
-          <a-button :loading="cleanByBizKeyLoading" type="error" @click="handleCleanByBizKey"
-            >开始清理</a-button
-          >
-        </Authority>
+      <BizKeyForm/>
+      <div class="p-4 pl-[150px] pt-0">
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="cleanByBizKeyLoading" type="error"
+                @click="handleCleanByBizKey"
+        >开始清理
+        </Button
+        >
       </div>
     </CollapseContainer>
 
     <CollapseContainer class="mt-4" title="通过流程ProcInstId清理">
-      <BasicForm @register="registerProcInstIdForm" />
-      <div class="p-4" style="padding-top: 0; padding-left: 150px">
-        <Authority :value="'DataClean:' + PerEnum.UPDATE">
-          <a-button
-            :loading="cleanByProcInstIdLoading"
-            type="error"
-            @click="handleCleanByProcInstId"
-            >开始清理</a-button
-          >
-        </Authority>
+      <ProcInstIdForm />
+      <div class="p-4 pl-[150px] pt-0">
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])"
+                :loading="cleanByProcInstIdLoading"
+                type="error"
+                @click="handleCleanByProcInstId"
+        >开始清理
+        </Button
+        >
       </div>
     </CollapseContainer>
 
     <CollapseContainer class="mt-4" title="通过流程ModelKey清理">
-      <BasicForm @register="registerModelKeyForm" />
-      <div class="p-4" style="padding-top: 0; padding-left: 150px">
-        <Authority :value="'DataClean:' + PerEnum.UPDATE">
-          <a-button :loading="cleanByModelKeyLoading" type="error" @click="handleCleanByModelKey"
-            >开始清理</a-button
-          >
-        </Authority>
+      <ModelKeyForm />
+      <div class="p-4 pl-[150px] pt-0">
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="cleanByModelKeyLoading" type="error"
+                @click="handleCleanByModelKey"
+        >开始清理
+        </Button
+        >
       </div>
     </CollapseContainer>
 
     <CollapseContainer class="mt-4" title="通过流程ModelKey删除流程模板">
-      <BasicForm @register="registerDeleteModelByModelKeyForm" />
-      <div class="p-4" style="padding-top: 0; padding-left: 150px">
-        <Authority :value="'DataClean:' + PerEnum.UPDATE">
-          <a-button :loading="deleteModelByModelKeyLoading" type="error" @click="handleDeleteModelByModelKey"
-            >开始删除</a-button
-          >
-        </Authority>
+      <DeleteModelByModelKeyForm />
+      <div class="p-4 pl-[150px] pt-0">
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="deleteModelByModelKeyLoading"
+                type="error" @click="handleDeleteModelByModelKey"
+        >开始删除
+        </Button
+        >
       </div>
     </CollapseContainer>
 
     <CollapseContainer class="mt-4" title="模型同步">
       <!--      <BasicForm @register="registerModelSyncForm" />-->
-      <div class="p-4" style="padding-top: 0; padding-left: 150px">
-        <Authority :value="'DataClean:' + PerEnum.UPDATE">
-          <Space>
-            <a-button :loading="bpmnModelSyncLoading" type="error" @click="handleBpmnModelSync"
-              >同步BPMN</a-button
-            >
-            <a-button :loading="dmnModelSyncLoading" type="error" @click="handleDmnModelSync"
-              >同步DMN</a-button
-            >
-          </Space>
-        </Authority>
+      <div class="p-4 pl-[150px] pt-0">
+        <Space>
+          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="bpmnModelSyncLoading" type="error"
+                  @click="handleBpmnModelSync"
+          >同步BPMN
+          </Button
+          >
+          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="dmnModelSyncLoading" type="error"
+                  @click="handleDmnModelSync"
+          >同步DMN
+          </Button
+          >
+        </Space>
       </div>
     </CollapseContainer>
   </Page>
 </template>
 <script lang="ts" setup>
-  import { ref, onMounted } from 'vue';
-  import { BasicForm, useForm } from '@/components/Form/index';
-  import { CollapseContainer } from '@/components/Container/index';
-  import { bizKeyFormSchema, procInstIdFormSchema, modelKeyFormSchema, deleteModelByModelKeyFormSchema } from './dataClean.data';
-  import { Alert, Space, message } from 'ant-design-vue';
-  import {
-    cleanByBizKeys,
-    cleanByModelKeys,
-    cleanByProcInstIds, deleteModelByModelKey,
-    syncModel,
-  } from '#/api/flowoperation/dataClean';
-  import { HeatMapOutlined } from '@ant-design/icons-vue';
+import {ref, onMounted} from 'vue';
+// import { BasicForm, useForm } from '@/components/Form/index';
+// import { CollapseContainer } from '@/components/Container/index';
+import {
+  bizKeyFormSchema,
+  procInstIdFormSchema,
+  modelKeyFormSchema,
+  deleteModelByModelKeyFormSchema
+} from './dataClean.data';
+import {Alert, Button, Space, message, Modal, Collapse} from 'ant-design-vue';
+import {Page} from '@vben/common-ui';
+import {useAccess} from '@vben/access';
+import {useVbenForm} from '#/adapter/form';
 
-  import { PerEnum } from '#/enums/perEnum';
+import {
+  cleanByBizKeys,
+  cleanByModelKeys,
+  cleanByProcInstIds, deleteModelByModelKey,
+  syncModel,
+} from '#/api/flowoperation/dataClean';
+import {HeatMapOutlined} from '@ant-design/icons-vue';
 
-  const cleanByBizKeyLoading = ref<boolean>(false);
-  const cleanByProcInstIdLoading = ref<boolean>(false);
-  const cleanByModelKeyLoading = ref<boolean>(false);
-  const deleteModelByModelKeyLoading = ref<boolean>(false);
-  const bpmnModelSyncLoading = ref<boolean>(false);
-  const dmnModelSyncLoading = ref<boolean>(false);
+import {PerEnum} from '#/enums/perEnum';
 
+const PerPrefix = 'DataClean:';
+
+const {hasAccessByCodes} = useAccess();
+
+const CollapsePanel = Collapse.Panel;
+
+const cleanByBizKeyLoading = ref<boolean>(false);
+const cleanByProcInstIdLoading = ref<boolean>(false);
+const cleanByModelKeyLoading = ref<boolean>(false);
+const deleteModelByModelKeyLoading = ref<boolean>(false);
+const bpmnModelSyncLoading = ref<boolean>(false);
+const dmnModelSyncLoading = ref<boolean>(false);
+
+/*
   const [registerBizKeyForm, { validate: validateBizKeyForm, setProps }] = useForm({
     labelWidth: 150,
     schemas: bizKeyFormSchema,
     showActionButtonGroup: false,
   });
+*/
 
-  const [registerProcInstIdForm, { validate: validateProcInstIdForm }] = useForm({
+
+const [BizKeyForm, bizKeyFormApi] = useVbenForm({
+  commonConfig: {
+    componentProps: {
+      // class: 'w-full',
+    },
+  },
+  showDefaultActions: false,
+  layout: 'horizontal',
+  schema: bizKeyFormSchema,
+  wrapperClass: 'grid-cols-1',
+});
+
+
+/*  const [registerProcInstIdForm, { validate: validateProcInstIdForm }] = useForm({
     labelWidth: 150,
     schemas: procInstIdFormSchema,
     showActionButtonGroup: false,
-  });
+  });*/
 
+const [ProcInstIdForm, procInstIdFormApi] = useVbenForm({
+  commonConfig: {
+    componentProps: {
+      // class: 'w-full',
+    },
+  },
+  showDefaultActions: false,
+  layout: 'horizontal',
+  schema: procInstIdFormSchema,
+  wrapperClass: 'grid-cols-1',
+});
+
+/*
   const [registerModelKeyForm, { validate: validateModelKeyForm }] = useForm({
     labelWidth: 150,
     schemas: modelKeyFormSchema,
     showActionButtonGroup: false,
-  });
+  });*/
 
-  const [registerDeleteModelByModelKeyForm, { validate: validateDeleteModelByModelKeyForm }] = useForm({
+const [ModelKeyForm, modelKeyFormApi] = useVbenForm({
+  commonConfig: {
+    componentProps: {
+      // class: 'w-full',
+    },
+  },
+  showDefaultActions: false,
+  layout: 'horizontal',
+  schema: modelKeyFormSchema,
+  wrapperClass: 'grid-cols-1',
+});
+
+/*  const [registerDeleteModelByModelKeyForm, { validate: validateDeleteModelByModelKeyForm }] = useForm({
     labelWidth: 150,
     schemas: deleteModelByModelKeyFormSchema,
     showActionButtonGroup: false,
-  });
-
-  onMounted(() => {
-    /*getEnv().then(res=>{
-    currentEnv.value = res;
   });*/
-  });
 
-  async function handleCleanByBizKey() {
-    // setProps({
-    //   loading: true,
-    // });
-    const values = await validateBizKeyForm();
-    createConfirm({
-      iconType: 'warning',
-      title: '提示',
-      content: '数据清理为不可逆操作，确定要执行吗？',
-      okButtonProps: {
-        type: 'error',
-      },
-      onOk: async () => {
-        cleanByBizKeyLoading.value = true;
-        cleanByBizKeys(values)
-          .then((res) => {
-            const resData = res.data;
-            if (resData.code === ResultEnum.SUCCESS) {
-              message.success(resData.msg);
-            } else {
-              message.error(resData.msg);
-            }
-          })
-          .finally(() => {
-            cleanByBizKeyLoading.value = false;
-          });
-      },
-    });
+
+const [DeleteModelByModelKeyForm, deleteModelByModelKeyFormApi] = useVbenForm({
+  commonConfig: {
+    componentProps: {
+      // class: 'w-full',
+    },
+  },
+  showDefaultActions: false,
+  layout: 'horizontal',
+  schema: deleteModelByModelKeyFormSchema,
+  wrapperClass: 'grid-cols-1',
+});
+
+onMounted(() => {
+  /*getEnv().then(res=>{
+  currentEnv.value = res;
+});*/
+});
+
+async function handleCleanByBizKey() {
+  // setProps({
+  //   loading: true,
+  // });
+  const {valid} = await bizKeyFormApi.validate();
+  if (!valid) {
+    return;
   }
 
-  async function handleCleanByProcInstId() {
-    const values = await validateProcInstIdForm();
-    createConfirm({
-      iconType: 'warning',
-      title: '提示',
-      content: '数据清理为不可逆操作，确定要执行吗？',
-      okButtonProps: {
-        type: 'error',
-      },
-      onOk: async () => {
-        cleanByProcInstIdLoading.value = true;
-        cleanByProcInstIds(values)
-          .then((res) => {
-            const resData = res.data;
-            if (resData.code === ResultEnum.SUCCESS) {
-              message.success(resData.msg);
-            } else {
-              message.error(resData.msg);
-            }
-          })
-          .finally(() => {
-            cleanByProcInstIdLoading.value = false;
-          });
-      },
-    });
-  }
-
-  async function handleCleanByModelKey() {
-    const values = await validateModelKeyForm();
-    createConfirm({
-      iconType: 'warning',
-      title: '提示',
-      content: '数据清理为不可逆操作，确定要执行吗？',
-      okButtonProps: {
-        type: 'error',
-      },
-      onOk: async () => {
-        cleanByModelKeyLoading.value = true;
-        cleanByModelKeys(values)
-          .then((res) => {
-            const resData = res.data;
-            if (resData.code === ResultEnum.SUCCESS) {
-              message.success(resData.msg);
-            } else {
-              message.error(resData.msg);
-            }
-          })
-          .finally(() => {
-            cleanByModelKeyLoading.value = false;
-          });
-      },
-    });
-  }
-
-  async function handleDeleteModelByModelKey() {
-    const values = await validateDeleteModelByModelKeyForm();
-    debugger;
-    createConfirm({
-      iconType: 'warning',
-      title: '提示',
-      content: '删除流程模板，将同时删除该模板的所有数据，为不可逆操作，确定要执行吗？',
-      okButtonProps: {
-        type: 'error',
-      },
-      onOk: async () => {
-        deleteModelByModelKeyLoading.value = true;
-        if(values.modelKeys){
-          values.modelKeys.split(',');
+  const values = await bizKeyFormApi.getValues();
+  Modal.confirm({
+    iconType: 'warning',
+    title: '提示',
+    content: '数据清理为不可逆操作，确定要执行吗？',
+    okButtonProps: {
+      danger: true,
+    },
+    onOk: async () => {
+      cleanByBizKeyLoading.value = true;
+      try {
+        const {success, msg} = await cleanByBizKeys(values);
+        if (success) {
+          message.success(msg);
+        } else {
+          message.error(msg);
         }
-        deleteModelByModelKey(values)
-          .then((res) => {
-            const {success, msg} = res.data;
-            if (success) {
-              message.success(msg);
-            } else {
-              message.error(msg);
-            }
-          })
-          .finally(() => {
-            deleteModelByModelKeyLoading.value = false;
-          });
-      },
-    });
-  }
+      } finally {
+        cleanByBizKeyLoading.value = false;
+      }
+    },
+  });
+}
 
-  async function handleBpmnModelSync() {
-    // const values = await validateModelKeyForm();
-    createConfirm({
-      iconType: 'warning',
-      title: '提示',
-      content: '同步Bpmn模板，确定要执行吗？',
-      okButtonProps: {
-        type: 'error',
-      },
-      onOk: async () => {
-        bpmnModelSyncLoading.value = true;
-        syncModel({ modelType: 0 })
-          .then((res) => {
-            const resData = res.data;
-            if (resData.code === ResultEnum.SUCCESS) {
-              message.success(resData.msg);
-            } else {
-              message.error(resData.msg);
-            }
-          })
-          .finally(() => {
-            bpmnModelSyncLoading.value = false;
-          });
-      },
-    });
-  }
+async function handleCleanByProcInstId() {
 
-  async function handleDmnModelSync() {
-    createConfirm({
-      iconType: 'warning',
-      title: '提示',
-      content: '同步Dmn模板，确定要执行吗？',
-      okButtonProps: {
-        type: 'error',
-      },
-      onOk: async () => {
-        dmnModelSyncLoading.value = true;
-        syncModel({ modelType: 4 })
-          .then((res) => {
-            const resData = res.data;
-            if (resData.code === ResultEnum.SUCCESS) {
-              message.success(resData.msg);
-            } else {
-              message.error(resData.msg);
-            }
-          })
-          .finally(() => {
-            dmnModelSyncLoading.value = false;
-          });
-      },
-    });
+  const {valid} = await procInstIdFormApi.validate();
+  if (!valid) {
+    return;
   }
+  const values = await procInstIdFormApi.getValues();
+  Modal.confirm({
+    iconType: 'warning',
+    title: '提示',
+    content: '数据清理为不可逆操作，确定要执行吗？',
+    okButtonProps: {
+      danger: true,
+    },
+    onOk: async () => {
+      cleanByProcInstIdLoading.value = true;
+      try {
+        const {success, msg} = await cleanByProcInstIds(values);
+        if (success) {
+          message.success(msg);
+        } else {
+          message.error(msg);
+        }
+      } finally {
+        cleanByProcInstIdLoading.value = false;
+      }
+    },
+  });
+}
+
+async function handleCleanByModelKey() {
+  const {valid} = await modelKeyFormApi.validate();
+  if (!valid) {
+    return;
+  }
+  const values = await modelKeyFormApi.getValues();
+  Modal.confirm({
+    iconType: 'warning',
+    title: '提示',
+    content: '数据清理为不可逆操作，确定要执行吗？',
+    okButtonProps: {
+      type: 'error',
+    },
+    onOk: async () => {
+      cleanByModelKeyLoading.value = true;
+      try {
+        const {success, msg} = await cleanByModelKeys(values);
+        if (success) {
+          message.success(msg);
+        } else {
+          message.error(msg);
+        }
+      } finally {
+        cleanByModelKeyLoading.value = false;
+      }
+    },
+  });
+}
+
+async function handleDeleteModelByModelKey() {
+  const {valid} = await deleteModelByModelKeyFormApi.validate();
+  if (!valid) {
+    return;
+  }
+  const values = await deleteModelByModelKeyFormApi.getValues();
+
+  Modal.confirm({
+    iconType: 'warning',
+    title: '提示',
+    content: '删除流程模板，将同时删除该模板的所有数据，为不可逆操作，确定要执行吗？',
+    okButtonProps: {
+      danger: true,
+    },
+    onOk: async () => {
+      deleteModelByModelKeyLoading.value = true;
+      if (values.modelKeys) {
+        values.modelKeys.split(',');
+      }
+      try {
+        const {success, msg} = await deleteModelByModelKey(values);
+        if (success) {
+          message.success(msg);
+        } else {
+          message.error(msg);
+        }
+      } finally {
+        deleteModelByModelKeyLoading.value = false;
+      }
+    },
+  });
+}
+
+async function handleBpmnModelSync() {
+  // const values = await validateModelKeyForm();
+  Modal.confirm({
+    iconType: 'warning',
+    title: '提示',
+    content: '同步Bpmn模板，确定要执行吗？',
+    okButtonProps: {
+      danger: true,
+    },
+    onOk: async () => {
+      bpmnModelSyncLoading.value = true;
+      try {
+        const {success, msg} = await syncModel({modelType: 0});
+        if (success) {
+          message.success(msg);
+        } else {
+          message.error(msg);
+        }
+      } finally {
+        bpmnModelSyncLoading.value = false;
+      }
+    },
+  });
+}
+
+async function handleDmnModelSync() {
+  Modal.confirm({
+    iconType: 'warning',
+    title: '提示',
+    content: '同步Dmn模板，确定要执行吗？',
+    okButtonProps: {
+      danger: true,
+    },
+    onOk: async () => {
+      dmnModelSyncLoading.value = true;
+      try {
+        const {success, msg} = await syncModel({modelType: 4});
+        if (success) {
+          message.success(msg);
+        } else {
+          message.error(msg);
+        }
+      } finally {
+        dmnModelSyncLoading.value = false;
+      }
+    },
+  });
+}
 </script>
 
 <style lang="less" scoped>
-  .center-align {
-    text-align: center;
-  }
+.center-align {
+  text-align: center;
+}
 </style>

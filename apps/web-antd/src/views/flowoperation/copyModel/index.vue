@@ -54,11 +54,11 @@
           closable
         />
         <Authority :value="'CopyModel:' + PerEnum.UPDATE">
-          <a-button
+          <Button
             :loading="customCopyPercent !== 100 && customCopyPercent !== 0"
             type="error"
             @click="handleCopyCustomForm"
-            >开始拷贝</a-button
+            >开始拷贝</Button
           >
         </Authority>
       </div>
@@ -85,11 +85,11 @@
           closable
         />
         <Authority :value="'CopyModel:' + PerEnum.UPDATE">
-          <a-button
+          <Button
             :loading="bizCopyPercent !== 100 && bizCopyPercent !== 0"
             type="error"
             @click="handleCopyBizForm"
-            >开始拷贝</a-button
+            >开始拷贝</Button
           >
         </Authority>
       </div>

@@ -1,22 +1,14 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
-import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-
-import { FormSchema } from '@/components/Form';
-import { BasicColumn } from '@/components/Table';
 
 export const SyncForm: FormSchema[] = [
   {
     label: '时间选择',
     fieldName: 'date',
-    required: true,
+    rules: 'selectRequired',
     component: 'DatePicker',
     componentProps: {
       showTime: true,
-    },
-    colProps: {
-      span: 24,
     },
   },
 ];
@@ -33,11 +25,20 @@ export const mongoJobColumns: VxeGridProps['columns'] = [
     field: 'startTime',
     align: 'left',
     width: 200,
+    slots: {default: 'startTime'}
   },
   {
     title: '截止时间',
     field: 'endTime',
     align: 'left',
     width: 200,
+    slots: {default: 'endTime'}
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];

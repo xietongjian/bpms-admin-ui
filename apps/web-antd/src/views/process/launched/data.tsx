@@ -43,6 +43,7 @@ export const launchedTableSchema: VxeGridProps['columns'] = [
     title: '流程标题',
     field: 'formName',
     align: 'left',
+    minWidth: 300,
     slots: { default: 'formName' }
   },
   {

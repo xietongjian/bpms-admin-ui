@@ -1,9 +1,4 @@
 <script setup lang="ts">
-  /**
-   * @desc MongoManagement
-   * @author DragonTeam <https://www.bpmport.com>
-   * @since 2024/9/28 18:33
-   */
   import { PerEnum } from '#/enums/perEnum';
   import {useAccess} from '@vben/access';
   import type {Recordable} from '@vben/types';
@@ -11,11 +6,11 @@
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
-  import {ColPage, Page} from '@vben/common-ui';
+  import {Page} from '@vben/common-ui';
   import {TableAction} from '#/components/table-action';
 
   import { DatePicker, Modal } from 'ant-design-vue';
-  import { CollapseContainer } from '@/components/Container';
+  // import { CollapseContainer } from '@/components/Container';
   import { createVNode, ref } from 'vue';
   import {
     syncAll,
@@ -35,8 +30,11 @@
     clearHiIdEntityLink,
   } from '#/api/flowoperation/MongoManagement';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import { BasicTable, useTable } from '@/components/Table';
+  // import { BasicTable, useTable } from '@/components/Table';
   import { mongoJobColumns } from '#/views/flowoperation/mongoManagement/mongoManagement.data';
+  import {columns} from "#/views/org/dept/dept.data";
+  import {getDepts} from "#/api/org/dept";
+  import {Button, message} from 'ant-design-vue';
 
   defineOptions({ name: 'MongoManagement' });
 
@@ -195,7 +193,7 @@
     });
   }
 
-  const [registerMongoJobTable] = useTable({
+/*  const [registerMongoJobTable] = useTable({
     size: 'small',
     api: async () => collapseList.value,
     columns: mongoJobColumns,
@@ -208,7 +206,38 @@
       align: 'left',
       dataIndex: 'action',
     },
-  });
+  });*/
+
+  const gridOptions: VxeGridProps<any> = {
+    pagerConfig: {
+      enabled: false,
+    },
+    treeConfig: {
+      parentField: 'pid',
+      rowField: 'id',
+      transform: true,
+    },
+    rowConfig: {
+      isHover: true,
+    },
+    columns: mongoJobColumns,
+    columnConfig: {resizable: true},
+    height: 'auto',
+    keepSource: true,
+    border: false,
+    stripe: true,
+    showOverflow: true,
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          return collapseList.value;
+        },
+      },
+    },
+  };
+
+  const [BasicTable, tableApi] = useVbenVxeGrid({gridOptions});
+
 </script>
 
 <template>
@@ -218,33 +247,33 @@
         <span class="ml-2">起止时间：</span>
         <DatePicker v-model:value="startTime" show-time />
         <DatePicker class="ml-2" v-model:value="endTime" show-time />
-        <a-button class="ml-2" type="primary" :loading="onAllSync" @click="startSyncAll">{{
+        <Button class="ml-2" type="primary" :loading="onAllSync" @click="startSyncAll">{{
           onAllSync ? '同步中' : '开始同步'
-        }}</a-button>
+        }}</Button>
       </div>
     </CollapseContainer>
 
-    <BasicTable class="mt-2" @register="registerMongoJobTable">
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'startTime'">
-          <DatePicker v-model:value="record.startTime" show-time />
-        </template>
-        <template v-if="column.key === 'endTime'">
-          <DatePicker v-model:value="record.endTime" show-time />
-        </template>
-        <template v-if="column.key === 'action'">
-          <a-button type="link" :loading="record.syncLoading" @click="startSync(record)">{{
-            record.syncLoading ? '同步中' : '开始同步'
-          }}</a-button>
-          <a-button
+    <BasicTable class="mt-2">
+      <template #startTime="{ row }">
+        <DatePicker v-model:value="row.startTime" show-time />
+      </template>
+      <template #endTime="{ row }">
+        <DatePicker v-model:value="row.endTime" show-time />
+      </template>
+      <template #action="{ row }">
+        <Button type="link" :loading="row.syncLoading" @click="startSync(row)">
+          {{
+            row.syncLoading ? '同步中' : '开始同步'
+          }}
+        </Button>
+        <Button
             class="ml-2"
             type="link"
             danger
-            :loading="record.clearLoading"
-            @click="startClear(record)"
-            >{{ record.clearLoading ? '清理中' : '开始清理' }}</a-button
-          >
-        </template>
+            :loading="row.clearLoading"
+            @click="startClear(row)">
+          {{ row.clearLoading ? '清理中' : '开始清理' }}
+        </Button>
       </template>
     </BasicTable>
   </Page>
