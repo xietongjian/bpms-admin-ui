@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Page auto-content-height>
     <BasicTable @register="registerTable">
       <template #toolbar-tools>
         <Button type="primary" @click="handleExport"> 导出Excel </Button>
@@ -15,7 +15,7 @@
     <ApproveHistoryModal ref="approveHistoryModalRef" @register="registerApproveHistoryModal" />
     <FlowPropertiesModal ref="flowPropertiesModalRef" @register="registerFlowPropertiesModal" />
     <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" @success="handleSuccess" />
-  </div>
+  </Page>
 </template>
 <script lang="ts" setup>
   import { nextTick } from 'vue';
@@ -26,7 +26,7 @@
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
 
   // import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
+  import {BpmnPreviewModal} from '#/views/components/preview';
   import { getAll } from '#/api/base/app';
   // import { useLoading } from '@/components/Loading';
   import { columns, searchFormSchema } from './nodeCount.data';
@@ -41,6 +41,7 @@
   import { Button, message } from 'ant-design-vue';
   import {TableAction} from '#/components/table-action';
   import {getCustomPagerModel} from "#/api/form/customForm";
+  import {ColPage, Page} from '@vben/common-ui';
 
   // const { createMessage } = useMessage();
   // const [openFullLoading, closeFullLoading] = useLoading({

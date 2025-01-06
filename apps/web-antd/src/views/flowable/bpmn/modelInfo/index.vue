@@ -1,238 +1,323 @@
 <template>
-  <PageWrapper v-loading="loadingRef" dense contentFullHeight fixedHeight contentClass="flex">
-    <FlowCategoryTree class="w-1/4 xl:w-1/5" @select="handleSelect" />
-    <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5">
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction :actions="createActions(record, column)" />
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="true"
+      :split-line="true"
+      :resizable="true"
+      :left-collapsible="true"
+      :auto-content-height="true"
+      content-class="h-full">
+    <template #left>
+      <FlowCategoryTree class="h-full" @select="handleSelect"/>
+    </template>
+    <div class="bg-card h-full">
+      <BasicTable>
+        <template #action="{ row }">
+          <TableAction :actions="createActions(row)"/>
         </template>
-      </template>
-    </BasicTable>
+      </BasicTable>
 
-    <ModelInfoModal @register="registerModal" @success="handleSuccess" />
-    <BpmnPreviewModal @register="registerBpmnPreviewModal" @success="handleSuccess" />
-    <CodePreviewModal @register="registerCodePreviewModal" :minHeight="200" />
-  </PageWrapper>
+      <ModelInfoModal ref="modelInfoModalRef" @register="registerModal" @success="handleSuccess"/>
+      <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" @success="handleSuccess"/>
+      <CodePreviewModal ref="codePreviewModalRef" @register="registerCodePreviewModal" :minHeight="200"/>
+    </div>
+  </ColPage>
 </template>
 <script lang="ts" setup>
-  import { PerEnum } from '@/enums/perEnum';
-  import { ref, nextTick } from 'vue';
+import {PerEnum} from '#/enums/perEnum';
+import {useAccess} from '@vben/access';
+import type {VbenFormProps} from '@vben/common-ui';
+import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
+import {BpmnPreviewModal} from '#/views/components/preview';
 
-  import { BasicTable, useTable, TableAction, BasicColumn, ActionItem } from '@/components/Table';
+import {useVbenVxeGrid} from '#/adapter/vxe-table';
+import type {Recordable} from '@vben/types';
+import {ColPage, Page} from '@vben/common-ui';
+import {TableAction} from '#/components/table-action';
+import {ref, nextTick} from 'vue';
 
-  import {
-    getModelInfoPageList,
-    deleteByIds,
-    publishBpmn,
-    stopBpmn,
-    getBpmnByModelKey,
-  } from '@/api/flowable/bpmn/modelInfo';
-  import { PageWrapper } from '@/components/Page';
-  import FlowCategoryTree from '@/views/components/leftTree/FlowCategoryTree.vue';
-  import { useModal } from '@/components/Modal';
-  import ModelInfoModal from './ModelInfoModal.vue';
-  import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
-  import CodePreviewModal from '@/views/components/preview/codePreview/index.vue';
-  import { getAll } from '@/api/base/app';
-  import { columns, searchFormSchema } from './modelInfo.data';
-  import { useMessage } from '@/hooks/web/useMessage';
+// import { BasicTable, useTable, TableAction, BasicColumn, ActionItem } from '@/components/Table';
 
-  const { createMessage } = useMessage();
+import {
+  getModelInfoPageList,
+  deleteByIds,
+  publishBpmn,
+  stopBpmn,
+  getBpmnByModelKey,
+} from '#/api/flowable/bpmn/modelInfo';
+// import { PageWrapper } from '@/components/Page';
+import FlowCategoryTree from '#/views/components/leftTree/FlowCategoryTree.vue';
+// import { useModal } from '@/components/Modal';
+import ModelInfoModal from './ModelInfoModal.vue';
+// import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
+// import CodePreviewModal from '@/views/components/preview/codePreview/index.vue';
+import {getAll} from '#/api/base/app';
+import {columns, searchFormSchema} from './modelInfo.data';
+import {getCustomPagerModel} from "#/api/form/customForm";
+// import { useMessage } from '@/hooks/web/useMessage';
 
-  const [registerModal, { openModal }] = useModal();
+// const { createMessage } = useMessage();
 
-  const [
+// const [registerModal, { openModal }] = useModal();
+
+/*  const [
     registerBpmnPreviewModal,
     { openModal: openBpmnPreviewModal, setModalProps: setBpmnPreviewProps },
   ] = useModal();
   const [
     registerCodePreviewModal,
     { openModal: openCodePreviewModal, setModalProps: setCodePreviewModalProps },
-  ] = useModal();
+  ] = useModal();*/
 
-  const currentCategory = ref<Recordable>({});
-  const loadingRef = ref(false);
+const currentCategory = ref<Recordable<any>>({});
+const loadingRef = ref(false);
+const PerPrefix = 'Bpmn:';
+const modelInfoModalRef = ref(),
+    bpmnPreviewModalRef = ref(),
+    codePreviewModalRef = ref();
 
-  const [registerTable, { getForm, reload }] = useTable({
-    title: '列表',
-    api: getModelInfoPageList,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
+/*const [registerTable, { getForm, reload }] = useTable({
+  title: '列表',
+  api: getModelInfoPageList,
+  columns,
+  formConfig: {
+    labelWidth: 120,
+    schemas: searchFormSchema,
+    showAdvancedButton: false,
+    showResetButton: false,
+    autoSubmitOnEnter: true,
+  },
+  searchInfo: { modelType: 0 },
+  useSearchForm: true,
+  showIndexColumn: false,
+  bordered: true,
+  actionColumn: {
+    width: 158,
+    align: 'left',
+    title: '操作',
+    dataIndex: 'action',
+  },
+});*/
+
+
+const formOptions: VbenFormProps = {
+  showCollapseButton: false,
+  submitOnEnter: true,
+  commonConfig: {
+    labelWidth: 60,
+  },
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  resetButtonOptions: {
+    show: false,
+  },
+  schema: searchFormSchema,
+};
+
+const gridOptions: VxeGridProps = {
+  columns,
+  columnConfig: {resizable: true},
+  height: 'auto',
+  maxHeight: '100%',
+  border: false,
+  keepSource: true,
+  autoResize: false,
+  stripe: true,
+  round: false,
+  radioConfig: {
+    highlight: true,
+    labelField: 'name',
+    trigger: 'row',
+  },
+  proxyConfig: {
+    ajax: {
+      query: async ({page}, formValues) => {
+        // currentModelInfo.value = {};
+        return await getModelInfoPageList({
+          query: {
+            pageNum: page.currentPage,
+            pageSize: page.pageSize,
+          },
+          entity: formValues || {},
+        });
+      },
     },
-    searchInfo: { modelType: 0 },
-    useSearchForm: true,
-    showIndexColumn: false,
-    bordered: true,
-    actionColumn: {
-      width: 158,
-      align: 'left',
-      title: '操作',
-      dataIndex: 'action',
-    },
-  });
+  },
+};
 
-  nextTick(() => {
-    const { updateSchema } = getForm();
-    getAll().then((res) => {
-      updateSchema([
-        {
-          field: 'appSn',
-          componentProps: { options: res, labelField: 'id' },
-        },
-      ]);
-    });
-  });
-
-  function createActions(record: Recordable, column: BasicColumn): ActionItem[] {
-    const { status } = record;
-    let actions: ActionItem[] = [
-      {
-        icon: 'ant-design:partition-outlined',
-        tooltip: '流程图预览',
-        label: '',
-        onClick: handlePreview.bind(null, record),
-      },
-      {
-        icon: 'ant-design:code-outlined',
-        tooltip: '查看XML',
-        label: '',
-        onClick: handlePreviewXml.bind(null, record),
-      },
-      {
-        auth: 'Bpmn:' + PerEnum.PUBLISH,
-        icon: 'ant-design:play-circle-filled',
-        tooltip: '发布',
-        label: '',
-        popConfirm: {
-          title: '确认发布吗?',
-          confirm: handlePublish.bind(null, record),
-        },
-        ifShow: status === 2,
-      },
-      {
-        auth: 'Bpmn:' + PerEnum.PUBLISH,
-        icon: 'ant-design:stop-twotone',
-        tooltip: '停用',
-        label: '',
-        color: 'error',
-        popConfirm: {
-          title: '确认停用吗?',
-          confirm: handleStop.bind(null, record),
-          placement: 'left',
-        },
-        ifShow: status === 3 || status === 2,
-      },
-      {
-        auth: 'Bpmn:' + PerEnum.UPDATE,
-        icon: 'clarity:note-edit-line',
-        tooltip: '修改',
-        label: '',
-        onClick: handleEdit.bind(null, record),
-        ifShow: false,
-      },
-      {
-        auth: 'Bpmn:' + PerEnum.DELETE,
-        icon: 'ant-design:delete-outlined',
-        color: 'error',
-        tooltip: '删除',
-        label: '',
-        popConfirm: {
-          title: '是否确认删除',
-          confirm: handleDelete.bind(null, record),
-        },
-        ifShow: false,
-      },
-    ];
-    return actions;
+const gridEvents: VxeGridListeners = {
+  radioChange: ({row}) => {
+    // clickRow(row);
   }
+};
 
-  function handlePreview(record: Recordable<any>) {
-    openBpmnPreviewModal(true, {
-      modelKey: record.modelKey,
+const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
+
+
+nextTick(() => {
+  const {updateSchema} = tableApi.formApi;
+  getAll().then((res) => {
+    updateSchema([
+      {
+        fieldName: 'appSn',
+        componentProps: {options: res, labelField: 'id'},
+      },
+    ]);
+  });
+});
+
+function createActions(record: Recordable<any>, column: BasicColumn): ActionItem[] {
+  const {status} = record;
+  let actions: any[] = [
+    {
+      icon: 'ant-design:partition-outlined',
+      tooltip: '流程图预览',
+      label: '',
+      onClick: handlePreview.bind(null, record),
+    },
+    {
+      icon: 'ant-design:code-outlined',
+      tooltip: '查看XML',
+      label: '',
+      onClick: handlePreviewXml.bind(null, record),
+    },
+    {
+      auth: [PerPrefix + PerEnum.PUBLISH],
+      icon: 'ant-design:play-circle-filled',
+      tooltip: '发布',
+      label: '',
+      popConfirm: {
+        title: '确认发布吗?',
+        confirm: handlePublish.bind(null, record),
+      },
+      ifShow: status === 2,
+    },
+    {
+      auth: [PerPrefix + PerEnum.PUBLISH],
+      icon: 'ant-design:stop-twotone',
+      tooltip: '停用',
+      label: '',
+      color: 'error',
+      popConfirm: {
+        title: '确认停用吗?',
+        confirm: handleStop.bind(null, record),
+        placement: 'left',
+      },
+      ifShow: status === 3 || status === 2,
+    },
+    {
+      auth: [PerPrefix + PerEnum.UPDATE],
+      icon: 'clarity:note-edit-line',
+      tooltip: '修改',
+      label: '',
+      onClick: handleEdit.bind(null, record),
+      ifShow: false,
+    },
+    {
+      auth: [PerPrefix + PerEnum.DELETE],
+      icon: 'ant-design:delete-outlined',
+      danger: true,
+      tooltip: '删除',
+      label: '',
+      popConfirm: {
+        title: '是否确认删除',
+        confirm: handleDelete.bind(null, record),
+      },
+      ifShow: false,
+      okButtonProps: {
+        danger: true,
+      }
+    },
+  ];
+  return actions;
+}
+
+function handlePreview(record: Recordable<any>) {
+  bpmnPreviewModalRef.value.setData({modelKey: record.modelKey});
+  bpmnPreviewModalRef.value.open();
+  /*openBpmnPreviewModal(true, {
+    modelKey: record.modelKey,
+  });
+  setBpmnPreviewProps({
+    title: `预览-${record.name}`,
+    centered: true,
+    useWrapper: false,
+    showOkBtn: false,
+    cancelText: '关闭',
+  });*/
+}
+
+function handlePreviewXml(record: Recordable<any>, e) {
+  e.stopPropagation();
+  getBpmnByModelKey({modelKey: record.modelKey}).then((res) => {
+    openCodePreviewModal(true, {
+      record: {code: res.modelXml, type: 'xml'},
+      isUpdate: false,
     });
-    setBpmnPreviewProps({
-      title: `预览-${record.name}`,
-      centered: true,
-      useWrapper: false,
+    setCodePreviewModalProps({
+      width: 900,
+      height: 400,
+      minHeight: 200,
+      title: `查看【${record.name}】的XML`,
       showOkBtn: false,
       cancelText: '关闭',
     });
-  }
+  });
+}
 
-  function handlePreviewXml(record: Recordable, e) {
-    e.stopPropagation();
-    getBpmnByModelKey({ modelKey: record.modelKey }).then((res) => {
-      openCodePreviewModal(true, {
-        record: { code: res.modelXml, type: 'xml' },
-        isUpdate: false,
-      });
-      setCodePreviewModalProps({
-        width: 900,
-        height: 400,
-        minHeight: 200,
-        title: `查看【${record.name}】的XML`,
-        showOkBtn: false,
-        cancelText: '关闭',
-      });
-    });
-  }
+function handleEdit(record: Recordable<any>) {
+  openModal(true, {
+    record,
+    isUpdate: true,
+  });
+}
 
-  function handleEdit(record: Recordable<any>) {
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });
-  }
+function handleDelete(record: Recordable<any>) {
+  deleteByIds([record.id]).then((res) => {
+    tableApi.reload();
+  });
+}
 
-  function handleDelete(record: Recordable<any>) {
-    deleteByIds([record.id]).then((res) => {
-      reload();
-    });
-  }
-
-  function handlePublish(record: Recordable<any>) {
-    loadingRef.value = true;
-    publishBpmn(record.modelId)
+function handlePublish(record: Recordable<any>) {
+  loadingRef.value = true;
+  publishBpmn(record.modelId)
       .then((res) => {
-        reload();
+        tableApi.reload();
         createMessage.success('发布成功！', 2);
       })
       .finally(() => {
         loadingRef.value = false;
       });
-  }
+}
 
-  function handleStop(record: Recordable<any>) {
-    loadingRef.value = true;
-    stopBpmn(record.modelId)
+function handleStop(record: Recordable<any>) {
+  loadingRef.value = true;
+  stopBpmn(record.modelId)
       .then((res) => {
-        reload();
+        tableApi.reload();
       })
       .finally(() => {
         loadingRef.value = false;
       });
-  }
+}
 
-  function handleSuccess() {
-    reload();
-  }
+function handleSuccess() {
+  tableApi.reload();
+}
 
-  function handleSelect(node: any) {
-    currentCategory.value = node;
-    let searchInfo = { categoryCode: node ? node.code : '' };
-    reload({ searchInfo });
-  }
+function handleSelect(node: any) {
+  currentCategory.value = node;
+  let searchInfo = {categoryCode: node ? node.code : ''};
+  tableApi.reload({searchInfo});
+}
 </script>
 
 <style lang="less" scoped>
-  .modelInfo-roles {
-    > span {
-      margin-right: 4px;
-    }
+.modelInfo-roles {
+  > span {
+    margin-right: 4px;
   }
+}
 </style>

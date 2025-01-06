@@ -1,10 +1,8 @@
 <template>
   <Page auto-content-height>
-    <BasicTable @register="registerTable">
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction :actions="createActions(record, column)" />
-        </template>
+    <BasicTable>
+      <template #action="{ row }">
+        <TableAction :actions="createActions(row)" />
       </template>
     </BasicTable>
     <BpmnPreviewModal ref="bpmnPreviewModalRef" />
@@ -74,7 +72,7 @@
   };
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
-  function handleBpmnPreview(modelKey, procInstId) {
+  function handleBpmnPreview(modelKey: string, procInstId="") {
     bpmnPreviewModalRef.value.setData({modelKey, procInstId});
     bpmnPreviewModalRef.value.open();
   }

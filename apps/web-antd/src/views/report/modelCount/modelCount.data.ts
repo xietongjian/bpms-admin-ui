@@ -1,5 +1,7 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { Tag } from 'ant-design-vue';
+import { z } from '#/adapter/form';
 
 import { h } from 'vue';
 
@@ -10,26 +12,26 @@ const FormTypeEnum = {
   '2': '任务流程表单',
 };
 
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
   },
   {
     title: 'KEY',
-    dataIndex: 'modelKey',
+    field: 'modelKey',
     align: 'left',
   },
   /*{
     title: '分类名称',
-    dataIndex: 'categoryName',
+    field: 'categoryName',
     width: 100,
     align: 'left'
   },*/
   {
     title: '表单类型',
-    dataIndex: 'formType',
+    field: 'formType',
     width: 120,
     align: 'center',
     customRender: ({ record }) => {
@@ -51,19 +53,19 @@ export const columns: BasicColumn[] = [
   },
   /*{
     title: '系统',
-    dataIndex: 'appName',
+    field: 'appName',
     width: 100,
     align: 'left'
   },
   {
     title: '应用范围',
-    dataIndex: 'appliedRangeName',
+    field: 'appliedRangeName',
     width: 100,
     align: 'left'
   },*/
   /*{
     title: '状态',
-    dataIndex: 'statusName',
+    field: 'statusName',
     width: 70,
     align: 'center',
     customRender: ({ record }) => {
@@ -83,15 +85,22 @@ export const columns: BasicColumn[] = [
   },*/
   {
     title: '更新时间',
-    dataIndex: 'updateTime',
+    field: 'updateTime',
     width: 150,
     align: 'left',
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
 export const searchFormSchema: FormSchema[] = [
   /*  {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -101,49 +110,41 @@ export const searchFormSchema: FormSchema[] = [
     colProps: {span: 6, lg:{span: 6, offset:0}, sm:{span: 10, offset: 0}, xs:{span: 16, offset: 0}},
   },*/
   {
-    field: 'formType',
+    fieldName: 'formType',
     label: '表单类型',
     component: 'Select',
     labelWidth: 70,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   {
-    field: 'deptId',
+    fieldName: 'deptId',
     label: '归属部门',
     component: 'OrgSelector',
     labelWidth: 70,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
 export const modelInfoFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
-    field: 'categoryCode',
+    fieldName: 'categoryCode',
     label: 'ID',
     component: 'Input',
-    show: false,
-  },
+    dependencies: {
+      show: false,
+      triggerFields: ['categoryCode']
+    }  },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
     component: 'Input',
-    required: true,
     rules: z
         .string({
           required_error: '名称不能为空',
@@ -164,18 +165,19 @@ export const modelInfoFormSchema: FormSchema[] = [
     ],*/
   },
   {
-    field: 'modelKey',
+    fieldName: 'modelKey',
     label: '标识',
     component: 'Input',
-    required: true,
+    // required: true,
   },
   {
-    field: 'appSn',
+    fieldName: 'appSn',
     label: '所属系统',
     component: 'Select',
     componentProps: {
       getPopupContainer: () => document.body,
     },
-    required: true,
+    rules: "selectRequired"
+    // required: true,
   },
 ];

@@ -5,19 +5,56 @@
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref, defineEmits } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, Rule, useForm } from '@/components/Form/index';
+  // import { BasicModal, useModalInner } from '@/components/Modal';
+  // import { BasicForm, Rule, useForm } from '@/components/Form/index';
+  import {useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from '#/adapter/form';
+  import {message} from 'ant-design-vue';
+
   import { modelInfoFormSchema } from './modelInfo.data';
-  import { saveOrUpdate, checkEntityExist } from '@/api/flowable/bpmn/modelInfo';
-  import { getAll } from '@/api/base/app';
-  import { useGo } from '@/hooks/web/usePage';
-  import { CheckExistParams } from '@/api/model/baseModel';
+  import { saveOrUpdate, checkEntityExist } from '#/api/flowable/bpmn/modelInfo';
+  import { getAll } from '#/api/base/app';
+  import {formSchema} from "#/views/org/jobGrade/jobGrade.data";
+  // import { useGo } from '@/hooks/web/usePage';
+  // import { CheckExistParams } from '@/api/model/baseModel';
 
   const emit = defineEmits(['success', 'register']);
 
   const isUpdate = ref(true);
-  const go = useGo();
 
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      handleSubmit();
+    },
+  });
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: modelInfoFormSchema,
+    wrapperClass: 'grid-cols-1',
+  });
+  /*
   const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
     labelWidth: 100,
     schemas: modelInfoFormSchema,
@@ -25,9 +62,9 @@
     actionColOptions: {
       span: 23,
     },
-  });
+  });*/
 
-  const getBaseDynamicRules = (params: CheckExistParams) => {
+  /*const getBaseDynamicRules = (params: CheckExistParams) => {
     return [
       {
         trigger: 'blur',
@@ -55,9 +92,9 @@
         },
       },
     ] as Rule[];
-  };
+  };*/
 
-  const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
+  /*const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
     async (data) => {
       resetFields();
       setModalProps({ confirmLoading: false });
@@ -113,7 +150,7 @@
         });
       }
     },
-  );
+  );*/
 
   const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '编辑'));
 

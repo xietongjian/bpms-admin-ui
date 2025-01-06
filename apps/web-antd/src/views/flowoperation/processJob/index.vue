@@ -1,11 +1,11 @@
 <template>
-  <Page auto-content-height class="p-4">
-    <div class="p-4 bg-white !pb-2">
+  <Page auto-content-height class="h-full flex flex-row">
+    <div class="p-4 bg-card !pb-1">
       <BasicForm class="job-search-form" @register="registerSearchForm" />
     </div>
-
-    <div class="mt-4 bg-white">
+    <div class="mt-4 bg-card flex-1">
       <Tabs
+          class="h-full"
         @change="handleChangeTab"
         type="card"
         :tabBarStyle="{ marginBottom: 0 }"
@@ -13,9 +13,7 @@
       >
         <template #rightExtra>
           <div v-if="selectedRowsCount > 0">
-            <Authority :value="'ProcessJob:' + PerEnum.UPDATE">
-              <Button class="mr-4" type="primary" @click="handleBatchExe">批量执行</Button>
-            </Authority>
+            <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" class="mr-4" type="primary" @click="handleBatchExe">批量执行</Button>
           </div>
         </template>
         <TabPane key="timerJob">
@@ -25,69 +23,47 @@
               <Badge :overflow-count="99999999" :count="dataCount.timerJobCount" />
             </Space>
           </template>
-          <BasicTable @register="registerTimerJobTable">
-            <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'action'">
-                <TableAction
-                  :actions="[
-                    {
-                      icon: 'ant-design:partition-outlined',
-                      tooltip: '流程图预览',
-                      label: '',
-                      onClick: handlePreview.bind(null, record),
-                    },
-                    {
-                      tooltip: '审批记录',
-                      icon: 'ant-design:history-outlined',
-                      onClick: handleViewApproveHistory.bind(null, record),
-                    },
-                    {
-                      tooltip: '审批变量',
-                      icon: 'ant-design:profile-outlined',
-                      onClick: handleViewFlowProperties.bind(null, record),
-                    },
-                  ]"
-                />
-              </template>
-
-              <template v-else-if="column.key === 'processInstanceId'">
-                <a v-if="!!record.processInstanceId" @click="doCopyContent(record.processInstanceId)">
-                  <CopyOutlined />
-                </a>
-                {{ record.processInstanceId||'-' }}
-              </template>
-
-              <template v-else-if="column.key === 'tenantId'">
-                {{ appObjs && appObjs[record.tenantId] }}
-              </template>
-
-              <template v-else-if="column.key === 'duedate'">
-                <div class="duedate-wrap">
-                  {{ record.duedate }}
-                  <Tooltip title="修改队列执行时间">
-                    <HighlightOutlined
-                      @click="handleChangeDueDate(record)"
-                      class="duedate-modify"
-                    />
-                  </Tooltip>
-                </div>
-              </template>
-
-              <template v-if="column.key === 'processName'">
-                <Tooltip title="查看流程图">
-                  <a>
-                    <PartitionOutlined @click="handlePreview(record)" />
-                  </a>
-                </Tooltip>
-                <Tooltip placement="topLeft" :mouseEnterDelay="0.3">
-                  <template #title>
-                    {{ record.processName }}
-                  </template>
-                  {{ record.processName }}
-                </Tooltip>
-              </template>
+          <TimerJobTable @register="registerTimerJobTable">
+            <template #action="{row}">
+              <TableAction :actions="createActions(row, 'timerJob')"/>
             </template>
-          </BasicTable>
+            <template #processInstanceId="{row}">
+              <a v-if="!!row.processInstanceId" @click="doCopyContent(row.processInstanceId)">
+                <CopyOutlined />
+              </a>
+              {{ row.processInstanceId||'-' }}
+            </template>
+
+            <template #tenantId="{row}">
+              {{ appObjs && appObjs[row.tenantId] }}
+            </template>
+
+            <template #duedate="{row}">
+              <div class="duedate-wrap">
+                {{ row.duedate }}
+                <Tooltip title="修改队列执行时间">
+                  <HighlightOutlined
+                      @click="handleChangeDueDate(row)"
+                      class="duedate-modify"
+                  />
+                </Tooltip>
+              </div>
+            </template>
+
+            <template #processName="{row}">
+              <Tooltip title="查看流程图">
+                <a>
+                  <PartitionOutlined @click="handlePreview(row)" />
+                </a>
+              </Tooltip>
+              <Tooltip placement="topLeft" :mouseEnterDelay="0.3">
+                <template #title>
+                  {{ row.processName }}
+                </template>
+                {{ row.processName }}
+              </Tooltip>
+            </template>
+          </TimerJobTable>
         </TabPane>
         <TabPane key="deadLetterJob">
           <template #tab>
@@ -96,75 +72,42 @@
               <Badge :overflow-count="99999999" :count="dataCount.deadLetterJobCount" />
             </Space>
           </template>
-          <BasicTable @register="registerDeadLetterJobTable" @selection-change="changeSelection">
-            <template #bodyCell="{ column, record }">
-              <template v-if="column.key === 'action'">
-                <TableAction
-                  :actions="[
-                    {
-                      auth: 'ProcessJob:' + PerEnum.UPDATE,
-                      icon: 'ant-design:play-circle-filled',
-                      tooltip: '执行',
-                      label: '',
-                      color: 'success',
-                      popConfirm: {
-                        title: '确认执行吗?',
-                        confirm: handleExe.bind(null, record),
-                      },
-                    },
-                    {
-                      icon: 'ant-design:partition-outlined',
-                      tooltip: '流程图预览',
-                      label: '',
-                      onClick: handlePreview.bind(null, record),
-                    },
-                    {
-                      tooltip: '审批记录',
-                      icon: 'ant-design:history-outlined',
-                      onClick: handleViewApproveHistory.bind(null, record),
-                    },
-                    {
-                      tooltip: '审批变量',
-                      icon: 'ant-design:profile-outlined',
-                      onClick: handleViewFlowProperties.bind(null, record),
-                    },
-                  ]"
-                />
-              </template>
-
-              <template v-else-if="column.key === 'processInstanceId'">
-                <a v-if="!!record.processInstanceId" @click="doCopyContent(record.processInstanceId)">
-                  <CopyOutlined />
-                </a>
-                {{ record.processInstanceId||'-' }}
-              </template>
-
-              <template v-else-if="column.key === 'tenantId'">
-                {{ appObjs && appObjs[record.tenantId] }}
-              </template>
-
-              <template v-if="column.key === 'processName'">
-                <Tooltip title="查看流程图">
-                  <a>
-                    <PartitionOutlined @click="handlePreview(record)" />
-                  </a>
-                </Tooltip>
-                <Tooltip placement="top" :mouseEnterDelay="0.3">
-                  <template #title>
-                    {{ record.processName }}
-                  </template>
-                  {{ record.processName }}
-                </Tooltip>
-              </template>
+          <DeadLetterJobTable @register="registerDeadLetterJobTable" @selection-change="changeSelection">
+            <template #action="{row}">
+              <TableAction :actions="createActions(row, 'deadLetterJob')"/>
             </template>
-          </BasicTable>
+            <template #processInstanceId="{row}">
+              <a v-if="!!row.processInstanceId" @click="doCopyContent(row.processInstanceId)">
+                <CopyOutlined />
+              </a>
+              {{ row.processInstanceId||'-' }}
+            </template>
+
+            <template #tenantId="{row}">
+              {{ appObjs && appObjs[row.tenantId] }}
+            </template>
+
+            <template #processName="{row}">
+              <Tooltip title="查看流程图">
+                <a>
+                  <PartitionOutlined @click="handlePreview(row)" />
+                </a>
+              </Tooltip>
+              <Tooltip placement="top" :mouseEnterDelay="0.3">
+                <template #title>
+                  {{ row.processName }}
+                </template>
+                {{ row.processName }}
+              </Tooltip>
+            </template>
+          </DeadLetterJobTable>
         </TabPane>
       </Tabs>
     </div>
-    <ApproveHistoryModal @register="registerApproveHistoryModal" />
-    <FlowPropertiesModal @register="registerFlowPropertiesModal" />
-    <BpmnPreviewModal @register="registerBpmnPreviewModal" />
-    <TimerJobEditModal @register="registerTimerJobEditModal" @success="handleChangeTab" />
+    <ApproveHistoryModal ref="approveHistoryModalRef" @register="registerApproveHistoryModal" />
+    <FlowPropertiesModal ref="flowPropertiesModalRef" @register="registerFlowPropertiesModal" />
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" />
+    <TimerJobEditModal ref="timerJobEditModalRef" @register="registerTimerJobEditModal" @success="handleChangeTab" />
   </Page>
 </template>
 <script lang="ts" setup>
@@ -188,31 +131,39 @@
   } from '#/api/flowoperation/processJob';
   import {BpmnPreviewModal} from '#/views/components/preview';
   import { getAll } from '#/api/base/app';
-  import { useLoading } from '@/components/Loading';
+  // import { useLoading } from '@/components/Loading';
   import { timerJobColumns, deadLetterJobColumns, searchFormSchema } from './processJob.data';
   import ApproveHistoryModal from '../processInst/ApproveHistoryModal.vue';
   import FlowPropertiesModal from '../processInst/FlowPropertiesModal.vue';
   import TimerJobEditModal from './TimerJobEditModal.vue';
   import { CopyOutlined, PartitionOutlined, HighlightOutlined } from '@ant-design/icons-vue';
-  import { copyText } from '@/utils/copyTextToClipboard';
+  // import { copyText } from '@/utils/copyTextToClipboard';
   import { Tooltip, Tabs, Badge, Button, Space, message } from 'ant-design-vue';
-  import { useModal } from '@/components/Modal';
+  // import { useModal } from '@/components/Modal';
   // import { useRequest } from '@vben/hooks';
   // import { PerEnum } from '@/enums/perEnum';
-  import { Authority } from '@/components/Authority';
-  import { BasicForm, Rule, useForm } from '@/components/Form/index';
+  // import { Authority } from '@/components/Authority';
+  // import { BasicForm, Rule, useForm } from '@/components/Form/index';
+  // import {columns} from "#/views/form/custom/modelInfo/modelInfo.data";
+  // import {getCustomPagerModel} from "#/api/form/customForm";
+  import {useVbenForm} from '#/adapter/form';
 
   defineOptions({ name: 'ProcessJob' });
+
+  const PerPrefix = 'ProcessJob:';
+  const {hasAccessByCodes} = useAccess();
 
   const TabPane = Tabs.TabPane;
   const activeKey = ref<string>('timerJob');
   const dataCount = ref<object>({ timerJobCount: 0, DeadLetterJobCount: 0 });
   const selectedRowsCount = ref(0);
   const appObjs = ref({});
-  const [openFullLoading, closeFullLoading] = useLoading({
-    tip: '执行中...',
-  });
 
+  const approveHistoryModalRef = ref(),
+    flowPropertiesModalRef = ref(),
+    bpmnPreviewModalRef = ref(),
+    timerJobEditModalRef = ref();
+  /*
   const [
     registerTimerJobEditModal,
     { openModal: openTimerJobEditModal, setModalProps: setTimerJobEditModalProps },
@@ -227,8 +178,8 @@
   const [
     registerBpmnPreviewModal,
     { openModal: openBpmnPreviewModal, setModalProps: setBpmnPreviewProps },
-  ] = useModal();
-
+  ] = useModal();*/
+/*
   const [registerSearchForm, { updateSchema, setProps, validate }] = useForm({
     labelWidth: 90,
     showResetButton: true,
@@ -240,8 +191,27 @@
     compact: true,
     submitFunc: doSearchFunc,
     fieldMapToTime: [['dateRange', ['startDate', 'endDate'], 'YYYY-MM-DD']],
+  });*/
+
+
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: true,
+    submitButtonOptions: {
+      content: '查询',
+    },
+    layout: 'horizontal',
+    schema: searchFormSchema,
+    wrapperClass: 'grid-cols-4',
   });
 
+
+/*
   const [registerTimerJobTable, { reload: reloadTimerJob }] = useTable({
     title: '',
     size: 'small',
@@ -260,9 +230,9 @@
       title: '操作',
       dataIndex: 'action',
     },
-  });
+  });*/
 
-  const [registerDeadLetterJobTable, { reload: reloadDeadLetterJob, getSelectRows }] = useTable({
+  /*const [registerDeadLetterJobTable, { reload: reloadDeadLetterJob, getSelectRows }] = useTable({
     title: '',
     size: 'small',
     api: queryDeadLetterJobPagerModel,
@@ -283,7 +253,124 @@
       title: '操作',
       dataIndex: 'action',
     },
-  });
+  });*/
+
+  const deadLetterJobGridOptions: VxeGridProps = {
+    columns: deadLetterJobColumns,
+    columnConfig: {resizable: true},
+    height: 'auto',
+    maxHeight: '100%',
+    border: false,
+    keepSource: true,
+    autoResize: false,
+    stripe: true,
+    round: false,
+    radioConfig: {
+      highlight: true,
+      labelField: 'name',
+      trigger: 'row',
+    },
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          return await queryDeadLetterJobPagerModel({
+            query: {
+              pageNum: page.currentPage,
+              pageSize: page.pageSize,
+            },
+            entity: formValues || {},
+          });
+        },
+      },
+    },
+  };
+
+  const [DeadLetterJobTable, deadLetterJobTableApi] = useVbenVxeGrid({gridOptions: deadLetterJobGridOptions});
+
+
+  const timerJobGridOptions: VxeGridProps = {
+    columns: timerJobColumns,
+    columnConfig: {resizable: true},
+    height: 'auto',
+    maxHeight: '100%',
+    border: false,
+    keepSource: true,
+    autoResize: false,
+    stripe: true,
+    round: false,
+    radioConfig: {
+      highlight: true,
+      labelField: 'name',
+      trigger: 'row',
+    },
+    proxyConfig: {
+      ajax: {
+        query: async ({page}, formValues) => {
+          return await queryDeadLetterJobPagerModel({
+            query: {
+              pageNum: page.currentPage,
+              pageSize: page.pageSize,
+            },
+            entity: formValues || {},
+          });
+        },
+      },
+    },
+  };
+
+  const [TimerJobTable, timerJobTableApi] = useVbenVxeGrid({gridOptions: timerJobGridOptions});
+
+  function createActions(record: Recordable<any>, type: string) {
+    if(type === 'timerJob'){
+      return [
+        {
+          icon: 'ant-design:partition-outlined',
+          tooltip: '流程图预览',
+          label: '',
+          onClick: handlePreview.bind(null, record),
+        },
+        {
+          tooltip: '审批记录',
+          icon: 'ant-design:history-outlined',
+          onClick: handleViewApproveHistory.bind(null, record),
+        },
+        {
+          tooltip: '审批变量',
+          icon: 'ant-design:profile-outlined',
+          onClick: handleViewFlowProperties.bind(null, record),
+        },
+      ];
+    }
+    return [
+      {
+        auth: PerPrefix + PerEnum.UPDATE,
+        icon: 'ant-design:play-circle-filled',
+        tooltip: '执行',
+        label: '',
+        color: 'success',
+        popConfirm: {
+          title: '确认执行吗?',
+          confirm: handleExe.bind(null, record),
+        },
+      },
+      {
+        icon: 'ant-design:partition-outlined',
+        tooltip: '流程图预览',
+        label: '',
+        onClick: handlePreview.bind(null, record),
+      },
+      {
+        tooltip: '审批记录',
+        icon: 'ant-design:history-outlined',
+        onClick: handleViewApproveHistory.bind(null, record),
+      },
+      {
+        tooltip: '审批变量',
+        icon: 'ant-design:profile-outlined',
+        onClick: handleViewFlowProperties.bind(null, record),
+      },
+    ];
+  }
 
   /**
    *  自定义搜索功能
@@ -333,7 +420,7 @@
     });
   }
 
-  useRequest(
+/*  useRequest(
     () => {
       handleChangeTab();
       return Promise.resolve({});
@@ -341,7 +428,7 @@
     {
       refreshOnWindowFocus: true,
     },
-  );
+  );*/
 
   nextTick(async () => {
     dataCount.value = await getJobsCount();
@@ -356,7 +443,7 @@
 
     appObjs.value = appObjsTemp;
 
-    await updateSchema([
+    await formApi.updateSchema([
       {
         fieldName: 'tenantId',
         componentProps: { options: appList, labelField: 'id' },

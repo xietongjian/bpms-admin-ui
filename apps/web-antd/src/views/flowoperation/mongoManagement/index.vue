@@ -241,7 +241,8 @@
 </script>
 
 <template>
-  <Page auto-content-height title="历史数据管理" contentFullHeight>
+  <Page auto-content-height
+        title="历史数据管理">
     <CollapseContainer title="全量数据同步">
       <div class="pt-2 pb-2 flex justify-start items-center">
         <span class="ml-2">起止时间：</span>

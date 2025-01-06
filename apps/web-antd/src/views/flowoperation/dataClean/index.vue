@@ -29,7 +29,7 @@
     <CollapseContainer class="mt-4" title="通过业务表单Key清理">
       <BizKeyForm/>
       <div class="p-4 pl-[150px] pt-0">
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="cleanByBizKeyLoading" type="error"
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="cleanByBizKeyLoading" danger
                 @click="handleCleanByBizKey"
         >开始清理
         </Button
@@ -42,7 +42,7 @@
       <div class="p-4 pl-[150px] pt-0">
         <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])"
                 :loading="cleanByProcInstIdLoading"
-                type="error"
+                danger
                 @click="handleCleanByProcInstId"
         >开始清理
         </Button
@@ -53,7 +53,7 @@
     <CollapseContainer class="mt-4" title="通过流程ModelKey清理">
       <ModelKeyForm />
       <div class="p-4 pl-[150px] pt-0">
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="cleanByModelKeyLoading" type="error"
+        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="cleanByModelKeyLoading" danger
                 @click="handleCleanByModelKey"
         >开始清理
         </Button
@@ -65,7 +65,7 @@
       <DeleteModelByModelKeyForm />
       <div class="p-4 pl-[150px] pt-0">
         <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="deleteModelByModelKeyLoading"
-                type="error" @click="handleDeleteModelByModelKey"
+                danger @click="handleDeleteModelByModelKey"
         >开始删除
         </Button
         >
@@ -76,12 +76,12 @@
       <!--      <BasicForm @register="registerModelSyncForm" />-->
       <div class="p-4 pl-[150px] pt-0">
         <Space>
-          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="bpmnModelSyncLoading" type="error"
+          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="bpmnModelSyncLoading" danger
                   @click="handleBpmnModelSync"
           >同步BPMN
           </Button
           >
-          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="dmnModelSyncLoading" type="error"
+          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="dmnModelSyncLoading" danger
                   @click="handleDmnModelSync"
           >同步DMN
           </Button
@@ -143,6 +143,7 @@ const [BizKeyForm, bizKeyFormApi] = useVbenForm({
     componentProps: {
       // class: 'w-full',
     },
+    labelWidth: 140
   },
   showDefaultActions: false,
   layout: 'horizontal',
@@ -162,6 +163,7 @@ const [ProcInstIdForm, procInstIdFormApi] = useVbenForm({
     componentProps: {
       // class: 'w-full',
     },
+    labelWidth: 140
   },
   showDefaultActions: false,
   layout: 'horizontal',
@@ -181,6 +183,7 @@ const [ModelKeyForm, modelKeyFormApi] = useVbenForm({
     componentProps: {
       // class: 'w-full',
     },
+    labelWidth: 140
   },
   showDefaultActions: false,
   layout: 'horizontal',
@@ -200,6 +203,7 @@ const [DeleteModelByModelKeyForm, deleteModelByModelKeyFormApi] = useVbenForm({
     componentProps: {
       // class: 'w-full',
     },
+    labelWidth: 140
   },
   showDefaultActions: false,
   layout: 'horizontal',
@@ -287,7 +291,7 @@ async function handleCleanByModelKey() {
     title: '提示',
     content: '数据清理为不可逆操作，确定要执行吗？',
     okButtonProps: {
-      type: 'error',
+      danger: true,
     },
     onOk: async () => {
       cleanByModelKeyLoading.value = true;

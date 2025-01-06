@@ -8,7 +8,9 @@ export const timerJobColumns: VxeGridProps['columns'] = [
     title: '流程标题',
     field: 'processName',
     align: 'left',
-    width: 300,
+    minWidth: 300,
+    slots: {default: 'processName'},
+
     resizable: true,
   },
   {
@@ -37,7 +39,7 @@ export const timerJobColumns: VxeGridProps['columns'] = [
     field: 'processInstanceId',
     align: 'left',
     width: 200,
-    resizable: true,
+    slots: {default: 'processInstanceId'},
   },
   {
     title: '流程定义ID',
@@ -60,6 +62,13 @@ export const timerJobColumns: VxeGridProps['columns'] = [
     align: 'left',
     sorter: true,
   },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
+  },
 ];
 
 export const deadLetterJobColumns: VxeGridProps['columns'] = [
@@ -67,7 +76,8 @@ export const deadLetterJobColumns: VxeGridProps['columns'] = [
     title: '流程标题',
     field: 'processName',
     align: 'left',
-    width: 300,
+    minWidth: 300,
+    slots: {default: 'processName'},
     resizable: true,
   },
   {
@@ -82,6 +92,7 @@ export const deadLetterJobColumns: VxeGridProps['columns'] = [
     field: 'tenantId',
     align: 'left',
     width: 150,
+    slots: {default: 'tenantId'},
     resizable: true,
   },
   {
@@ -103,6 +114,7 @@ export const deadLetterJobColumns: VxeGridProps['columns'] = [
     field: 'duedate',
     align: 'left',
     width: 180,
+    slots: {default: 'duedate'},
     resizable: true,
   },
   {
@@ -126,6 +138,13 @@ export const deadLetterJobColumns: VxeGridProps['columns'] = [
     align: 'left',
     sorter: true,
   },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
+  },
 ];
 
 export const searchFormSchema: FormSchema[] = [
@@ -136,13 +155,6 @@ export const searchFormSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入流程标题',
     },
-    colProps: {
-      sm: 12,
-      md: 12,
-      lg: 8,
-      xl: 6,
-      xxl: 6,
-    },
   },
   {
     fieldName: 'processInstanceId',
@@ -151,25 +163,14 @@ export const searchFormSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入流程实例ID',
     },
-    colProps: {
-      sm: 12,
-      md: 12,
-      lg: 8,
-      xl: 6,
-      xxl: 6,
-    },
   },
   {
     fieldName: 'tenantId',
     label: '系统',
     component: 'Select',
-    colProps: {
-      sm: 12,
-      md: 12,
-      lg: 8,
-      xl: 6,
-      xxl: 6,
-    },
+    componentProps: {
+      class: 'w-full'
+    }
   },
 ];
 
@@ -178,7 +179,10 @@ export const timerJobFormSchema: FormSchema[] = [
     fieldName: 'jobId',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['jobId']
+    }
   },
   {
     fieldName: 'processName',
@@ -202,9 +206,7 @@ export const timerJobFormSchema: FormSchema[] = [
       valueFormat: 'YYYY-MM-DD HH:mm:ss',
       showTime: true,
     },
-    rules: [{ required: true }],
-    colProps: {
-      span: 24,
-    },
+    // rules: [{ required: true }],
+    rules: 'selectRequired',
   },
 ];

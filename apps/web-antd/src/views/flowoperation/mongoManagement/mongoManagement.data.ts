@@ -18,7 +18,7 @@ export const mongoJobColumns: VxeGridProps['columns'] = [
     title: '任务',
     field: 'label',
     align: 'left',
-    width: 240,
+    minWidth: 240,
   },
   {
     title: '开始时间',
@@ -39,6 +39,6 @@ export const mongoJobColumns: VxeGridProps['columns'] = [
     fixed: 'right',
     slots: {default: 'action'},
     title: '操作',
-    width: 120,
+    width: 200,
   },
 ];

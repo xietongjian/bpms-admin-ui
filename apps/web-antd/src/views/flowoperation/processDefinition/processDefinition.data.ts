@@ -1,4 +1,4 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
+// import { BasicColumn, FormSchema } from '@/components/Table';
 import { Tag } from 'ant-design-vue';
 import { h } from 'vue';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
@@ -55,6 +55,13 @@ export const columns: VxeGridProps['columns'] = [
     field: 'updateTime',
     width: 120,
     align: 'left',
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
@@ -131,6 +138,13 @@ export const hisDefinitionColumns: VxeGridProps['columns'] = [
       }
       return h(Tag, { color: color }, () => statusName);
     },
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
