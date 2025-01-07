@@ -17,9 +17,6 @@
   import { FormValidPatternEnum } from '#/enums/commonEnum';
   import {message, Modal} from 'ant-design-vue';
 
-
-
-
   // const { createMessage, createConfirm } = useMessage();
 
   const props = defineProps({

@@ -6,12 +6,12 @@
    */
 
   import { nextTick, Ref, ref, shallowRef, watch } from 'vue';
-  import { useECharts } from '@/hooks/web/useECharts';
+  import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
   import {
     getInstanceCountsForOneMonth,
     getTaskCountsForOneMonth,
-  } from '@/api/report/processInstanceCount';
-  import OneDayLine from '@/views/report/processInstanceCount/components/OneDayLine.vue';
+  } from '#/api/report/processInstanceCount';
+  import OneDayLine from '#/views/report/processInstanceCount/components/OneDayLine.vue';
 
   defineOptions({ name: 'MonthlyBar' });
 

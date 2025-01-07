@@ -83,12 +83,6 @@ export const searchFormSchema: FormSchema[] = [
     label: '系统',
     component: 'Select',
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   {
     fieldName: 'keyword',
@@ -98,18 +92,14 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称/编码',
     },
     labelWidth: 60,
-    colProps: {
-      span: 8,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   {
     fieldName: 'categoryCode',
     label: '',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+    }
   },
 ];
 
@@ -117,22 +107,23 @@ export const modelInfoFormSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+    }
   },
   {
     fieldName: 'categoryCode',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
     component: 'Input',
-    required: true,
     rules: z
         .string({
           required_error: '名称不能为空',
@@ -145,7 +136,7 @@ export const modelInfoFormSchema: FormSchema[] = [
     fieldName: 'modelKey',
     label: '标识',
     component: 'Input',
-    required: true,
+    // required: true,
   },
   {
     fieldName: 'appSn',
@@ -154,6 +145,6 @@ export const modelInfoFormSchema: FormSchema[] = [
     componentProps: {
       getPopupContainer: () => document.body,
     },
-    required: true,
+    // required: true,
   },
 ];
