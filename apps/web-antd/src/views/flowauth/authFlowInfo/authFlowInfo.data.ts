@@ -2,10 +2,6 @@ import { OrderNoDefaultEnum } from '#/enums/commonEnum';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { z } from '#/adapter/form';
-
-const colProps = {
-  span: 24,
-};
 export const columns: VxeGridProps['columns'] = [
   {
     title: '授权人',
@@ -147,6 +143,5 @@ export const formSchema: FormSchema[] = [
       multiple: true,
       title: '选择流程模板',
     },
-    colProps,
   },
 ];

@@ -270,17 +270,6 @@ watch(
       }
     },
 );
-nextTick(() => {
-  /*const { updateSchema } = getForm();
-  getAll().then((res) => {
-    updateSchema([
-      {
-        field: 'appSn',
-        componentProps: { options: res, labelField: 'id' },
-      },
-    ]);
-  });*/
-});
 
 /**
  * key: 0决策表1决策服务

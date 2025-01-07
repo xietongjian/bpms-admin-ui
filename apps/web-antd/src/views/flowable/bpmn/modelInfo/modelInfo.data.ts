@@ -3,12 +3,10 @@ import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { Tag } from 'ant-design-vue';
+import {getAll} from '#/api/base/app';
 
 import { h } from 'vue';
 
-const colProps = {
-  span: 24,
-};
 export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
@@ -84,24 +82,25 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称/编码',
     },
     labelWidth: 60,
-    colProps: {
+    /*colProps: {
       span: 6,
       lg: { span: 6, offset: 0 },
       sm: { span: 10, offset: 0 },
       xs: { span: 16, offset: 0 },
-    },
+    },*/
   },
   {
     fieldName: 'appSn',
     label: '系统',
-    component: 'Select',
+    component: 'ApiSelect',
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
+    componentProps: {
+      api: getAll,
+      fieldNames: {
+        value: 'sn',
+        label: 'name'
+      },
+    }
   },
 ];
 
@@ -109,22 +108,26 @@ export const modelInfoFormSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'categoryCode',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
     component: 'Input',
-    required: true,
+    /*required: true,
     rules: [
       {
         required: true,
@@ -136,14 +139,14 @@ export const modelInfoFormSchema: FormSchema[] = [
         message: '字符长度不能大于200！',
       },
     ],
-    colProps,
+    colProps,*/
   },
   {
     fieldName: 'modelKey',
     label: '标识',
     component: 'Input',
-    required: true,
-    colProps,
+    /*required: true,
+    colProps,*/
   },
   {
     fieldName: 'appSn',
@@ -152,7 +155,7 @@ export const modelInfoFormSchema: FormSchema[] = [
     componentProps: {
       getPopupContainer: () => document.body,
     },
-    required: true,
-    colProps,
+    /*required: true,
+    colProps,*/
   },
 ];

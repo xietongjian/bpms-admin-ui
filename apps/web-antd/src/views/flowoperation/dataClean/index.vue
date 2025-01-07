@@ -26,7 +26,7 @@
           </CollapsePanel>
         </Collapse>-->
 
-    <CollapseContainer class="mt-4" title="通过业务表单Key清理">
+    <Card class="mt-4" title="通过业务表单Key清理">
       <BizKeyForm/>
       <div class="p-4 pl-[150px] pt-0">
         <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="cleanByBizKeyLoading" danger
@@ -35,9 +35,9 @@
         </Button
         >
       </div>
-    </CollapseContainer>
+    </Card>
 
-    <CollapseContainer class="mt-4" title="通过流程ProcInstId清理">
+    <Card class="mt-4" title="通过流程ProcInstId清理">
       <ProcInstIdForm />
       <div class="p-4 pl-[150px] pt-0">
         <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])"
@@ -48,9 +48,9 @@
         </Button
         >
       </div>
-    </CollapseContainer>
+    </Card>
 
-    <CollapseContainer class="mt-4" title="通过流程ModelKey清理">
+    <Card class="mt-4" title="通过流程ModelKey清理">
       <ModelKeyForm />
       <div class="p-4 pl-[150px] pt-0">
         <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="cleanByModelKeyLoading" danger
@@ -59,9 +59,9 @@
         </Button
         >
       </div>
-    </CollapseContainer>
+    </Card>
 
-    <CollapseContainer class="mt-4" title="通过流程ModelKey删除流程模板">
+    <Card class="mt-4" title="通过流程ModelKey删除流程模板">
       <DeleteModelByModelKeyForm />
       <div class="p-4 pl-[150px] pt-0">
         <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="deleteModelByModelKeyLoading"
@@ -70,9 +70,9 @@
         </Button
         >
       </div>
-    </CollapseContainer>
+    </Card>
 
-    <CollapseContainer class="mt-4" title="模型同步">
+    <Card class="mt-4" title="模型同步">
       <!--      <BasicForm @register="registerModelSyncForm" />-->
       <div class="p-4 pl-[150px] pt-0">
         <Space>
@@ -88,20 +88,18 @@
           >
         </Space>
       </div>
-    </CollapseContainer>
+    </Card>
   </Page>
 </template>
 <script lang="ts" setup>
 import {ref, onMounted} from 'vue';
-// import { BasicForm, useForm } from '@/components/Form/index';
-// import { CollapseContainer } from '@/components/Container/index';
 import {
   bizKeyFormSchema,
   procInstIdFormSchema,
   modelKeyFormSchema,
   deleteModelByModelKeyFormSchema
 } from './dataClean.data';
-import {Alert, Button, Space, message, Modal, Collapse} from 'ant-design-vue';
+import {Alert, Button, Space, message, Card, Modal, Collapse} from 'ant-design-vue';
 import {Page} from '@vben/common-ui';
 import {useAccess} from '@vben/access';
 import {useVbenForm} from '#/adapter/form';

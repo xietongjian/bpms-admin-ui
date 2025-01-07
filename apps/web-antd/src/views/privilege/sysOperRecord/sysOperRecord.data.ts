@@ -6,7 +6,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 
 // import { DescItem } from '@/components/Description';
 import { formatToDateTime } from '#/utils/dateUtil';
-// import { CodeEditor } from '@/components/CodeEditor';
+import { CodeEditor } from '#/components/CodeEditor';
 
 export const columns: VxeGridProps['columns'] = [
   {

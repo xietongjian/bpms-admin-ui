@@ -65,7 +65,7 @@
   import { Row, Col, message, Empty } from 'ant-design-vue';
   import { SlidersOutlined, ArrowRightOutlined } from '@ant-design/icons-vue';
   import {apiCategoryFormSchema} from "#/views/base/apiInfo/apiInfo.data";
-  // import { CodeEditor, MODE } from '@/components/CodeEditor';
+  import { CodeEditor, MODE } from '#/components/CodeEditor';
 
   const fieldNameReplaceStr = '_______';
 

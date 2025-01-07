@@ -4,7 +4,7 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 
 import {FormValidPatternEnum, RemarkDefaultEnum} from '#/enums/commonEnum';
-// import { CodeEditor, MODE } from '@/components/CodeEditor';
+import { CodeEditor, MODE } from '#/components/CodeEditor';
 
 const colProps = {
   span: 24,

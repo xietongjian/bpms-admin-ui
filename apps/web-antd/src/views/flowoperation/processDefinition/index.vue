@@ -287,14 +287,14 @@ const [SubTable, subTableApi] = useVbenVxeGrid({gridOptions: subGridOptions});
 
 nextTick(() => {
   const {updateSchema} = tableApi.formApi;
-  getAll().then((res) => {
-    updateSchema([
+  /*getAll().then((res) => {
+    updateSchema && updateSchema([
       {
         fieldName: 'appSn',
         componentProps: {options: res, labelField: 'id'},
       },
     ]);
-  });
+  });*/
 });
 
 function handlePreview(record: Recordable<any>, e) {

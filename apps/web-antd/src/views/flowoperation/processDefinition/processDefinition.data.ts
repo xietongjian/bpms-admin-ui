@@ -5,7 +5,7 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-
+import {getAll} from '#/api/base/app';
 export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
@@ -74,24 +74,19 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入流程标题',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   {
     fieldName: 'appSn',
     label: '系统',
-    component: 'Select',
+    component: 'ApiSelect',
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
+    componentProps: {
+      api: getAll,
+      fieldNames: {
+        value: 'sn',
+        label: 'name'
+      },
+    }
   },
 ];
 

@@ -11,12 +11,6 @@ export const bizKeyFormSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入业务表单Key！',
     },
-    colProps: {
-      span: 16,
-      lg: { span: 16, offset: 0 },
-      sm: { span: 20, offset: 0 },
-      xs: { span: 24, offset: 0 },
-    },
   },
 ];
 export const procInstIdFormSchema: FormSchema[] = [
@@ -28,12 +22,6 @@ export const procInstIdFormSchema: FormSchema[] = [
     help: '根据流程ProcInstId清理数据！',
     componentProps: {
       placeholder: '请输入流程ProcInstId！',
-    },
-    colProps: {
-      span: 16,
-      lg: { span: 16, offset: 0 },
-      sm: { span: 20, offset: 0 },
-      xs: { span: 24, offset: 0 },
     },
   },
 ];
@@ -48,12 +36,6 @@ export const modelKeyFormSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入流程ModelKey！',
     },
-    colProps: {
-      span: 16,
-      lg: { span: 16, offset: 0 },
-      sm: { span: 20, offset: 0 },
-      xs: { span: 24, offset: 0 },
-    },
   },
 ];
 
@@ -66,12 +48,6 @@ export const deleteModelByModelKeyFormSchema: FormSchema[] = [
     help: '根据流程ModelKey删除流程模板数据！',
     componentProps: {
       placeholder: '请输入流程ModelKey！',
-    },
-    colProps: {
-      span: 16,
-      lg: { span: 16, offset: 0 },
-      sm: { span: 20, offset: 0 },
-      xs: { span: 24, offset: 0 },
     },
   },
 ];

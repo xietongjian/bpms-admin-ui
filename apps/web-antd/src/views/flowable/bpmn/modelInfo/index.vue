@@ -52,8 +52,7 @@ import FlowCategoryTree from '#/views/components/leftTree/FlowCategoryTree.vue';
 // import { useModal } from '@/components/Modal';
 import ModelInfoModal from './ModelInfoModal.vue';
 // import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
-// import CodePreviewModal from '@/views/components/preview/codePreview/index.vue';
-import {getAll} from '#/api/base/app';
+import CodePreviewModal from '#/views/components/preview/codePreview/index.vue';
 import {columns, searchFormSchema} from './modelInfo.data';
 import {getCustomPagerModel} from "#/api/form/customForm";
 // import { useMessage } from '@/hooks/web/useMessage';
@@ -75,8 +74,8 @@ const currentCategory = ref<Recordable<any>>({});
 const loadingRef = ref(false);
 const PerPrefix = 'Bpmn:';
 const modelInfoModalRef = ref(),
-    bpmnPreviewModalRef = ref(),
-    codePreviewModalRef = ref();
+    bpmnPreviewModalRef = ref();
+const codePreviewModalRef = ref();
 
 /*const [registerTable, { getForm, reload }] = useTable({
   title: '列表',
@@ -157,20 +156,20 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEve
 
 
 nextTick(() => {
-  const {updateSchema} = tableApi.formApi;
-  getAll().then((res) => {
+  // const {updateSchema} = tableApi.formApi;
+  /*getAll().then((res) => {
     updateSchema([
       {
         fieldName: 'appSn',
         componentProps: {options: res, labelField: 'id'},
       },
     ]);
-  });
+  });*/
 });
 
-function createActions(record: Recordable<any>, column: BasicColumn): ActionItem[] {
+function createActions(record: Recordable<any>) {
   const {status} = record;
-  let actions: any[] = [
+  return [
     {
       icon: 'ant-design:partition-outlined',
       tooltip: '流程图预览',
@@ -199,11 +198,14 @@ function createActions(record: Recordable<any>, column: BasicColumn): ActionItem
       icon: 'ant-design:stop-twotone',
       tooltip: '停用',
       label: '',
-      color: 'error',
+      danger: true,
       popConfirm: {
         title: '确认停用吗?',
         confirm: handleStop.bind(null, record),
         placement: 'left',
+      },
+      okButtonProps: {
+        danger: true,
       },
       ifShow: status === 3 || status === 2,
     },
@@ -231,7 +233,6 @@ function createActions(record: Recordable<any>, column: BasicColumn): ActionItem
       }
     },
   ];
-  return actions;
 }
 
 function handlePreview(record: Recordable<any>) {
@@ -249,9 +250,18 @@ function handlePreview(record: Recordable<any>) {
   });*/
 }
 
-function handlePreviewXml(record: Recordable<any>, e) {
+async function handlePreviewXml(record: Recordable<any>, e) {
   e.stopPropagation();
-  getBpmnByModelKey({modelKey: record.modelKey}).then((res) => {
+  const {modelXml} = await getBpmnByModelKey({modelKey: record.modelKey});
+
+  debugger;
+  codePreviewModalRef.value.setData({code: modelXml});
+  codePreviewModalRef.value.open();
+  codePreviewModalRef.value.setState({
+    title: `查看【${record.name}】的XML`,
+  });
+
+  /*getBpmnByModelKey({modelKey: record.modelKey}).then((res) => {
     openCodePreviewModal(true, {
       record: {code: res.modelXml, type: 'xml'},
       isUpdate: false,
@@ -264,7 +274,7 @@ function handlePreviewXml(record: Recordable<any>, e) {
       showOkBtn: false,
       cancelText: '关闭',
     });
-  });
+  });*/
 }
 
 function handleEdit(record: Recordable<any>) {

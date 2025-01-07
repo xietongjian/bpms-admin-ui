@@ -1,5 +1,5 @@
 <template>
-  <div class="bpmn-container w-full h-full">
+  <div ref="bpmnContainerRef" class="bpmn-container w-full h-full">
     <div class="containers" ref="container" >
       <BpmnPresetViewer
           v-if="processInstanceId || processModelKey"
@@ -52,7 +52,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, unref, shallowRef, defineProps, defineExpose } from 'vue';
+import {computed, ref, unref, shallowRef, defineProps, defineExpose, nextTick} from 'vue';
+
   import { Button, Space } from 'ant-design-vue';
   import {
     CompressOutlined,

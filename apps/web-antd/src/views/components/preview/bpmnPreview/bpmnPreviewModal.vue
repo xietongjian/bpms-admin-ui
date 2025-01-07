@@ -1,5 +1,5 @@
 <template>
-  <BasicModal class="w-[1000px] h-full">
+  <BasicModal ref="bpmnContainerRef" class="aaaaaaaaaaaa w-[1000px] h-full">
     <template #title>
       流程图 - {{modelName}}
       <LoadingOutlined v-if="modelName === ''" />
@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, unref, shallowRef, defineExpose } from 'vue';
+import {computed, ref, unref, shallowRef, defineExpose, nextTick} from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
   // import ApproveHistoryTimeLine from '#/views/components/process/ApproveHistoryTimeLine.vue';
@@ -50,6 +50,9 @@
   const modelKey = ref('');
   const procInstId = ref('');
   const MenuItem = Menu.Item;
+
+  const bpmnContainerRef = ref(null);
+
 
   const [BasicModal, modalApi] = useVbenModal({
     // centered: true,
@@ -74,6 +77,7 @@
   });
   const presetViewer = ref<ComponentInstance<typeof BpmnPresetViewer>>();
   const bpmnViewer = shallowRef();
+
 
   const exportLoading = ref<boolean>(false);
   const modelName = ref('');

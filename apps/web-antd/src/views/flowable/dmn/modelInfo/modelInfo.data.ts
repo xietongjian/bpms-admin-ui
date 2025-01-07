@@ -102,23 +102,27 @@ export const modelInfoFormSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["id"]
+    }
   },
   {
     fieldName: 'categoryCode',
     label: 'categoryCode',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["categoryCode"]
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
     component: 'Input',
-    required: true,
-    rules: [
+    // required: true,
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -128,22 +132,28 @@ export const modelInfoFormSchema: FormSchema[] = [
         max: 200,
         message: '字符长度不能大于200！',
       },
-    ],
+    ],*/
   },
   {
     fieldName: 'modelKey',
     label: '标识',
     component: 'Input',
-    required: true,
+    // required: true,
   },
   {
     fieldName: 'appSn',
     label: '所属系统',
-    component: 'Select',
+    component: 'ApiSelect',
     componentProps: {
       getPopupContainer: () => document.body,
+      api: getAll,
+      fieldNames: {
+        value: 'sn',
+        label: 'name'
+      },
     },
-    required: true,
+    rules: 'selectRequired'
+    // required: true,
   },
 ];
 
@@ -225,7 +235,7 @@ export const dmnBaseFormSchema: FormSchema[] = [
       class: 'w-full',
       getPopupContainer: () => document.body,
     },
-    required: true,
+    rules: 'selectRequired'
   },
   /*{
     fieldName: 'image',

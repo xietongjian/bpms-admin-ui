@@ -4,6 +4,7 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
+import {getAll} from "#/api/base/app";
 
 let processStatus = [];
 const processStatusObj = {};
@@ -87,13 +88,6 @@ export const searchFormSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入名称/标识',
     },
-    colProps: {
-      sm: 12,
-      md: 12,
-      lg: 8,
-      xl: 6,
-      xxl: 6,
-    },
   },
   {
     fieldName: 'businessKey',
@@ -101,13 +95,6 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入业务表单编号',
-    },
-    colProps: {
-      sm: 12,
-      md: 12,
-      lg: 8,
-      xl: 6,
-      xxl: 6,
     },
   },
   {
@@ -117,25 +104,18 @@ export const searchFormSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入流程实例ID',
     },
-    colProps: {
-      sm: 12,
-      md: 12,
-      lg: 8,
-      xl: 6,
-      xxl: 6,
-    },
   },
   {
     fieldName: 'appSn',
     label: '系统',
-    component: 'Select',
-    colProps: {
-      sm: 12,
-      md: 12,
-      lg: 8,
-      xl: 6,
-      xxl: 6,
-    },
+    component: 'ApiSelect',
+    componentProps: {
+      api: getAll,
+      fieldNames: {
+        value: 'sn',
+        label: 'name'
+      },
+    }
   },
   {
     fieldName: 'processDefinitionKey',
@@ -146,13 +126,6 @@ export const searchFormSchema: FormSchema[] = [
       multiple: false,
       title: '选择流程模板',
     },
-    colProps: {
-      sm: 12,
-      md: 12,
-      lg: 8,
-      xl: 6,
-      xxl: 6,
-    },
   },
   {
     fieldName: 'companyId',
@@ -161,13 +134,6 @@ export const searchFormSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请选择提交单位',
       selectType: '1',
-    },
-    colProps: {
-      sm: 12,
-      md: 12,
-      lg: 8,
-      xl: 6,
-      xxl: 6,
     },
   },
   {
@@ -178,13 +144,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请选择提交部门',
       selectType: '2',
     },
-    colProps: {
-      sm: 12,
-      md: 12,
-      lg: 8,
-      xl: 6,
-      xxl: 6,
-    },
   },
   {
     fieldName: 'startedUserIds',
@@ -194,25 +153,11 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请选择提交人',
       multiple: true,
     },
-    colProps: {
-      sm: 12,
-      md: 12,
-      lg: 8,
-      xl: 6,
-      xxl: 6,
-    },
   },
   {
     fieldName: 'dateRange',
     label: '时间范围',
     component: 'RangePicker',
-    colProps: {
-      sm: 12,
-      md: 12,
-      lg: 8,
-      xl: 6,
-      xxl: 6,
-    },
   },
   {
     fieldName: 'processStatus',
@@ -224,13 +169,6 @@ export const searchFormSchema: FormSchema[] = [
       valueField: 'label',
       disabled: true,
     },
-    colProps: {
-      sm: 12,
-      md: 12,
-      lg: 8,
-      xl: 6,
-      xxl: 6,
-    },
   },
 ];
 
@@ -238,28 +176,23 @@ export const processNodeSelectionFormSchema: FormSchema[] = [
   {
     fieldName: 'activityIds',
     label: '选择节点',
-    required: true,
-    ifShow: true,
     component: 'Select',
     componentProps: {
       placeholder: '请选择任务节点',
       options: [],
     },
-    colProps: { span: 24 },
+    rules: 'selectRequired'
   },
   {
     fieldName: 'message',
-    required: false,
     ifShow: false,
     label: '干预信息',
     component: 'Textarea',
-    colProps: { span: 24 },
-    rules: [
-      {
-        max: 1024,
-        message: '字符长度不能大于1024！',
-      },
-    ],
+    rules: z
+        .string()
+        .max(1024, "字符长度不能大于1024！")
+        .nullable()
+        .optional(),
     componentProps: {
       placeholder: '请输入干预信息',
       autoSize: {

@@ -83,10 +83,9 @@ import AuthFlowInfoModal from './AuthFlowInfoModal.vue';
 import {deleteByIds, getAuthPointListByPage} from '#/api/flowauth/authFlowInfo';
 import {EmpInfo} from '#/views/components/EmpInfo';
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
+
 const {hasAccessByCodes} = useAccess();
-
 const PerPrefix = "AuthFlowInfo:";
-
 const authFlowInfoModalRef = ref();
 
 const formOptions: VbenFormProps = {

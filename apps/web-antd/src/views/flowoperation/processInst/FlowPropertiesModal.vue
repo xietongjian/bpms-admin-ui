@@ -27,7 +27,7 @@
 
   // import { BasicModal, useModalInner } from '@/components/Modal';
   import { Row, Col, Empty, message } from 'ant-design-vue';
-  // import { JsonPreview } from '@/components/CodeEditor';
+  import { JsonPreview } from '#/components/CodeEditor';
 
   import { getVariablesByProcessInstanceId } from '#/api/flowoperation/processInst';
 

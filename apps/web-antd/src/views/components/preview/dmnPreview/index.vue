@@ -109,7 +109,7 @@
     getByModelId,
     getDmnSimulatorInputParamsByModelKey,
   } from '#/api/flowable/dmn/modelInfo';
-  // import { CodeEditor, MODE } from '#/components/CodeEditor';
+  import { CodeEditor, MODE } from '#/components/CodeEditor';
 
 
   import { dmnSimulatorInputFormSchema } from '#/views/flowable/dmn/modelInfo/modelInfo.data';

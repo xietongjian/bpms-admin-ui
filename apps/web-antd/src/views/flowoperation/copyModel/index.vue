@@ -1,5 +1,5 @@
 <template>
-  <Page auto-content-height title="不同环境的流程、表单拷贝" contentFullHeight>
+  <Page auto-content-height title="不同环境的流程、表单拷贝">
     <Alert type="warning" show-icon>
       <template #icon>
         <HeatMapOutlined style="color: orangered" />
@@ -39,7 +39,7 @@
           <span class="font-bold">{{ envConst[targetEnv] }}</span>
         </Space>
       </template>
-      <BasicForm @register="registerCustomForm" />
+      <CustomForm />
 
       <div class="p-4" style="padding-top: 0; padding-left: 100px">
         <Progress
@@ -73,7 +73,7 @@
           <span class="font-bold">{{ envConst[targetEnv] }}</span>
         </Space>
       </template>
-      <BasicForm @register="registerBizForm" />
+      <BizForm />
 
       <div class="p-4" style="padding-top: 0; padding-left: 100px">
         <Progress v-if="bizCopyPercent > 0 && bizCopyPercent !== 100" :percent="bizCopyPercent" />
@@ -84,14 +84,13 @@
           :type="bizResult.code === '100' ? 'success' : 'error'"
           closable
         />
-        <Authority :value="'CopyModel:' + PerEnum.UPDATE">
-          <Button
+        <Button
+            v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])"
             :loading="bizCopyPercent !== 100 && bizCopyPercent !== 0"
             type="error"
             @click="handleCopyBizForm"
-            >开始拷贝</Button
-          >
-        </Authority>
+        >开始拷贝</Button
+        >
       </div>
     </CollapseContainer>
   </Page>
@@ -108,10 +107,10 @@
   import {ColPage, Page} from '@vben/common-ui';
   import {TableAction} from '#/components/table-action';
 
-  import { BasicForm, useForm } from '@/components/Form/index';
-  import { CollapseContainer } from '@/components/Container/index';
+  // import { BasicForm, useForm } from '@/components/Form/index';
+  // import { CollapseContainer } from '@/components/Container/index';
   import { customFormSchema, bizFormSchema } from './copyModel.data';
-  import { Alert, Progress, Tag, Space, success } from 'ant-design-vue';
+  import { Alert, Progress, Tag, Space, message } from 'ant-design-vue';
   import { ArrowRightOutlined, HeatMapOutlined } from '@ant-design/icons-vue';
 
   import {
@@ -121,7 +120,10 @@
     getModelInfoByModelKey,
   } from '#/api/flowoperation/copyModelToProd';
   import { findNode } from '#/utils/helper/treeHelper';
+  import {useVbenForm} from "#/adapter/form";
   const {hasAccessByCodes} = useAccess();
+
+  const PerPrefix = 'CopyModel:';
 
   const envConst = {
     dev: '开发环境',
@@ -140,6 +142,34 @@
   const copyBizLoading = ref<boolean>(false);
   const syncCategories = ref([]);
 
+
+
+  const [CustomForm, customFormApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: customFormSchema,
+    wrapperClass: 'grid-cols-1',
+  });
+
+
+  const [BizForm, bizFormApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: bizFormSchema,
+    wrapperClass: 'grid-cols-1',
+  });
+
+/*
   // 自定义表单
   const [
     registerCustomForm,
@@ -175,7 +205,7 @@
     actionColOptions: {
       span: 23,
     },
-  });
+  });*/
 
   onMounted(() => {
     // getEnv().then(res=>{

@@ -104,7 +104,7 @@ import {nextTick, ref, unref} from 'vue';
 import {apiTesting, getApiInfoTreeData} from '#/api/base/apiInfo';
 import {Page} from '@vben/common-ui';
 import {Alert, Button, Tree, Col, Row, Space, Tabs, Tag} from 'ant-design-vue';
-// import {CodeEditor, MODE} from '@/components/CodeEditor';
+import {CodeEditor, MODE} from '#/components/CodeEditor';
 // import {BasicForm, useForm} from '@/components/Form';
 import {ColPage} from '@vben/common-ui';
 

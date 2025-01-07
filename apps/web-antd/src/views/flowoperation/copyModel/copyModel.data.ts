@@ -1,4 +1,4 @@
-import { FormSchema } from '@/components/Table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 
 export const customFormSchema: FormSchema[] = [
   {
@@ -6,37 +6,28 @@ export const customFormSchema: FormSchema[] = [
     label: '类型',
     component: 'Input',
     defaultValue: 0,
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["type"]
+    }
   },
   {
     fieldName: 'sourceModel',
     label: '源流程',
     component: 'ModelInfoSelector',
-    required: true,
+    // required: true,
     componentProps: {
       title: '选择流程',
       formType: 0, // 0表示自定义表单
       placeholder: '请选择源流程',
       multiple: false,
     },
-    colProps: {
-      span: 8,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 12, offset: 0 },
-      xs: { span: 20, offset: 0 },
-    },
   },
   {
     fieldName: 'categoryCode',
     label: '目标分类',
-    required: true,
+    rules: 'selectRequired',
     component: 'TreeSelect',
-    colProps: {
-      span: 8,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 12, offset: 0 },
-      xs: { span: 20, offset: 0 },
-    },
     componentProps: {
       treeNodeFilterProp: 'title',
       getPopupContainer: () => document.body,
@@ -50,37 +41,28 @@ export const bizFormSchema: FormSchema[] = [
     label: '类型',
     component: 'Input',
     defaultValue: 1,
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["type"]
+    }
   },
   {
     fieldName: 'sourceModel',
     label: '源流程',
     component: 'ModelInfoSelector',
-    required: true,
+    // required: true,
     componentProps: {
       title: '选择流程',
       formType: 1, // 1表示业务表单
       placeholder: '请选择源流程',
       multiple: false,
     },
-    colProps: {
-      span: 8,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 12, offset: 0 },
-      xs: { span: 20, offset: 0 },
-    },
   },
   {
     fieldName: 'categoryCode',
     label: '目标分类',
-    required: true,
+    rules: 'selectRequired',
     component: 'TreeSelect',
-    colProps: {
-      span: 8,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 12, offset: 0 },
-      xs: { span: 20, offset: 0 },
-    },
     componentProps: {
       treeNodeFilterProp: 'title',
       getPopupContainer: () => document.body,
@@ -89,19 +71,15 @@ export const bizFormSchema: FormSchema[] = [
   {
     fieldName: 'targetModelInfo',
     label: '目标流程',
-    required: false,
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["targetModelInfo"]
+    },
     componentProps: {
       disabled: true,
       allowClear: false,
     },
     component: 'Input',
-    colProps: {
-      span: 8,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -111,37 +89,30 @@ export const customTaskFormSchema: FormSchema[] = [
     label: '类型',
     component: 'Input',
     defaultValue: 0,
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["type"]
+    }
   },
   {
     fieldName: 'sourceModel',
     label: '源流程',
     component: 'ModelInfoSelector',
-    required: true,
+    // required: true,
     componentProps: {
       title: '选择流程',
       formType: 0, // 0表示自定义表单
       placeholder: '请选择源流程',
       multiple: false,
     },
-    colProps: {
-      span: 8,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 12, offset: 0 },
-      xs: { span: 20, offset: 0 },
-    },
+
   },
   {
     fieldName: 'categoryCode',
     label: '目标分类',
-    required: true,
+    // required: true,
+    rules: 'selectRequired',
     component: 'TreeSelect',
-    colProps: {
-      span: 8,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 12, offset: 0 },
-      xs: { span: 20, offset: 0 },
-    },
     componentProps: {
       treeNodeFilterProp: 'name',
       replaceFields: {

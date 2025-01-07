@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, unref, shallowRef, defineProps, defineEmits, defineExpose } from 'vue';
+import {computed, ref, unref, shallowRef, defineProps, defineEmits, defineExpose, watch} from 'vue';
   import { Button, Space } from 'ant-design-vue';
   import {
     CompressOutlined,
@@ -61,12 +61,14 @@
     PlusOutlined,
   } from '@ant-design/icons-vue';
   import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
+  import { useElementSize  } from '@vueuse/core'
 
   import '#/assets/bpmn/viewer/lib/style.css';
   import { usePreferences } from '@vben/preferences';
   const emit = defineEmits(['data-change']);
   const { isDark } = usePreferences();
   const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
+
 
   defineProps({
     title: {
@@ -92,10 +94,25 @@
 
   const processInstanceId = ref('');
   const processModelKey = ref('');
+  const { width, height } = useElementSize(presetViewer)
 
-  /*const destroyModeler = () => {
-  bpmnViewer.value?.clear();
-}*/
+
+  const sizeTimer = ref(false);
+
+  watch(height,
+      (newValues, oldValues) => {
+        if(!sizeTimer.value){
+          sizeTimer.value = true;
+          setTimeout(() => {
+            processFitViewer();
+            sizeTimer.value = false;
+          }, 100);
+        }
+      },
+      {
+        immediate: false // 如果需要在组件实例化时立即执行，则设置为true
+      }
+  );
 
   function processFitContainer() {
     const canvas = bpmnViewer.value?.get('canvas');
