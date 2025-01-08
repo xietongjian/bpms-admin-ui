@@ -28,7 +28,7 @@
               <TableAction :actions="createActions(row, 'timerJob')"/>
             </template>
             <template #processInstanceId="{row}">
-              <a v-if="!!row.processInstanceId" @click="doCopyContent(row.processInstanceId)">
+              <a class="cursor-pointer" v-if="!!row.processInstanceId" @click="doCopyContent(row.processInstanceId)">
                 <CopyOutlined />
               </a>
               {{ row.processInstanceId||'-' }}
@@ -117,6 +117,7 @@
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
+  import { useClipboard } from '@vueuse/core';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {ColPage, Page} from '@vben/common-ui';
@@ -149,6 +150,7 @@
   import {useVbenForm} from '#/adapter/form';
 
   defineOptions({ name: 'ProcessJob' });
+  const { copy } = useClipboard({ legacy: true });
 
   const PerPrefix = 'ProcessJob:';
   const {hasAccessByCodes} = useAccess();
@@ -306,7 +308,7 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
-          return await queryDeadLetterJobPagerModel({
+          return await queryTimerJobPagerModel({
             query: {
               pageNum: page.currentPage,
               pageSize: page.pageSize,
@@ -529,7 +531,12 @@
   }
 
   function handlePreview(record: Recordable<any>) {
-    openBpmnPreviewModal(true, {
+    bpmnPreviewModalRef.value.setData({
+      modelKey: record.processDefinitionId.substring(0, record.processDefinitionId.indexOf(':')),
+      procInstId: record.processInstanceId,
+    });
+    bpmnPreviewModalRef.value.open();
+    /*openBpmnPreviewModal(true, {
       modelKey: record.processDefinitionId.substring(0, record.processDefinitionId.indexOf(':')),
       procInstId: record.processInstanceId,
     });
@@ -538,7 +545,7 @@
       useWrapper: false,
       showOkBtn: false,
       cancelText: '关闭',
-    });
+    });*/
   }
 
   function handleCloseFunc() {
@@ -546,8 +553,9 @@
     return Promise.resolve(true);
   }
 
-  function doCopyContent(content) {
-    copyText(content);
+  async function doCopyContent(content) {
+    await copy(content);
+    message.success('已拷贝到剪切板！');
   }
 </script>
 <style lang="less">
