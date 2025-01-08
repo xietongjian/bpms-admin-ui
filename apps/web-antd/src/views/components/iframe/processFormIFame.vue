@@ -14,7 +14,7 @@
   import type { CSSProperties } from 'vue';
   import { defineComponent, ref, unref, onMounted, nextTick, computed } from 'vue';
   import { Spin } from 'ant-design-vue';
-  import { getViewportOffset } from '@/utils/domUtils';
+  import { getViewportOffset } from '#/utils/domUtils';
   import { useWindowSizeFn } from '@vben/hooks';
   import { propTypes } from '@/utils/propTypes';
   import { useDesign } from '@/hooks/web/useDesign';

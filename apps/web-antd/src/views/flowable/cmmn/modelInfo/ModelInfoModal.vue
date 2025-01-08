@@ -8,10 +8,10 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { BasicForm, Rule, useForm } from '@/components/Form/index';
   import { modelInfoFormSchema } from './modelInfo.data';
-  import { saveOrUpdate, checkEntityExist } from '@/api/flowable/bpmn/modelInfo';
-  import { getAll } from '@/api/base/app';
+  import { saveOrUpdate, checkEntityExist } from '#/api/flowable/bpmn/modelInfo';
+  import { getAll } from '#/api/base/app';
   import { useGo } from '@/hooks/web/usePage';
-  import { CheckExistParams } from '@/api/model/baseModel';
+  import { CheckExistParams } from '#/api/model/baseModel';
   import { FormValidPatternEnum } from '@/enums/constantEnum';
 
   const emit = defineEmits(['success', 'register']);

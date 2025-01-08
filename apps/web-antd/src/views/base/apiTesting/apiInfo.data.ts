@@ -218,7 +218,7 @@ export const apiTestingFormSchema: FormSchema[] = [
   {
     label: '备注',
     field: 'note',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,

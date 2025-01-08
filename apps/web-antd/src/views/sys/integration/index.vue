@@ -1,17 +1,59 @@
 <template>
-  <Page content-class="flex flex-row gap-4 h-full" auto-content-height>
-    <div class="min-h-screen w-full bg-card p-4 rounded-md">
+  <Page auto-content-height>
+    <div class="w-full">
 <!--      <MarkdownViewer :value="docContent" />-->
-      <div v-html="docContent"></div>
+      <div v-html="docContentHtml" class="markdown-content"></div>
+
+<!--      <Markdown
+          html
+          linkify
+          typographer
+          highlight
+          :source="docContent"
+          :options="markdownOptions"
+      />-->
+
+<!--      <VMarkdownView
+          html
+          :mode="getTheme"
+          :content="docContent"
+          :options="markdownOptions"
+      ></VMarkdownView>-->
     </div>
   </Page>
 </template>
 <script lang="ts" setup>
-  import { ref, unref, onMounted, nextTick } from 'vue';
+  import {computed, ref, unref, onMounted, nextTick } from 'vue';
   import {getIntegrationDoc} from "#/api/sys/integration";
-  // import {MarkdownViewer} from "@/components/Markdown";
   import { useRouter } from 'vue-router';
   import {Page} from '@vben/common-ui';
+  import Markdown from 'vue3-markdown-it';
+  import hljs from 'highlight.js';
+  import 'highlight.js/styles/dark.css';
+  import 'highlight.js/styles/github.css';
+
+  import { Marked } from 'marked'
+  import { markedHighlight } from "marked-highlight";
+  import { VMarkdownView } from 'vue3-markdown'
+
+  import { usePreferences } from '@vben/preferences';
+
+  import 'vue3-markdown/dist/style.css'
+
+  const markdownOptions = {
+    highlight: true,
+  }
+
+  const { isDark } = usePreferences();
+  const getTheme = computed(() => {
+    if(isDark){
+      switchHighlightTheme('dark');
+    } else {
+      switchHighlightTheme('github');
+    }
+    return (isDark.value ? 'dark' : 'light');
+  });
+
 
   const {currentRoute} = useRouter();
 
@@ -21,29 +63,73 @@
 
   onMounted(async () => {
     await nextTick();
-    setTimeout(() => {
-      loadDocContent();
-    }, 100);
+    await loadDocContent();
   });
+  const marked = new Marked(
+      markedHighlight({
+        emptyLangClass: 'hljs',
+        langPrefix: 'hljs language-',
+        highlight(code, lang, info) {
+          const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+          return hljs.highlight(code, { language }).value;
+        }
+      })
+  );
+  const docContentHtml = computed(() => {
+        return marked.parse(docContent.value);
+      }
+  );
 
-  function loadDocContent() {
+  async function loadDocContent() {
     try {
       loading.value = true;
       const fileName = unref(currentRoute).path.split('/').pop();
       const url = `/docs/integration/${fileName}/index.md`;
-      getIntegrationDoc({ url })
-          .then((res: any) => {
-            docContent.value = res.data;
-          })
-          .catch((e) => {
-            console.error(e);
-          })
-          .finally(() => {});
+      const {data} = await getIntegrationDoc({ url });
+      docContent.value = data;
     } catch (e) {
       console.error(e);
-      loading.value = false;
     } finally {
       loading.value = false;
     }
   }
+
+  function switchHighlightTheme(newTheme) {
+    debugger;
+    // 移除所有旧的主题样式
+    document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+      if (link.href.includes('/highlight.js/styles/')) {
+        link.remove();
+      }
+    });
+
+    // 加载新主题样式
+    var themeLink = document.createElement('link');
+    themeLink.rel = 'stylesheet';
+    themeLink.href = '/highlight.js/styles/' + newTheme + '.css';
+    document.head.appendChild(themeLink);
+
+    // 重新渲染所有高亮代码
+    hljs.highlightAll();
+  }
 </script>
+
+<style>
+
+/*
+.markdown-content table {
+  width: 100%;
+  border-collapse: collapse !important; !* 确保边框合并生效 *!
+  margin: 20px 0;
+  border: 1px solid black !important; !* 设置表格整体边框颜色为黑色 *!
+}
+
+.markdown-content th, .markdown-content td {
+  border: 1px solid black !important; !* 设置表头和单元格边框颜色为黑色 *!
+  padding: 8px;
+}
+
+.markdown-content th {
+  text-align: left;
+}*/
+</style>

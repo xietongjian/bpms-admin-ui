@@ -108,7 +108,7 @@ import {CodeEditor, MODE} from '#/components/CodeEditor';
 // import {BasicForm, useForm} from '@/components/Form';
 import {ColPage} from '@vben/common-ui';
 
-// import SplitPane from '@/views/components/splitPane/index.vue';
+// import SplitPane from '#/views/components/splitPane/index.vue';
 import {headerFormSchema, pathVariableFormSchema, queryVariableFormSchema} from './apiInfo.data';
 // import {BasicTree, TreeItem} from "@/components/Tree";
 // import {useDrawer} from "@/components/Drawer";

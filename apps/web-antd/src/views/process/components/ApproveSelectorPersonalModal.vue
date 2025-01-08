@@ -10,7 +10,7 @@
   import { BasicForm, useForm } from '@/components/Form/index';
   import { approveActionFormSchema } from './action.data';
   import { Button, Tag } from 'ant-design-vue';
-  import {afterAddSign, beforeAddSign, delegateTask, turnTask, reviewTask} from "@/api/process/process";
+  import {afterAddSign, beforeAddSign, delegateTask, turnTask, reviewTask} from "#/api/process/process";
   import { useGo } from '@/hooks/web/usePage';
   import { useMessage } from '@/hooks/web/useMessage';
 

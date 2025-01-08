@@ -26,7 +26,7 @@
 <script lang="ts" setup>
   import { nextTick } from 'vue';
   import { BasicTable, useTable, TableAction, BasicColumn, ActionItem } from '@/components/Table';
-  import { getModules, deleteByIds } from '@/api/privilege/module';
+  import { getModules, deleteByIds } from '#/api/privilege/module';
   import { useMessage } from '@/hooks/web/useMessage';
   import { columns, searchFormSchema } from './module.data';
   import ModuleModal from './ModuleModal.vue';

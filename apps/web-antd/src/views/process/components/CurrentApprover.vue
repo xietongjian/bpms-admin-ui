@@ -27,7 +27,7 @@
   import { defineComponent, ref, unref, onMounted } from 'vue';
   import { ApartmentOutlined, ClockCircleOutlined, UserOutlined } from '@ant-design/icons-vue';
   import { Avatar, Space, Tag, Row, Col } from 'ant-design-vue';
-  import { CollapseContainer } from '@/components/Container/index';
+  // import { CollapseContainer } from '@/components/Container/index';
   import {EmpInfo} from '#/views/components/EmpInfo';
 
   export default defineComponent({

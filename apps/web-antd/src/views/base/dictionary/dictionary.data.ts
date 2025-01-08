@@ -130,7 +130,7 @@ export const dictionaryFormSchema: FormSchema[] = [
   {
     label: '备注',
     fieldName: 'remark',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,

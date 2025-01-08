@@ -38,7 +38,7 @@
     getProcessVariableByModelKey,
     saveOrUpdateProcessVariable,
   } from '#/api/flowable/bpmn/modelInfo';
-  import { Tag, Button } from 'ant-design-vue';
+  import { Tag, Button, message } from 'ant-design-vue';
   import { TableAction } from '#/components/table-action';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';

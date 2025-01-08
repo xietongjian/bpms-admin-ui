@@ -5,10 +5,10 @@
 </template>
 <script lang="ts" setup>
   import { onMounted, ref, unref } from 'vue';
-  import FramePage from '@/views/components/iframe/index.vue';
+  import FramePage from '#/views/components/iframe/index.vue';
   import { useRouter } from 'vue-router';
   import { useMultipleTabStore } from '@/store/modules/multipleTab';
-  import { getByModelId } from '@/api/flowable/bpmn/modelInfo';
+  import { getByModelId } from '#/api/flowable/bpmn/modelInfo';
 
   const { currentRoute } = useRouter();
   const {

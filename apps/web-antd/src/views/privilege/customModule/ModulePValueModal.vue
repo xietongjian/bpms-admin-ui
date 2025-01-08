@@ -8,7 +8,7 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { formSchema } from './module.data';
-  import { saveOrUpdate } from '@/api/privilege/module';
+  import { saveOrUpdate } from '#/api/privilege/module';
 
   const emit = defineEmits(['success', 'register']);
 

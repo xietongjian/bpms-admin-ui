@@ -134,7 +134,7 @@
   import { List, Avatar, Tag, Space, Row, Col, Timeline, Tooltip } from 'ant-design-vue';
   import {EmpInfo} from '#/views/components/EmpInfo';
   import { getFormatCode } from '@/utils';
-  import { getCommentInfosByProcessInstanceId } from '@/api/flowable/bpmn/modelInfo';
+  import { getCommentInfosByProcessInstanceId } from '#/api/flowable/bpmn/modelInfo';
   import { BasicTitle } from '@/components/Basic';
 
   const TimelineItem = Timeline.Item;

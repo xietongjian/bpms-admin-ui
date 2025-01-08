@@ -6,12 +6,12 @@
    */
 
   import { nextTick, Ref, ref, shallowRef, watch } from 'vue';
-  import { useECharts } from '@/hooks/web/useECharts';
-  import OneDayLine from '@/views/report/processInstanceCount/components/OneDayLine.vue';
+  import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
+  import OneDayLine from '#/views/report/processInstanceCount/components/OneDayLine.vue';
   import {
     getInstanceCountsForLastNumDays,
     getTaskCountsForLastNumDays,
-  } from '@/api/report/processInstanceCount';
+  } from '#/api/report/processInstanceCount';
 
   defineOptions({ name: 'SevenDaysBar' });
 

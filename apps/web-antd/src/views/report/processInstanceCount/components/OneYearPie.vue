@@ -5,13 +5,13 @@
    * @since 2024/10/11 15:48
    */
 
-  import { useECharts } from '@/hooks/web/useECharts';
+  import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
   import { nextTick, ref, Ref, shallowRef, watch } from 'vue';
   import {
     getInstanceCountsForMonths,
     getTaskCountsForMonths,
-  } from '@/api/report/processInstanceCount';
-  import MonthlyBar from '@/views/report/processInstanceCount/components/MonthlyBar.vue';
+  } from '#/api/report/processInstanceCount';
+  import MonthlyBar from '#/views/report/processInstanceCount/components/MonthlyBar.vue';
 
   defineOptions({ name: 'OneYearPie' });
 

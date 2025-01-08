@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
-  import { Button, Upload } from 'ant-design-vue';
+  import { Button, Upload, message } from 'ant-design-vue';
   import { UploadOutlined } from '@ant-design/icons-vue';
   import { defineEmits, ref, shallowRef } from 'vue';
   // import { useMessage } from '@/hooks/web/useMessage';
@@ -18,18 +18,47 @@
   const fileList = shallowRef<UploadProps['fileList']>([]);
   const modalVisible = ref(false);
 
-  const [registerForm, { validate }] = useForm({
-    labelWidth: 100,
-    schemas: uploadVariableFileFormSchema,
-    showActionButtonGroup: false,
-    actionColOptions: { span: 24 },
+  // const [registerForm, { validate }] = useForm({
+  //   labelWidth: 100,
+  //   schemas: uploadVariableFileFormSchema,
+  //   showActionButtonGroup: false,
+  //   actionColOptions: { span: 24 },
+  // });
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: uploadVariableFileFormSchema,
+    wrapperClass: 'grid-cols-1',
   });
 
-  const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(() => {
-    fileList.value = [];
-    setModalProps({ confirmLoading: false });
-    changeLoading(false);
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        fileList.value = [];
+      }
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      // handleSubmit();
+    },
   });
+
+  // const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(() => {
+  //   fileList.value = [];
+  //   setModalProps({ confirmLoading: false });
+  //   changeLoading(false);
+  // });
 
   const handleRemove: UploadProps['onRemove'] = (file) => {
     const index = fileList.value!.indexOf(file);
@@ -49,7 +78,7 @@
         return;
       }
 
-      await validate();
+      await formApi.validate();
 
       const { data } = await uploadVariableTemplate({
         file: fileList.value[0],
@@ -59,15 +88,14 @@
         message.success(data.msg);
         modalVisible.value = false;
         emit('success', data.data);
-        closeModal();
+        modalApi.close();
       } else {
         message.error(data.msg);
       }
     } catch (e) {
       console.error(e);
     } finally {
-      changeLoading(false);
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   };
 </script>

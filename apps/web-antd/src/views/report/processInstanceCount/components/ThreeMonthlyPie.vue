@@ -6,12 +6,12 @@
    */
 
   import { nextTick, Ref, ref, shallowRef, watch } from 'vue';
-  import { useECharts } from '@/hooks/web/useECharts';
+  import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
   import {
     getInstanceCountsForLastNumMonth,
     getTaskCountsForLastNumMonth,
-  } from '@/api/report/processInstanceCount';
-  import MonthlyBar from '@/views/report/processInstanceCount/components/MonthlyBar.vue';
+  } from '#/api/report/processInstanceCount';
+  import MonthlyBar from '#/views/report/processInstanceCount/components/MonthlyBar.vue';
 
   defineOptions({ name: 'ThreeMonthlyPie' });
 

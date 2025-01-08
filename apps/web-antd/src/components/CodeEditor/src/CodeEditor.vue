@@ -3,6 +3,7 @@ import type { CSSProperties } from 'vue'
 import { ref, watchEffect } from 'vue'
 import { Codemirror } from 'vue-codemirror'
 import { vue } from '@codemirror/lang-vue'
+import { markdown } from '@codemirror/lang-markdown'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { usePreferences } from '@vben/preferences';
 
@@ -29,7 +30,7 @@ const props = withDefaults(defineProps<Props>(), {
   indentWithTab: true,
   tabSize: 2
 })
-const extensions = props.dark || isDark ? [vue(), oneDark] : [vue()]
+const extensions = props.dark || isDark ? [markdown(), vue(), oneDark] : [markdown(), vue()]
 const codeValue = ref('')
 watchEffect(() => {
   codeValue.value = props.code

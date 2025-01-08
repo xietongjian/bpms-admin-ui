@@ -51,7 +51,7 @@ import {
 import FlowCategoryTree from '#/views/components/leftTree/FlowCategoryTree.vue';
 // import { useModal } from '@/components/Modal';
 import ModelInfoModal from './ModelInfoModal.vue';
-// import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
+// import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
 import CodePreviewModal from '#/views/components/preview/codePreview/index.vue';
 import {columns, searchFormSchema} from './modelInfo.data';
 import {getCustomPagerModel} from "#/api/form/customForm";

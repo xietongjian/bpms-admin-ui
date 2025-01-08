@@ -8,8 +8,8 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { formSchema } from './module.data';
-  import { saveOrUpdate } from '@/api/privilege/module';
-  import { getModelInfoByModelKey } from '@/api/flowable/bpmn/modelInfo';
+  import { saveOrUpdate } from '#/api/privilege/module';
+  import { getModelInfoByModelKey } from '#/api/flowable/bpmn/modelInfo';
 
   const emit = defineEmits(['success', 'register']);
 

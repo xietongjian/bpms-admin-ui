@@ -8,8 +8,8 @@
   import { BasicModal, useModalInner } from '@/components/Modal';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { pValueFormSchema } from './module.data';
-  import { savePValue } from '@/api/privilege/module';
-  import { getAppPrivilegeValues } from '@/api/privilege/appPrivilegeValue';
+  import { savePValue } from '#/api/privilege/module';
+  import { getAppPrivilegeValues } from '#/api/privilege/appPrivilegeValue';
 
   const emit = defineEmits(['success', 'register']);
 

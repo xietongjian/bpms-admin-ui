@@ -6,11 +6,11 @@
    */
 
   import { nextTick, Ref, ref, shallowRef, watch } from 'vue';
-  import { useECharts } from '@/hooks/web/useECharts';
+  import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
   import {
     getInstanceCountsFor24Hour,
     getTaskCountsFor24Hour,
-  } from '@/api/report/processInstanceCount';
+  } from '#/api/report/processInstanceCount';
 
   defineOptions({ name: 'OneDayLine' });
 

@@ -80,24 +80,12 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称/编码',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   {
     fieldName: 'appSn',
     label: '系统',
     component: 'Select',
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -152,9 +140,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     label: '流程名称',
     required: true,
     component: 'Input',
-    colProps: {
-      span: 12,
-    },
+
     dependencies: {
       show(values) {
         return values.formType !== 0;
@@ -167,9 +153,6 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     label: '流程编码',
     required: true,
     component: 'Input',
-    colProps: {
-      span: 12,
-    },
     dependencies: {
       show(values) {
         return values.formType !== 0;
@@ -290,14 +273,10 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     componentProps: {
       mode: 'svg',
     },
-    colProps: {
-      span: 12,
-    },
   },
   {
     fieldName: 'privilegeTitle',
     slot: 'privilegeTitle',
-    colProps,
   },
 
   {
@@ -308,7 +287,6 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
       getPopupContainer: () => document.body,
     },
     required: true,
-    colProps: { span: 12 },
   },
 
   {
@@ -388,7 +366,6 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
         },
       ],
     },
-    colProps: { span: 24 },
   },
 ];
 

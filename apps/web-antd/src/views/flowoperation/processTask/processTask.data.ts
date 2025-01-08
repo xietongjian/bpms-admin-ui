@@ -284,7 +284,7 @@ export const formSchema: FormSchema[] = [
   {
     label: '备注',
     fieldName: 'note',
-    component: 'InputTextArea',
+    component: 'Textarea',
     rules: [
       {
         max: 500,

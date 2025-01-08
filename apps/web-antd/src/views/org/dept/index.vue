@@ -18,7 +18,7 @@ import {deleteByIds, getDepts} from '#/api/org/dept';
 import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';
 // import { useModal } from '@/components/Modal';
 import DeptModal from './DeptModal.vue';
-// import SplitPane from '@/views/components/splitPane/index.vue';
+// import SplitPane from '#/views/components/splitPane/index.vue';
 import {columns, searchFormSchema} from './dept.data';
 import {EmpInfo} from '#/views/components/EmpInfo';
 

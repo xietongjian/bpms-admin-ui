@@ -76,9 +76,9 @@ function createRequestClient(baseURL: string) {
 
       // 不进行任何处理，直接返回
       // 用于页面代码可能需要直接获取code，data，message这些信息时开启
-      if (config?.noTransformResponse) {
-        return responseData;
-      }
+      // if (config?.noTransformResponse) {
+      //   return responseData;
+      // }
       if (typeof config.isTransformResponse !== 'undefined' && !config.isTransformResponse) {
         return responseData;
       }

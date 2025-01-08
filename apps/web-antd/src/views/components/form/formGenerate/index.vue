@@ -17,7 +17,7 @@
   import { onMounted, reactive, ref, defineProps, nextTick } from 'vue';
   import { Alert } from 'ant-design-vue';
   import { GenerateForm } from '/public/form-making';
-  import { getCustomFormInfoVoByModelKeyAndBusinessKey } from '@/api/flowoperation/processTask';
+  import { getCustomFormInfoVoByModelKeyAndBusinessKey } from '#/api/flowoperation/processTask';
 
   const props = defineProps({
     modelKey: {

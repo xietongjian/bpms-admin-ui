@@ -157,4 +157,5 @@
       modalApi.setState({loading: false, confirmLoading: false});
     }
   }
+  defineExpose(modalApi)
 </script>

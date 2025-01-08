@@ -13,7 +13,7 @@
   import {
     getCommentInfoByTaskId,
     updateCommentInfo
-  } from "@/api/process/process";
+  } from "#/api/process/process";
   import { useGo } from '@/hooks/web/usePage';
   import { useMessage } from '@/hooks/web/useMessage';
 

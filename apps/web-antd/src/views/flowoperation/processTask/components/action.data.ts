@@ -88,7 +88,7 @@ export const approveActionFormSchema: FormSchema[] = [
   {
     fieldName: 'message',
     label: '审批意见',
-    component: 'InputTextArea',
+    component: 'Textarea',
     required: true,
     rules: [
       {

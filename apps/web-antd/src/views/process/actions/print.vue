@@ -40,10 +40,10 @@
   import { Divider, Card, Tag, Empty, Space, Button, Descriptions} from 'ant-design-vue';
   import { useRouter } from 'vue-router';
   import { LeftOutlined } from '@ant-design/icons-vue';
-  import FormContainer from '@/views/process/components/FormContainer.vue';
-  import ApprovalHistory from '@/views/process/components/ApprovalHistory.vue';
+  import FormContainer from '#/views/process/components/FormContainer.vue';
+  import ApprovalHistory from '#/views/process/components/ApprovalHistory.vue';
   import { useGo } from '@/hooks/web/usePage';
-  import {getProdModelInfoByModelKeyAndProcInstId} from "@/api/process/process";
+  import {getProdModelInfoByModelKeyAndProcInstId} from "#/api/process/process";
   import { Loading, useLoading } from '@/components/Loading';
 
   export default defineComponent({

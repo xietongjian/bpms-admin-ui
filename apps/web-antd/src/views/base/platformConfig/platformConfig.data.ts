@@ -128,7 +128,7 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'appSecret',
     label: '秘钥',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,

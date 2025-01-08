@@ -299,7 +299,7 @@ function previewImageVisibleChange(visible, prevVisible) {
   import { ref } from 'vue';
 
   import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { getAccountPageList, deleteByIds } from '@/api/privilege/account';
+  import { getAccountPageList, deleteByIds } from '#/api/privilege/account';
   import { UserOutlined } from '@ant-design/icons-vue';
 
   import { useModal } from '@/components/Modal';

@@ -105,11 +105,11 @@
 import {onMounted, ref} from 'vue';
 import {CheckOutlined, StopOutlined, UserOutlined} from '@ant-design/icons-vue';
 import {Avatar, Col, List, Row, Space, Tag} from 'ant-design-vue';
-import {CollapseContainer} from '@/components/Container/index';
+// import {CollapseContainer} from '@/components/Container/index';
 import {EmpInfo} from '#/views/components/EmpInfo';
 
-import {getCommentInfosByProcessInstanceId} from "@/api/process/process";
-import {getFormatCode} from "@/utils";
+import {getCommentInfosByProcessInstanceId} from "#/api/process/process";
+import {getFormatCode} from "#/utils";
 
 const props = defineProps({
   procInstId: {

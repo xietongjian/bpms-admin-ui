@@ -16,7 +16,7 @@
   import { getAll } from '#/api/base/app';
   import {formSchema} from "#/views/org/jobGrade/jobGrade.data";
   // import { useGo } from '@/hooks/web/usePage';
-  // import { CheckExistParams } from '@/api/model/baseModel';
+  // import { CheckExistParams } from '#/api/model/baseModel';
 
   const emit = defineEmits(['success', 'register']);
 

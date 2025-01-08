@@ -89,7 +89,7 @@
       {
         field: 'message',
         label: '审批意见',
-        component: 'InputTextArea',
+        component: 'Textarea',
         componentProps: {
           autoSize: {
             minRows: 2,

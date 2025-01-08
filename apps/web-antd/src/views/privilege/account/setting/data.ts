@@ -43,7 +43,7 @@ export const baseSetschemas: FormSchema[] = [
   },
 /*  {
     fieldName: 'introduction',
-    component: 'InputTextArea',
+    component: 'Textarea',
     label: '个人简介',
     colProps: { span: 18 },
   },*/

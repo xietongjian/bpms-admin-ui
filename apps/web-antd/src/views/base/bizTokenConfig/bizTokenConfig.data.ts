@@ -226,7 +226,7 @@ export const formSchema: FormSchema[] = [
   {
     field: 'params',
     label: '请求参数',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -312,7 +312,7 @@ export const formSchema: FormSchema[] = [
   {
     label: '备注',
     field: 'remark',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,

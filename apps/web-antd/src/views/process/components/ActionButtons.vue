@@ -1,19 +1,17 @@
 <template>
   <Space>
     <!--    <a-button @click="doSimulation" > 模拟 </a-button>-->
-    <a-button type="primary" @click="doLaunch" :loading="loading"> 提交</a-button>
+    <Button type="primary" @click="doLaunch" :loading="loading"> 提交</Button>
     <!--    <a-button @click="doSave" :loading="loading" > 存草稿 </a-button>-->
     <!--    <PopConfirmButton v-if="canStop" type="error" title="确定要作废该流程吗？" @confirm="doStop"  > 作废 </PopConfirmButton>-->
-    <a-button @click="doBack"> 取消</a-button>
+    <Button @click="doBack"> 取消</Button>
   </Space>
 </template>
 <script lang="ts" setup>
   import {defineEmits, defineProps, ref, unref, defineExpose} from 'vue';
   import {stopProcess} from "#/api/process/process";
-  import {message} from "ant-design-vue";
-
   // import {useLoading} from '@/components/Loading';
-  import {Space} from 'ant-design-vue';
+  import {Space, Button, message} from 'ant-design-vue';
 
   const emit = defineEmits(['doLaunch', 'doSimulation', 'doSave', 'doClose', 'doStop'])
   const props = defineProps({
@@ -26,9 +24,9 @@
 
   const canStop = ref(props.taskId && props.taskId !== '0' && props.procInstId && props.procInstId !== '0');
 
-  const [openFullLoading, closeFullLoading] = useLoading({
-    tip: '处理中...',
-  });
+  // const [openFullLoading, closeFullLoading] = useLoading({
+  //   tip: '处理中...',
+  // });
 
   function doLaunch() {
     emit('doLaunch');

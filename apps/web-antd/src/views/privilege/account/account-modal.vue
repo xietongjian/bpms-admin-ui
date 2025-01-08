@@ -110,8 +110,8 @@ defineExpose(modalApi);
   import { PlusOutlined } from '@ant-design/icons-vue';
 
   import { accountFormSchema } from './account.data';
-  import { saveOrUpdate, checkEntityExist } from '@/api/privilege/account';
-  import { CheckExistParams } from '@/api/model/baseModel';
+  import { saveOrUpdate, checkEntityExist } from '#/api/privilege/account';
+  import { CheckExistParams } from '#/api/model/baseModel';
   import { FormValidPatternEnum } from '@/enums/commonEnum';
 
   const emit = defineEmits(['success', 'register']);

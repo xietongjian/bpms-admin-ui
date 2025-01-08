@@ -27,7 +27,7 @@
   import { Col, Row, Collapse, message, Button } from 'ant-design-vue';
   import {useVbenForm} from '#/adapter/form';
 
-  // import { accountInfoApi } from '@/api/demo/account';
+  // import { accountInfoApi } from '#/api/demo/account';
   import { uploadApi } from '#/api/sys/upload';
   // import headerImg from '#/assets/images/header.jpg';
   import { baseSetschemas } from './data';

@@ -31,11 +31,11 @@
     deleteByIds,
     publishBpmn,
     stopBpmn,
-  } from '@/api/flowable/bpmn/modelInfo';
+  } from '#/api/flowable/bpmn/modelInfo';
   import { PageWrapper } from '@/components/Page';
 
   import { useModal } from '@/components/Modal';
-  import { getAll } from '@/api/base/app';
+  import { getAll } from '#/api/base/app';
   import { columns, searchFormSchema } from './modelInfo.data';
   import { useMessage } from '@/hooks/web/useMessage';
   import { useGo } from '@/hooks/web/usePage';

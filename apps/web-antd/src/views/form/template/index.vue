@@ -71,20 +71,20 @@
   import FormTemplateModal from './FormTemplateModal.vue';
 
   import { getFormTemplateList, deleteById, getFormCategoryListData, deleteFormCategoryById } from '#/api/form/formTemplate';
-  import {Button, Tree, message, Col, Popconfirm, Row, Tooltip} from "ant-design-vue";
+  import {Button, Tree, message, Col, Popconfirm, Row, Tooltip, message} from "ant-design-vue";
 
   import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons-vue";
   import {listToTree} from "#/utils/helper/treeHelper";
   import FormCategoryModal from "#/views/form/template/FormCategoryModal.vue";
 
   const formTemplateModalRef = ref();
+  const formCategoryModalRef = ref();
   const PerPrefix = 'FormTemplate:';
   const {hasAccessByCodes} = useAccess();
 
   const treeLoading = ref(true);
   const formCategoryTreeData = ref([]);
   const currentNode = ref(undefined);
-  // const [registerModal, { openModal, setModalProps }] = useModal();
   const formCategoryDataMap = ref<any>({});
   // const [registerFormCategoryModal, {openModal: openFormCategoryModal, setModalProps: setFormCategoryModalProps}] = useModal();
 /*  const [openFullLoading, closeFullLoading] = useLoading({
@@ -261,57 +261,50 @@
   initFormCategoryTree();
 
   function handleCreateCategory(node: any) {
-    openFormCategoryModal(true, {
-      isUpdate: false,
-      record: {pid: node?.id}
+    formCategoryModalRef.value.setData({pid: node?.id});
+    formCategoryModalRef.value.open();
+    formCategoryModalRef.value.setState({
+      title: "新增分类"
     });
-    setFormCategoryModalProps({ title: "新增分类", centered: true });
   }
 
   function handleUpdateCategory(node: any) {
-    openFormCategoryModal(true, {
-      isUpdate: true,
-      record: node
+    formCategoryModalRef.value.setData(node);
+    formCategoryModalRef.value.open();
+    formCategoryModalRef.value.setState({
+      title: "修改分类"
     });
-    setFormCategoryModalProps({ title: "修改分类", centered: true });
   }
   async function handleSelect(node: any, e: any) {
     const selectedNode = e.selectedNodes[0];
     if (selectedNode) {
       currentNode.value = selectedNode;
-      const {getFieldsValue} = getForm();
-      const values = getFieldsValue();
-      await reload({searchInfo: {categoryCode: selectedNode.code, ...values}});
+      const {getValues} = tableApi.formApi;
+      const values = getValues();
+      await tableApi.reload({searchInfo: {categoryCode: selectedNode.code, ...values}});
     } else {
       currentNode.value = undefined;
-      await reload();
+      await tableApi.reload();
     }
   }
   function handleAddFormTemplate() {
-    openModal(true, { categoryCode: currentNode.value?.code });
-    setEditModalProps('添加模板');
+    formTemplateModalRef.value.setData({ categoryCode: currentNode.value?.code });
+    formTemplateModalRef.value.open();
+    formTemplateModalRef.value.setState({
+      title: '添加模板'
+    });
+    // openModal(true, { categoryCode: currentNode.value?.code });
+    // setEditModalProps('添加模板');
   }
 
   function handleEditFormTemplate(record: Recordable<any>) {
-    openModal(true, record);
-    setEditModalProps('编辑模板');
-  }
-
-  function setEditModalProps(title) {
-    setModalProps({
-      title: title,
-      bodyStyle: { padding: '0px', margin: '0px' },
-      defaultFullscreen: true,
-      maskClosable: false,
-      centered: true,
-      keyboard: false,
-      showOkBtn: false,
-      showCancelBtn: false,
-      draggable: false,
-      canFullscreen: false,
-      closable: false,
-      destroyOnClose: true,
+    formTemplateModalRef.value.setData(record);
+    formTemplateModalRef.value.open();
+    formTemplateModalRef.value.setState({
+      title: '添加模板'
     });
+    // openModal(true, record);
+    // setEditModalProps('编辑模板');
   }
 
   function handleCloseFunc() {
@@ -331,10 +324,10 @@
 
   async function handleDeleteCategory(node: any) {
     if(node.children && node.children.length>0){
-      message.waring('该分类下有子分类，不允许删除');
+      message.warning('该分类下有子分类，不允许删除');
       return;
     }
-    openFullLoading();
+    // openFullLoading();
     try {
       const {success, msg} = await deleteFormCategoryById(node.id);
       if(success){
@@ -344,7 +337,7 @@
         message.error(msg);
       }
     } finally {
-      closeFullLoading();
+      // closeFullLoading();
     }
   }
 </script>

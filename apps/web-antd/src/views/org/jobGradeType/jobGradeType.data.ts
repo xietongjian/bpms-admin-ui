@@ -159,7 +159,7 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'note',
     label: '备注',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,

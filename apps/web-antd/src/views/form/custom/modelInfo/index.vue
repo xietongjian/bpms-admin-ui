@@ -71,11 +71,9 @@
         </template>
       </BasicTable>
     </div>
-    <CopyModelInfoModal ref="copyModelInfoModalRef" @register="registerCopyModal" @success="handleSuccess" formType="custom" />
+    <CopyModelInfoModal ref="copyModelInfoModalRef" @success="handleSuccess" formType="custom" />
     <TaskFormDesignerModal ref="taskFormDesignerModalRef"
-      @success="handleTaskFormSuccess"
-      :closeFunc="handleCloseFunc"
-    />
+      @success="handleTaskFormSuccess" />
     <BpmnPreviewModal ref="bpmnPreviewModalRef" />
     <BpmnDesignerModal ref="bpmnDesignerModalRef"
       @success="handleBpmnDesignerModalSuccess"

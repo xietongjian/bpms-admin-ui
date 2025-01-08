@@ -8,16 +8,16 @@
 <script lang="ts" setup>
   import { Button } from 'ant-design-vue';
   import { LeftOutlined } from '@ant-design/icons-vue';
-  import { useGo } from '@/hooks/web/usePage';
+  // import { useGo } from '@/hooks/web/usePage';
 
-  const go = useGo();
+  // const go = useGo();
   function doBack() {
     if (window.opener) {
       window.close();
     } else if (history.state.back) {
       history.back();
     } else {
-      go('/process/todo');
+      // go('/process/todo');
     }
   }
 </script>

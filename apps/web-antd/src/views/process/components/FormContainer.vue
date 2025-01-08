@@ -46,12 +46,12 @@
     getBizInfoVoByModelKey,
     getCustomFormInfoVoByModelKeyAndBusinessKey,
     startCustomFormProcess,
-  } from '@/api/process/process';
+  } from '#/api/process/process';
   import { useMessage } from '@/hooks/web/useMessage';
   import { CollapseContainer } from '@/components/Container';
   import { GenerateForm } from '/public/form-making';
-  import { getFormItemShowsByTaskId } from '@/api/process/form';
-  import { updateCustomFormData } from '@/api/process/customForm';
+  import { getFormItemShowsByTaskId } from '#/api/process/form';
+  import { updateCustomFormData } from '#/api/process/customForm';
 
   const props = defineProps({
     formType: {

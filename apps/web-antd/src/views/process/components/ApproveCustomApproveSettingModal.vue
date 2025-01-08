@@ -10,7 +10,7 @@
   import { BasicForm, useForm } from '@/components/Form/index';
   import { approveActionFormSchema } from './action.data';
   import { Button, Tag } from 'ant-design-vue';
-  import { complete } from "@/api/process/process";
+  import { complete } from "#/api/process/process";
   import { useGo } from '@/hooks/web/usePage';
   import { useMessage } from '@/hooks/web/useMessage';
 
@@ -94,7 +94,7 @@
           {
             field: 'message',
             label: '审批意见',
-            component: 'InputTextArea',
+            component: 'Textarea',
             colProps: {span: 22},
             componentProps: {
               autoSize: {

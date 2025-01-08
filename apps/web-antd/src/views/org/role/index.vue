@@ -20,7 +20,7 @@ import RoleModal from './RoleModal.vue';
 import { columns, searchFormSchema } from './role.data';
 import {getCompanies} from "#/api/org/company";
 // import { OrgSelectType } from '@/components/Selector/src/types';
-// import SplitPane from '@/views/components/splitPane/index.vue';
+// import SplitPane from '#/views/components/splitPane/index.vue';
 
 // const [registerModal, { openModal }] = useModal();
 // 人员选择弹窗

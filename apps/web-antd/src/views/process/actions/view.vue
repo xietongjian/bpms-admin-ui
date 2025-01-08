@@ -37,19 +37,19 @@
   import { Divider, Card, Tag, Empty, Button, Descriptions} from 'ant-design-vue';
   import { useRouter } from 'vue-router';
   import { LeftOutlined } from '@ant-design/icons-vue';
-  import FormContainer from '@/views/process/components/FormContainer.vue';
+  import FormContainer from '#/views/process/components/FormContainer.vue';
 
-  import ActionButtons from '@/views/process/components/ActionButtons.vue';
-  import ViewActionButtons from '@/views/process/components/ViewActionButtons.vue';
-  import BaseActionButtons from '@/views/process/components/BaseActionButtons.vue';
-  import ProcessBackButton from '@/views/process/components/ProcessBackButton.vue';
-  import ApproveActionButtons from '@/views/process/components/ApproveActionButtons.vue';
-  import ApprovalHistory from '@/views/process/components/ApprovalHistory.vue';
-  import CurrentApprover from '@/views/process/components/CurrentApprover.vue';
+  import ActionButtons from '#/views/process/components/ActionButtons.vue';
+  import ViewActionButtons from '#/views/process/components/ViewActionButtons.vue';
+  import BaseActionButtons from '#/views/process/components/BaseActionButtons.vue';
+  import ProcessBackButton from '#/views/process/components/ProcessBackButton.vue';
+  import ApproveActionButtons from '#/views/process/components/ApproveActionButtons.vue';
+  import ApprovalHistory from '#/views/process/components/ApprovalHistory.vue';
+  import CurrentApprover from '#/views/process/components/CurrentApprover.vue';
 
   import { useGo } from '@/hooks/web/usePage';
   import { useMessage } from '@/hooks/web/useMessage';
-  import {getProdModelInfoByModelKeyAndProcInstId, getCurrTaskApplyersByBusinessKey} from "@/api/process/process";
+  import {getProdModelInfoByModelKeyAndProcInstId, getCurrTaskApplyersByBusinessKey} from "#/api/process/process";
   import {useUserStore} from "@/store/modules/user";
   import {EmpInfo} from '#/views/components/EmpInfo';
   import {isEmpty} from "@/utils/is";

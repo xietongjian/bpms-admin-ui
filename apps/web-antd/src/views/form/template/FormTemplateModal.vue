@@ -124,8 +124,6 @@
     templateId.value = data.id;
   });*/
 
-
-
   const [BasicModal, modalApi] = useVbenModal({
     fullscreenButton: false,
     onOpenChange: async (isOpen) => {
@@ -134,8 +132,10 @@
       }
       modalApi.setState({loading: true, confirmLoading: true});
       const values = modalApi.getData();
-      // isUpdate.value = !!values.id;
-      // await formApi.setValues(values);
+
+      loadData(values.id);
+      formCategory.value = values.categoryCode;
+      templateId.value = values.id;
       modalApi.setState({loading: false, confirmLoading: false});
     },
   });

@@ -21,8 +21,8 @@
   import {Button, Space} from 'ant-design-vue';
   import {useRouter} from 'vue-router';
   import {useModal} from '@/components/Modal';
-  import BpmnPreviewModal from '@/views/components/preview/bpmnPreview/index.vue';
-  // import PrintPreviewModal from '@/views/components/preview/printPreview/index.vue';
+  import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
+  // import PrintPreviewModal from '#/views/components/preview/printPreview/index.vue';
   import {useGo} from '@/hooks/web/usePage';
 
   const props = defineProps({

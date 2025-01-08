@@ -43,7 +43,7 @@
   import { useRouter } from 'vue-router';
   import Todo from './todo/index.vue';
   import Launched from './launched/index.vue';
-  import HaveDown from '@/views/process/haveDown/index.vue';
+  import HaveDown from '#/views/process/haveDown/index.vue';
   import Launch from './launch/index.vue';
 
   const TabPane = Tabs.TabPane;

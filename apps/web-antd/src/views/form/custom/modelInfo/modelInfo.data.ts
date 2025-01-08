@@ -131,20 +131,24 @@ export const modelInfoFormSchema: FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["id"]
+    }
   },
   {
     fieldName: 'categoryCode',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ["categoryCode"]
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
     component: 'Input',
-    required: true,
     rules: z
         .string({
           required_error: '名称不能为空',

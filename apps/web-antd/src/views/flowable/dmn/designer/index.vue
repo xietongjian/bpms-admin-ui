@@ -17,7 +17,7 @@
 </template>
 <script lang="ts">
   import { defineComponent, onMounted, ref, unref, computed, nextTick } from 'vue';
-  import FramePage from '@/views/components/iframe/index.vue';
+  import FramePage from '#/views/components/iframe/index.vue';
   import { useFrameKeepAlive } from '@/layouts/iframe/useFrameKeepAlive';
   import { useRouter } from 'vue-router';
   import { useMultipleTabStore } from '@/store/modules/multipleTab';
@@ -27,14 +27,14 @@
     saveOrUpdate,
     checkEntityExist,
     initDmnDiagram,
-  } from '@/api/flowable/dmn/modelInfo';
+  } from '#/api/flowable/dmn/modelInfo';
   import { Modal, Tabs } from 'ant-design-vue';
   import { useMessage } from '@/hooks/web/useMessage';
   import { PageWrapper } from '@/components/Page';
   import { BasicForm, Rule, useForm } from '@/components/Form/index';
   import { dmnBaseFormSchema } from '../modelInfo/modelInfo.data';
-  import { changeURLPar } from '@/utils/domUtils';
-  import { CheckExistParams } from '@/api/model/baseModel';
+  import { changeURLPar } from '#/utils/domUtils';
+  import { CheckExistParams } from '#/api/model/baseModel';
   import { useTabs } from '@/hooks/web/useTabs';
   import { useGo } from '@/hooks/web/usePage';
   import { Loading, useLoading } from '@/components/Loading';

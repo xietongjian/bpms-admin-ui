@@ -68,23 +68,23 @@
   import { ref, unref, onMounted, nextTick } from 'vue';
   import { Space, Tag, Row, Col, Modal, Affix } from 'ant-design-vue';
   import { useUserStore } from '@/store/modules/user';
-  import FormContainer from '@/views/process/components/FormContainer.vue';
-  // import BpmnSimulatorModal from '@/views/components/preview/bpmnSimulator/index.vue';
+  import FormContainer from '#/views/process/components/FormContainer.vue';
+  // import BpmnSimulatorModal from '#/views/components/preview/bpmnSimulator/index.vue';
 
-  // import ActionButtons from '@/views/process/components/ActionButtons.vue';
-  import BaseActionButtons from '@/views/process/components/BaseActionButtons.vue';
+  // import ActionButtons from '#/views/process/components/ActionButtons.vue';
+  import BaseActionButtons from '#/views/process/components/BaseActionButtons.vue';
 
   import { useLoading } from '@/components/Loading';
   import {
     getProdModelInfoByModelKeyAndProcInstId,
     startCustomFormProcess,
-  } from '@/api/process/process';
+  } from '#/api/process/process';
 
   import { BasicModal, useModal, useModalInner } from '@/components/Modal';
   import { useMessage } from '@/hooks/web/useMessage';
-  import ApprovalHistory from '@/views/process/components/ApprovalHistory.vue';
+  import ApprovalHistory from '#/views/process/components/ApprovalHistory.vue';
   import {EmpInfo} from '#/views/components/EmpInfo';
-  import { updateCustomFormData } from '@/api/process/customForm';
+  import { updateCustomFormData } from '#/api/process/customForm';
   import { useGo } from '@/hooks/web/usePage';
 
   const go = useGo();

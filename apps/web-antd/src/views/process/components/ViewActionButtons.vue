@@ -26,7 +26,7 @@
   import { useModal } from '@/components/Modal';
   import FetchBackMessageModal from './FetchBackMessageModal.vue';
   import { useGo } from '@/hooks/web/usePage';
-  import {checkFetchBack, checkRevokeProcess, revokeProcess} from "@/api/process/process";
+  import {checkFetchBack, checkRevokeProcess, revokeProcess} from "#/api/process/process";
   import ApproveSelectorPersonalModal from './ApproveSelectorPersonalModal.vue';
   import { PopConfirmButton } from '@/components/Button';
   import {useMessage} from "@/hooks/web/useMessage";
