@@ -7,6 +7,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
     field: 'name',
+    minWidth: 200,
     align: 'left',
   },
   {
@@ -30,7 +31,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '操作',
     field: 'action',
     width: 100,
-    align: 'left',
+    align: 'center',
     fixed: 'right',
     slots: {
       default: 'action',

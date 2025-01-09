@@ -9,12 +9,13 @@ export const columns: VxeGridProps['columns'] = [
     title: '名称',
     field: 'name',
     align: 'left',
-    width: 300,
+    minWidth: 300,
     resizable: true,
   },
   {
     title: '编码',
     field: 'code',
+    minWidth: 100,
     align: 'left',
   },
   {

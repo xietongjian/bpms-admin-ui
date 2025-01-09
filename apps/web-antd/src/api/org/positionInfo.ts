@@ -70,7 +70,7 @@ export const getPagerModel = (params: any) => {
 };
 
 export const saveOrUpdate = (params: any) =>
-  requestClient.post<any>(Api.SaveOrUpdate, params);
+  requestClient.post<any>(Api.SaveOrUpdate, params, {isTransformResponse: false});
 
 export const batchSaveOrUpdatePositionSeqAndPosition = (params?: any) =>
   requestClient.post<any>(Api.BatchSaveOrUpdatePositionSeqAndPosition, params);

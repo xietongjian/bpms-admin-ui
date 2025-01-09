@@ -87,6 +87,9 @@ export const companyRoleFormSchema: FormSchema[] = [
     label: 'ID',
     // required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
 ];

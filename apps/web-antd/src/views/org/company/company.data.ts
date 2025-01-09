@@ -11,6 +11,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '全称',
     field: 'cname',
     align: 'left',
+    minWidth: 200,
     resizable: true,
     treeNode: true
   },

@@ -125,9 +125,14 @@ async function handleSubmit() {
       return;
     }
     const values = await formApi.getValues();
-    await saveOrUpdate(values);
-    modalApi.close();
-    emit('success');
+    const {success, msg} = await saveOrUpdate(values);
+    if(success){
+      message.success(msg);
+      modalApi.close();
+      emit('success');
+    }else {
+      message.error(msg);
+    }
   } finally {
     modalApi.setState({loading: false, confirmLoading: false});
   }

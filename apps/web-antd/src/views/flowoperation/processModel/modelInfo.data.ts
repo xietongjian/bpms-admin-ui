@@ -98,23 +98,27 @@ export const modelInfoFormSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'categoryCode',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['categoryCode']
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
     component: 'Input',
     required: true,
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -124,7 +128,7 @@ export const modelInfoFormSchema: FormSchema[] = [
         max: 200,
         message: '字符长度不能大于200！',
       },
-    ],
+    ],*/
   },
   {
     fieldName: 'modelKey',

@@ -71,7 +71,6 @@ export const formSchema: FormSchema[] = [
     fieldName: 'id',
     label: '表id',
     component: 'Input',
-    show: false,
     dependencies: {
       show: false,
       triggerFields: ['id'],

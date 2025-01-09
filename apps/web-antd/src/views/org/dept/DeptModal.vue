@@ -1,26 +1,13 @@
 <script lang="ts" setup>
   import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
-  // import { BasicModal, useModalInner } from '@/components/Modal';
-  // import { BasicForm, Rule, useForm } from '@/components/Form/index';
   import { deptFormSchema } from './dept.data';
-  import { saveOrUpdate, checkEntityExist } from '#/api/org/dept';
-  // import { CheckExistParams } from '#/api/model/baseModel';
+  import { saveOrUpdate } from '#/api/org/dept';
   import {useVbenForm} from "#/adapter/form";
   import {useVbenModal} from '@vben/common-ui';
 
   const emit = defineEmits(['success', 'register']);
 
   const isUpdate = ref(true);
-
- /* const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
-    labelWidth: 100,
-    schemas: deptFormSchema,
-    showActionButtonGroup: false,
-    actionColOptions: {
-      span: 23,
-    },
-  });*/
-
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
@@ -53,35 +40,6 @@
       handleSubmit();
     },
   });
-  const getBaseDynamicRules = (params: any) => {
-    return [
-      {
-        trigger: 'blur',
-        validator: (_, value) => {
-          if (value) {
-            return checkEntityExist({
-              id: params.id,
-              field: params.field,
-              fieldValue: value,
-              fieldName: params.fieldName,
-            })
-              .then((res) => {
-                if (res) {
-                  return Promise.resolve();
-                } else {
-                  return Promise.reject(params.fieldName + '已存在，请修改！');
-                }
-              })
-              .catch((res) => {
-                return Promise.reject(res);
-              });
-          } else {
-            return Promise.resolve();
-          }
-        },
-      },
-    ] as Rule[];
-  };
 
   /*const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(
     async (data) => {
@@ -163,8 +121,12 @@
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
+      modalApi.setState({loading: true, confirmLoading: true});
+      const {valid} = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
 
       if (values.leaderPersonal && values.leaderPersonal.length > 0) {
         const personal = values.leaderPersonal[0];
@@ -179,17 +141,22 @@
       delete values.leaderPersonal;
       delete values.superiorPersonal;
 
-      await saveOrUpdate(values);
-      closeModal();
-      emit('success');
+      const {success, msg} = await saveOrUpdate(values);
+      if(success){
+        message.success(msg);
+        modalApi.close();
+        emit('success');
+      } else{
+        message.error(msg);
+      }
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
   defineExpose(modalApi);
 </script>
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal >
+    <BasicForm />
   </BasicModal>
 </template>

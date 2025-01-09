@@ -43,7 +43,7 @@ export const dictionaryFormSchema: FormSchema[] = [
     component: 'Input',
     dependencies: {
       show: false,
-      triggerFields: ['']
+      triggerFields: ['id']
     }
   },
   {

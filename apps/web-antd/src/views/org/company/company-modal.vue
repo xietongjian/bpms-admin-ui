@@ -72,7 +72,7 @@
   defineExpose(modalApi);
 </script>
 <template>
-  <BasicModal :close-on-click-modal="false" :title="title">
+  <BasicModal >
     <BasicForm />
   </BasicModal>
 </template>

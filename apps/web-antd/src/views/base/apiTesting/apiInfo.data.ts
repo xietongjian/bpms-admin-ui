@@ -79,13 +79,16 @@ export const headerFormSchema: FormSchema[] = [
 
 export const apiTestingFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
     required: true,
     component: 'Input',
@@ -98,14 +101,14 @@ export const apiTestingFormSchema: FormSchema[] = [
         .max(32, "字符长度不能大于32！")
   },
   {
-    field: 'sn',
+    fieldName: 'sn',
     label: '标识',
     required: true,
     component: 'Input',
     colProps,
   },
   {
-    field: 'url',
+    fieldName: 'url',
     label: '系统URL',
     required: true,
     component: 'Input',
@@ -137,7 +140,7 @@ export const apiTestingFormSchema: FormSchema[] = [
     // colProps,
   },
   {
-    field: 'indexUrl',
+    fieldName: 'indexUrl',
     label: '首页URL',
     required: true,
     component: 'Input',
@@ -168,14 +171,14 @@ export const apiTestingFormSchema: FormSchema[] = [
     colProps,*/
   },
   {
-    field: 'image',
+    fieldName: 'image',
     label: '图标',
     required: false,
     component: 'IconPicker',
     colProps,
   },
   {
-    field: 'orderNo',
+    fieldName: 'orderNo',
     label: '排序号',
     help: '数值越小越靠前！',
     component: 'InputNumber',
@@ -186,7 +189,7 @@ export const apiTestingFormSchema: FormSchema[] = [
     },
   },
   {
-    field: 'status',
+    fieldName: 'status',
     label: '状态',
     required: false,
     component: 'Switch',
@@ -200,7 +203,7 @@ export const apiTestingFormSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'platformEnabled',
+    fieldName: 'platformEnabled',
     label: '是否推送',
     help: '是否推送消息至第三方平台！',
     component: 'Switch',
@@ -215,7 +218,7 @@ export const apiTestingFormSchema: FormSchema[] = [
   },
   {
     label: '备注',
-    field: 'note',
+    fieldName: 'note',
     component: 'Textarea',
     componentProps: {
       autoSize: {

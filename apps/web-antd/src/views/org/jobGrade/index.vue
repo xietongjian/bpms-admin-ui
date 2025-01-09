@@ -16,12 +16,10 @@
     </template>
     <BasicTable>
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
+        <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>
       <template #action="{ row }">
-        <TableAction
-            :actions="createActions(row)"
-        />
+        <TableAction :actions="createActions(row)" />
       </template>
     </BasicTable>
     <JobGradeModal ref="jobGradeModalRef" @success="handleSuccess"/>
@@ -29,7 +27,6 @@
 </template>
 <script lang="ts" setup>
 import {PerEnum} from '#/enums/perEnum';
-import {useAccess} from '@vben/access';
 import {ref, unref} from 'vue';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
@@ -46,7 +43,6 @@ import {getJobGradeTypes} from "#/api/org/jobGradeType";
 import { TableAction } from '#/components/table-action';
 
 const PerPrefix = 'JobGrade:';
-const {hasAccessByCodes} = useAccess();
 
 // const [registerModal, {openModal, setModalProps}] = useModal();
 const currentTreeNode = ref<Recordable<any>>({});

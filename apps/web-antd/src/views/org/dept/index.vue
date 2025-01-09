@@ -6,8 +6,6 @@ import type {Recordable} from '@vben/types';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 
-import {useAccess} from '@vben/access';
-
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {ColPage} from '@vben/common-ui';
 import {TableAction} from '#/components/table-action';
@@ -16,18 +14,12 @@ import {Button, message} from 'ant-design-vue';
 
 import {deleteByIds, getDepts} from '#/api/org/dept';
 import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';
-// import { useModal } from '@/components/Modal';
 import DeptModal from './DeptModal.vue';
-// import SplitPane from '#/views/components/splitPane/index.vue';
 import {columns, searchFormSchema} from './dept.data';
 import {EmpInfo} from '#/views/components/EmpInfo';
 
-
 const PerPrefix = 'Department:';
 
-const {hasAccessByCodes} = useAccess();
-
-// const [registerModal, { openModal, setModalProps }] = useModal();
 const currentNode = ref<Recordable<any>>({});
 
 const deptModalRef = ref();

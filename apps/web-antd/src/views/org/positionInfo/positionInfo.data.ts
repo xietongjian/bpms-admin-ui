@@ -1,9 +1,9 @@
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
-import { OrderNoDefaultEnum,FormValidPatternEnum } from '#/enums/commonEnum';
+import { OrderNoDefaultEnum } from '#/enums/commonEnum';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {checkEntityExist} from "#/api/base/app";
+import { checkEntityExist } from '#/api/org/positionInfo';
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 
@@ -72,9 +72,11 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'name',
@@ -110,16 +112,20 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'positionSeqId',
     label: '岗位序列ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['positionSeqId']
+    }
   },
   {
     fieldName: 'positionSeqCode',
     label: '岗位序列编码',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['positionSeqCode']
+    }
   },
 
   {

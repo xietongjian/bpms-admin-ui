@@ -191,7 +191,7 @@ export const dmnBaseFormSchema: FormSchema[] = [
     component: 'Input',
     dependencies: {
       show: false,
-      triggerFields: ['modelId'],
+      triggerFields: ['categoryCode'],
     }
   },
   {

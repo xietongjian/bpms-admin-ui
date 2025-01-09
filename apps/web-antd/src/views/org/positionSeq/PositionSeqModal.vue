@@ -1,13 +1,10 @@
 
 <script lang="ts" setup>
-  import { defineComponent, ref, computed, unref } from 'vue';
-  // import { BasicModal, useModalInner } from '@/components/Modal';
-  // import { BasicForm, Rule, useForm } from '@/components/Form';
+  import { ref, computed, unref } from 'vue';
   import { formSchema } from './positionSeq.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/org/positionSeq';
-  // import { CheckExistParams } from '#/api/model/baseModel';
-  import { FormValidPatternEnum } from '#/enums/commonEnum';
-  import {useVbenModal} from '@vben/common-ui';
+  import { message} from 'ant-design-vue';
+
   import {useVbenForm} from "#/adapter/form";
   const isUpdate = ref(true);
   const [BasicForm, formApi] = useVbenForm({
@@ -96,15 +93,42 @@
     }
   });*/
 
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await baseFormApi.submitForm();
+      handleSubmit();
+    },
+  });
+
+
   const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 
   async function handleSubmit() {
     try {
       setModalProps({ confirmLoading: true });
       const values = await validate();
-      await saveOrUpdate(values);
-      closeModal();
-      emit('success');
+      const {success, msg} = await saveOrUpdate(values);
+      if(success){
+        message.success(msg);
+        modalApi.close();
+        emit('success');
+      }else{
+        message.error(msg);
+      }
+
     } finally {
       setModalProps({ confirmLoading: false });
     }
@@ -112,7 +136,7 @@
 
 </script>
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal >
+    <BasicForm />
   </BasicModal>
 </template>

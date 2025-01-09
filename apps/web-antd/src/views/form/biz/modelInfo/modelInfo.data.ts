@@ -99,6 +99,7 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     dependencies: {
       show: false,
+      triggerFields: ['categoryCode']
     }
   },
 ];
@@ -110,6 +111,7 @@ export const modelInfoFormSchema: FormSchema[] = [
     component: 'Input',
     dependencies: {
       show: false,
+      triggerFields: ['id']
     }
   },
   {
@@ -118,6 +120,7 @@ export const modelInfoFormSchema: FormSchema[] = [
     component: 'Input',
     dependencies: {
       show: false,
+      triggerFields: ['categoryCode']
     }
   },
   {

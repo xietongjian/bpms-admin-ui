@@ -4,6 +4,7 @@ import { OrderNoDefaultEnum, RemarkDefaultEnum,FormValidPatternEnum } from '#/en
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { checkEntityExist } from '#/api/org/dept';
+
 import { getCompaniesListData } from '#/api/org/company';
 
 export const columns: VxeGridProps['columns'] = [
@@ -11,6 +12,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '名称',
     field: 'name',
     align: 'left',
+    minWidth: 200,
     resizable: true,
     treeNode: true
   },

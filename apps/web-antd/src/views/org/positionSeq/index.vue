@@ -1,26 +1,21 @@
 <script lang="ts" setup>
-import { defineComponent } from 'vue';
-import { PerEnum } from '#/enums/perEnum';
-import {AccessControl, useAccess} from '@vben/access';
+import {PerEnum} from '#/enums/perEnum';
+
 import type {VbenFormProps} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-import type { Recordable } from '@vben/types';
-import { TableAction } from '#/components/table-action';
+import type {Recordable} from '@vben/types';
+import {TableAction} from '#/components/table-action';
 import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
 
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
-  // import { useModal } from '@/components/Modal';
-  import { columns, searchFormSchema } from './positionSeq.data';
-  import PositionSeqModal from './PositionSeqModal.vue';
-  import { getPositionSeqs, deleteByIds } from '#/api/org/positionSeq';
-import {listColumns} from "#/views/base/app/app.data";
-import {getAppListByPage} from "#/api/base/app";
+// import { useModal } from '@/components/Modal';
+import {columns, searchFormSchema} from './positionSeq.data';
+import PositionSeqModal from './PositionSeqModal.vue';
+import {getPositionSeqs, deleteByIds} from '#/api/org/positionSeq';
+
 import {Page} from "@vben/common-ui";
 
-
-const {hasAccessByCodes} = useAccess();
-
-  const PerPrefix = 'PositionSeq:';
+const PerPrefix = 'PositionSeq:';
 // const [registerModal, { openModal, setModalProps }] = useModal();
 /*const [registerTable, { reload }] = useTable({
   title: '列表',
@@ -115,7 +110,7 @@ function handleCreateChild(record: Recordable, e) {
   setModalProps({
     title: '新增【' + record.name + '】的子序列',
   });
-  record = { pid: record.id, status: 1 };
+  record = {pid: record.id, status: 1};
   openModal(true, {
     record,
     isUpdate: true,
@@ -168,7 +163,7 @@ function createActions(record: Recordable<any>) {
         title: '是否确认删除',
         confirm: handleDelete.bind(null, record),
         placement: 'left',
-        okButtonProps: { danger: true },
+        okButtonProps: {danger: true},
       },
     },
   ];
@@ -176,18 +171,14 @@ function createActions(record: Recordable<any>) {
 </script>
 <template>
   <Page auto-content-height>
-    <BasicTable @register="registerTable">
+    <BasicTable>
       <template #toolbar-tools>
-        <a-button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</a-button>
+        <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-              :actions="createActions(record)"
-          />
-        </template>
+      <template #action="{ row }">
+        <TableAction :actions="createActions(row)"/>
       </template>
     </BasicTable>
-    <PositionSeqModal @register="registerModal" @success="handleSuccess" />
+    <PositionSeqModal ref="positionSeqModalRef" @success="handleSuccess"/>
   </Page>
 </template>

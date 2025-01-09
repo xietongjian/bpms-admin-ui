@@ -37,7 +37,7 @@ export const getJobGradeTypesToTree = (params?: any) => {
 };
 
 export const saveOrUpdate = (params?: any) =>
-  requestClient.post<any>(Api.SaveOrUpdate, params);
+  requestClient.post<any>(Api.SaveOrUpdate, params, {isTransformResponse: false});
 
 export const checkEntityExist = (params?: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);

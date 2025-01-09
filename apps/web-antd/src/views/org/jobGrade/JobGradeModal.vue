@@ -141,7 +141,7 @@
       if (success) {
         modalApi.close();
         emit('success');
-
+        message.success(msg);
       } else {
         message.error(msg)
       }

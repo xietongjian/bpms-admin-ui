@@ -3,9 +3,9 @@
 
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
-
+  import {message} from 'ant-design-vue';
   import { formSchema } from './positionInfo.data';
-  import { saveOrUpdate, checkEntityExist } from '#/api/org/positionInfo';
+  import { saveOrUpdate } from '#/api/org/positionInfo';
   import { formatToDate } from '#/utils/dateUtil';
 
 
@@ -125,9 +125,14 @@
       if (values.startDate) {
         values.startDate = formatToDate(values.startDate);
       }
-      await saveOrUpdate(values);
-      modalApi.close();
-      emit('success');
+      const {success, msg} = await saveOrUpdate(values);
+      if(success){
+        message.success(msg);
+        modalApi.close();
+        emit('success');
+      } else {
+        message.error(msg);
+      }
     } finally {
       modalApi.setState({loading: false, confirmLoading: false});
     }

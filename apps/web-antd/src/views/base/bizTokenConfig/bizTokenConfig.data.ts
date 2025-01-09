@@ -101,18 +101,18 @@ export const searchFormSchema: FormSchema[] = [
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
-    field: 'type',
+    fieldName: 'type',
     component: 'RadioButtonGroup',
     label: '服务类型',
-    colProps: {
-      span: 24,
-    },
     defaultValue: 'sc',
     componentProps: ({schema, formModel, formActionType}) => {
       return {
@@ -132,7 +132,7 @@ export const formSchema: FormSchema[] = [
         ],
         onChange: (val) => {
           formActionType.updateSchema([
-            { field: 'serviceId', required: val === 'sc', componentProps: { show: val==='sc'  } },
+            { fieldName: 'serviceId', required: val === 'sc', componentProps: { show: val==='sc'  } },
 
           ]);
         },
@@ -140,7 +140,7 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
     required: true,
     component: 'Input',
@@ -164,7 +164,7 @@ export const formSchema: FormSchema[] = [
     ],*/
   },
   {
-    field: 'serviceId',
+    fieldName: 'serviceId',
     label: 'ServiceId',
     required: true,
     component: 'Input',
@@ -174,7 +174,7 @@ export const formSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'url',
+    fieldName: 'url',
     label: '请求地址',
     required: true,
     component: 'Input',
@@ -199,7 +199,7 @@ export const formSchema: FormSchema[] = [
     colProps,*/
   },
   {
-    field: 'method',
+    fieldName: 'method',
     component: 'RadioButtonGroup',
     label: '请求方式',
     required: true,
@@ -224,7 +224,7 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    field: 'params',
+    fieldName: 'params',
     label: '请求参数',
     component: 'Textarea',
     componentProps: {
@@ -233,7 +233,7 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    /* render: ({ model, field }) => {
+    /* render: ({ model, fieldName }) => {
       return h(CodeEditor, {
         value: model[field],
         mode: MODE.JSON,
@@ -268,14 +268,14 @@ export const formSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'tokenKey',
+    fieldName: 'tokenKey',
     label: 'Token键名',
     help: '返回值中取token的字段名',
     component: 'Input',
     colProps,
   },
   {
-    field: 'tokenName',
+    fieldName: 'tokenName',
     label: 'Token名称',
     help: '设置到接口header里面的Token键名',
     required: true,
@@ -283,7 +283,7 @@ export const formSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'serverAddr',
+    fieldName: 'serverAddr',
     label: '注册地址',
     component: 'Input',
     show: ({ values }) => {
@@ -292,7 +292,7 @@ export const formSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'namespaceId',
+    fieldName: 'namespaceId',
     label: '命名空间',
     component: 'Input',
     show: ({ values }) => {
@@ -301,7 +301,7 @@ export const formSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'groupName',
+    fieldName: 'groupName',
     label: '组名',
     component: 'Input',
     show: ({ values }) => {
@@ -311,7 +311,7 @@ export const formSchema: FormSchema[] = [
   },
   {
     label: '备注',
-    field: 'remark',
+    fieldName: 'remark',
     component: 'Textarea',
     componentProps: {
       autoSize: {

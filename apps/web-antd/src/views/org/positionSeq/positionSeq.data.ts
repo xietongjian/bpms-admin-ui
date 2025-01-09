@@ -1,7 +1,8 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {checkEntityExist} from "#/api/base/app";
+
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
+import { checkEntityExist } from '#/api/org/positionSeq';
 
 import { OrderNoDefaultEnum, RemarkDefaultEnum,FormValidPatternEnum } from '#/enums/commonEnum';
 
@@ -10,7 +11,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '名称',
     field: 'name',
     align: 'left',
-    width: 300,
+    minWidth: 300,
     resizable: true,
   },
   {
@@ -67,14 +68,16 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
-    required: true,
+    // required: true,
     component: 'Input',
     show: true,
     /*rules: [
@@ -97,17 +100,15 @@ export const formSchema: FormSchema[] = [
     label: '编码',
     required: true,
     component: 'Input',
-    show: true,
-    colProps: {
-      span: 24,
-    },
   },
   {
     fieldName: 'pid',
     label: '父级编码',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['pid']
+    }
   },
   {
     fieldName: 'orderNo',
@@ -119,7 +120,6 @@ export const formSchema: FormSchema[] = [
       min: OrderNoDefaultEnum.MIN,
       max: OrderNoDefaultEnum.MAX,
     },
-    show: true,
   },
   {
     fieldName: 'status',
@@ -133,14 +133,10 @@ export const formSchema: FormSchema[] = [
       checkedChildren: '启用',
       unCheckedChildren: '停用',
     },
-    colProps: {
-      span: 24,
-    },
   },
   {
     fieldName: 'note',
     label: '备注',
-    required: false,
     component: 'Textarea',
     componentProps: {
       autoSize: {
@@ -148,15 +144,11 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    show: true,
     /*rules: [
       {
         max: 255,
         message: '字符长度不能大于255！',
       },
     ],*/
-    colProps: {
-      span: 24,
-    },
   },
 ];
