@@ -266,14 +266,12 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
-    required: false,
+    help: '数值越小越靠前！',
     component: 'InputNumber',
   },
   {
     fieldName: 'status',
     label: '状态',
-    required: false,
     component: 'Switch',
     defaultValue: true,
     componentProps: {

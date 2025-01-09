@@ -45,7 +45,7 @@ export const searchFormSchema: FormSchema[] = [
   /*{
     fieldName: 'roleSn',
     label: '角色',
-    helpMessage:'组件暂未开发',
+    help:'组件暂未开发',
     component: 'Input',
     componentProps: {
       placeholder: '请选择角色',

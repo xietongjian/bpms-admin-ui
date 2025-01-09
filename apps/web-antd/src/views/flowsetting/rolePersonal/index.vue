@@ -59,11 +59,12 @@
                         {
                           auth: 'RolePersonal:' + PerEnum.DELETE,
                           icon: 'ant-design:delete-outlined',
-                          color: 'error',
+                          danger: true,
                           tooltip: '删除',
                           popConfirm: {
                             title: '是否确认删除',
                             confirm: handleDeletePersonal.bind(null, rcd),
+                            okButtonProps: { danger: true },
                           },
                         },
                       ]"

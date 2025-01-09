@@ -10,7 +10,7 @@ export const listColumns: VxeGridProps['columns'] = [
     title: '菜单名称',
     field: 'name',
     align: 'left',
-    width: 300,
+    minWidth: 300,
     resizable: true,
     treeNode: true,
     slots: {default: 'name'}
@@ -216,7 +216,7 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'redirect',
     label: '跳转地址',
-    helpMessage: '目录菜单跳转地址！',
+    help: '目录菜单跳转地址！',
     component: 'Input',
     /*rules: [
       {
@@ -239,7 +239,7 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     // defaultValue: OrderNoDefaultEnum.VALUE,
     // componentProps: {

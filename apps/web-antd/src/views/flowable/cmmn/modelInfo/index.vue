@@ -137,12 +137,13 @@
       },
       {
         icon: 'ant-design:delete-outlined',
-        color: 'error',
+        danger: true,
         title: '删除',
         label: '',
         popConfirm: {
           title: '是否确认删除',
           confirm: handleDelete.bind(null, record),
+          okButtonProps: { danger: true },
         },
       },
     ];

@@ -126,7 +126,7 @@ const [registerDrawer, {setDrawerProps, closeDrawer}] = useDrawerInner(async (da
 
 async function handleSubmit() {
   try {
-    const valid = await formApi.validate();
+    const { valid } = await formApi.validate();
     if (!valid) return;
 
     const values = formApi.getValues();

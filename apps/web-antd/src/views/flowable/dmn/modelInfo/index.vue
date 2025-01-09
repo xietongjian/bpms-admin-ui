@@ -408,7 +408,7 @@ function createActions(record: Recordable<any>){
     },
     /*{
     icon: 'ant-design:delete-outlined',
-    color: 'error',
+    danger: true,
     tooltip: '删除',
     label: '',
     popConfirm: {

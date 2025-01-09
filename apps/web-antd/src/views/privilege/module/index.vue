@@ -16,10 +16,10 @@ import {PerEnum} from "#/enums/perEnum";
 import { IconifyIcon } from '@vben/icons';
 import PValueSettingModal from './ModulePValueModal.vue';
 
-
 const PerPrefix = "Module:";
 const moduleDrawerRef = ref(), pValueSettingModalRef=ref();
 const {hasAccessByCodes} = useAccess();
+
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
   submitOnEnter: true,

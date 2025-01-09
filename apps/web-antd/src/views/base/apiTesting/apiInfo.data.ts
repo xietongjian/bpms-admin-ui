@@ -177,8 +177,7 @@ export const apiTestingFormSchema: FormSchema[] = [
   {
     field: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
-    required: false,
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
@@ -203,8 +202,7 @@ export const apiTestingFormSchema: FormSchema[] = [
   {
     field: 'platformEnabled',
     label: '是否推送',
-    helpMessage: '是否推送消息至第三方平台！',
-    required: false,
+    help: '是否推送消息至第三方平台！',
     component: 'Switch',
     defaultValue: 0,
     componentProps: {

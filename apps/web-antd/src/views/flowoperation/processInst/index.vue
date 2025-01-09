@@ -514,7 +514,7 @@
         auth: 'ProcessInst:' + PerEnum.UPDATE,
         icon: 'ant-design:stop-twotone',
         label: '终止',
-        color: 'error',
+        danger: true,
         ifShow: record.processStatus !== 'end' && record.processStatus !== 'zz',
         onClick: () => handleStop(record),
       },
@@ -526,7 +526,7 @@
             ? 'ant-design:pause-circle-filled'
             : 'ant-design:play-circle-filled',
         label: record.suspensionState === 1 ? '挂起' : '激活',
-        color: 'error',
+        danger: true,
         onClick: () => handleChangePState(record),
       },
     ];
@@ -536,28 +536,28 @@
         auth: 'ProcessInst:' + PerEnum.UPDATE,
         icon: 'clarity:fast-forward-line',
         label: '执行',
-        color: 'error',
+        danger: true,
         onClick: () => execute(record),
       });
       actions.push({
         auth: 'ProcessInst:' + PerEnum.UPDATE,
         icon: 'ant-design:rollback-outlined',
         label: '干预',
-        color: 'error',
+        danger: true,
         onClick: () => handleIntervention(record),
       });
       actions.push({
         auth: 'ProcessInst:' + PerEnum.UPDATE,
         icon: 'ant-design:branches-outlined',
         label: '切换版本',
-        color: 'error',
+        danger: true,
         onClick: () => handleChangeVersion(record),
       });
       actions.push({
         auth: 'ProcessInst:' + PerEnum.UPDATE,
         icon: 'clarity:code-outline-badged',
         label: '变量补偿',
-        color: 'error',
+        danger: true,
         onClick: () => handleChangeVariable(record),
       });
     }
@@ -568,7 +568,7 @@
         icon: 'ant-design:medicine-box-outlined',
         tooltip: '复活',
         label: '复活',
-        color: 'error',
+        danger: true,
         onClick: () => handleRevival(record),
       });
     }

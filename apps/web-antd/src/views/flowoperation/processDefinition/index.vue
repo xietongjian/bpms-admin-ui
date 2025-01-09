@@ -213,12 +213,13 @@ function createSubActions(record: Recordable<any>, itemRecord: Recordable<any>) 
     {
       auth: 'ProcessDefinition:' + PerEnum.UPDATE,
       icon: 'ant-design:pause-circle-outlined',
-      color: 'error',
+      danger: true,
       tooltip: '挂起',
       ifShow: itemRecord.suspensionState === 1,
       popConfirm: {
         title: '是否确认挂起',
         confirm: handleSuspend.bind(null, record, itemRecord),
+        okButtonProps: { danger: true },
       },
     },
     {

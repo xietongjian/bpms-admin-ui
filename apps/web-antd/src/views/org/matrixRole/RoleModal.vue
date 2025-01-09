@@ -116,7 +116,7 @@ const [BasicForm, formApi] = useVbenForm({
 async function handleSubmit() {
   try {
     modalApi.setState({loading: true, confirmLoading: true});
-    const valid = await formApi.validate();
+    const { valid } = await formApi.validate();
     if (!valid) {
       return;
     }

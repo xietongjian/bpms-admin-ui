@@ -93,11 +93,14 @@
         auth: 'Dictionary:' + PerEnum.DELETE,
         tooltip: '删除',
         icon: 'ant-design:delete-outlined',
-        color: 'error',
+        danger: true,
         onClick: handleDeleteStop.bind(null, row),
         popConfirm: {
           title: '是否确认删除',
           confirm: handleDelete.bind(null, row),
+          okButtonProps: {
+            danger: true
+          }
         },
       },
     ];

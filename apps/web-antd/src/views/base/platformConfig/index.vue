@@ -2,14 +2,13 @@
   <Page auto-content-height>
     <BasicTable>
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
+        <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>
 
       <template #action="{ row }">
-        <TableAction
-          :actions="createActions(row)"
-        />
+        <TableAction :actions="createActions(row)" />
       </template>
+
       <template #appKey="{ row }">
         <a @click="doCopyContent(row.appKey)">
           <CopyOutlined/>
@@ -23,12 +22,14 @@
         </a>
         {{ row.appSecret }}
       </template>
+
       <template #agentId="{ row }">
         <a @click="doCopyContent(row.agentId)">
           <CopyOutlined/>
         </a>
         {{ row.agentId }}
       </template>
+
       <template #corpId="{ row }">
         <a @click="doCopyContent(row.corpId)">
           <CopyOutlined/>
@@ -57,10 +58,12 @@ import {columns, searchFormSchema} from './platformConfig.data';
 // import { copyText } from '@/utils/copyTextToClipboard';
 import {CopyOutlined} from '@ant-design/icons-vue';
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
-import {useAccess} from '@vben/access';
+import { useClipboard } from '@vueuse/core';
+
+const { copy } = useClipboard({ legacy: true });
+
 
 const PerPrefix = "PlatformConfig:";
-const {hasAccessByCodes} = useAccess();
 const platformConfigModalRef = ref();
 /*const [registerModal, { openModal, setModalProps }] = useModal();
 
@@ -142,6 +145,7 @@ function createActions(record: Recordable<any>) {
       icon: 'ant-design:delete-outlined',
       danger: true,
       popConfirm: {
+        placement: 'left',
         title: '是否确认删除',
         confirm: handleDelete.bind(null, record),
         okButtonProps: {
@@ -192,7 +196,8 @@ function handleCloseFunc() {
   return Promise.resolve(true);
 }
 
-function doCopyContent(content) {
-  // copyText(content);
+async function doCopyContent(content) {
+  await copy(content);
+  message.success('已拷贝到剪切板！');
 }
 </script>

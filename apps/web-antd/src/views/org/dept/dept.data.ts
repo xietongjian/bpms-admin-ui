@@ -47,6 +47,13 @@ export const columns: VxeGridProps['columns'] = [
     field: 'createTime',
     width: 180,
   },
+  {
+    title: '操作',
+    width: 120,
+    align: 'center',
+    slots: { default: 'action' },
+    fixed: 'right',
+  },
 ];
 
 export const searchFormSchema: FormSchema[] = [

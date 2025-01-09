@@ -12,13 +12,11 @@ import {deleteById, getJobGradeTypes} from '#/api/org/jobGradeType';
 import type {Recordable} from '@vben/types';
 import {TableAction} from '#/components/table-action';
 import {Button, Tag} from 'ant-design-vue';
-import {useAccess} from '@vben/access';
 
 const PerPrefix = "JobGradeType:";
 
 const jobGradeTypeModalRef = ref();
 
-const {hasAccessByCodes} = useAccess();
 /*const [registerModal, { openModal }] = useModal();
 const [registerTable, { reload }] = useTable({
   title: '列表',
@@ -142,19 +140,15 @@ function createActions(record: Recordable<any>) {
   <Page auto-content-height>
     <BasicTable>
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
+        <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>
 
       <template #status="{ row }">
         <Tag v-if="row.status === 1" color="green">启用</Tag>
         <Tag v-else color="red">停用</Tag>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-              :actions="createActions(record)"
-          />
-        </template>
+      <template #action="{ row }">
+        <TableAction :actions="createActions(row)" />
       </template>
     </BasicTable>
     <JobGradeTypeModal ref="jobGradeTypeModalRef" @success="handleSuccess"/>

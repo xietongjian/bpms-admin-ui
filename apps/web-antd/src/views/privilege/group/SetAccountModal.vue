@@ -5,6 +5,7 @@
   import { addUserGroups } from '#/api/privilege/group';
   import {useVbenForm} from "#/adapter/form";
   import {useVbenModal} from '@vben/common-ui';
+  import {message} from 'ant-design-vue';
 
   const emit = defineEmits(['success', 'register']);
 
@@ -92,12 +93,16 @@
     }
   });*/
 
-  let getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
+  // let getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
+      modalApi.setState({loading: true, confirmLoading: true});
+      const {valid} = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
       console.log(values);
       values.users = values.users.map((item) => {
         return { id: item };
@@ -105,18 +110,23 @@
       values.groupId = values.id;
       delete values.id;
 
-      await addUserGroups(values);
-      closeModal();
-      emit('success');
+      const {success, msg} = await addUserGroups(values);
+      if(success){
+        emit('success');
+        message.success(msg);
+        modalApi.close();
+      } else{
+        message.error(msg);
+      }
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
 
   defineExpose(modalApi)
 </script>
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal class="w-[600px]">
+    <BasicForm />
   </BasicModal>
 </template>

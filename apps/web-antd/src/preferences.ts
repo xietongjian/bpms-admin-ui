@@ -11,9 +11,19 @@ export const overridesPreferences = defineOverridesPreferences({
     "styleType": "plain"
   },
   app: {
+    loginExpiredMode: 'modal',
+    dynamicTitle: true,
     layout: "mixed-nav",
     accessMode: 'backend',
     name: import.meta.env.VITE_APP_TITLE,
+    // 是否开启检查更新
+    enableCheckUpdates: true,
+    // 检查更新的时间间隔，单位为分钟
+    checkUpdatesInterval: 1,
+  },
+  copyright: {
+    enable: true,
+    companyName: '飞流数智化'
   },
   logo: {
     enable: true,

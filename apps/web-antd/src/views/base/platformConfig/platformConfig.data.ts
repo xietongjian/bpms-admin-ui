@@ -2,11 +2,9 @@ import { RemarkDefaultEnum, FormValidPatternEnum } from '#/enums/commonEnum';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
+import { checkEntityExist } from '#/api/base/platformConfig';
 
 
-const colProps = {
-  span: 24,
-};
 export const columns: VxeGridProps['columns'] = [
   {
     title: '类型',
@@ -91,12 +89,15 @@ export const formSchema: FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'type',
     label: '类型',
-    // required: true,
+    rules: 'selectRequired',
     component: 'Select',
     componentProps: {
       options: [
@@ -105,7 +106,6 @@ export const formSchema: FormSchema[] = [
         { label: '飞书', value: 'feishu' },
       ],
     },
-    colProps: { span: 16 },
   },
   {
     fieldName: 'appKey',
@@ -123,7 +123,6 @@ export const formSchema: FormSchema[] = [
         message: 'appKey长度不能大于32！',
       },
     ],*/
-    colProps,
   },
   {
     fieldName: 'appSecret',
@@ -135,14 +134,12 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    show: true,
     /*rules: [
       {
         max: 1500,
         message: '字符长度不能大于1500！',
       },
     ],*/
-    colProps,
   },
   {
     fieldName: 'returnUrl',
@@ -160,19 +157,16 @@ export const formSchema: FormSchema[] = [
         message: '字符长度不能大于128！',
       },
     ],*/
-    colProps,
   },
   {
     fieldName: 'agentId',
     label: '应用Id',
     component: 'Input',
-    colProps,
   },
   {
     fieldName: 'corpId',
     label: '企业Id',
     component: 'Input',
-    colProps,
   },
 ];
 
@@ -188,13 +182,11 @@ export const secretKeyFormSchema: FormSchema[] = [
     label: 'appKey',
     component: 'Input',
     slot: 'snSlot',
-    colProps,
   },
   {
     label: '密钥',
     fieldName: 'appSecret',
     component: 'Input',
     slot: 'snSlot',
-    colProps,
   },
 ];

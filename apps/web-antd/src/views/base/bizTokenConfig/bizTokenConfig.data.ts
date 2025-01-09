@@ -270,14 +270,14 @@ export const formSchema: FormSchema[] = [
   {
     field: 'tokenKey',
     label: 'Token键名',
-    helpMessage: '返回值中取token的字段名',
+    help: '返回值中取token的字段名',
     component: 'Input',
     colProps,
   },
   {
     field: 'tokenName',
     label: 'Token名称',
-    helpMessage: '设置到接口header里面的Token键名',
+    help: '设置到接口header里面的Token键名',
     required: true,
     component: 'Input',
     colProps,

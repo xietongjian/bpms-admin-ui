@@ -123,11 +123,12 @@ function createActions(record: any) {
       auth: [PerPrefix + PerEnum.DELETE],
       tooltip: '删除',
       icon: 'ant-design:delete-outlined',
-      color: 'error',
+      danger: true,
       popConfirm: {
         title: '是否确认删除',
         confirm: handleDelete.bind(null, record),
         placement: 'left',
+        okButtonProps: { danger: true },
       },
     },
   ];
@@ -172,7 +173,7 @@ function previewImageVisibleChange(visible, prevVisible) {
   <Page auto-content-height>
     <BasicTable table-title="列表">
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix+PerEnum.ADD])" type="primary" @click="handleAdd">新建</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleAdd">新建</Button>
       </template>
       <template #image="{ row }">
         <Avatar :src="row.image" @click="previewImageHandle(row.image)">
@@ -245,11 +246,12 @@ function previewImageVisibleChange(visible, prevVisible) {
                 auth: 'Account:' + PerEnum.DELETE,
                 tooltip: '删除',
                 icon: 'ant-design:delete-outlined',
-                color: 'error',
+                danger: true,
                 popConfirm: {
                   title: '是否确认删除',
                   confirm: handleDelete.bind(null, record),
                   placement: 'left',
+                  okButtonProps: { danger: true },
                 },
               },
             ]"

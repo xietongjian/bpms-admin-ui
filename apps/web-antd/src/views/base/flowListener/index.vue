@@ -76,7 +76,7 @@
                   {
                     auth: 'FlowListener:' + PerEnum.DELETE,
                     icon: 'ant-design:delete-outlined',
-                    color: 'error',
+                    danger: true,
                     title: '删除',
                     popConfirm: {
                       title: '是否确认删除',

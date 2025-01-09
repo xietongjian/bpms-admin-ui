@@ -199,7 +199,7 @@ export const formSchema: FormSchema[] = [
   {
     field: 'redirect',
     label: '跳转地址',
-    helpMessage: '目录菜单跳转地址！',
+    help: '目录菜单跳转地址！',
     component: 'Input',
     rules: [
       {
@@ -221,7 +221,7 @@ export const formSchema: FormSchema[] = [
   {
     field: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {

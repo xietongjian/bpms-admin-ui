@@ -50,7 +50,7 @@
   async function handleSubmit() {
     try {
       modalApi.setState({loading: true, confirmLoading: true});
-      const valid = await formApi.validate();
+      const { valid } = await formApi.validate();
       if(valid){
         const values = await formApi.getValues();
         const {success, msg} = await setPassword({id: values.id, password: values.passwordNew});

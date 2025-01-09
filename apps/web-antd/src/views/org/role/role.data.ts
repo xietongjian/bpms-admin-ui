@@ -85,12 +85,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称/标识',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 14, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -98,9 +92,11 @@ export const roleFormSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'name',
@@ -135,14 +131,15 @@ export const roleFormSchema: FormSchema[] = [
     fieldName: 'companyId',
     label: '所属公司',
     component: 'Input',
-    required: false,
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['companyId']
+    }
   },
   {
     fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
-    required: false,
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
@@ -166,8 +163,5 @@ export const roleFormSchema: FormSchema[] = [
         message: '字符长度不能大于1024！',
       },
     ],*/
-    colProps: {
-      span: 24,
-    },
   },
 ];

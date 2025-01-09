@@ -23,13 +23,11 @@
     <div class="h-full">
       <BasicTable class="!pt-0 !pl-0 !pr-0 !pb-0">
         <template #toolbar-tools>
-          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
+          <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
         </template>
 
         <template #action="{ row }">
-          <TableAction
-              :actions="createActions(row)"
-          />
+          <TableAction :actions="createActions(row)" />
         </template>
         <template #type="{ row }">
           <Tag v-if="row.type === 1" color="processing">公司矩阵角色</Tag>
@@ -45,7 +43,7 @@
   import {useAccess} from '@vben/access';
   import type {VxeGridProps} from '#/adapter/vxe-table';
   import { defineComponent, ref, unref, onMounted } from 'vue';
-  import { Input, Tree, Tag, Space, Button, message } from 'ant-design-vue';
+  import { Tree, Tag, Button, message } from 'ant-design-vue';
   import type { Recordable } from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import { SettingOutlined } from '@ant-design/icons-vue';
@@ -68,8 +66,6 @@
   const currentNode = ref<Recordable<any>>({});
   const treeData = ref<any[]>([]);
   const PerPrefix = 'MatrixRole:';
-
-  const {hasAccessByCodes} = useAccess();
 
   function createActions(row: Recordable<any>) {
     return [

@@ -22,7 +22,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '用户名',
     field: 'username',
-    width: 120,
+    minWidth: 120,
     align: 'left',
   },
   {
@@ -58,6 +58,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '所属组',
     field: 'groups',
     align: 'left',
+    minWidth: 150,
     slots: {default: 'groups'},
   },
   {

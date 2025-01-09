@@ -125,7 +125,6 @@ function createActions(row: Recordable<any>) {
       auth: [PerPrefix + PerEnum.DELETE],
       tooltip: '删除',
       icon: 'ant-design:delete-outlined',
-      color: 'error',
       onClick: (e) => {
         e.stopPropagation();
       },

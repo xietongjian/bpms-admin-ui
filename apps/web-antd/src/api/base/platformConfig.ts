@@ -19,7 +19,7 @@ export const getPlatformConfigListByPage = (params?: any) => {
   return requestClient.post<any>(Api.GetPlatformConfigListByPage, params);
 };
 
-export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params);
+export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params, {isTransformResponse: false});
 
 export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);

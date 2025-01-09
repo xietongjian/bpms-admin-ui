@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {ref} from 'vue';
+import {ref, onMounted, nextTick, computed} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
@@ -12,18 +12,27 @@ import {TableAction} from '#/components/table-action';
 import {getGroupListByPage, deleteByIds} from '#/api/privilege/group';
 
 import GroupModal from './group-modal.vue';
-import { useAccess } from '@vben/access';
 import {columns, searchFormSchema} from "./group.data";
 import SetAclModal from './SetAclModal.vue';
 import SetAccountModal from './SetAccountModal.vue';
+import { preferences, updatePreferences } from '@vben/preferences';
 
 import {PerEnum} from "#/enums/perEnum";
+
+
+onMounted(() => {
+  nextTick(() => {
+    // const appName = computed(() => preferences.app.name);
+    // const name = performance?.app?.name;
+    // 动态修改偏好设置
+    // updatePreferences({app: {name: '123'}});
+  })
+});
 
 const PerPrefix = "Group:";
 const setAccountModalRef = ref();
 const setAclModalRef = ref();
 const groupModalRef = ref();
-const { hasAccessByCodes } = useAccess();
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -32,6 +41,7 @@ const formOptions: VbenFormProps = {
     labelWidth: 60,
   },
   wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
   resetButtonOptions: {
     show: false,
   },
@@ -163,14 +173,12 @@ function handleSetAccountSuccess() {
     <BasicTable table-title="列表">
       <template #toolbar-tools>
         <Space>
-          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleAdd">新建</Button>
+          <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleAdd">新建</Button>
         </Space>
       </template>
 
       <template #action="{ row }">
-        <TableAction
-            :actions="createActions(row)"
-        />
+        <TableAction :actions="createActions(row)" />
       </template>
 
       <template #image="{ row }">

@@ -197,12 +197,13 @@
     const actions: ActionItem[] = [
       {
         label: '删除',
-        color: 'error',
+        danger: true,
         popConfirm: {
           title: '是否确认删除',
           confirm: () => {
             tableRef.value?.remove(record);
           },
+          okButtonProps: { danger: true },
         },
       },
     ];

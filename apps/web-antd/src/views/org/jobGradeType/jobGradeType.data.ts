@@ -63,6 +63,13 @@ export const columns: VxeGridProps['columns'] = [
     width: 100,
     align: 'left',
   }*/
+  {
+    title: '操作',
+    width: 120,
+    align: 'center',
+    slots: { default: 'action' },
+    fixed: 'right',
+  }
 ];
 
 export const searchFormSchema: FormSchema[] = [

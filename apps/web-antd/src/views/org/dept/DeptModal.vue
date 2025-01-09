@@ -25,7 +25,7 @@
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
       componentProps: {
-        // class: 'w-full',
+        class: 'w-full',
       },
     },
     showDefaultActions: false,

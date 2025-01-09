@@ -20,7 +20,7 @@ export const saveOrUpdate = (params: any) =>
     requestClient.post<any>(Api.SaveOrUpdate, params, {noTransformResponse: true });
 
 export const addUserGroups = (params: any) => {
-  return requestClient.post<any>(Api.AddUserGroups + '/' + params.groupId, params.users);
+  return requestClient.post<any>(Api.AddUserGroups + '/' + params.groupId, params.users, {isTransformResponse: false});
 };
 
 export const deleteByIds = (params: Array<string>) =>

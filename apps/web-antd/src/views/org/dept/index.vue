@@ -152,11 +152,14 @@ function createActions(row: Recordable<any>) {
       auth: [PerPrefix + PerEnum.DELETE],
       tooltip: '删除',
       icon: 'ant-design:delete-outlined',
-      color: 'error',
+      danger: true,
       popConfirm: {
         title: '是否确认删除',
         confirm: handleDelete.bind(null, row),
         placement: 'left',
+        okButtonProps: {
+          danger: true,
+        }
       },
     },
   ];
@@ -177,9 +180,9 @@ function createActions(row: Recordable<any>) {
     <template #left>
       <CompanyTree @select="handleSelect"/>
     </template>
-    <BasicTable class="!pt-0 !pl-0 !pr-0 !pb-0">
-      <template #toolbar>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
+    <BasicTable table-title="列表">
+      <template #toolbar-tools>
+        <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>
       <template #action="{ row }">
         <TableAction

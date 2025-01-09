@@ -132,7 +132,7 @@ const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 async function handleSubmit() {
   try {
     drawerApi.setState({loading: true, confirmLoading: true});
-    const valid = await formApi.validate();
+    const { valid } = await formApi.validate();
     if(!valid){
       return;
     }

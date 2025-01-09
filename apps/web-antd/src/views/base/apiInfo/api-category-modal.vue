@@ -85,7 +85,7 @@ const getTitle = computed(() => (unref(isUpdate) ? '修改' : '新增'));
 async function handleSubmit() {
   try {
     modalApi.setState({loading: true, confirmLoading: true});
-    const valid = await formApi.validate();
+    const { valid } = await formApi.validate();
     if (!valid) {
       return;
     }

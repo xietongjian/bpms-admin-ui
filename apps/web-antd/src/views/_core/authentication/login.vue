@@ -104,6 +104,9 @@ const formSchema = computed((): VbenFormSchema[] => {
       rules: z.string().refine((value) => value, {
         message: $t('authentication.verifyRequiredTip'),
       }),
+      componentProps: {
+        placeholder: '请输入验证码',
+      },
       suffix: () => {
         return h('img', {
           onClick: reloadVerifyCode,
@@ -118,6 +121,13 @@ const formSchema = computed((): VbenFormSchema[] => {
 
 <template>
   <AuthenticationLogin
+      :showCodeLogin="false"
+      :showForgetPassword="false"
+      :showQrcodeLogin="false"
+      :showRegister="false"
+      :showThirdPartyLogin="false"
+      subTitle=""
+      title="飞流数智化"
     :form-schema="formSchema"
     :loading="authStore.loginLoading"
     @submit="authStore.authLogin"

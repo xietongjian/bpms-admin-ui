@@ -1,6 +1,7 @@
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import { checkEntityExist } from '#/api/base/systemConfig';
 
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
 
@@ -48,6 +49,15 @@ export const columns: VxeGridProps['columns'] = [
     title: '创建时间',
     field: 'createTime',
     width: 180,
+  },
+  {
+    title: '操作',
+    field: 'action',
+    align: 'center',
+    width: 120,
+    slots: {
+      default: 'action',
+    },
   },
 ];
 
@@ -125,8 +135,7 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'configOrder',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
-    required: false,
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {

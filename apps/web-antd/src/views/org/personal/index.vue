@@ -33,7 +33,7 @@
         >
           全量同步
         </PopConfirmButton>-->
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
+        <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>
 
       <template #status="{ row }">
@@ -187,13 +187,10 @@
   import {
     Tag,
     Popover,
-    Popconfirm,
     Button,
     Avatar,
     Badge,
-    Spin,
-    Space,
-      message,
+    message,
     Divider,
     Image,
   } from 'ant-design-vue';

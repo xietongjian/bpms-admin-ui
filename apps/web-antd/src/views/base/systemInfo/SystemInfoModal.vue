@@ -66,7 +66,7 @@
 
   async function handleSubmit() {
     try {
-      const valid = await formApi.validate();
+      const { valid } = await formApi.validate();
       if (!valid) return;
       const values = await formApi.getValues();
       modalApi.setState({loading: true, confirmLoading: true});
