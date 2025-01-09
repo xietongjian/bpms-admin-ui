@@ -2,6 +2,7 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
+import { getAll } from '#/api/base/app';
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -115,7 +116,7 @@ export const searchFormSchema: FormSchema[] = [
     },
   },
   {
-    fieldName: 'formName',
+    fieldName: 'name',
     label: '节点名称',
     component: 'Input',
     componentProps: {
@@ -173,7 +174,14 @@ export const searchFormSchema: FormSchema[] = [
   {
     fieldName: 'appSn',
     label: '系统',
-    component: 'Select',
+    component: 'ApiSelect',
+    componentProps: {
+      api: getAll,
+      fieldNames: {
+        value: 'sn',
+        label: 'name'
+      },
+    },
     colProps: {
       span: 6,
       lg: { span: 6, offset: 0 },

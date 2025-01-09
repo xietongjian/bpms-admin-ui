@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height>
-    <BasicTable @register="registerTable">
+    <BasicTable>
       <template #action="{ row }">
         <TableAction
             :actions="createActions(row)"
@@ -27,11 +27,7 @@
         <div class="text-right">
           <Space>
             <EmpInfo :no="row.assignee" :name="row.assigneeName" />
-            <Authority :value="'ProcessTask:' + PerEnum.UPDATE">
-              <a-button size="small" type="error" @click="handleChangeAssignee(row)"
-              >变更</a-button
-              >
-            </Authority>
+            <Button v-access:code="PerPrefix + PerEnum.UPDATE" size="small" type="error" @click="handleChangeAssignee(row)">变更</Button>
           </Space>
         </div>
       </template>
@@ -89,7 +85,6 @@
   import {BpmnPreviewModal} from '#/views/components/preview';
   // import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
   import FlowPropertiesModal from '../processInst/FlowPropertiesModal.vue';
-  import { getAll } from '#/api/base/app';
   import { columns, searchFormSchema } from './processTask.data';
   import ApproveHistoryModal from '../processInst/ApproveHistoryModal.vue';
   import ProcessFormModal from './ProcessFormModal.vue';
@@ -101,16 +96,20 @@
   import { Tooltip, Space, Modal, Button, message } from 'ant-design-vue';
   import { PerEnum } from '#/enums/perEnum';
   import {EmpInfo} from '#/views/components/EmpInfo';
-  // import { useRequest } from '@vben/hooks';
-  import {useAccess} from "@vben/access";
   import {TableAction} from '#/components/table-action';
+  import { useClipboard } from '@vueuse/core';
 
   import ProcessStatus from '#/views/components/process/ProcessStatus.vue';
-  import {getPagerModel} from "#/api/form/bizForm";
+
+  const { copy } = useClipboard({ legacy: true });
 
   defineOptions({ name: 'ProcessTask' });
   const PerPrefix = 'ProcessTask:';
-  const {hasAccessByCodes} = useAccess();
+  const bpmnPreviewModalRef = ref(),
+    personalSelectorModalRef = ref(),
+    flowPropertiesModalRef = ref(),
+    approveHistoryModalRef = ref(),
+    processFormModalRef = ref();
 
   // 人员选择弹窗
   /*const [
@@ -246,7 +245,7 @@
   }
 
   nextTick(() => {
-    const { updateSchema } = tableApi.formApi;
+    /*const { updateSchema } = tableApi.formApi;
     getAll().then((res) => {
       updateSchema([
         {
@@ -254,7 +253,7 @@
           componentProps: { options: res, labelField: 'id' },
         },
       ]);
-    });
+    });*/
   });
 
   function handleExe(record: Recordable<any>) {
@@ -346,7 +345,12 @@
   }
 
   function handlePreview(record: Recordable<any>) {
-    openBpmnPreviewModal(true, {
+    bpmnPreviewModalRef.value.setData({
+      modelKey: record.modelKey,
+      procInstId: record.processInstanceId,
+    });
+    bpmnPreviewModalRef.value.open();
+    /*openBpmnPreviewModal(true, {
       modelKey: record.modelKey,
       procInstId: record.processInstanceId,
     });
@@ -356,7 +360,7 @@
       useWrapper: false,
       showOkBtn: false,
       cancelText: '关闭',
-    });
+    });*/
   }
 
   function handleChangeAssignee(record: Recordable<any>) {
@@ -398,6 +402,7 @@
         label: '',
         popConfirm: {
           title: '确认执行吗?',
+          placement: 'left',
           confirm: handleExe.bind(null, row),
           okButtonProps: {
 
@@ -443,12 +448,11 @@
   }
 
   function doCopyContent(content) {
-    copyText(content);
+    copy(content);
+    message.success('已拷贝到剪切板！');
   }
 
   function handleProcessFormVisibleChange() {
-    setTimeout(() => {
-      tableApi.reload();
-    }, 200);
+    tableApi.reload();
   }
 </script>

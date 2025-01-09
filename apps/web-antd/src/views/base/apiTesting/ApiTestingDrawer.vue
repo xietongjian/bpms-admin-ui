@@ -1,30 +1,31 @@
 <template>
   <BasicDrawer
       v-bind="$attrs"
-      @register="registerDrawer"
       title="在线测试【】"
       width="50%"
       showFooter
       @ok="handleSubmit"
   >
-    <BasicForm @register="registerForm"/>
+    <BasicForm />
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
-import {computed, ref, unref} from 'vue';
-import {BasicDrawer, useDrawerInner} from '@/components/Drawer';
+import {computed, ref, unref, defineEmits, defineExpose} from 'vue';
+import {useVbenForm} from "#/adapter/form";
+import {useVbenDrawer} from "@vben/common-ui";
 
-import {BasicForm, useForm} from '@/components/Form';
+// import {BasicForm, useForm} from '@/components/Form';
 import {apiTestingFormSchema} from './apiInfo.data';
-import {insert, update} from '#/api/portal/cms/banner';
-import {getAllBoard} from '#/api/portal/cms/board';
-import {OrgDataType} from '@/components/Selector/src/types';
-import {getAllPublishRange} from '#/api/portal/cms/publishRange';
+import {formSchema} from "#/views/privilege/module/module.data";
+// import {insert, update} from '#/api/portal/cms/banner';
+// import {getAllBoard} from '#/api/portal/cms/board';
+// import {OrgDataType} from '@/components/Selector/src/types';
+// import {getAllPublishRange} from '#/api/portal/cms/publishRange';
 
 const isUpdate = ref(true);
 const boardList = ref();
 
-const [
+/*const [
   registerForm,
   {resetFields, updateSchema, getFieldsValue, setFieldsValue, validate},
 ] = useForm({
@@ -32,9 +33,9 @@ const [
   schemas: apiTestingFormSchema,
   showActionButtonGroup: false,
   fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM-DD']],
-});
+});*/
 
-const [registerDrawer, {setDrawerProps, closeDrawer}] = useDrawerInner(async (data) => {
+/*const [registerDrawer, {setDrawerProps, closeDrawer}] = useDrawerInner(async (data) => {
   await resetFields();
   // setDrawerProps({ loading: true });
   setDrawerProps({loading: true});
@@ -96,12 +97,46 @@ const [registerDrawer, {setDrawerProps, closeDrawer}] = useDrawerInner(async (da
     });
   }
   setDrawerProps({loading: false});
+});*/
+
+
+
+const [BasicDrawer, drawerApi] = useVbenDrawer({
+  onCancel() {
+    drawerApi.close();
+  },
+  onOpenChange(isOpen: boolean) {
+    if (isOpen) {
+      const values = drawerApi.getData<Record<string, any>>();
+      if (values) {
+        formApi.setValues(values);
+        drawerApi.setState({loading: false, confirmLoading: false});
+      }
+    }
+  },
+  onConfirm() {
+    // await baseFormApi.submitForm();
+    handleSubmit();
+  }
+});
+
+const [BasicForm, formApi] = useVbenForm({
+  commonConfig: {
+    componentProps: {
+      // class: 'w-full',
+    },
+  },
+  showDefaultActions: false,
+  layout: 'horizontal',
+  schema: apiTestingFormSchema,
+  wrapperClass: 'grid-cols-1',
 });
 
 async function handleSubmit() {
   try {
-    const values = await validate();
-    setDrawerProps({confirmLoading: true});
+    const {valid} = await formApi.validate();
+    const values = await formApi.getValues();
+    drawerApi.setState({loading: true, confirmLoading: true});
 
     if (values.posterUploader && values.posterUploader.length > 0) {
       values.posterPath = values.posterUploader[0].filePath;
@@ -129,9 +164,9 @@ async function handleSubmit() {
       await insert(values);
     }
 
-    closeDrawer();
+    drawerApi.close();
   } finally {
-    setDrawerProps({confirmLoading: false});
+    drawerApi.setState({loading: false, confirmLoading: false});
   }
 }
 </script>
