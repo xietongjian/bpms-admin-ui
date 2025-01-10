@@ -16,7 +16,6 @@ import {Button} from 'ant-design-vue';
 
 const PerPrefix = "AppPrivilegeValue:";
 const appPrivilegeValueModalRef = ref();
-const { hasAccessByCodes } = useAccess();
 
 
 const gridOptions: VxeGridProps<any> = {
@@ -96,7 +95,7 @@ function createActions(record: Recordable<any>) {
   <Page auto-content-height>
     <BasicTable >
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增 </Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增 </Button>
       </template>
 
       <template #action="{ row }">

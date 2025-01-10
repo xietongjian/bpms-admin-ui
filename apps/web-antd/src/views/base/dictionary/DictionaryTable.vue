@@ -5,7 +5,7 @@
       @selection-change="changeDictionary"
     >
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD]) && dictTypeId !== ''" type="primary" @click="handleCreate">新增</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" v-if="dictTypeId !== ''" type="primary" @click="handleCreate">新增</Button>
       </template>
       <template #action="{row}">
         <TableAction
@@ -34,7 +34,6 @@
   import DictionaryModal from './DictionaryModal.vue';
   import {useVbenVxeGrid} from "#/adapter/vxe-table";
 
-  const { hasAccessByCodes } = useAccess();
   const PerPrefix = "Group:";
   const emit = defineEmits(['handleSelect']);
 

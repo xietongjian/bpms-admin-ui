@@ -84,8 +84,7 @@
           :type="bizResult.code === '100' ? 'success' : 'error'"
           closable
         />
-        <Button
-            v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])"
+        <Button v-access:code="PerPrefix+PerEnum.UPDATE"
             :loading="bizCopyPercent !== 100 && bizCopyPercent !== 0"
             type="error"
             @click="handleCopyBizForm"
@@ -98,7 +97,6 @@
 <script lang="ts" setup>
   import { ref, unref, onMounted, nextTick } from 'vue';
   import { PerEnum } from '#/enums/perEnum';
-  import {useAccess} from '@vben/access';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
@@ -110,7 +108,7 @@
   // import { BasicForm, useForm } from '@/components/Form/index';
   // import { CollapseContainer } from '@/components/Container/index';
   import { customFormSchema, bizFormSchema } from './copyModel.data';
-  import { Alert, Progress, Tag, Space, message } from 'ant-design-vue';
+  import {Alert, Progress, Tag, Space, message, Button} from 'ant-design-vue';
   import { ArrowRightOutlined, HeatMapOutlined } from '@ant-design/icons-vue';
 
   import {
@@ -121,7 +119,6 @@
   } from '#/api/flowoperation/copyModelToProd';
   import { findNode } from '#/utils/helper/treeHelper';
   import {useVbenForm} from "#/adapter/form";
-  const {hasAccessByCodes} = useAccess();
 
   const PerPrefix = 'CopyModel:';
 

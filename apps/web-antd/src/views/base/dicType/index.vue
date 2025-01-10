@@ -2,7 +2,7 @@
   <Page auto-content-height>
     <BasicTable>
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>
       <template #action="{ row }">
         <TableAction :actions="createActions(row)"/>
@@ -31,7 +31,6 @@
 
   const PerPrefix = 'DicType:';
   const dicTypeModalRef = ref();
-  const {hasAccessByCodes}  = useAccess();
 
 
   /*const [registerModal, { openModal, setModalProps }] = useModal();

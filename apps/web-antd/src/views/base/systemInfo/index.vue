@@ -2,7 +2,7 @@
   <Page auto-content-height>
     <BasicTable>
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>
       <template #action="{ row }">
         <TableAction
@@ -38,13 +38,11 @@ import {columns, searchFormSchema} from './systemInfo.data';
 import SystemInfoModal from './SystemInfoModal.vue';
 import { TableAction } from '#/components/table-action';
 
-import {useAccess} from '@vben/access';
 import {UserOutlined} from "@ant-design/icons-vue";
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
 import {Page} from "@vben/common-ui";
 
 const PerPrefix = "SystemInfo:";
-const {hasAccessByCodes} = useAccess();
 const systemInfoModalRef = ref();
 
 const formOptions: VbenFormProps = {

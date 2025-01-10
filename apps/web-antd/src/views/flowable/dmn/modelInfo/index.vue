@@ -20,7 +20,7 @@
       >
         <template #toolbar-tools>
           <div class="flex flex-row gap-2">
-            <Dropdown v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])">
+            <Dropdown v-access:code="PerPrefix+PerEnum.ADD" >
               <template #overlay>
                 <Menu @click="handleCreate">
                   <MenuItem key="0">
@@ -111,7 +111,6 @@
 <script lang="ts" setup>
 import {ref, unref, watch, nextTick} from 'vue';
 import {PerEnum} from '#/enums/perEnum';
-import {useAccess} from '@vben/access';
 import type {Recordable} from '@vben/types';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
@@ -143,7 +142,6 @@ import {columns, searchFormSchema} from './modelInfo.data';
 import {InsertRowAboveOutlined, ClusterOutlined, DownOutlined} from '@ant-design/icons-vue';
 
 const PerPrefix = 'Dmn:';
-const {hasAccessByCodes} = useAccess();
 
 const dmnDesignerModalRef = ref(),
     codePreviewModalRef = ref(),

@@ -16,8 +16,7 @@
       <BasicTable >
         <template #toolbar-tools >
           <div class="flex flex-row gap-2">
-            <Tooltip
-                v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
+            <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH"
                 placement="bottom">
               <template #title>
                 <span>只有状态为【待发布】的数据才能发布</span>
@@ -31,8 +30,7 @@
                 <Button type="primary">发布</Button>
               </Popconfirm>
             </Tooltip>
-            <Tooltip
-                v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
+            <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH"
                 placement="bottom">
               <template #title>
                 <span>只有状态为【待发布/已发布】的数据才能停用</span>
@@ -47,9 +45,7 @@
                 <Button type="primary" danger>停用</Button>
               </Popconfirm>
             </Tooltip>
-            <template
-                v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])"
-            >
+            <template v-access:code="PerPrefix+PerEnum.ADD" >
               <Dropdown placement="bottom">
                 <template #overlay>
                   <Menu @click="handleCreate">
@@ -147,7 +143,6 @@
 </template>
 <script lang="ts" setup>
   import { nextTick, ref, unref, watch } from 'vue';
-  import {useAccess} from '@vben/access';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps} from '#/adapter/vxe-table';
@@ -172,7 +167,6 @@
   import BizBpmnDesignerModal from '#/views/form/components/BizBpmnDesignerModal.vue';
   import BizNoFormBpmnDesignerModal from '#/views/form/components/BizNoFormBpmnDesignerModal.vue';
   import {getCustomPagerModel} from "#/api/form/customForm";
-  const {hasAccessByCodes} = useAccess();
 
   const MenuItem = Menu.Item;
   const PerPrefix = 'Biz:';

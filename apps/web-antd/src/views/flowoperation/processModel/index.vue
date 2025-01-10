@@ -20,7 +20,6 @@
 
   import { BasicTable, useTable, TableAction, BasicColumn, ActionItem } from '@/components/Table';
   import { PerEnum } from '#/enums/perEnum';
-  import {useAccess} from '@vben/access';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';

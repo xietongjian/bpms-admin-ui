@@ -37,7 +37,7 @@
     <div class="bg-card h-full">
       <BasicTable >
         <template #toolbar-tools >
-          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleAddFormTemplate"> 新增</Button>
+          <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleAddFormTemplate"> 新增</Button>
         </template>
         <template #action="{row}">
           <TableAction :actions="createActions(row)" />
@@ -59,7 +59,6 @@
 <script lang="ts" setup>
   import {h, ref} from 'vue';
   import { PerEnum } from '#/enums/perEnum';
-  import {useAccess} from '@vben/access';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
@@ -80,7 +79,6 @@
   const formTemplateModalRef = ref();
   const formCategoryModalRef = ref();
   const PerPrefix = 'FormTemplate:';
-  const {hasAccessByCodes} = useAccess();
 
   const treeLoading = ref(true);
   const formCategoryTreeData = ref([]);

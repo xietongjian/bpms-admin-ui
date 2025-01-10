@@ -2,7 +2,7 @@
   <Page auto-content-height>
     <BasicTable>
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>
       <template #action="{ row }">
         <TableAction :actions="createActions(row)"/>
@@ -16,7 +16,6 @@ import {ref} from 'vue';
 import {message, Button} from 'ant-design-vue';
 
 import {PerEnum} from '#/enums/perEnum';
-import {useAccess} from '@vben/access';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
@@ -26,8 +25,6 @@ import AreaModal from './AreaModal.vue';
 import {Page} from "@vben/common-ui";
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
 import {TableAction} from '#/components/table-action';
-
-const {hasAccessByCodes} = useAccess();
 
 const areaModalRef = ref();
 const PerPrefix = 'Area:';

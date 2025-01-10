@@ -11,7 +11,7 @@
       <template #image="{ row }">
         <div v-if="showUploadBtn(row)" class="view-img-wrapper">
           <TableImg :size="80" :simpleShow="true" :imgList="[row.imageBase64]"/>
-          <div class="config-img-tool" v-if="hasPermission(`SystemConfig:${PerEnum.UPDATE}`)">
+          <div class="config-img-tool" v-access:code="PerPrefix+PerEnum.UPDATE" >
             <Space>
               <Upload
                   name="file"

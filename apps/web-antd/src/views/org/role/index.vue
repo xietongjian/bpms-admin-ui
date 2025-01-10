@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { PerEnum } from '#/enums/perEnum';
-import {useAccess} from '@vben/access';
 import type{Recordable} from '@vben/types';
 import { defineComponent, ref, unref } from 'vue';
 import { Input, Tag, Space, Button, Badge, Popover, message, Affix, Divider } from 'ant-design-vue';
@@ -31,7 +30,6 @@ const currentRole = ref<Recordable<any>>({});
 const currentNode = ref<Recordable<any>>({});
 
 const PerPrefix = 'Role:';
-const {hasAccessByCodes} = useAccess();
 
 /*const [registerTable, { reload, setProps }] = useTable({
   title: '列表',
@@ -232,7 +230,7 @@ function handleSelect(node: any) {
     <div class="flex-1 h-full">
       <BasicTable >
         <template #toolbar-tools>
-          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" class="ml-2" type="primary" @click="handleCreate">新增</Button>
+          <Button v-access:code="PerPrefix+PerEnum.ADD" class="ml-2" type="primary" @click="handleCreate">新增</Button>
         </template>
         <template #action="{row}">
           <TableAction :actions="createActions(row)"/>

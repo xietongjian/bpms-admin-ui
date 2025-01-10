@@ -2,7 +2,7 @@
   <Page auto-content-height>
     <BasicTable>
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix+PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>
       <template #action="{ row }">
         <TableAction :actions="createActions(row)" />
@@ -15,7 +15,6 @@
   import {ref} from 'vue';
   import { PerEnum } from '#/enums/perEnum';
   import {Page} from '@vben/common-ui';
-  import {useAccess} from '@vben/access';
   import type {VxeGridProps} from '#/adapter/vxe-table';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {Recordable} from '@vben/types';
@@ -29,7 +28,6 @@
 
   const PerPrefix = 'AuthPoint:';
 
-  const {hasAccessByCodes} = useAccess();
 
   const authPointModalRef = ref();
   // const [registerModal, { openModal }] = useModal();

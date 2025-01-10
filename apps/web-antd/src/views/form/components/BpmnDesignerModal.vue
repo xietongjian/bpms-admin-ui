@@ -62,7 +62,7 @@
           </Col>
           <Col span="8" style="text-align: right">
             <Space>
-              <Popconfirm v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH]) && publishBtnVisibility" @confirm="handlePublish">
+              <Popconfirm v-access:code="PerPrefix+PerEnum.PUBLISH" v-if="publishBtnVisibility" @confirm="handlePublish">
                 <template #title>
                   <div style="max-width: 300px; word-wrap: break-word; white-space: break-spaces">
                     确定要发布【{{ modelBaseInfo.name }}】流程吗？

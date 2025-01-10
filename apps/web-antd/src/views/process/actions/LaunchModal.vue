@@ -26,10 +26,10 @@
           />-->
           <Space>
             <!--    <a-button @click="doSimulation" > 模拟 </a-button>-->
-            <a-button type="primary" @click="doLaunch" :loading="submitLoading"> 提交</a-button>
+            <Button type="primary" @click="doLaunch" :loading="submitLoading"> 提交</Button>
             <!--    <a-button @click="doSave" :loading="loading" > 存草稿 </a-button>-->
             <!--    <PopConfirmButton v-if="canStop" type="error" title="确定要作废该流程吗？" @confirm="doStop"  > 作废 </PopConfirmButton>-->
-            <a-button @click="doBack"> 取消</a-button>
+            <Button @click="doBack"> 取消</Button>
           </Space>
         </Col>
       </Row>
@@ -66,52 +66,53 @@
 </template>
 <script lang="ts" setup>
   import { ref, unref, onMounted, nextTick } from 'vue';
-  import { Space, Tag, Row, Col, Modal, Affix } from 'ant-design-vue';
-  import { useUserStore } from '@/store/modules/user';
+  import { Space, Tag, Row, Col, Modal, Affix, message } from 'ant-design-vue';
+  // import { useUserStore } from '@/store/modules/user';
   import FormContainer from '#/views/process/components/FormContainer.vue';
   // import BpmnSimulatorModal from '#/views/components/preview/bpmnSimulator/index.vue';
 
   // import ActionButtons from '#/views/process/components/ActionButtons.vue';
   import BaseActionButtons from '#/views/process/components/BaseActionButtons.vue';
 
-  import { useLoading } from '@/components/Loading';
+  // import { useLoading } from '@/components/Loading';
   import {
     getProdModelInfoByModelKeyAndProcInstId,
     startCustomFormProcess,
   } from '#/api/process/process';
+  import {useVbenModal} from '@vben/common-ui';
 
-  import { BasicModal, useModal, useModalInner } from '@/components/Modal';
-  import { useMessage } from '@/hooks/web/useMessage';
+  // import { BasicModal, useModal, useModalInner } from '@/components/Modal';
+  // import { useMessage } from '@/hooks/web/useMessage';
   import ApprovalHistory from '#/views/process/components/ApprovalHistory.vue';
   import {EmpInfo} from '#/views/components/EmpInfo';
   import { updateCustomFormData } from '#/api/process/customForm';
-  import { useGo } from '@/hooks/web/usePage';
+  // import { useGo } from '@/hooks/web/usePage';
 
-  const go = useGo();
+  // const go = useGo();
   const flowBaseInfo = ref({});
   const processBaseInfo = ref({});
   const formContainerRef = ref();
   const launchHeaderAfixed = ref(false);
   const submitLoading = ref(false);
   const actionButtonsRef = ref();
-  const [openFullLoading, closeFullLoading] = useLoading({
-    tip: '提交中...',
-  });
-  const { createMessage } = useMessage();
+  // const [openFullLoading, closeFullLoading] = useLoading({
+  //   tip: '提交中...',
+  // });
+  // const { message } = useMessage();
   const approvalHistoryVisible = ref(false);
   // launch/:modelKey/:procInstId/:bizId/:taskId/:formType
-  const userStore = useUserStore();
-  const [
+  // const userStore = useUserStore();
+  /*const [
     registerBpmnSimulatorModal,
     { openModal: openBpmnSimulatorModal, setModalProps: setBpmnSimulatorProps },
-  ] = useModal();
+  ] = useModal();*/
 
   function changeSubmitLoading(loading){
-    changeLoading(loading);
+    modalApi.setState({loading: loading, confirmLoading: loading});
     submitLoading.value = loading;
   }
 
-  const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(async (data) => {
+  /*const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(async (data) => {
     processBaseInfo.value = {
       formType: data.formType,
       modelKey: data.modelKey,
@@ -127,6 +128,36 @@
       confirmLoading: false,
       title: `发起XXX审批`,
     });
+  });*/
+
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          processBaseInfo.value = {
+            formType: values.formType,
+            modelKey: values.modelKey,
+            procInstId: values.procInstId,
+            bizId: values.bizId,
+            taskId: values.taskId,
+            viewType: values.viewType || 'view'
+          };
+          approvalHistoryVisible.value = !!values.procInstId;
+          initData();
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await baseFormApi.submitForm();
+      // handleSubmit();
+    },
   });
 
   const approvalHistoryRef = ref<HTMLElement | null>(null);
@@ -136,7 +167,7 @@
   }
 
   function handleClose() {
-    closeModal();
+    modalApi.close();
   }
 
   let closePage = () => {
@@ -183,10 +214,10 @@
         });
       };
       window['onSubmitFail'] = (res) => {
-        createMessage.error((res && res.msg) || '提交表单失败，请稍后再试！');
+        message.error((res && res.msg) || '提交表单失败，请稍后再试！');
       };
       window['onSaveFail'] = (res) => {
-        createMessage.error((res && res.msg) || '保存数据失败，请稍后再试！');
+        message.error((res && res.msg) || '保存数据失败，请稍后再试！');
       };
     });
   }
@@ -223,7 +254,7 @@
       data: formData,
     });
     if (typeof doSubmitResult === 'undefined') {
-      createMessage.error('未找到动作【doSubmitForm】');
+      message.error('未找到动作【doSubmitForm】');
       closeSubmitLoading();
       // return Promise.reject('未找到动作【doSubmitForm】。\n提示：\n1、请在表单中添加【doSubmitForm】动作；\n2、该动作需要返回【Promise.resolve({success: true, msg: \'提交成功\', code: \'100\'})】对象。')
     } else if (doSubmitResult instanceof Promise) {
@@ -237,13 +268,13 @@
               // window.close();
             });
           } else {
-            createMessage.error(res.msg);
+            message.error(res.msg);
             closeSubmitLoading();
           }
         })
         .catch((e) => {
           console.error('调用表单动作【doSubmitForm】出现异常！原因：\n', e);
-          createMessage.error(e.msg || '提交表单异常！');
+          message.error(e.msg || '提交表单异常！');
           closeSubmitLoading();
         });
     } else {
@@ -297,7 +328,7 @@
             closeSubmitLoading();
           });
         } else {
-          createMessage.error(res.msg);
+          message.error(res.msg);
           closeSubmitLoading();
         }
       })
@@ -322,22 +353,22 @@
       } else if (unref(flowBaseInfo).formType === 1) {
         res = await startBizProcess(formData, status);
       } else {
-        createMessage.error('未知的表单类型！');
+        message.error('未知的表单类型！');
       }
       if(res){
         if (res.success) {
           changeSubmitLoading(false);
-          createMessage.success(res.msg);
+          message.success(res.msg);
           // 发起流程成功后关闭
-          closeModal();
+          modalApi.close();
           // 关闭后跳转到我发起的流程页面
-          go({name: 'Launched'});
+          // go({name: 'Launched'});
         } else {
-          createMessage.error(res.msg);
+          message.error(res.msg);
           changeSubmitLoading(false);
         }
       } else {
-        createMessage.error('提交表单失败！');
+        message.error('提交表单失败！');
         changeSubmitLoading(false);
       }
     }catch (e){
@@ -346,7 +377,7 @@
   }
 
   function doBack() {
-    closeModal();
+    modalApi.close();
   }
 
   async function doSimulation() {

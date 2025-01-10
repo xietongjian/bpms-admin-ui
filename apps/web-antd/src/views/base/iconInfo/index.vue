@@ -13,7 +13,7 @@
       <div class="flex flex-col bg-card h-full p-2">
         <div class="h-10 flex flex-row justify-between border border-solid border-b-px border-x-0 border-t-0">
           <span>图标分类</span>
-          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])"
+          <Button v-access:code="PerPrefix+PerEnum.ADD"
                   size="small"
                   @click="handleCreateCategory"
                   type="primary">
@@ -72,7 +72,7 @@
                      @search="onSearch"
         />
         <div>
-          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新建</Button>
+          <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate">新建</Button>
         </div>
       </div>
 
@@ -101,8 +101,9 @@
                 </div>
                 <div class="text-xs text-gray-400">{{ item.sn }}</div>
               </div>
+              <!-- v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE, PerPrefix + PerEnum.DELETE])" -->
               <div
-                v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE, PerPrefix + PerEnum.DELETE])"
+                  v-access:code="[PerPrefix + PerEnum.UPDATE, PerPrefix + PerEnum.DELETE]"
                 class="group-hover:block hidden absolute top-1 right-3 cursor-pointer">
                 <Dropdown>
                   <a class="w-[20px] h-[20px] bg-blue-500/80 rounded-full flex items-center justify-center"
@@ -111,10 +112,10 @@
                   </a>
                   <template #overlay>
                     <Menu>
-                      <MenuItem v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])">
+                      <MenuItem v-access:code="PerPrefix+PerEnum.UPDATE" >
                         <a href="javascript:;" @click="handleEdit(item)">编辑</a>
                       </MenuItem>
-                      <MenuItem v-if="hasAccessByCodes([PerPrefix + PerEnum.DELETE])">
+                      <MenuItem v-access:code="PerPrefix+PerEnum.DELETE" >
                         <Popconfirm
                           title="确定要删除吗？"
                           ok-text="确认"
@@ -172,7 +173,6 @@ import type {Recordable} from '@vben/types';
 
 import {listToTree} from '#/utils/helper/treeHelper';
 import {PerEnum} from "#/enums/perEnum";
-import {useAccess} from '@vben/access';
 
 import IconInfoModal from './IconInfoModal.vue';
 import IconCategoryModal from './IconCategoryModal.vue';
@@ -197,7 +197,6 @@ import {
 } from 'ant-design-vue';
 
 const PerPrefix = "IconInfo:";
-const {hasAccessByCodes} = useAccess();
 
 const MenuItem = Menu.Item;
 

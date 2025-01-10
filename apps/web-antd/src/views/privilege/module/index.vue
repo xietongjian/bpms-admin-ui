@@ -18,7 +18,6 @@ import PValueSettingModal from './ModulePValueModal.vue';
 
 const PerPrefix = "Module:";
 const moduleDrawerRef = ref(), pValueSettingModalRef=ref();
-const {hasAccessByCodes} = useAccess();
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -190,7 +189,7 @@ function createActions(record: Recordable<any>): any[] {
     <BasicTable table-title="列表">
       <template #toolbar-tools>
         <Space>
-          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleAdd">新建</Button>
+          <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleAdd">新建</Button>
         </Space>
       </template>
 

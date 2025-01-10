@@ -17,7 +17,6 @@ import {PerEnum} from '#/enums/perEnum';
 
 const PerPrefix = 'Company:';
 const companyModalRef = ref();
-const {hasAccessByCodes}  = useAccess();
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -155,7 +154,7 @@ function createActions(record: Recordable<any>) {
   <Page auto-content-height>
     <BasicTable >
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>
       <template #action="{ row }">
         <TableAction

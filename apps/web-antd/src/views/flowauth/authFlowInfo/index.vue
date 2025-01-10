@@ -2,7 +2,7 @@
   <Page auto-content-height>
     <BasicTable>
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>
       <template #action="{ row }">
         <TableAction :actions="createActions(row)"/>
@@ -76,7 +76,6 @@ import type {Recordable} from '@vben/types';
 import {Page} from '@vben/common-ui';
 import {Popover, Button, Divider, Space, Tag, message} from 'ant-design-vue';
 import {TableAction} from '#/components/table-action';
-import {useAccess} from '@vben/access';
 
 import {columns, searchFormSchema} from './authFlowInfo.data';
 import AuthFlowInfoModal from './AuthFlowInfoModal.vue';
@@ -84,7 +83,6 @@ import {deleteByIds, getAuthPointListByPage} from '#/api/flowauth/authFlowInfo';
 import {EmpInfo} from '#/views/components/EmpInfo';
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
 
-const {hasAccessByCodes} = useAccess();
 const PerPrefix = "AuthFlowInfo:";
 const authFlowInfoModalRef = ref();
 

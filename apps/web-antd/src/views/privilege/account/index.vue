@@ -13,14 +13,12 @@ import {UserOutlined} from '@ant-design/icons-vue';
 import AccountModal from './account-modal.vue';
 import PasswordModal from './PasswordModal.vue';
 import SetGroupModal from './SetGroupModal.vue';
-import {useAccess} from '@vben/access';
 import {PerEnum} from "#/enums/perEnum";
 import {TableAction} from '#/components/table-action';
 
 const passwordModalRef = ref();
 const setGroupModalRef = ref();
 const accountModalRef = ref();
-const {hasAccessByCodes} = useAccess();
 
 const PerPrefix = 'Account:';
 

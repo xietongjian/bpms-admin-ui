@@ -11,14 +11,10 @@ import {Button, Image, Tag, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import { TableAction } from '#/components/table-action';
 
-import {useAccess} from '@vben/access';
-
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import AppModal from './app-modal.vue';
 import AppSecretKeyModal from './app-secret-key-modal.vue';
 import {deleteByIds, getAppListByPage} from '#/api/base/app';
-
-const {hasAccessByCodes} = useAccess();
 
 const PerPrefix = "App:";
 
@@ -143,7 +139,7 @@ function createActions(row: Recordable<any>) {
   <Page auto-content-height>
     <BasicTable table-title="列表">
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleAdd">新建</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleAdd">新建</Button>
       </template>
 
       <template #image="{ row }">

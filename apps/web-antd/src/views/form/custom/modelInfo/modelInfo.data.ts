@@ -170,6 +170,6 @@ export const modelInfoFormSchema: FormSchema[] = [
     componentProps: {
       getPopupContainer: () => document.body,
     },
-    required: true,
+    rules: 'selectRequired'
   },
 ];

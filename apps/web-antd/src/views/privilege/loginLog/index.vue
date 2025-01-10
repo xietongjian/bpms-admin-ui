@@ -12,10 +12,8 @@ import {columns, searchFormSchema} from './loginLog.data';
 import LoginLogModal from './LoginLogModal.vue';
 import {getLoginLogListByPage, deleteByIds} from '#/api/privilege/loginLog';
 import {PerEnum} from "#/enums/perEnum";
-import {useAccess} from '@vben/access';
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
 
-const {hasAccessByCodes} = useAccess();
 const [modal, contextHolder] = Modal.useModal();
 
 const loginLogModalRef = ref();
@@ -166,7 +164,7 @@ function createActions(row: Recordable<any>): any[] {
   <Page auto-content-height>
     <BasicTable>
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.DELETE])"
+        <Button v-access:code="PerPrefix+PerEnum.DELETE"
                 type="danger"
                 @click="handleDeleteAll"> 删除</Button>
       </template>

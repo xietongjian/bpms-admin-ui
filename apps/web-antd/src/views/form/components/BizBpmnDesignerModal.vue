@@ -220,7 +220,6 @@
   import FlowVariableSetting from '#/views/form/components/FlowVariableSetting.vue';
   import FormDesigner from '#/views/components/form/formMaking/index.vue';
   import BpmnBaseInfo from '#/views/form/components/BpmnBaseInfo.vue';
-  import {useAccess} from '@vben/access';
 
   // import { usePermission } from '@/hooks/web/usePermission';
   import { PerEnum } from '#/enums/perEnum';
@@ -231,7 +230,7 @@
   // import { copyText } from '#/utils/copyTextToClipboard';
   import { getXMLAttribute, updateXMLAttribute } from '#/utils/domUtils';
   // import { useAppStore } from '@/store/modules/app';
-  const {hasAccessByCodes} = useAccess();
+
 
 
   // const appStore = useAppStore();

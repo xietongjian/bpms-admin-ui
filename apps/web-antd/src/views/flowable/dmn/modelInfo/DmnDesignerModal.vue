@@ -59,7 +59,7 @@
           </Col>
           <Col span="8" style="text-align: right">
             <Space>
-              <Popconfirm v-if="hasAccessByCodes([PerPerfix + PerEnum.PUBLISH]) && publishBtnVisibility" @confirm="handlePublish">
+              <Popconfirm v-access:code="PerPrefix+PerEnum.PUBLISH" v-if="publishBtnVisibility" @confirm="handlePublish">
                 <template #title>
                   <div style="max-width: 300px; word-wrap: break-word; white-space: break-spaces">
                     确定要发布【{{ baseModelInfo.name }}】流程吗？
@@ -140,7 +140,6 @@ import {
   Popconfirm,
 } from 'ant-design-vue';
 import {PerEnum} from '#/enums/perEnum';
-import {useAccess} from '@vben/access';
 
 // import { copyText } from '@/utils/copyTextToClipboard';
 // import { Authority } from '@/components/Authority';
@@ -150,7 +149,6 @@ import {apiCategoryFormSchema} from "#/views/base/apiInfo/apiInfo.data";
 // import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
 import {usePreferences} from '@vben/preferences';
 
-const {hasAccessByCodes} = useAccess();
 const PerPrefix = 'Dmn:';
 const {isDark} = usePreferences();
 const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));

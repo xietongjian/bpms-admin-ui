@@ -13,7 +13,7 @@
       >
         <template #rightExtra>
           <div v-if="selectedRowsCount > 0">
-            <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" class="mr-4" type="primary" @click="handleBatchExe">批量执行</Button>
+            <Button v-access:code="PerPrefix+PerEnum.UPDATE" class="mr-4" type="primary" @click="handleBatchExe">批量执行</Button>
           </div>
         </template>
         <TabPane key="timerJob">
@@ -113,7 +113,6 @@
 <script lang="ts" setup>
   import { nextTick, ref } from 'vue';
   import { PerEnum } from '#/enums/perEnum';
-  import {useAccess} from '@vben/access';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
@@ -153,7 +152,6 @@
   const { copy } = useClipboard({ legacy: true });
 
   const PerPrefix = 'ProcessJob:';
-  const {hasAccessByCodes} = useAccess();
 
   const TabPane = Tabs.TabPane;
   const activeKey = ref<string>('timerJob');

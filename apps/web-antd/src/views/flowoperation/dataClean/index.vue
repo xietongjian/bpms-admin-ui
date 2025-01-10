@@ -29,7 +29,7 @@
     <Card class="mt-4" title="通过业务表单Key清理">
       <BizKeyForm/>
       <div class="p-4 pl-[150px] pt-0">
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="cleanByBizKeyLoading" danger
+        <Button v-access:code="PerPrefix+PerEnum.UPDATE" :loading="cleanByBizKeyLoading" danger
                 @click="handleCleanByBizKey"
         >开始清理
         </Button
@@ -40,7 +40,7 @@
     <Card class="mt-4" title="通过流程ProcInstId清理">
       <ProcInstIdForm />
       <div class="p-4 pl-[150px] pt-0">
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])"
+        <Button v-access:code="PerPrefix+PerEnum.UPDATE"
                 :loading="cleanByProcInstIdLoading"
                 danger
                 @click="handleCleanByProcInstId"
@@ -53,7 +53,7 @@
     <Card class="mt-4" title="通过流程ModelKey清理">
       <ModelKeyForm />
       <div class="p-4 pl-[150px] pt-0">
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="cleanByModelKeyLoading" danger
+        <Button v-access:code="PerPrefix+PerEnum.UPDATE" :loading="cleanByModelKeyLoading" danger
                 @click="handleCleanByModelKey"
         >开始清理
         </Button
@@ -64,7 +64,7 @@
     <Card class="mt-4" title="通过流程ModelKey删除流程模板">
       <DeleteModelByModelKeyForm />
       <div class="p-4 pl-[150px] pt-0">
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="deleteModelByModelKeyLoading"
+        <Button v-access:code="PerPrefix+PerEnum.UPDATE" :loading="deleteModelByModelKeyLoading"
                 danger @click="handleDeleteModelByModelKey"
         >开始删除
         </Button
@@ -76,12 +76,12 @@
       <!--      <BasicForm @register="registerModelSyncForm" />-->
       <div class="p-4 pl-[150px] pt-0">
         <Space>
-          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="bpmnModelSyncLoading" danger
+          <Button v-access:code="PerPrefix+PerEnum.UPDATE" :loading="bpmnModelSyncLoading" danger
                   @click="handleBpmnModelSync"
           >同步BPMN
           </Button
           >
-          <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE])" :loading="dmnModelSyncLoading" danger
+          <Button v-access:code="PerPrefix+PerEnum.UPDATE" :loading="dmnModelSyncLoading" danger
                   @click="handleDmnModelSync"
           >同步DMN
           </Button
@@ -101,7 +101,6 @@ import {
 } from './dataClean.data';
 import {Alert, Button, Space, message, Card, Modal, Collapse} from 'ant-design-vue';
 import {Page} from '@vben/common-ui';
-import {useAccess} from '@vben/access';
 import {useVbenForm} from '#/adapter/form';
 
 import {
@@ -116,7 +115,6 @@ import {PerEnum} from '#/enums/perEnum';
 
 const PerPrefix = 'DataClean:';
 
-const {hasAccessByCodes} = useAccess();
 
 const CollapsePanel = Collapse.Panel;
 

@@ -2,7 +2,7 @@
   <Page auto-content-height>
     <BasicTable class="custom-listener-table">
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate"> 新增</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>
       <template #action="{ row }">
         <TableAction :actions="createActions(row)" />
@@ -93,17 +93,15 @@
     </BasicTable>
     <ListenerModal ref="listenerModalRef" @register="registerModal" @success="handleSuccess"/>
     <ListenerPropertiesModal ref="listenerPropertiesModalRef"
-        @register="registerPropertiesModal"
         @success="handleUpdateSecretKeySuccess"
         :closeFunc="handleCloseFunc"
     />
   </Page>
 </template>
 <script lang="ts" setup>
-import {defineComponent, ref, unref, onMounted} from 'vue';
+import {ref, unref, onMounted} from 'vue';
 
 import {PerEnum} from '#/enums/perEnum';
-import {useAccess} from '@vben/access';
 import type {Recordable} from '@vben/types';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
@@ -124,7 +122,7 @@ import {columns, searchFormSchema, propertiesColumns} from './listener.data';
 import {Page} from '@vben/common-ui';
 import ListenerModal from './ListenerModal.vue';
 import ListenerPropertiesModal from './ListenerPropertiesModal.vue';
-import {getCustomPagerModel} from "#/api/form/customForm";
+// import {getCustomPagerModel} from "#/api/form/customForm";
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
 
 
@@ -139,7 +137,6 @@ const expandedRowKeys = ref([]);
 const currentListener = ref<Recordable<any>>({});
 
 const PerPrefix = 'FlowListener:';
-const {hasAccessByCodes} = useAccess();
 
 const listenerModalRef = ref(),
     listenerPropertiesModalRef = ref();

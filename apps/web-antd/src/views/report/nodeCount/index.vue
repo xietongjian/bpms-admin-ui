@@ -19,7 +19,6 @@
 </template>
 <script lang="ts" setup>
   import { nextTick } from 'vue';
-  import {useAccess} from '@vben/access';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
 

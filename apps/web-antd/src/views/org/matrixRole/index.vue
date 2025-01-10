@@ -40,7 +40,6 @@
 </template>
 <script lang="ts" setup>
   import { PerEnum } from '#/enums/perEnum';
-  import {useAccess} from '@vben/access';
   import type {VxeGridProps} from '#/adapter/vxe-table';
   import { defineComponent, ref, unref, onMounted } from 'vue';
   import { Tree, Tag, Button, message } from 'ant-design-vue';

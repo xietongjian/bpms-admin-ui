@@ -16,7 +16,7 @@
     </template>
     <BasicTable class="w-full" >
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="link" @click="handleExportTemplate">导出模板</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="link" @click="handleExportTemplate">导出模板</Button>
 <!--        <ImpExcel v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" @success="loadDataSuccess" dateFormat="xlsx">
           <Button>
             <template #icon>
@@ -180,7 +180,6 @@
   import {ColPage} from '@vben/common-ui';
   // import OrgTree from '#/views/components/leftTree/OrgTree.vue';
   import { ManOutlined, ImportOutlined, WomanOutlined, UserOutlined } from '@ant-design/icons-vue';
-  import {useAccess} from '@vben/access';
 
   import PersonalModal from './PersonalModal.vue';
   // import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
@@ -206,7 +205,6 @@
   // import { useLoading } from '@/components/Loading';
 
   const PerPrefix = 'Personal:';
-  const {hasAccessByCodes} = useAccess();
 
   const personalModalRef = ref();
 

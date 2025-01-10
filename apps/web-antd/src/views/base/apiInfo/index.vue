@@ -21,7 +21,6 @@ import {listToTree} from "#/utils/helper/treeHelper";
 import ApiCategoryModal from "./api-category-modal.vue";
 import ApiInfoDrawer from "./api-info-drawer.vue";
 import {columns, searchFormSchema} from "./apiInfo.data";
-import {useAccess} from '@vben/access';
 
 const selectNodeIds = ref([]);
 const treeLoading = ref(true);
@@ -29,7 +28,6 @@ const treeLoading = ref(true);
 const apiInfoDrawer = ref();
 const apiCategoryModal = ref();
 const PerPrefix = "ApiInfo:";
-const {hasAccessByCodes} = useAccess();
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -303,7 +301,7 @@ function createActions(record: Recordable<any>) {
     </template>
     <BasicTable @register="registerTable" class="!p-0">
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" size="small" type="primary"
+        <Button v-access:code="PerPrefix+PerEnum.ADD" size="small" type="primary"
                 @click="handleCreate">新增
         </Button>
       </template>

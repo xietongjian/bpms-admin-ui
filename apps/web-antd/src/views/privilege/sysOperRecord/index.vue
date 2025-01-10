@@ -7,7 +7,6 @@ import type {Recordable} from '@vben/types';
 import {columns, searchFormSchema} from './sysOperRecord.data';
 import LoginLogModal from './SysOperRecordModal.vue';
 import {getListByPage, deleteByIds} from '#/api/privilege/sysOperRecord';
-import {useAccess} from '@vben/access';
 import {PerEnum} from "#/enums/perEnum";
 import {TableAction} from '#/components/table-action';
 
@@ -16,7 +15,6 @@ import {Page} from '@vben/common-ui';
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
 import {Button, message, Modal} from "ant-design-vue";
 
-const {hasAccessByCodes} = useAccess();
 const [modal, contextHolder] = Modal.useModal();
 
 const loginLogModalRef = ref();
@@ -179,7 +177,7 @@ function handleSuccess() {
   <Page auto-content-height>
     <BasicTable>
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix+PerEnum.DELETE])" type="danger" @click="handleDeleteAll"> 删除</Button>
+        <Button v-access:code="PerPrefix+PerEnum.DELETE" type="danger" @click="handleDeleteAll"> 删除</Button>
       </template>
       <template #action="{ row }">>
         <TableAction :actions="createActions(row)" />

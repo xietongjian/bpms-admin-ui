@@ -78,7 +78,6 @@
 <script lang="ts" setup>
   import { nextTick, createVNode, ref } from 'vue';
   import { PerEnum } from '#/enums/perEnum';
-  import {useAccess} from '@vben/access';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';

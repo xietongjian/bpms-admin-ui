@@ -27,7 +27,6 @@
 </template>
 <script lang="ts" setup>
 import {PerEnum} from '#/enums/perEnum';
-import {useAccess} from '@vben/access';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
 import {BpmnPreviewModal} from '#/views/components/preview';

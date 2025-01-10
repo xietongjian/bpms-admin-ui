@@ -16,8 +16,7 @@
       <BasicTable >
         <template #toolbar-tools >
           <div class="flex flex-row gap-2">
-            <Tooltip
-                v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
+            <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH"
                 placement="bottom">
               <template #title>
                 <span>只有状态为【待发布】的数据才能发布</span>
@@ -30,9 +29,7 @@
                 <Button :disabled="!showPublishBtn" type="primary">发布</Button>
               </Popconfirm>
             </Tooltip>
-            <Tooltip
-                v-if="hasAccessByCodes([PerPrefix + PerEnum.PUBLISH])"
-                placement="bottom">
+            <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH" placement="bottom">
               <template #title>
                 <span>只有状态为【待发布/已发布】的数据才能停用</span>
               </template>
@@ -45,7 +42,7 @@
                 <Button :disabled="!showStopBtn" type="primary" danger>停用</Button>
               </Popconfirm>
             </Tooltip>
-            <template v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])">
+            <template v-access:code="PerPrefix+PerEnum.ADD" >
               <Button type="primary" @click="handleCreate"> 新建 </Button>
               <Button type="primary" @click="handleCopy"> 复制 </Button>
             </template>
@@ -83,7 +80,6 @@
 <script lang="ts" setup>
 import { ref, unref, watch } from 'vue';
 import { PerEnum } from '#/enums/perEnum';
-  import {useAccess} from '@vben/access';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
 
@@ -107,7 +103,6 @@ import type {Recordable} from '@vben/types';
 
   const PerPrefix = 'Custom:';
 
-  const {hasAccessByCodes} = useAccess();
 
   const bpmnDesignerModalRef = ref(),
       copyModelInfoModalRef = ref(),
@@ -433,7 +428,8 @@ import type {Recordable} from '@vben/types';
   }
 
   function handleBpmnDesignerModalSuccess() {
-    tableApi.reload();
+    const {getValues} = tableApi.formApi;
+    tableApi.reload({...getValues(), categoryCode: unref(currentCategory).code});
   }
 
   function changePublishStopBtnShow(status) {
@@ -479,7 +475,7 @@ import type {Recordable} from '@vben/types';
 
   async function handleSelect(node: any) {
     currentCategory.value = node;
-    tableApi.reload({categoryCode: node.code});
+    tableApi.reload({categoryCode: node?.code});
   }
 
   function handleTaskFormSuccess() {

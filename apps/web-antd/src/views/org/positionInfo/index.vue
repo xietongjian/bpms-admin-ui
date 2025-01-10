@@ -10,7 +10,6 @@ import PositionInfoModal from './PositionInfoModal.vue';
 import {Button, Popconfirm, message} from 'ant-design-vue';
 import type {VbenFormProps} from '@vben/common-ui';
 import {ColPage} from '@vben/common-ui';
-import {useAccess} from '@vben/access';
 import {TableAction} from '#/components/table-action';
 
 import {columns, searchFormSchema} from './positionInfo.data';
@@ -18,7 +17,6 @@ import type {Recordable} from '@vben/types';
 
 const PerPrefix = "PositionInfo:";
 const positionInfoModalRef = ref();
-const {hasAccessByCodes} = useAccess();
 
 // const [registerModal, { openModal, setModalProps }] = useModal();
 const currentTreeNode = ref<Recordable<any>>({});
@@ -171,7 +169,7 @@ function createActions(record: Recordable<any>) {
     </template>
     <BasicTable>
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" type="primary" @click="handleCreate">新增</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
