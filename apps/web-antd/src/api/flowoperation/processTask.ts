@@ -100,7 +100,7 @@ export const updateAssignee = (params: any) => {
  */
 export const stopProcess = (params: any) => {
   // /stopProcess/{taskId}/{processInstanceId}
-  return requestClient.post<any>(Api.StopProcess, params , { isReturnNativeResponse: true });
+  return requestClient.post<any>(Api.StopProcess, params, { isTransformResponse: false });
 };
 
 /**

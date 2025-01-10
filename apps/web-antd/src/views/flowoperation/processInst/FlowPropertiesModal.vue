@@ -1,5 +1,5 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" wrapClassName="flow-properties-container ">
+  <BasicModal class="w-[900px]" >
     <Row
       v-if="variableData && variableData.length > 0"
       v-for="item in variableData"
@@ -7,7 +7,7 @@
       align="middle"
       style="margin-bottom: 10px"
     >
-      <Col span="6" class="text-right font-bold text-base"> {{ item.name }}： </Col>
+      <Col span="6" class="text-right font-bold text-base text-ellipsis overflow-hidden"> {{ item.name }}： </Col>
       <Col span="18" class="code-viewer-bg">
         <!--        <pre v-highlight style="margin-bottom:0;"><code class="json">{{item.value||"&nbsp;"}}</code></pre>-->
         <div style="width: 100%; overflow: auto; max-height: 500px">
@@ -21,14 +21,10 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref } from 'vue';
+  import { ref, defineExpose } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
-  import {useVbenForm} from '#/adapter/form';
-
-  // import { BasicModal, useModalInner } from '@/components/Modal';
   import { Row, Col, Empty, message } from 'ant-design-vue';
   import { JsonPreview } from '#/components/CodeEditor';
-
   import { getVariablesByProcessInstanceId } from '#/api/flowoperation/processInst';
 
   const variableData = ref();
@@ -50,10 +46,10 @@
     },
   );*/
 
-
-
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
+    showConfirmButton: false,
+    cancelText: '关闭',
     onCancel() {
       modalApi.close();
     },
@@ -80,6 +76,7 @@
     },
   });
 
+  defineExpose(modalApi)
 </script>
 <style lang="less">
   .code-viewer-bg {

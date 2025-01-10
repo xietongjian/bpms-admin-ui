@@ -12,15 +12,15 @@ enum Api {
  * @param params
  */
 export const queryDeadLetterJobPagerModel = (params: any) => {
-  console.log('queryDeadLetterJobPagerModel...', params);
-
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { query, entity };
+  // console.log('queryDeadLetterJobPagerModel...', params);
+  //
+  // const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
+  // const entity = params || {};
+  // if (entity) {
+  //   delete entity['pageNum'];
+  //   delete entity['pageSize'];
+  // }
+  // const queryParam = { query, entity };
   return requestClient.post(Api.QueryDeadLetterJobPagerModel, params);
 };
 
@@ -30,7 +30,7 @@ export const queryDeadLetterJobPagerModel = (params: any) => {
  */
 export const queryTimerJobPagerModel = (params: any) => {
   console.log('queryTimerJobPagerModel...', params);
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
+  /*const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
   const entity = params || {};
   if (entity) {
     delete entity['pageNum'];
@@ -44,8 +44,8 @@ export const queryTimerJobPagerModel = (params: any) => {
     delete entity['order'];
   } else {
     query['sqlOrderBy'] = { 't1.START_TIME_': 'DESC' };
-  }
-  const queryParam = { query, entity };
+  }*/
+  // const queryParam = { query, entity };
   return requestClient.post(Api.QueryTimerJobPagerModel, params);
 };
 
@@ -56,8 +56,8 @@ export const queryTimerJobPagerModel = (params: any) => {
  */
 export const getJobsCount = () => {
   return Promise.all([
-    queryTimerJobPagerModel({ pageNum: 1, pageSize: 0 }),
-    queryDeadLetterJobPagerModel({ pageNum: 1, pageSize: 0 }),
+    queryTimerJobPagerModel({query:{ pageNum: 1, pageSize: 0}, entity: {} }),
+    queryDeadLetterJobPagerModel({query: { pageNum: 1, pageSize: 0 }, entity: {}}),
   ]).then((res) => {
     return Promise.resolve({ timerJobCount: res[0].total, deadLetterJobCount: res[1].total });
   });
@@ -70,7 +70,7 @@ export const getJobsCount = () => {
  */
 export const moveDeadLetterJobToExecutableJobByJobIds = (jobIds: any) => {
   return requestClient.post<any>(Api.MoveDeadLetterJobToExecutableJobByJobIds, jobIds,
-    { isReturnNativeResponse: true },
+    { isTransformResponse: false },
   );
 };
 

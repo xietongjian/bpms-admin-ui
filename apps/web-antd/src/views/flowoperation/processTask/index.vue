@@ -27,7 +27,7 @@
         <div class="text-right">
           <Space>
             <EmpInfo :no="row.assignee" :name="row.assigneeName" />
-            <Button v-access:code="PerPrefix + PerEnum.UPDATE" size="small" type="error" @click="handleChangeAssignee(row)">变更</Button>
+            <Button v-access:code="PerPrefix + PerEnum.UPDATE" size="small" danger @click="handleChangeAssignee(row)">变更</Button>
           </Space>
         </div>
       </template>
@@ -61,7 +61,7 @@
       @register="registerPersonalModal"
       @change="handleSettingPersonalSuccess"
     />
-    <FlowPropertiesModal ref="flowPropertiesModalRef" @register="registerFlowPropertiesModal" />
+    <FlowPropertiesModal ref="flowPropertiesModalRef" />
     <ApproveHistoryModal ref="approveHistoryModalRef" @register="registerApproveHistoryModal" />
     <ProcessFormModal ref="processFormModalRef"
       @register="registerProcessFormModal"
@@ -170,15 +170,15 @@
 
 
   const formOptions: VbenFormProps = {
-    showCollapseButton: false,
+    showCollapseButton: true,
+    collapsed: true,
     submitOnEnter: true,
     commonConfig: {
-      labelWidth: 60,
+      labelWidth: 80,
     },
-    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-    actionWrapperClass: 'col-span-2 col-start-3 text-left ml-4',
+    collapsedRows: 1,
     resetButtonOptions: {
-      show: false,
+      show: true,
     },
     schema: searchFormSchema,
   };
@@ -257,8 +257,6 @@
   });
 
   async function handleExe(record: Recordable<any>) {
-    tableApi.setLoading(true);
-
     try {
       const {success, msg} = await completeBackStage({taskId: record.taskId, processInstanceId: record.processInstanceId});
       if (success) {
@@ -268,8 +266,8 @@
         message.error(msg);
       }
     } catch (e) {
+      console.error(e);
     } finally {
-      tableApi.setLoading(false);
     }
   }
 
@@ -283,27 +281,27 @@
       okButtonProps: {
         danger: true,
       },
-      onOk() {
-        openFullLoading();
-        stopProcess({ taskId: record.taskId, processInstanceId: record.processInstanceId })
-          .then((res) => {
-            const { data } = res;
-            if (data.success) {
-              message.success(data.msg);
-              tableApi.reload();
-            } else {
-              message.error(data.msg);
-            }
-          })
-          .finally(() => {
-            closeFullLoading();
-          });
+      async onOk() {
+        const {success, msg} = await stopProcess({
+          taskId: record.taskId,
+          processInstanceId: record.processInstanceId
+        });
+        if (success) {
+          message.success(msg, 0.5,() => tableApi.reload());
+        } else {
+          message.error(msg);
+        }
       },
     });
   }
 
   function handleViewApproveHistory(record: Recordable<any>) {
-    openApproveHistoryModal(true, {
+    approveHistoryModalRef.value.setData(record);
+    approveHistoryModalRef.value.open();
+    approveHistoryModalRef.value.setState({
+      title: `查看流程【${record.formName}】的审批记录`,
+    });
+    /*openApproveHistoryModal(true, {
       record,
       isUpdate: true,
     });
@@ -313,7 +311,7 @@
       title: `查看流程【${record.formName}】的审批记录`,
       showOkBtn: false,
       cancelText: '关闭',
-    });
+    });*/
   }
 
   function handleViewForm(record: Recordable<any>) {
@@ -332,7 +330,12 @@
   }
 
   function handleViewFlowProperties(record: Recordable<any>) {
-    openFlowPropertiesModal(true, {
+    flowPropertiesModalRef.value.setData(record);
+    flowPropertiesModalRef.value.open();
+    flowPropertiesModalRef.value.setState({
+      title: `查看流程【${record.formName}】的变量`,
+    });
+    /*openFlowPropertiesModal(true, {
       record,
     });
     setFlowPropertiesModalProps({
@@ -341,7 +344,7 @@
       showOkBtn: false,
       centered: true,
       cancelText: '关闭',
-    });
+    });*/
   }
 
   function handlePreview(record: Recordable<any>) {

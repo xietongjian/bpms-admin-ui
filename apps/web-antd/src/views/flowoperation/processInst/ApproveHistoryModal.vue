@@ -6,8 +6,6 @@
 <script lang="ts" setup>
   import { ref } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
-  import {useVbenForm} from '#/adapter/form';
-  import {message} from 'ant-design-vue';
   import ApproveHistoryList from '#/views/components/process/ApproveHistoryList.vue';
 
   import { getCommentInfosByProcessInstanceId } from '#/api/flowable/bpmn/modelInfo';
@@ -35,6 +33,8 @@
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
+    showConfirmButton: false,
+    cancelText: '关闭',
     onCancel() {
       modalApi.close();
     },

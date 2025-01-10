@@ -107,7 +107,7 @@ const formOptions: VbenFormProps = {
     labelWidth: 60,
   },
   wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  actionWrapperClass: 'col-span-2 col-start-3 text-left ml-4',
   resetButtonOptions: {
     show: false,
   },
@@ -188,6 +188,7 @@ function createActions(record: Recordable<any>) {
       label: '',
       popConfirm: {
         title: '确认发布吗?',
+        placement: 'left',
         confirm: handlePublish.bind(null, record),
       },
       ifShow: status === 2,

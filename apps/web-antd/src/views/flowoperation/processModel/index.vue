@@ -35,19 +35,19 @@
     publishBpmn,
     stopBpmn,
   } from '#/api/flowable/bpmn/modelInfo';
-  import { PageWrapper } from '@/components/Page';
+  // import { PageWrapper } from '@/components/Page';
   import FlowCategoryTree from '#/views/components/leftTree/FlowCategoryTree.vue';
 
-  import { useModal } from '@/components/Modal';
+  // import { useModal } from '@/components/Modal';
   import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
   import { getAll } from '#/api/base/app';
   import { columns, searchFormSchema } from './modelInfo.data';
   import {Button, message} from 'ant-design-vue'
 
-  const [
+/*  const [
     registerBpmnPreviewModal,
     { openModal: openBpmnPreviewModal, setModalProps: ssetBpmnPreviewProps },
-  ] = useModal();
+  ] = useModal();*/
 
   const currentCategory = ref<Recordable>({});
   const loadingRef = ref(false);

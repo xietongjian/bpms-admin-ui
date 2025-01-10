@@ -2,6 +2,7 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
+import {getAll} from "#/api/base/app";
 
 export const timerJobColumns: VxeGridProps['columns'] = [
   {
@@ -73,6 +74,7 @@ export const timerJobColumns: VxeGridProps['columns'] = [
 
 export const deadLetterJobColumns: VxeGridProps['columns'] = [
   {
+    type: 'checkbox',
     title: '流程标题',
     field: 'processName',
     align: 'left',
@@ -167,9 +169,14 @@ export const searchFormSchema: FormSchema[] = [
   {
     fieldName: 'tenantId',
     label: '系统',
-    component: 'Select',
+    component: 'ApiSelect',
     componentProps: {
-      class: 'w-full'
+      class: 'w-full',
+      api: getAll,
+      fieldNames: {
+        value: 'sn',
+        label: 'name'
+      },
     }
   },
 ];

@@ -110,6 +110,7 @@ export const searchFormSchema: FormSchema[] = [
     label: '系统',
     component: 'ApiSelect',
     componentProps: {
+      class: 'w-full',
       api: getAll,
       fieldNames: {
         value: 'sn',

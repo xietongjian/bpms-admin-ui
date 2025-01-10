@@ -215,12 +215,11 @@
     collapsed: true,
     submitOnEnter: true,
     commonConfig: {
-      labelWidth: 60,
+      labelWidth: 80,
     },
-    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+    collapsedRows: 1,
     resetButtonOptions: {
-      show: false,
+      show: true,
     },
     schema: searchFormSchema,
   };

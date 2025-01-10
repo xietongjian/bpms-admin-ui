@@ -96,7 +96,7 @@ export const columns: VxeGridProps['columns'] = [
     fixed: 'right',
     slots: {default: 'action'},
     title: '操作',
-    width: 120,
+    width: 150,
   },
 ];
 
@@ -108,12 +108,6 @@ export const searchFormSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入流程标题',
     },
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   {
     fieldName: 'name',
@@ -121,12 +115,6 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入流程标题',
-    },
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
     },
   },
   {
@@ -136,12 +124,6 @@ export const searchFormSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入业务表单编号',
     },
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   {
     fieldName: 'processInstanceId',
@@ -150,12 +132,6 @@ export const searchFormSchema: FormSchema[] = [
     componentProps: {
       placeholder: '请输入流程实例ID',
     },
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   {
     fieldName: 'userCode',
@@ -163,12 +139,6 @@ export const searchFormSchema: FormSchema[] = [
     component: 'PersonalSelector',
     componentProps: {
       placeholder: '请选择待办人',
-    },
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
     },
   },
   {
@@ -181,12 +151,6 @@ export const searchFormSchema: FormSchema[] = [
         value: 'sn',
         label: 'name'
       },
-    },
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
     },
   },
 ];
@@ -206,7 +170,7 @@ export const formSchema: FormSchema[] = [
     label: '名称',
     required: true,
     component: 'Input',
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -216,7 +180,7 @@ export const formSchema: FormSchema[] = [
         max: 32,
         message: '字符长度不能大于32！',
       },
-    ],
+    ],*/
   },
   {
     fieldName: 'sn',
