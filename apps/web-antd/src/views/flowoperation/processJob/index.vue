@@ -6,14 +6,16 @@
     <ProcInstJobTable>
       <template #toolbar-actions>
         <RadioGroup v-model:value="jobType" button-style="solid" @change="handleChangeJobType">
-          <RadioButton value="timer">
-            延时队列
-            <Badge :overflow-count="99999999" :count="dataCount.timerJobCount" />
-          </RadioButton>
-          <RadioButton value="deadLetter">
-            死信队列
-            <Badge :overflow-count="99999999" :count="dataCount.deadLetterJobCount" />
-          </RadioButton>
+          <Badge class="z-10" :overflow-count="99999999" :number-style="{ backgroundColor: '#52c41a' }" :count="dataCount.timerJobCount" >
+            <RadioButton value="timer">
+              延时队列
+            </RadioButton>
+          </Badge>
+          <Badge :overflow-count="99999999" :count="dataCount.deadLetterJobCount">
+            <RadioButton value="deadLetter">
+              死信队列
+            </RadioButton>
+          </Badge>
         </RadioGroup>
       </template>
       <template #toolbar-tools>
@@ -139,6 +141,7 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
+          selectedRowsCount.value = 0;
           const params = {
             query: {
               pageNum: page.currentPage,
@@ -251,19 +254,22 @@
   }
 
   function handleBatchExe() {
-    const selectedRows = getSelectRows();
+    const selectedRows = tableApi.grid.getCheckboxRecords();
     if (selectedRows && selectedRows.length <= 0) {
       message.warn('请选择行！');
       return;
     }
-    createConfirm({
+    Modal.confirm({
       iconType: 'warning',
       title: '提示',
       content: '确定要执行所选行吗？',
       onOk: async () => {
         const ids = selectedRows.map((item) => item.id);
-        batchExe(ids);
+        await batchExe(ids);
       },
+      okButtonProps: {
+        danger: true,
+      }
     });
   }
 
@@ -275,7 +281,7 @@
     approveHistoryModalRef.value.setData(record);
     approveHistoryModalRef.value.open();
     approveHistoryModalRef.value.setState({
-      title: `查看流程【${record.formName}】的审批记录`,
+      title: `查看流程【${record.processName}】的审批记录`,
     });
   }
 
@@ -283,7 +289,7 @@
     flowPropertiesModalRef.value.setData(record);
     flowPropertiesModalRef.value.open();
     flowPropertiesModalRef.value.setState({
-      title: `查看流程【${record.formName}】的变量`,
+      title: `查看流程【${record.processName}】的变量`,
     });
   }
 

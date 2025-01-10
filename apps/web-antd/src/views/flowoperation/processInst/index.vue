@@ -1,7 +1,7 @@
 <template>
   <Page auto-content-height>
     <BasicTable class="proc-inst-table" @register="registerTable">
-      <template #toolbar-tools>
+      <template #toolbar-actions>
         <Segmented
           class="data-type-switch"
           @change="handleReload"
@@ -11,6 +11,14 @@
             { value: 'history', label: '全部实例' },
           ]"
         />
+        <RadioGroup v-model:value="procInstType" button-style="solid" @change="handleChangeProcInstType">
+          <RadioButton value="running">
+            运行中实例
+          </RadioButton>
+          <RadioButton value="history">
+            全部实例
+          </RadioButton>
+        </RadioGroup>
       </template>
       <template #action="{row}">
         <TableAction
@@ -110,7 +118,7 @@
   } from '@ant-design/icons-vue';
   // import { copyText } from '@/utils/copyTextToClipboard';
   import ProcessFormModal from '../processTask/ProcessFormModal.vue';
-  import { Modal, Tooltip, Segmented, Badge, message, Button } from 'ant-design-vue';
+  import {Modal, Tooltip, Segmented, Badge, message, Button, RadioButton, RadioGroup} from 'ant-design-vue';
   // import { useModal } from '@/components/Modal';
   // import { useRequest } from '@vben/hooks';
 
@@ -118,6 +126,9 @@
   // import { useLoading } from '@/components/Loading';
   import ProcessVariablesModal from '#/views/flowoperation/processInst/ProcessVariablesModal.vue';
   import {getCustomPagerModel} from "#/api/form/customForm";
+  import {deadLetterJobColumns, timerJobColumns} from "#/views/flowoperation/processJob/processJob.data";
+
+  const procInstType = ref('running');
 
   const approveHistoryModalRef = ref(),
       flowPropertiesModalRef = ref(),
@@ -242,7 +253,7 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
-          currentModelInfo.value = {};
+          // currentModelInfo.value = {};
           return await findProcessinstancesPagerModel({
             query: {
               pageNum: page.currentPage,
@@ -257,7 +268,7 @@
 
   const gridEvents: VxeGridListeners = {
     radioChange: ({row}) => {
-      clickRow(row);
+      // clickRow(row);
     }
   };
 
@@ -275,6 +286,11 @@
       ]);
     });
   });
+
+  async function handleChangeProcInstType(e: Event) {
+    const values = await tableApi?.formApi.getValues();
+    tableApi.reload(values);
+  }
 
   function handleViewForm(record: Recordable<any>) {
     processFormModalRef.value.setData(record);
@@ -509,7 +525,7 @@
   function getTableDownActions(record) {
     const actions = [
       {
-        auth: 'ProcessInst:' + PerEnum.UPDATE,
+        auth: ['ProcessInst:' + PerEnum.UPDATE],
         icon: 'ant-design:stop-twotone',
         label: '终止',
         danger: true,
@@ -517,7 +533,7 @@
         onClick: () => handleStop(record),
       },
       {
-        auth: 'ProcessInst:' + PerEnum.UPDATE,
+        auth: ['ProcessInst:' + PerEnum.UPDATE],
         ifShow: record.suspensionState !== null,
         icon:
           record.suspensionState === 1
@@ -531,28 +547,28 @@
 
     if (procInstDataType.value === 'running') {
       actions.push({
-        auth: 'ProcessInst:' + PerEnum.UPDATE,
+        auth: ['ProcessInst:' + PerEnum.UPDATE],
         icon: 'clarity:fast-forward-line',
         label: '执行',
         danger: true,
         onClick: () => execute(record),
       });
       actions.push({
-        auth: 'ProcessInst:' + PerEnum.UPDATE,
+        auth: ['ProcessInst:' + PerEnum.UPDATE],
         icon: 'ant-design:rollback-outlined',
         label: '干预',
         danger: true,
         onClick: () => handleIntervention(record),
       });
       actions.push({
-        auth: 'ProcessInst:' + PerEnum.UPDATE,
+        auth: ['ProcessInst:' + PerEnum.UPDATE],
         icon: 'ant-design:branches-outlined',
         label: '切换版本',
         danger: true,
         onClick: () => handleChangeVersion(record),
       });
       actions.push({
-        auth: 'ProcessInst:' + PerEnum.UPDATE,
+        auth: ['ProcessInst:' + PerEnum.UPDATE],
         icon: 'clarity:code-outline-badged',
         label: '变量补偿',
         danger: true,
@@ -562,7 +578,7 @@
 
     if (record.endTime) {
       actions.push({
-        auth: 'ProcessInst:' + PerEnum.UPDATE,
+        auth: ['ProcessInst:' + PerEnum.UPDATE],
         icon: 'ant-design:medicine-box-outlined',
         tooltip: '复活',
         label: '复活',
