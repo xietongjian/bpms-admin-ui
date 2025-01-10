@@ -69,15 +69,15 @@ function visibleChange(visible) {
   <Popover
     :z-index="2001"
     v-if="!!name"
-    @visible-change="visibleChange"
+    @open-change="visibleChange"
     title="人员信息"
     trigger="hover"
   >
     <template #content>
       <Spin :spinning="spinning">
-        <div class="emp-info-container">
+        <div class="w-[300px] emp-info-container">
           <Descriptions size="small" :column="1">
-            <DescriptionsItem label="" style="text-align: center" class="emp-header-box text-center">
+            <DescriptionsItem label="" class="emp-header-box text-center">
               <Avatar
                 v-if="empBaseInfo.headImg"
                 :src="empBaseInfo.headImg"
@@ -119,9 +119,8 @@ function visibleChange(visible) {
 </template>
 
 
-<style lang="less">
+<style lang="scss">
   .emp-info-container {
-    width: 300px;
     .emp-header-box {
       position: absolute;
       right: 0;

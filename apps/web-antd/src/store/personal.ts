@@ -11,7 +11,6 @@ export const usePersonalStore = defineStore('personal', () => {
   );
 
   function getPersonalInfo(personalCode: string): any {
-    debugger;
     if (!personalCode) return null;
     // 这里拿到的就不可能为空了
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

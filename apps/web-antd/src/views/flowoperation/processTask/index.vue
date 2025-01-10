@@ -256,21 +256,21 @@
     });*/
   });
 
-  function handleExe(record: Recordable<any>) {
-    // openFullLoading();
-    completeBackStage({ taskId: record.taskId, processInstanceId: record.processInstanceId })
-      .then((res) => {
-        const { data } = res;
-        if (data.success) {
-          message.success(data.msg);
-          tableApi.reload();
-        } else {
-          message.error(data.msg);
-        }
-      })
-      .finally(() => {
-        closeFullLoading();
-      });
+  async function handleExe(record: Recordable<any>) {
+    tableApi.setLoading(true);
+
+    try {
+      const {success, msg} = await completeBackStage({taskId: record.taskId, processInstanceId: record.processInstanceId});
+      if (success) {
+        message.success(msg);
+        tableApi.reload();
+      } else {
+        message.error(msg);
+      }
+    } catch (e) {
+    } finally {
+      tableApi.setLoading(false);
+    }
   }
 
   function handleStop(record: Recordable<any>) {

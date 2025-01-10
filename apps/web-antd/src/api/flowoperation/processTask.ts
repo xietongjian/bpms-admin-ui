@@ -81,9 +81,8 @@ export const saveOrUpdateReadInfo = (params: any) => {
  * @param params
  */
 export const completeBackStage = (params: any) => {
-  // /completeBackStage/{taskId}/{processInstanceId}
   return requestClient.post<any>(Api.CompleteBackStage + '/' + params.taskId + '/' + params.processInstanceId, { },
-    { isReturnNativeResponse: true },
+    { isTransformResponse: false },
   );
 };
 
