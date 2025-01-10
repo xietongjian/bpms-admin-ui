@@ -30,7 +30,7 @@ export const apiTesting = (params: any) => {
   if(/^http/.test(params.url)){
     return axios.request(reqConfig);
   }
-  return requestClient.request(params.url, reqConfig, { isTransformResponse: false });
+  return requestClient.request(params.url, reqConfig);
 };
 
 export const getApiInfoListByPage = (params: any) => {

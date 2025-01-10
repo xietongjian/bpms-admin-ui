@@ -4,6 +4,7 @@ import { ref, watchEffect } from 'vue'
 import { Codemirror } from 'vue-codemirror'
 import { vue } from '@codemirror/lang-vue'
 import { markdown } from '@codemirror/lang-markdown'
+import { json } from '@codemirror/lang-json'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { usePreferences } from '@vben/preferences';
 
@@ -30,7 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
   indentWithTab: true,
   tabSize: 2
 })
-const extensions = props.dark || isDark ? [markdown(), vue(), oneDark] : [markdown(), vue()]
+const extensions = props.dark || isDark ? [markdown(), vue(), json(), oneDark] : [markdown(), vue(), json()]
 const codeValue = ref('')
 watchEffect(() => {
   codeValue.value = props.code
@@ -46,6 +47,9 @@ function onChange (value: string, viewUpdate: any) {
 }
 function onBlur (viewUpdate: any) {
   emits('blur', viewUpdate)
+}
+function onFocus (viewUpdate: any) {
+  emits('focus', viewUpdate)
 }
 </script>
 <template>

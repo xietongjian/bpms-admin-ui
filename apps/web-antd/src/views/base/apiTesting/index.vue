@@ -26,13 +26,13 @@
         <template #icon="item">
           <FolderOpenOutlined v-if="item.type === 'category'" style="color: #105bfe;"/>
           <span v-else>
-                <ApiOutlined style="color: green;"/>
-              </span>
+            <ApiOutlined style="color: green;"/>
+          </span>
         </template>
       </Tree>
     </template>
     <div class="h-full">
-      <ScrollContainer v-if="!!currentNode" class="bg-card">
+      <div v-if="!!currentNode" class="bg-card h-full overflow-y-auto">
         <div class="">
           <Alert type="success">
             <template #message>
@@ -68,6 +68,8 @@
               <QueryVariableForm />
             </TabPane>
             <TabPane key="requestBody" tab="请求体" v-if="currentNode.requestBody">
+              aaa{{currentNode.requestBody}}<br/>
+              bbb{{requestBody}}<br/>
               <CodeEditor v-model:value="requestBody" :mode="MODE.JSON"/>
             </TabPane>
           </Tabs>
@@ -91,7 +93,7 @@
             </TabPane>
           </Tabs>
         </div>
-      </ScrollContainer>
+      </div>
       <div v-else class="h-full flex items-center justify-center bg-card">
         <h3 class="font-bold">请选择一个API进行调试</h3>
       </div>
@@ -105,20 +107,11 @@ import {apiTesting, getApiInfoTreeData} from '#/api/base/apiInfo';
 import {Page} from '@vben/common-ui';
 import {Alert, Button, Tree, Col, Row, Space, Tabs, Tag} from 'ant-design-vue';
 import {CodeEditor, MODE} from '#/components/CodeEditor';
-// import {BasicForm, useForm} from '@/components/Form';
 import {ColPage} from '@vben/common-ui';
-
-// import SplitPane from '#/views/components/splitPane/index.vue';
 import {headerFormSchema, pathVariableFormSchema, queryVariableFormSchema} from './apiInfo.data';
-// import {BasicTree, TreeItem} from "@/components/Tree";
-// import {useDrawer} from "@/components/Drawer";
-// import ApiTestingDrawer from './ApiTestingDrawer.vue';
-// import ScrollContainer from "@/components/Container/src/ScrollContainer.vue";
 import {forEach, listToTree} from "#/utils/helper/treeHelper";
-// import {useLoading} from '@/components/Loading';
 import {ApiOutlined, FolderOpenOutlined} from '@ant-design/icons-vue';
 import {useVbenForm} from "#/adapter/form";
-import CompanyTree from "#/views/components/leftTree/CompanyTree.vue";
 
 const treeLoading = ref(true);
 const apiTestingErrorMsg = ref("");
@@ -249,36 +242,45 @@ async function fetchApiInfoTreeData() {
 async function initApiTestingInfo() {
   activeParamKey.value = "";
   const apiInfo = unref(currentNode);
+  const {setState: resetHeaderSchema } = headerFormApi;
+  const {setState: resetPathVariableSchema } = pathVariableFormApi;
+  const {setState: resetQueryVariableSchema } = queryVariableFormApi;
   if (apiInfo) {
     if (apiInfo.headers && apiInfo.headers.length > 0) {
+      debugger;
       apiInfo.headers.forEach(item => {
         item.colProps = {span: 12};
         item.component = 'Input';
+        item.fieldName = item.field;
       });
-      await resetHeaderSchema(apiInfo.headers);
+      await resetHeaderSchema({schema: apiInfo.headers});
       activeParamKey.value = "header";
     }
     if (apiInfo.pathVariables && apiInfo.pathVariables.length > 0) {
       apiInfo.pathVariables.forEach(item => {
         item.colProps = {span: 12};
         item.component = 'Input';
-        item.required = true;
+        item.rules = 'required';
+        item.fieldName = item.field;
       });
-      await resetPathVariableSchema(apiInfo.pathVariables);
+      await resetPathVariableSchema({schema: apiInfo.pathVariables});
       activeParamKey.value = unref(activeParamKey) || "pathVariables";
     }
     if (apiInfo.queryVariables && apiInfo.queryVariables.length > 0) {
       apiInfo.queryVariables.forEach(item => {
         item.colProps = {span: 12};
         item.component = 'Input';
+        item.fieldName = item.field;
       });
-      await resetQueryVariableSchema(apiInfo.queryVariables);
+      await resetQueryVariableSchema({schema: apiInfo.queryVariables});
       activeParamKey.value = unref(activeParamKey) || "queryVariables";
     }
 
     if (apiInfo.requestBody) {
       requestBody.value = apiInfo.requestBody;
       activeParamKey.value = unref(activeParamKey) || "requestBody";
+    } else {
+      requestBody.value = '';
     }
     if (apiInfo.responseBodyCase) {
       responseBodyCase.value = apiInfo.responseBodyCase;
@@ -302,7 +304,9 @@ async function handleTesting() {
     let headerFieldsValue = undefined;
     if (currentApi.headers && currentApi.headers.length > 0) {
       try {
-        headerFieldsValue = await validateHeader();
+        const {valid} = await headerFormApi.validate();
+        if(!valid) return;
+        headerFieldsValue = await headerFormApi.getValues();
       } catch (e) {
         activeParamKey.value = 'header';
         return;
@@ -312,7 +316,10 @@ async function handleTesting() {
     let pathVariableFieldsValue = undefined;
     if (currentApi.pathVariables && currentApi.pathVariables.length > 0) {
       try {
-        pathVariableFieldsValue = await validatePathVariable();
+        const {valid} = await pathVariableFormApi.validate();
+        if(!valid) return;
+
+        pathVariableFieldsValue = await pathVariableFormApi.getValues();
       } catch (e) {
         activeParamKey.value = 'pathVariable';
         return;
@@ -322,7 +329,10 @@ async function handleTesting() {
     let queryVariableFieldsValue = undefined;
     if (currentApi.queryVariables && currentApi.queryVariables.length > 0) {
       try {
-        queryVariableFieldsValue = await validateQueryVariable();
+        const {valid} = await queryVariableFormApi.validate();
+        if(!valid) return;
+
+        queryVariableFieldsValue = await queryVariableFormApi.getValues();
       } catch (e) {
         activeParamKey.value = 'queryVariable';
         return;
@@ -336,6 +346,8 @@ async function handleTesting() {
       } catch (e) {
         activeParamKey.value = 'requestBody';
       }
+    } else {
+
     }
 
     const queryVariables = queryVariableFieldsValue || {};
@@ -348,7 +360,7 @@ async function handleTesting() {
     }
 
     // 组装路径上面的参数
-    openFullLoading();
+    // openFullLoading();
     const {data, status} = await apiTesting({
       url: url,
       method: currentApi.method,
@@ -361,16 +373,17 @@ async function handleTesting() {
 
     }
     responseBody.value = data;
-    closeFullLoading();
+    // closeFullLoading();
   } catch (e) {
     console.log(e);
     apiTestingErrorMsg.value = e;
-    closeFullLoading();
+    // closeFullLoading();
   }
 }
 
 async function handleSelect(node: any, e: any) {
   const selectedNode = e.selectedNodes[0];
+debugger;
   apiTestingErrorMsg.value = '';
   if (selectedNode) {
     if (selectedNode.type === 'api') {
@@ -402,7 +415,6 @@ async function handleSelect(node: any, e: any) {
         queryVariables: !!queryVariables ? JSON.parse(queryVariables) : [],
         requestBody,
       };
-      debugger;
       currentNode.value = apiInfo;
       await nextTick();
       setTimeout(() => {

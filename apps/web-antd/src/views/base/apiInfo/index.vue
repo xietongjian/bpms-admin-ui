@@ -14,7 +14,7 @@ import {
   getApiInfoListByPage
 } from '#/api/base/apiInfo';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons-vue";
-import {Button, message, Popconfirm, Tooltip, Tree} from "ant-design-vue";
+import {Button, Row, message, Popconfirm, Tooltip, Tree} from "ant-design-vue";
 import {TableAction} from '#/components/table-action';
 import {listToTree} from "#/utils/helper/treeHelper";
 
@@ -25,8 +25,6 @@ import {columns, searchFormSchema} from "./apiInfo.data";
 const selectNodeIds = ref([]);
 const treeLoading = ref(true);
 
-const apiInfoDrawer = ref();
-const apiCategoryModal = ref();
 const PerPrefix = "ApiInfo:";
 
 const formOptions: VbenFormProps = {
@@ -168,14 +166,13 @@ async function handleDeleteCategory(node: any) {
     } else {
       message.error(msg);
     }
-
   } finally {
     // closeFullLoading();
   }
 }
 
 function handleCreate() {
-  apiInfodrawerRef.value.setData({categoryId: unref(currentNode)?.id});
+  apiInfoDrawerRef.value.setData({categoryId: unref(currentNode)?.id});
   apiInfoDrawerRef.value.open();
   apiInfoDrawerRef.value.setState({
     title: "新增接口",
