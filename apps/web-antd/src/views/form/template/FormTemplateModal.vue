@@ -1,5 +1,6 @@
 <template>
   <BasicModal
+    class="w-[1000px]"
     v-bind="$attrs"
     @ok="handleSubmit"
     :wrapperFooterOffset="50"
@@ -157,7 +158,7 @@
     initFormCategoryTree();
     if (id) {
       saveLoading.value = true;
-      changeLoading(true);
+      // changeLoading(true);
       getFormTemplateById(id)
         .then((res) => {
           const formJson = typeof res.formJson === 'string' ? JSON.parse(res.formJson): res.formJson;
@@ -168,7 +169,7 @@
         })
         .finally(() => {
           saveLoading.value = false;
-          changeLoading(false);
+          // changeLoading(false);
         });
     } else {
       formName.value = '';

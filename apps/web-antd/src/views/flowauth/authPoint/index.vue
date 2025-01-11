@@ -7,6 +7,11 @@
       <template #action="{ row }">
         <TableAction :actions="createActions(row)" />
       </template>
+      <template #ifDefault="{ row }">
+        <Tag :color="row.ifDefault ? 'green' : 'default'">
+          {{ row.ifDefault ? '是' : '否' }}
+        </Tag>
+      </template>
     </BasicTable>
     <AuthPointModal ref="authPointModalRef" @success="handleSuccess" />
   </Page>
@@ -22,9 +27,9 @@
   import AuthPointModal from './AuthPointModal.vue';
   import { getAuthPointListByPage, deleteByIds } from '#/api/flowauth/authPoint';
   import {TableAction} from '#/components/table-action';
-  import {getAccountPageList} from "#/api/privilege/account";
   import {useVbenVxeGrid} from "#/adapter/vxe-table";
   import {Button, message} from 'ant-design-vue';
+  import {Tag} from 'ant-design-vue';
 
   const PerPrefix = 'AuthPoint:';
 
@@ -61,12 +66,12 @@
     commonConfig: {
       labelWidth: 60,
     },
+    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
     actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
     resetButtonOptions: {
       show: false,
     },
     schema: searchFormSchema,
-    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
   };
 
   const gridOptions: VxeGridProps<any> = {
@@ -113,7 +118,7 @@
           confirm: handleDelete.bind(null, row),
           placement: 'left',
           okButtonProps: {
-            danager: true,
+            danger: true,
           }
         },
       },
@@ -136,15 +141,16 @@
     });
   }
 
-  function handleDelete(record: Recordable<any>) {
-    deleteByIds({ id: record.id }).then(() => {
-      tableApi.reload();
-    });
+  async function handleDelete(record: Recordable<any>) {
+    const {success, msg} = await deleteByIds({ id: record.id });
+    if (success) {
+      message.success(msg, 0.5, () => tableApi.reload());
+    } else {
+      message.error(msg);
+    }
   }
 
   function handleSuccess() {
-    setTimeout(() => {
-      tableApi.reload();
-    }, 200);
+    tableApi.reload();
   }
 </script>

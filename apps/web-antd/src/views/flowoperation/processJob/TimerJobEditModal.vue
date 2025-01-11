@@ -1,11 +1,11 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" @ok="handleSubmit">
-    <BasicForm @register="registerForm">
-      <template #processNameRender="{ model, field }">
-        {{ model[field] }}
+  <BasicModal class="w-[500px]">
+    <BasicForm>
+      <template #processName="slotProps">
+        {{slotProps.value??'-'}}
       </template>
-      <template #elementNameRender="{ model, field }">
-        {{ model[field] }}
+      <template #elementName="slotProps">
+        {{slotProps.value??'-'}}
       </template>
     </BasicForm>
   </BasicModal>
@@ -16,7 +16,7 @@
   // import { BasicForm, useForm } from '@/components/Form/index';
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
-  import {message} from 'ant-design-vue';
+  import {Input, message} from 'ant-design-vue';
 
   import { timerJobFormSchema } from './processJob.data';
   import { updateDuedateById } from '#/api/flowoperation/processJob';
@@ -80,7 +80,7 @@
       }
       const values = await formApi.getValues();
       const res = await updateDuedateById(values);
-      const { data, success, msg } = res.data;
+      const { success, msg } = res.data;
       if (success) {
         message.success(msg);
         emit('success');

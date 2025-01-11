@@ -49,7 +49,7 @@ export function compensateProcessInstanceVariables(processInstanceId: string, pa
  * @param params
  */
 export const findProcessinstancesPagerModel = (params: any) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
+/*  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
   const entity = params || {};
   if (entity) {
     delete entity['pageNum'];
@@ -65,9 +65,10 @@ export const findProcessinstancesPagerModel = (params: any) => {
     query['sqlOrderBy'] = { 't1.START_TIME_': 'DESC' };
   }
   const queryParam = { query, entity };
+  */
   // 获取运行时/所有的流程实例列表
   const url =
-    params.procInstDataType === 'running'
+    params?.entity?.procInstDataType === 'running'
       ? Api.GetPagerModelRunProcessInstance
       : Api.FindHisProcessinstancesPagerModel;
 

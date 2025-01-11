@@ -103,7 +103,7 @@ export const formSchema: FormSchema[] = [
           .max(100, '最多输入100个字符')
           .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
           .refine(
-            async (e) => {
+            async () => {
               let result = false;
               try {
                 result = await checkEntityExist({

@@ -251,6 +251,7 @@ export const setGroupFormSchema: FormSchema[] = [
     labelWidth: 50,
     componentProps: {
       placeholder: '请选择用户组',
+      allowClear: true,
       api: getAllList,
       mode: 'multiple',
       fieldNames: {

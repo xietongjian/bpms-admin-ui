@@ -23,6 +23,7 @@ export const columns: VxeGridProps['columns'] = [
     align: 'left',
     width: 300,
     resizable: true,
+    slots: {default: 'formName'}
   },
   {
     title: '流程实例ID',
@@ -87,6 +88,7 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/标识',
+      allowClear: true,
     },
   },
   {
@@ -95,6 +97,7 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入业务表单编号',
+      allowClear: true,
     },
   },
   {
@@ -103,6 +106,7 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入流程实例ID',
+      allowClear: true,
     },
   },
   {
@@ -116,6 +120,8 @@ export const searchFormSchema: FormSchema[] = [
         value: 'sn',
         label: 'name'
       },
+      placeholder: '请选择系统',
+      allowClear: true,
     }
   },
   {
@@ -123,6 +129,7 @@ export const searchFormSchema: FormSchema[] = [
     label: '流程模板',
     component: 'ModelInfoSelector',
     componentProps: {
+      allowClear: true,
       placeholder: '请选择流程模板',
       multiple: false,
       title: '选择流程模板',
@@ -133,6 +140,7 @@ export const searchFormSchema: FormSchema[] = [
     label: '提交单位',
     component: 'OrgSelector',
     componentProps: {
+      allowClear: true,
       placeholder: '请选择提交单位',
       selectType: '1',
     },
@@ -142,6 +150,7 @@ export const searchFormSchema: FormSchema[] = [
     label: '提交部门',
     component: 'OrgSelector',
     componentProps: {
+      allowClear: true,
       placeholder: '请选择提交部门',
       selectType: '2',
     },
@@ -151,6 +160,7 @@ export const searchFormSchema: FormSchema[] = [
     label: '提交人',
     component: 'PersonalSelector',
     componentProps: {
+      allowClear: true,
       placeholder: '请选择提交人',
       multiple: true,
     },
@@ -159,6 +169,12 @@ export const searchFormSchema: FormSchema[] = [
     fieldName: 'dateRange',
     label: '时间范围',
     component: 'RangePicker',
+    componentProps: {
+      placeholder: ['开始时间', '结束时间'],
+      allowClear: true,
+      format: 'YYYY-MM-DD',
+      showTime: false,
+    }
   },
   {
     fieldName: 'processStatus',

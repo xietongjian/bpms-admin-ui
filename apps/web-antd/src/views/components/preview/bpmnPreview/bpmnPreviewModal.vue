@@ -1,7 +1,7 @@
 <template>
   <BasicModal ref="bpmnContainerRef" class="aaaaaaaaaaaa w-[1000px] h-full">
     <template #title>
-      流程图 - {{modelName}}
+      流程图 - {{modelName??'-'}}
       <LoadingOutlined v-if="modelName === ''" />
     </template>
     <BpmnPreviewContainer

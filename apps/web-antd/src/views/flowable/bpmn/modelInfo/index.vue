@@ -251,10 +251,8 @@ function handlePreview(record: Recordable<any>) {
 }
 
 async function handlePreviewXml(record: Recordable<any>, e) {
-  e.stopPropagation();
+  // e.stopPropagation();
   const {modelXml} = await getBpmnByModelKey({modelKey: record.modelKey});
-
-  debugger;
   codePreviewModalRef.value.setData({code: modelXml});
   codePreviewModalRef.value.open();
   codePreviewModalRef.value.setState({

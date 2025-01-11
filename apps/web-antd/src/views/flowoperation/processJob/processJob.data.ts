@@ -34,6 +34,7 @@ export const timerJobColumns: VxeGridProps['columns'] = [
     align: 'left',
     width: 180,
     resizable: true,
+    slots: {default: 'duedate'},
   },
   {
     title: '流程实例ID',
@@ -173,6 +174,8 @@ export const searchFormSchema: FormSchema[] = [
     componentProps: {
       class: 'w-full',
       api: getAll,
+      placeholder: '请选择系统',
+      allowClear: true,
       fieldNames: {
         value: 'sn',
         label: 'name'
@@ -195,19 +198,18 @@ export const timerJobFormSchema: FormSchema[] = [
     fieldName: 'processName',
     label: '流程名称',
     component: 'Input',
-    slot: 'processNameRender',
   },
   {
     fieldName: 'elementName',
     label: '节点名称',
     component: 'Input',
-    slot: 'elementNameRender',
   },
   {
     fieldName: 'duedate',
     label: '执行时间',
     component: 'DatePicker',
     componentProps: {
+      class: 'w-full',
       placeholder: '请选择执行时间',
       format: 'YYYY-MM-DD HH:mm:ss',
       valueFormat: 'YYYY-MM-DD HH:mm:ss',

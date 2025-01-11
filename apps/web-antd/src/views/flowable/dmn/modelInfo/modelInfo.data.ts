@@ -90,6 +90,8 @@ export const searchFormSchema: FormSchema[] = [
     labelWidth: 60,
     componentProps: {
       api: getAll,
+      placeholder: '请选择系统',
+      allowClear: true,
       fieldNames: {
         value: 'sn',
         label: 'name'
@@ -147,6 +149,8 @@ export const modelInfoFormSchema: FormSchema[] = [
     componentProps: {
       getPopupContainer: () => document.body,
       api: getAll,
+      placeholder: '请选择系统',
+      allowClear: true,
       fieldNames: {
         value: 'sn',
         label: 'name'
@@ -228,6 +232,8 @@ export const dmnBaseFormSchema: FormSchema[] = [
     component: 'ApiSelect',
     componentProps: {
       api: getAll,
+      placeholder: '请选择系统',
+      allowClear: true,
       fieldNames: {
         value: 'sn',
         label: 'name'

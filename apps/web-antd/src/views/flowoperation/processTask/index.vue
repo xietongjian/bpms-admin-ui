@@ -244,30 +244,16 @@
       });
   }
 
-  nextTick(() => {
-    /*const { updateSchema } = tableApi.formApi;
-    getAll().then((res) => {
-      updateSchema([
-        {
-          fieldName: 'appSn',
-          componentProps: { options: res, labelField: 'id' },
-        },
-      ]);
-    });*/
-  });
-
   async function handleExe(record: Recordable<any>) {
     try {
       const {success, msg} = await completeBackStage({taskId: record.taskId, processInstanceId: record.processInstanceId});
       if (success) {
-        message.success(msg);
-        tableApi.reload();
+        message.success(msg, 0.5, () => tableApi.reload());
       } else {
         message.error(msg);
       }
     } catch (e) {
       console.error(e);
-    } finally {
     }
   }
 
@@ -301,32 +287,13 @@
     approveHistoryModalRef.value.setState({
       title: `查看流程【${record.formName}】的审批记录`,
     });
-    /*openApproveHistoryModal(true, {
-      record,
-      isUpdate: true,
-    });
-    setModalProps({
-      width: 800,
-      centered: true,
-      title: `查看流程【${record.formName}】的审批记录`,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });*/
   }
 
   function handleViewForm(record: Recordable<any>) {
     record.allowsOperation = true;
-    openProcessFormModal(true, {
-      record,
-    });
-    setProcessFormModalProps({
-      width: 1000,
-      title: `查看流程【${record.formName}】的表单`,
-      showOkBtn: false,
-      centered: true,
-      cancelText: '关闭',
-      maskClosable: true,
-    });
+    processFormModalRef.value.setData(record);
+    processFormModalRef.value.open();
+    processFormModalRef.value.setState({title: `查看流程【${record.formName}】的表单`});
   }
 
   function handleViewFlowProperties(record: Recordable<any>) {
@@ -335,16 +302,6 @@
     flowPropertiesModalRef.value.setState({
       title: `查看流程【${record.formName}】的变量`,
     });
-    /*openFlowPropertiesModal(true, {
-      record,
-    });
-    setFlowPropertiesModalProps({
-      width: 900,
-      title: `查看流程【${record.formName}】的变量`,
-      showOkBtn: false,
-      centered: true,
-      cancelText: '关闭',
-    });*/
   }
 
   function handlePreview(record: Recordable<any>) {
@@ -353,19 +310,7 @@
       procInstId: record.processInstanceId,
     });
     bpmnPreviewModalRef.value.open();
-    /*openBpmnPreviewModal(true, {
-      modelKey: record.modelKey,
-      procInstId: record.processInstanceId,
-    });
-    setBpmnPreviewProps({
-      title: `预览-${record.formName}`,
-      centered: true,
-      useWrapper: false,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });*/
   }
-
   function handleChangeAssignee(record: Recordable<any>) {
     currentTask.value = record;
     openPersonalSelector(true, {
@@ -383,7 +328,6 @@
       showCancelBtn: true,
     });
   }
-
 
   function createActions (row: Recordable<any>) {
     return [

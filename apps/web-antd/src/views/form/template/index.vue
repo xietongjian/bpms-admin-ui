@@ -70,7 +70,7 @@
   import FormTemplateModal from './FormTemplateModal.vue';
 
   import { getFormTemplateList, deleteById, getFormCategoryListData, deleteFormCategoryById } from '#/api/form/formTemplate';
-  import {Button, Tree, message, Col, Popconfirm, Row, Tooltip, message} from "ant-design-vue";
+  import {Button, Tree, Col, Popconfirm, Row, Tooltip, message} from "ant-design-vue";
 
   import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons-vue";
   import {listToTree} from "#/utils/helper/treeHelper";

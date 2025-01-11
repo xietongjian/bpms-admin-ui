@@ -1,8 +1,5 @@
 <template>
   <Page auto-content-height class="h-full" content-class="flex flex-col">
-<!--    <div class="p-4 bg-card !pb-1">
-      <BasicForm class="job-search-form" @register="registerSearchForm" />
-    </div>-->
     <ProcInstJobTable>
       <template #toolbar-actions>
         <RadioGroup v-model:value="jobType" button-style="solid" @change="handleChangeJobType">
@@ -19,7 +16,11 @@
         </RadioGroup>
       </template>
       <template #toolbar-tools>
-        <Button v-access:code="PerPrefix + PerEnum.UPDATE" danger @click="handleBatchExe" v-if="jobType === 'deadLetter'" :disabled="selectedRowsCount <= 0">批量执行</Button>
+        <Button v-access:code="PerPrefix + PerEnum.UPDATE"
+                danger @click="handleBatchExe"
+                v-if="jobType === 'deadLetter'" :disabled="selectedRowsCount <= 0">
+          批量执行
+        </Button>
       </template>
       <template #action="{row}">
         <TableAction :actions="createActions(row)"/>
@@ -36,15 +37,10 @@
       </template>
 
       <template #duedate="{row}">
-        <div class="duedate-wrap">
-          {{ row.duedate }}
-          <Tooltip title="修改队列执行时间">
-            <HighlightOutlined
-                @click="handleChangeDueDate(row)"
-                class="duedate-modify"
-            />
-          </Tooltip>
-        </div>
+        {{ row.duedate??'-' }}
+        <Tooltip title="修改队列执行时间">
+          <HighlightOutlined @click="handleChangeDueDate(row)" class="cursor-pointer"/>
+        </Tooltip>
       </template>
 
       <template #processName="{row}">
@@ -64,7 +60,7 @@
     <ApproveHistoryModal ref="approveHistoryModalRef" @register="registerApproveHistoryModal" />
     <FlowPropertiesModal ref="flowPropertiesModalRef" @register="registerFlowPropertiesModal" />
     <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" />
-    <TimerJobEditModal ref="timerJobEditModalRef" @register="registerTimerJobEditModal" @success="handleChangeTab" />
+    <TimerJobEditModal ref="timerJobEditModalRef" @success="handleChangeTab" />
   </Page>
 </template>
 <script lang="ts" setup>
@@ -159,6 +155,9 @@
   const gridEvents: VxeGridListeners = {
     checkboxChange: ({records}) => {
       selectedRowsCount.value = records.length;
+    },
+    checkboxAll: ({records}) => {
+      selectedRowsCount.value = records.length;
     }
   };
   const [ProcInstJobTable, tableApi] = useVbenVxeGrid({gridOptions, formOptions, gridEvents});
@@ -199,17 +198,11 @@
     ];
   }
 
-  function handleChangeDueDate(record) {
-    openTimerJobEditModal(true, {
-      record,
-      isUpdate: true,
-    });
-    setTimerJobEditModalProps({
-      width: 600,
-      title: `修改队列执行时间`,
-      showOkBtn: true,
-      centered: true,
-      cancelText: '关闭',
+  function handleChangeDueDate(record: Recordable<any>) {
+    timerJobEditModalRef.value.setData(record);
+    timerJobEditModalRef.value.open();
+    timerJobEditModalRef.value.setState({
+      title: `修改队列执行时间`
     });
   }
 
@@ -281,7 +274,7 @@
     approveHistoryModalRef.value.setData(record);
     approveHistoryModalRef.value.open();
     approveHistoryModalRef.value.setState({
-      title: `查看流程【${record.processName}】的审批记录`,
+      title: `查看流程【${record.processName??'-'}】的审批记录`,
     });
   }
 

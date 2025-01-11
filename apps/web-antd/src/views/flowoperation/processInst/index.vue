@@ -2,16 +2,7 @@
   <Page auto-content-height>
     <BasicTable class="proc-inst-table" @register="registerTable">
       <template #toolbar-actions>
-        <Segmented
-          class="data-type-switch"
-          @change="handleReload"
-          v-model:value="procInstDataType"
-          :options="[
-            { value: 'running', label: '运行中实例' },
-            { value: 'history', label: '全部实例' },
-          ]"
-        />
-        <RadioGroup v-model:value="procInstType" button-style="solid" @change="handleChangeProcInstType">
+        <RadioGroup v-model:value="procInstDataType" button-style="solid" @change="handleChangeProcInstType">
           <RadioButton value="running">
             运行中实例
           </RadioButton>
@@ -21,10 +12,7 @@
         </RadioGroup>
       </template>
       <template #action="{row}">
-        <TableAction
-            :actions="getTableActions(row)"
-            :dropDownActions="getTableDownActions(row)"
-        />
+        <TableAction :actions="getTableActions(row)" :dropDownActions="getTableDownActions(row)"/>
       </template>
       <template #processInstanceId="{row}">
         <a @click="doCopyContent(row.processInstanceId)"><CopyOutlined /></a>
@@ -43,7 +31,7 @@
       <template #formName="{row}">
         <Tooltip title="查看流程图">
           <a>
-            <PartitionOutlined @click="handlePreview(record)" />
+            <PartitionOutlined @click="handlePreview(row)" />
           </a>
         </Tooltip>
         <Tooltip placement="topLeft" :mouseEnterDelay="0.3">
@@ -116,19 +104,10 @@
     PartitionOutlined,
     PauseCircleFilled,
   } from '@ant-design/icons-vue';
-  // import { copyText } from '@/utils/copyTextToClipboard';
   import ProcessFormModal from '../processTask/ProcessFormModal.vue';
   import {Modal, Tooltip, Segmented, Badge, message, Button, RadioButton, RadioGroup} from 'ant-design-vue';
-  // import { useModal } from '@/components/Modal';
-  // import { useRequest } from '@vben/hooks';
-
   import { backToStep, restartProcessInstance, stopProcess } from '#/api/flowoperation/processTask';
-  // import { useLoading } from '@/components/Loading';
   import ProcessVariablesModal from '#/views/flowoperation/processInst/ProcessVariablesModal.vue';
-  import {getCustomPagerModel} from "#/api/form/customForm";
-  import {deadLetterJobColumns, timerJobColumns} from "#/views/flowoperation/processJob/processJob.data";
-
-  const procInstType = ref('running');
 
   const approveHistoryModalRef = ref(),
       flowPropertiesModalRef = ref(),
@@ -141,10 +120,6 @@
   const { isSupported, copy, copied } = useClipboard({ legacy: true });
 
   defineOptions({ name: 'ProcessInst' });
-
-  // const [openFullLoading, closeFullLoading] = useLoading({
-  //   tip: '执行中...',
-  // });
 
   const procInstDataType = ref('running');
 
@@ -220,7 +195,6 @@
     },
   );*/
 
-
   const formOptions: VbenFormProps = {
     showCollapseButton: true,
     collapsed: true,
@@ -253,13 +227,12 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
-          // currentModelInfo.value = {};
           return await findProcessinstancesPagerModel({
             query: {
               pageNum: page.currentPage,
               pageSize: page.pageSize,
             },
-            entity: formValues || {},
+            entity: {...formValues, procInstDataType: procInstDataType.value},
           });
         },
       },
@@ -274,17 +247,16 @@
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
 
-
   nextTick(() => {
-    const { updateSchema } = tableApi.formApi;
-    getAll().then((res) => {
+    // const { updateSchema } = tableApi.formApi;
+    /*getAll().then((res) => {
       updateSchema([
         {
           fieldName: 'appSn',
           componentProps: { options: res, labelField: 'id' },
         },
       ]);
-    });
+    });*/
   });
 
   async function handleChangeProcInstType(e: Event) {
@@ -296,36 +268,24 @@
     processFormModalRef.value.setData(record);
     processFormModalRef.value.open();
     processFormModalRef.value.setState({title: `查看流程【${record.formName}】的表单`});
-    /*openProcessFormModal(true, {
-      record,
-    });
-    setProcessFormModalProps({
-      width: 1000,
-      title: `查看流程【${record.formName}】的表单`,
-      showOkBtn: false,
-      centered: true,
-      cancelText: '关闭',
-      maskClosable: false,
-    });*/
   }
 
   function handleViewApproveHistory(record: Recordable<any>) {
-    openApproveHistoryModal(true, {
-      record,
-      isUpdate: true,
-    });
-    setModalProps({
-      width: 800,
+    approveHistoryModalRef.value.setData(record);
+    approveHistoryModalRef.value.open();
+    approveHistoryModalRef.value.setState({
       title: `查看流程【${record.formName}】的审批记录`,
-      showOkBtn: false,
-      centered: true,
-      cancelText: '关闭',
     });
   }
 
   // 查看
   function handleViewFlowProperties(record: Recordable<any>) {
-    openFlowPropertiesModal(true, {
+    flowPropertiesModalRef.value.setData(record);
+    flowPropertiesModalRef.value.open();
+    flowPropertiesModalRef.value.setState({
+      title: `查看流程【${record.formName}】的变量`,
+    });
+    /*openFlowPropertiesModal(true, {
       record,
     });
     setFlowPropertiesModalProps({
@@ -333,7 +293,7 @@
       showOkBtn: false,
       centered: true,
       cancelText: '关闭',
-    });
+    });*/
   }
 
   // 终止
@@ -347,21 +307,16 @@
       okButtonProps: {
         danger: true,
       },
-      onOk() {
-        openFullLoading();
-        stopProcess({ taskId: '', processInstanceId: record.processInstanceId })
-          .then((res) => {
-            const { data } = res;
-            if (data.success) {
-              message.success(data.msg);
-              tableApi.reload();
-            } else {
-              message.error(data.msg);
-            }
-          })
-          .finally(() => {
-            closeFullLoading();
-          });
+      async onOk() {
+        const {success, msg} = await stopProcess({
+          taskId: '',
+          processInstanceId: record.processInstanceId
+        });
+        if (success) {
+          message.success(msg, 0.5,() => tableApi.reload());
+        } else {
+          message.error(msg);
+        }
       },
     });
   }
@@ -376,29 +331,22 @@
       okText: '确定',
       cancelText: '取消',
       okButtonProps: { danger: true },
-      onOk() {
-        openFullLoading();
-        changeProcInstActive({
-          procInstId: record.processInstanceId,
-          suspensionState: record.suspensionState,
-        })
-          .then((res) => {
-            const { data } = res;
-            if (data.success) {
-              message.success(data.msg);
-              tableApi.reload();
-            } else {
-              message.error(data.msg);
-            }
-          })
-          .catch((e) => {
-            console.error(e);
-            message.error(stateName + '流程失败！');
-          })
-          .finally(() => {
-            closeFullLoading();
+      async onOk() {
+        try {
+          const {success, msg} = await changeProcInstActive({
+            procInstId: record.processInstanceId,
+            suspensionState: record.suspensionState,
           });
-      },
+          if (success) {
+            message.success(msg, 0.5, () =>tableApi.reload());
+          } else {
+            message.error(msg);
+          }
+        } catch (e) {
+          console.error(e);
+          message.error(stateName + '流程失败！');
+        }
+      }
     });
   }
 
@@ -411,18 +359,29 @@
       okText: '确定',
       cancelText: '取消',
       okButtonProps: { danger: true },
-      onOk() {
-        openFullLoading();
-        executeProcessInstance(record.processInstanceId)
-          .then(() => tableApi.reload())
-          .finally(() => closeFullLoading());
+      async onOk() {
+        try {
+          const {success, msg} = await executeProcessInstance(record.processInstanceId);
+          if (success) {
+            message.success(msg, 0.5, () => tableApi.reload());
+          } else {
+            message.error(msg);
+          }
+        } catch (e) {
+          console.error(e);
+        }
       },
     });
   }
 
   // 预览流程图
   function handlePreview(record: Recordable<any>) {
-    openBpmnPreviewModal(true, {
+    bpmnPreviewModalRef.value.setData({
+      modelKey: record.modelKey,
+      procInstId: record.processInstanceId,
+    });
+    bpmnPreviewModalRef.value.open();
+    /*openBpmnPreviewModal(true, {
       modelKey: record.modelKey,
       procInstId: record.processInstanceId,
     });
@@ -432,7 +391,7 @@
       useWrapper: false,
       showOkBtn: false,
       cancelText: '关闭',
-    });
+    });*/
   }
 
   // 干预
@@ -479,8 +438,9 @@
     openProcessVariableModal(true, { record });
   }
 
-  function doCopyContent(content) {
-    copyText(content);
+  async function doCopyContent(content) {
+    await copy(content);
+    message.success('已拷贝到剪切板！');
   }
 
   async function handleReload(value) {
@@ -496,7 +456,7 @@
     tableApi.reload();
   }
 
-  function getTableActions(record) {
+  function getTableActions(record: Recordable<any>) {
     return [
       {
         label: '',
@@ -522,7 +482,7 @@
       },
     ];
   }
-  function getTableDownActions(record) {
+  function getTableDownActions(record: Recordable<any>) {
     const actions = [
       {
         auth: ['ProcessInst:' + PerEnum.UPDATE],
@@ -586,11 +546,6 @@
         onClick: () => handleRevival(record),
       });
     }
-
     return actions;
   }
 </script>
-
-<style lang="less">
-
-</style>

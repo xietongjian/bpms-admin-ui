@@ -1,7 +1,9 @@
 import { z } from '#/adapter/form';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
+import {FormValidPatternEnum, OrderNoDefaultEnum, RemarkDefaultEnum} from '#/enums/commonEnum';
+import { checkEntityExist } from '#/api/flowauth/authPoint';
+
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -20,13 +22,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '是否默认',
     field: 'ifDefault',
     width: 80,
-    /*customRender: ({ record }) => {
-      const status = record.ifDefault;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '是' : '否';
-      return h(Tag, { color: color }, () => text);
-    },*/
+    slots: { default: 'ifDefault' },
   },
   {
     title: '排序号',
@@ -57,12 +53,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称/编码',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -87,35 +77,51 @@ export const formSchema: FormSchema[] = [
         .trim()
         .min(1, "功能点名不能为空")
         .max(96, "字符长度不能大于96！")
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '功能点名不能为空！',
-      },
-      {
-        max: 96,
-        message: '字符长度不能大于96！',
-      },
-    ],*/
   },
   {
     fieldName: 'sn',
     label: '标识',
     component: 'Input',
-    rules: z
-      .string({
-        required_error: '标识不能为空',
-      })
-      .trim()
-      .min(1, "标识不能为空")
-      .max(64, "字符长度不能大于64！")
+    dependencies: {
+      rules(values) {
+        const { id, sn } = values;
+        return z
+          .string({
+            required_error: "标识不能为空"
+          })
+          .min(1, "标识不能为空")
+          .max(64, '最多输入64个字符')
+          .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
+          .refine(
+            async () => {
+              let result = false;
+              try {
+                result = await checkEntityExist({
+                  id: id,
+                  field: 'sn',
+                  fieldValue: sn || '',
+                  fieldName: '标识',
+                });
+              } catch (e) {
+                console.error(e);
+              }
+              return result;
+            },
+            {
+              message: '标识已存在',
+            },
+          );
+      },
+      triggerFields: ['sn'],
+    },
   },
   {
     fieldName: 'ifDefault',
     label: '是否默认',
     component: 'Switch',
     componentProps: {
+      checkedValue: 1,
+      unCheckedValue: 0,
       checkedChildren: '是',
       unCheckedChildren: '否',
     },

@@ -147,6 +147,8 @@ export const searchFormSchema: FormSchema[] = [
     component: 'ApiSelect',
     componentProps: {
       api: getAll,
+      placeholder: '请选择系统',
+      allowClear: true,
       fieldNames: {
         value: 'sn',
         label: 'name'

@@ -96,6 +96,8 @@ export const searchFormSchema: FormSchema[] = [
     labelWidth: 60,
     componentProps: {
       api: getAll,
+      placeholder: '请选择系统',
+      allowClear: true,
       fieldNames: {
         value: 'sn',
         label: 'name'

@@ -1,5 +1,5 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" wrap-class-name="process-form-full-modal ">
+  <BasicModal class="w-[1000px]" wrap-class-name="process-form-full-modal ">
     <div>
       <div ref="allInfoId">
         <Tabs v-model:activeKey="activeViewKey" size="small">
@@ -295,9 +295,11 @@
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
+    footer: false,
     onCancel() {
       modalApi.close();
     },
+
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
