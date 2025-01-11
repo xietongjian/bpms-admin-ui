@@ -127,6 +127,10 @@
 
   const [BasicModal, modalApi] = useVbenModal({
     fullscreenButton: false,
+    showCancelButton: false,
+    closable: false,
+    footer: false,
+    fullscreen: true,
     onOpenChange: async (isOpen) => {
       if (!isOpen) {
         return null;

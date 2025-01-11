@@ -6,6 +6,7 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
 import { Tag } from 'ant-design-vue';
 
 import { h } from 'vue';
+import {getAll} from "#/api/base/app";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -81,8 +82,18 @@ export const searchFormSchema: FormSchema[] = [
   {
     fieldName: 'appSn',
     label: '系统',
-    component: 'Select',
+    component: 'ApiSelect',
     labelWidth: 60,
+    componentProps: {
+      class: 'w-full',
+      api: getAll,
+      placeholder: '请选择系统',
+      allowClear: true,
+      fieldNames: {
+        value: 'sn',
+        label: 'name'
+      },
+    }
   },
   {
     fieldName: 'keyword',
@@ -90,6 +101,7 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/编码',
+      allowClear: true,
     },
     labelWidth: 60,
   },

@@ -9,6 +9,7 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入查询关键字',
+      allowClear: true,
     },
     labelWidth: 80,
   },

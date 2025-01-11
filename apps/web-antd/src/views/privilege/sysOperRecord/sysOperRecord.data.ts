@@ -58,6 +58,7 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/编码',
+      allowClear: true,
     },
     labelWidth: 60,
     colProps: {

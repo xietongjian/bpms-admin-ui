@@ -88,6 +88,7 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入Token名称！',
+      allowClear: true,
     },
     labelWidth: 60,
     colProps: {

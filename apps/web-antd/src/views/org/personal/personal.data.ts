@@ -102,6 +102,7 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入姓名/工号/手机/邮箱',
+      allowClear: true,
     },
     labelWidth: 60,
     colProps: {
