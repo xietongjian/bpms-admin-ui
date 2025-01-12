@@ -81,6 +81,6 @@ export const moveDeadLetterJobToExecutableJobByJobIds = (jobIds: any) => {
  */
 export const updateDuedateById = (params: any) => {
   return requestClient.post<any>(Api.UpdateDuedateById, params,
-    { isReturnNativeResponse: true },
+    { isTransformResponse: false },
   );
 };

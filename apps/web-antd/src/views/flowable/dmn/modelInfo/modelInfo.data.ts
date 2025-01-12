@@ -13,11 +13,12 @@ export const columns: VxeGridProps['columns'] = [
     field: 'name',
     align: 'left',
     minWidth: 200,
+    slots: {default: 'name'},
   },
   {
     title: 'KEY',
     field: 'modelKey',
-    width: 200,
+    minWidth: 200,
     align: 'left',
   },
   {
@@ -41,7 +42,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '状态',
     field: 'statusName',
-    width: 70,
+    width: 80,
     align: 'center',
 /*    customRender: ({ record }) => {
       const { status, statusName } = record;
@@ -61,7 +62,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '更新时间',
     field: 'updateTime',
-    width: 120,
+    width: 140,
     align: 'left',
   },
   {
@@ -69,7 +70,7 @@ export const columns: VxeGridProps['columns'] = [
     fixed: 'right',
     slots: {default: 'action'},
     title: '操作',
-    width: 120,
+    width: 130,
   },
 ];
 

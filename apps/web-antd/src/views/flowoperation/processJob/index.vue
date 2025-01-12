@@ -60,7 +60,7 @@
     <ApproveHistoryModal ref="approveHistoryModalRef" @register="registerApproveHistoryModal" />
     <FlowPropertiesModal ref="flowPropertiesModalRef" @register="registerFlowPropertiesModal" />
     <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" />
-    <TimerJobEditModal ref="timerJobEditModalRef" @success="handleChangeTab" />
+    <TimerJobEditModal ref="timerJobEditModalRef" @success="handleRefresh" />
   </Page>
 </template>
 <script lang="ts" setup>
@@ -226,8 +226,7 @@
     });
 
     const values = await tableApi?.formApi.getValues();
-    tableApi.reload(values);
-    loadDataCount();
+    handleRefresh(values);
   }
 
   async function loadDataCount(){
@@ -238,12 +237,16 @@
     const {success, msg} = await moveDeadLetterJobToExecutableJobByJobIds(ids);
     if (success) {
       message.success(msg, 0.5, () => {
-        tableApi.reload();
-        loadDataCount();
+        handleRefresh();
       });
     } else {
       message.error(msg);
     }
+  }
+
+  function handleRefresh(values?: Recordable<any>) {
+    tableApi.reload(values);
+    loadDataCount();
   }
 
   function handleBatchExe() {

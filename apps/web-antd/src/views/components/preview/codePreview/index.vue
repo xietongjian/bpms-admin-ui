@@ -22,6 +22,7 @@
     onCancel() {
       modalApi.close();
     },
+    cancelText: '关闭',
     showConfirmButton: false,
     onOpenChange(isOpen: boolean) {
       if (isOpen) {

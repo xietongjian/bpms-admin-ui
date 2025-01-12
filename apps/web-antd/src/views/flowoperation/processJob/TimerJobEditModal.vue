@@ -47,6 +47,7 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
+          values.jobId = values.id;
           formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
@@ -79,8 +80,11 @@
         return;
       }
       const values = await formApi.getValues();
-      const res = await updateDuedateById(values);
-      const { success, msg } = res.data;
+      if(!values.jobId){
+        message.error('任务不存在！');
+        return;
+      }
+      const {success, msg} = await updateDuedateById(values);
       if (success) {
         message.success(msg);
         emit('success');

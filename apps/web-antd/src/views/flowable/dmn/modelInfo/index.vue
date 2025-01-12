@@ -13,11 +13,7 @@
       <FlowCategoryTree class="w-full" @select="handleSelect"/>
     </template>
     <div class="bg-card h-full">
-      <BasicTable
-          @row-click="clickRow"
-          @selection-change="changeSelection"
-          @fetch-success="fetchSuccess"
-      >
+      <BasicTable >
         <template #toolbar-tools>
           <div class="flex flex-row gap-2">
             <Dropdown v-access:code="PerPrefix+PerEnum.ADD" >
@@ -77,35 +73,33 @@
 
           </div>
         </template>
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'action'">
-            <TableAction :stopButtonPropagation="true" :actions="createActions(record, column)"/>
-          </template>
-          <template v-else-if="column.key === 'name'">
-            <!-- 0决策表1决策服务 -->
-            <Tooltip :title="record.dmnType == 0 ? '决策表' : record.dmnType == 1 ? '决策服务' : ''">
-              <InsertRowAboveOutlined v-if="record.dmnType == 0" style="color: #108ee9"/>
-              <ClusterOutlined v-else-if="record.dmnType == 1" style="color: purple"/>
-            </Tooltip>
-            {{ record.name }}
-          </template>
+        <template #action="{row}">
+          <TableAction :stopButtonPropagation="true" :actions="createActions(row, column)"/>
+        </template>
+        <template #name="{row}">
+          <!-- 0决策表1决策服务 -->
+          <Tooltip :title="row.dmnType == 0 ? '决策表' : row.dmnType == 1 ? '决策服务' : ''">
+            <InsertRowAboveOutlined v-if="row.dmnType == 0" style="color: #108ee9"/>
+            <ClusterOutlined v-else-if="row.dmnType == 1" style="color: purple"/>
+          </Tooltip>
+          {{ row.name }}
         </template>
       </BasicTable>
-      <DmnDesignerModal
-          ref="dmnDesignerModalRef"
-          @success="handleSuccess"/>
-      <CodePreviewModal
-          ref="codePreviewModalRef"
-          :minHeight="200"
-          @success="handleSuccess"
-      />
-      <DmnSimulatorModal
-          ref="dmnSimulatorModalRef"
-          :minHeight="200"/>
-      <DmnPreviewModal
-          ref="dmnPreviewModalRef"
-          :minHeight="200"/>
     </div>
+    <DmnDesignerModal
+        ref="dmnDesignerModalRef"
+        @success="handleSuccess"/>
+    <CodePreviewModal
+        ref="codePreviewModalRef"
+        :minHeight="200"
+        @success="handleSuccess"
+    />
+    <DmnSimulatorModal
+        ref="dmnSimulatorModalRef"
+        :minHeight="200"/>
+    <DmnPreviewModal
+        ref="dmnPreviewModalRef"
+        :minHeight="200"/>
   </ColPage>
 </template>
 <script lang="ts" setup>

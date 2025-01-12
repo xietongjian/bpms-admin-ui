@@ -21,6 +21,7 @@ interface Props {
   indentWithTab?: boolean // 启用 tab 按键
   tabSize?: number // tab 按键缩进空格数
   autoDestroy?: boolean // 组件销毁时是否自动销毁代码编辑器实例
+  type: 'xml' | 'json' | 'vue' | 'markdown'
 }
 const props = withDefaults(defineProps<Props>(), {
   codeStyle: () => ({}),
@@ -30,11 +31,19 @@ const props = withDefaults(defineProps<Props>(), {
   autofocus: false,
   disabled: false,
   indentWithTab: true,
-  tabSize: 2
+  tabSize: 2,
+  type: 'xml'
 })
-const extensions = props.dark || isDark ?
-    [markdown(), vue(), xml(), json(), oneDark] :
-    [markdown(), vue(), xml(), json()]
+const extensions = (props.dark || isDark.value) ? [oneDark] : [];
+if(props.type === 'xml'){
+  extensions.push(xml());
+} else if(props.type === 'json'){
+  extensions.push(json());
+} else if(props.type === 'vue'){
+  extensions.push(vue());
+} else if(props.type === 'markdown'){
+  extensions.push(markdown());
+}
 const codeValue = ref('')
 watchEffect(() => {
   codeValue.value = props.code

@@ -192,7 +192,8 @@ export const timerJobFormSchema: FormSchema[] = [
     dependencies: {
       show: false,
       triggerFields: ['jobId']
-    }
+    },
+    rules: 'required'
   },
   {
     fieldName: 'processName',
