@@ -1,5 +1,5 @@
 <template>
-  <Card class="todo-center-card" size="small"
+  <Card class="[&_.ant-list-item]:bg-secondary [&_.ant-list-item]:p-1" size="small"
         v-bind="$attrs"
         :tab-list="tabList"
         :active-tab-key="activeKey"
@@ -23,7 +23,7 @@
       </span>
     </template>
     <template #extra>
-      <a-button type="link" size="small" @click="handleToMore()">更多</a-button>
+      <Button type="link" size="small" @click="handleToMore()">更多</Button>
     </template>
     <p v-if="activeKey === 'todo'">
       <List :loading="todoLoading"
@@ -138,13 +138,10 @@
     getAppingTasksPagerModel,
     getApplyedTasksPagerModel,
   } from "#/api/process/process";
-  // import { useGo } from '@/hooks/web/usePage';
   // import ProcessFormModal from "#/views/flowoperation/processTask/ProcessFormModal.vue";
-  // import {useModal} from "#/components/Modal";
   import {AuditOutlined} from "@ant-design/icons-vue";
+  import type {Recordable} from '@vben/types';
 
-
-  // const go = useGo();
   const ListItem = List.Item;
   const ListItemMeta = List.Item.Meta;
   const todoLoading = ref(true);
@@ -230,7 +227,11 @@
     todoLoading.value = true;
 
     try {
-      const res = await getAppingTasksPagerModel({pageSize: pageSize, pageNum: pageNum});
+      const params = {
+        query: {pageSize: pageSize, pageNum: pageNum},
+        entity: {}
+      }
+      const res = await getAppingTasksPagerModel(params);
       todoPageData.value = res;
       todoPagination.total = res.total;
     } catch (e) {
@@ -243,7 +244,11 @@
     haveDownLoading.value = true;
 
     try {
-      const res = await getApplyedTasksPagerModel({pageSize: pageSize, pageNum: pageNum});
+      const params = {
+        query: {pageSize: pageSize, pageNum: pageNum},
+        entity: {}
+      }
+      const res = await getApplyedTasksPagerModel(params);
       haveDownPageData.value = res;
       haveDownPagination.total = res.total;
     } catch (e) {
@@ -255,7 +260,11 @@
     launchedLoading.value = true;
 
     try {
-      const res = await findMyProcessinstancesPagerModel({pageSize: pageSize, pageNum: pageNum});
+      const params = {
+        query: {pageSize: pageSize, pageNum: pageNum},
+        entity: {}
+      }
+      const res = await findMyProcessinstancesPagerModel(params);
       launchedPageData.value = res;
       launchedPagination.total = res.total;
     } catch (e) {
@@ -305,7 +314,7 @@
       .ant-list-item{
         padding: 10px;
         margin-bottom: 10px;
-        background: #f9f9f9;
+        //background: #f9f9f9;
         border-block-end: none;
       }
     }

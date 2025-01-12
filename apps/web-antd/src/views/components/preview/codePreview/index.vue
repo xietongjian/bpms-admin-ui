@@ -1,6 +1,6 @@
 <template>
-  <BasicModal class="w-[1000px] min-h-[550px]" >
-    <div class="absolute">
+  <BasicModal class="w-[1000px] min-h-[550px]" content-class="p-0" >
+    <div class="absolute w-full h-full">
       <CodeEditor
           :codeStyle="{width: '100%', height: '100%', fontSize: '16px' }"
           v-model="codeTxt"

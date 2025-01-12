@@ -61,7 +61,7 @@ const showDot = computed(() =>
 );
 
 const menus = computed(() => [
-  {
+  /*{
     handler: () => {
       openWindow(VBEN_DOC_URL, {
         target: '_blank',
@@ -87,7 +87,7 @@ const menus = computed(() => [
     },
     icon: CircleHelp,
     text: $t('ui.widgets.qa'),
-  },
+  },*/
 ]);
 
 const avatar = computed(() => {

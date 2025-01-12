@@ -5,6 +5,7 @@ import { Codemirror } from 'vue-codemirror'
 import { vue } from '@codemirror/lang-vue'
 import { markdown } from '@codemirror/lang-markdown'
 import { json } from '@codemirror/lang-json'
+import { xml } from '@codemirror/lang-xml'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { usePreferences } from '@vben/preferences';
 
@@ -31,7 +32,9 @@ const props = withDefaults(defineProps<Props>(), {
   indentWithTab: true,
   tabSize: 2
 })
-const extensions = props.dark || isDark ? [markdown(), vue(), json(), oneDark] : [markdown(), vue(), json()]
+const extensions = props.dark || isDark ?
+    [markdown(), vue(), xml(), json(), oneDark] :
+    [markdown(), vue(), xml(), json()]
 const codeValue = ref('')
 watchEffect(() => {
   codeValue.value = props.code
@@ -56,6 +59,7 @@ function onFocus (viewUpdate: any) {
   <Codemirror
       v-model="codeValue"
       :style="codeStyle"
+      :disabled="disabled"
       :extensions="extensions"
       @ready="handleReady"
       @change="onChange"
@@ -66,11 +70,11 @@ function onFocus (viewUpdate: any) {
 </template>
 <style lang="less" scoped>
 :deep(.cm-editor) {
-  border-radius: 8px;
+  border-radius: 2px;
   outline: none;
   border: 1px solid transparent;
   .cm-scroller {
-    border-radius: 8px;
+    border-radius: 2px;
   }
 }
 :deep(.cm-focused) {

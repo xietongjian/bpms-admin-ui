@@ -23,7 +23,14 @@ export const overridesPreferences = defineOverridesPreferences({
   },
   copyright: {
     enable: true,
-    companyName: '飞流数智化'
+    companyName: '飞流数智化',
+    companySiteLink: 'https://www.feilu.com',
+    icp: '粤A-88088808',
+    icpLink: '',
+    date: '2025'
+  },
+  sidebar: {
+    autoActivateChild: true,
   },
   logo: {
     enable: true,
@@ -33,4 +40,8 @@ export const overridesPreferences = defineOverridesPreferences({
     mode: 'light',
     radius: '0.2',
   },
+  widget: {
+    languageToggle: false,
+
+  }
 });
