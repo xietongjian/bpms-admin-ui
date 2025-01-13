@@ -12,10 +12,10 @@ export const getAppPrivilegeValues = () => {
 };
 
 export const saveOrUpdate = (params: any) =>
-  requestClient.post<any>(Api.SaveOrUpdate, params);
+  requestClient.post<any>(Api.SaveOrUpdate, params, {isTransformResponse: false});
 
 export const deleteByIds = (params: Array<string>) =>
-  requestClient.post<any>(Api.Delete, params, {noTransformResponse: true});
+  requestClient.post<any>(Api.Delete, params, {isTransformResponse: false});
 
 export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);

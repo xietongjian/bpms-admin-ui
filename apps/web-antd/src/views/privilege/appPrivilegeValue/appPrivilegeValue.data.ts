@@ -59,17 +59,6 @@ export const formSchema: FormSchema[] = [
       })
       .min(1, '名称不能为空')
       .max(32, "字符长度不能大于32！"),
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 32,
-        message: '字符长度不能大于32！',
-      },
-    ],*/
   },
   {
     fieldName: 'position',
@@ -98,11 +87,10 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    /*rules: [
-      {
-        max: 200,
-        message: '字符长度不能大于200！',
-      },
-    ],*/
+    rules: z
+        .string()
+        .max(200, "字符长度不能大于200！")
+        .nullable()
+        .optional()
   },
 ];

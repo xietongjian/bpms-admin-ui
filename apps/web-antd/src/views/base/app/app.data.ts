@@ -134,7 +134,7 @@ export const formSchema: FormSchema[] = [
     },
     rules: z
       .string()
-      .max(128, "字符长度不能大于128")
+      .max(255, "字符长度不能大于255")
       .regex(new RegExp('^[a-zA-z]+://[^\\s]*$'), "请输入正确的URL地址")
       .nullish()
       .nullable()
@@ -150,8 +150,8 @@ export const formSchema: FormSchema[] = [
     },
     rules: z
       .string()
-      .max(128, "字符长度不能大于128")
-      .regex(new RegExp('^\\/(\\w+\\/?)+(\\.?\\w+)?$'), "请输入正确的URL地址")
+      .max(255, "字符长度不能大于255")
+      .regex(new RegExp('([a-zA-z]+://[^\\s]*)|(^\\/(\\w+\\/?)+(\\.?\\w+)?)'), "请输入正确的URL地址")
       .nullish()
       .nullable()
       .optional(),

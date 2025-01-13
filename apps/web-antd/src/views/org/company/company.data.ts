@@ -4,7 +4,8 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 
 import { getCompanyTypes } from '#/api/org/companyType';
 import { OrderNoDefaultEnum, RemarkDefaultEnum, FormValidPatternEnum } from '#/enums/commonEnum';
-import {checkEntityExist} from "#/api/base/app";
+import { checkEntityExist } from '#/api/org/company';
+
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -43,7 +44,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'status',
     width: 80,
     slots: {default: 'status'},
-      },
+  },
   {
     title: '排序',
     field: 'orderNo',
@@ -154,7 +155,7 @@ export const formSchema: FormSchema[] = [
                 },
             );
       },
-      triggerFields: ['code'],
+      triggerFields: [''],
     },
   },
   {
@@ -162,14 +163,15 @@ export const formSchema: FormSchema[] = [
     label: '类型',
     component: 'ApiTreeSelect',
     componentProps: {
+      class: 'w-full',
       api: getCompanyTypes,
       placeholder: '请选择公司类型',
       getPopupContainer: () => document.body,
-      treeDataSimpleMode: true,
-      fieldNames: {
-        label: 'name',
-        value: 'code',
-      }
+      // treeDataSimpleMode: true,
+      treeDataSimpleMode: { id: "id", pId: "pid", rootPId: null },
+      // 菜单接口转options格式
+      labelField: 'name',
+      valueField: 'code',
     },
     rules: z
         .string({

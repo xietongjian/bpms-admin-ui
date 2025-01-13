@@ -1,22 +1,15 @@
 <script lang="ts" setup>
-  import { computed, defineEmits, ref, unref, defineExpose } from 'vue';
+  import { defineEmits, ref, defineExpose } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import {message} from 'ant-design-vue';
   import {useVbenForm} from '#/adapter/form';
 
   import { cloneDeep } from '@vben/utils';
 
-  import { $t } from '@vben/locales';
-
   import { formSchema } from './company.data';
   import { saveOrUpdate } from '#/api/org/company';
 
   const emit = defineEmits<{ success: [] }>();
-
-  const isUpdate = ref(true);
-  const title = computed(() => {
-    return isUpdate.value ? $t('pages.common.edit') : $t('pages.common.add');
-  });
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
@@ -36,7 +29,6 @@
       }
       modalApi.setState({loading: true, confirmLoading: true});
       const values = modalApi.getData();
-      isUpdate.value = !!values.id;
       await formApi.setValues(values);
       modalApi.setState({loading: false, confirmLoading: false});
     },

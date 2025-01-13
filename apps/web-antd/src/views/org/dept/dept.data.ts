@@ -1,4 +1,3 @@
-import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { OrderNoDefaultEnum, RemarkDefaultEnum,FormValidPatternEnum } from '#/enums/commonEnum';
 import { z } from '#/adapter/form';
@@ -131,7 +130,7 @@ export const deptFormSchema: FormSchema[] = [
                 },
             );
       },
-      triggerFields: ['sn'],
+      triggerFields: [''],
     },
   },
   {
@@ -175,17 +174,10 @@ export const deptFormSchema: FormSchema[] = [
     componentProps: {
       api: getCompaniesListData,
       // childrenField: 'children',
-      treeDataSimpleMode: true,
-      fieldNames: {
-        label: 'cname',
-        value: 'id'
-      },
+      treeDataSimpleMode: { id: "id", pId: "pid", rootPId: null },
       labelField: 'cname',
-      valueField: 'path',
+      valueField: 'code',
       allowClear: true,
-      searchPlaceholder: '搜索',
-      treeNodeLabelProp: 'cname',
-      treeNodeFilterProp: 'cname',
       getPopupContainer: () => document.body,
     },
     rules: 'selectRequired'

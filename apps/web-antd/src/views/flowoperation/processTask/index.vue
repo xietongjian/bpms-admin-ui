@@ -67,6 +67,7 @@
       @register="registerProcessFormModal"
       @reload="handleProcessFormVisibleChange"
     />
+    <ProcessFormPreviewModal ref="processFormPreviewModalRef" />
   </Page>
 </template>
 <script lang="ts" setup>
@@ -82,7 +83,7 @@
     stopProcess,
     updateAssignee,
   } from '#/api/flowoperation/processTask';
-  import {BpmnPreviewModal} from '#/views/components/preview';
+  import {BpmnPreviewModal, ProcessFormPreviewModal} from '#/views/components/preview';
   // import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
   import FlowPropertiesModal from '../processInst/FlowPropertiesModal.vue';
   import { columns, searchFormSchema } from './processTask.data';
@@ -291,9 +292,9 @@
 
   function handleViewForm(record: Recordable<any>) {
     record.allowsOperation = true;
-    processFormModalRef.value.setData(record);
-    processFormModalRef.value.open();
-    processFormModalRef.value.setState({title: `查看流程【${record.formName}】的表单`});
+    processFormPreviewModalRef.value.setData(record);
+    processFormPreviewModalRef.value.open();
+    processFormPreviewModalRef.value.setState({title: `查看流程【${record.formName}】的表单`});
   }
 
   function handleViewFlowProperties(record: Recordable<any>) {

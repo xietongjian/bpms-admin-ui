@@ -8,19 +8,9 @@
           </TypographyLink>
         </Tooltip>
         <TypographyLink @click="handleViewForm(row)">
-          {{row.formName}}
+          {{row.name}}
         </TypographyLink>
       </template>
-<!--      <template #formName="{ row }">
-        <Tooltip placement="top" title="流程图预览">
-          <a>
-            <PartitionOutlined @click="showFlowDiagram(row.processDefinitionKey, row.processInstanceId)" class="flow-diagram-icon mr-2"/>
-          </a>
-        </Tooltip>
-        <TypographyLink @click="handleViewForm(row)">
-          {{ row.formName }}
-        </TypographyLink>
-      </template>-->
       <template #startPersonName="{ row }">
         <EmpInfo :no="row.startPersonCode" :name="row.startPersonName" />
       </template>
@@ -99,6 +89,7 @@ const bpmnPreviewModalRef = ref();
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
   submitOnEnter: true,
+  fieldMappingTime: [['dateRange', ['startTime', 'endTime'], 'YYYY-MM-DD']],
   commonConfig: {
     labelWidth: 60,
   },
@@ -137,7 +128,7 @@ const gridOptions: VxeGridProps<any> = {
 
 const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
-function handleBpmnPreview(modelKey, procInstId) {
+function handleBpmnPreview(modelKey: string, procInstId: string) {
   bpmnPreviewModalRef.value.setData({modelKey, procInstId});
   bpmnPreviewModalRef.value.open();
 }

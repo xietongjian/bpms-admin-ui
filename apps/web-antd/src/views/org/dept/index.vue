@@ -103,22 +103,16 @@ function handleDelete(record: Recordable<any>) {
   });
 }
 
-function doSearch() {
-  reloadData();
-}
-
 function reloadData() {
   if (unref(currentNode) && unref(currentNode).id) {
     tableApi.reload({companyId: unref(currentNode).id});
   } else {
-    tableApi.setDatas([]);
+    tableApi.reload();
   }
 }
 
 function handleSuccess() {
-  setTimeout(() => {
-    reloadData();
-  }, 200);
+  reloadData();
 }
 
 function handleSelect(node: Recordable<any>) {

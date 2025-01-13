@@ -60,6 +60,7 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
+  fieldMappingTime: [['dateRange', ['startTime', 'endTime'], 'YYYY-MM-DD']],
   wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
   resetButtonOptions: {
     show: true,

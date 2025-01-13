@@ -8,7 +8,6 @@ import type { Recordable } from '@vben/types';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {Page} from '@vben/common-ui';
 import { TableAction } from '#/components/table-action';
-import {useAccess} from "@vben/access";
 
 import {deleteByIds, getCompaniesListData} from '#/api/org/company';
 import {columns, searchFormSchema} from './company.data';
@@ -103,11 +102,6 @@ function handleDelete(record: Recordable<any>) {
     tableApi.reload();
   });
 }
-
-function doSearch() {
-  tableApi.reload();
-}
-
 function handleSuccess() {
   setTimeout(() => {
     tableApi.reload();
@@ -133,7 +127,6 @@ function createActions(record: Recordable<any>) {
       tooltip: '删除',
       icon: 'ant-design:delete-outlined',
       danger: true,
-      danger: true,
       onClick: (e) => {
         e.stopPropagation();
       },
@@ -157,15 +150,14 @@ function createActions(record: Recordable<any>) {
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>
       <template #action="{ row }">
-        <TableAction
-          :actions="createActions(row)"
-        />
+        <TableAction :actions="createActions(row)" />
       </template>
       <template #typeId="{ row }">
         {{row.typeId}}
       </template>
       <template #status="{ row }">
-        {{row.status}}
+        <Tag v-if="row.status === 1" color="green">启用</Tag>
+        <Tag v-else color="red">禁用</Tag>
       </template>
     </BasicTable>
     <CompanyModal ref="companyModalRef" @success="handleSuccess"/>
