@@ -3,9 +3,6 @@ import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 
-const colProps = {
-  span: 22,
-};
 export const backToStepTableColumns: VxeGridProps['columns'] = [
   {
     title: '节点名称',
@@ -36,12 +33,6 @@ export const searchFormSchema: FormSchema[] = [
       allowClear: true,
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 14, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -86,7 +77,6 @@ export const approveActionFormSchema: FormSchema[] = [
     fieldName: 'signType',
     component: 'Checkbox',
     label: ' ',
-    colProps,
     ifShow: ({values})=>values.actionType === 'addsign',
     renderComponentContent: '加签审批完成之后是否流转到我审批',
   },
@@ -182,9 +172,6 @@ export const approveBackToStepFormSchema: FormSchema[] = [
         minRows: 2,
         maxRows: 10,
       },
-    },
-    colProps: {
-      span: 24,
     },
   },
   {

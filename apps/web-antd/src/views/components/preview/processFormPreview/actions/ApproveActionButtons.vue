@@ -84,7 +84,6 @@
   // import { useMessage } from '@/hooks/web/useMessage';
   // import { ResultEnum } from '@/enums/httpEnum';
   import {approveMsgSchemas} from "#/views/process/components/action.data";
-  import {formSchema} from "#/views/org/jobGrade/jobGrade.data";
 
   const approveSelectorPersonalModalRef = ref(),
       approveCustomApproveSettingRef = ref(),

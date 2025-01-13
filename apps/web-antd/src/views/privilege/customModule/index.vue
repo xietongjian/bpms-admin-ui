@@ -25,16 +25,16 @@
 </template>
 <script lang="ts" setup>
   import { nextTick } from 'vue';
-  import { BasicTable, useTable, TableAction, BasicColumn, ActionItem } from '@/components/Table';
+  // import { BasicTable, useTable, TableAction, BasicColumn, ActionItem } from '@/components/Table';
   import { getModules, deleteByIds } from '#/api/privilege/module';
-  import { useMessage } from '@/hooks/web/useMessage';
+  // import { useMessage } from '@/hooks/web/useMessage';
   import { columns, searchFormSchema } from './module.data';
   import ModuleModal from './ModuleModal.vue';
   import PValueSettingModal from './PValueSettingModal.vue';
-  import { useModal } from '@/components/Modal';
-  import { Authority } from '@/components/Authority';
-  import { PerEnum } from '@/enums/perEnum';
-  import { Tag, Space } from 'ant-design-vue';
+  // import { useModal } from '@/components/Modal';
+  // import { Authority } from '@/components/Authority';
+  import { PerEnum } from '#/enums/perEnum';
+  import { Tag, Space, message } from 'ant-design-vue';
 
   const { createMessage } = useMessage();
 

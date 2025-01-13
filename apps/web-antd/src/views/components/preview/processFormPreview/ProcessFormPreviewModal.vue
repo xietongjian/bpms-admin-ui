@@ -9,7 +9,7 @@
                 <template #title>
                   <div style="font-weight: bold; width: 200px">基本信息</div>
                 </template>
-                <Description @register="registerDescription" />
+                <Descriptions @register="registerDescription" />
               </div>
               <CollapseContainer>
                 <template #title>
@@ -36,53 +36,7 @@
           </TabPane>
           <TabPane key="viewFlow" tab="查看流程图">
             <div class="form-bpmn-container">
-              <div class="containers" ref="container">
-                <BpmnPresetViewer
-                  v-if="formGeneratePropsInfo.procInstId || formGeneratePropsInfo.modelKey"
-                  ref="presetViewer"
-                  :theme="getTheme"
-                  local="zh_CN"
-                  translate-prefix="bpmn.information."
-                  :procInstId="formGeneratePropsInfo.procInstId"
-                  :modelKey="formGeneratePropsInfo.modelKey"
-                  @viewer-init="handleViewerInit"
-                />
-                <div class="svg-controller">
-                  <div class="scale-rate">
-                    {{ Math.floor(defaultZoom * 10 * 10) + '%' }}
-                  </div>
-                  <Space>
-                    <Button
-                      title="缩小"
-                      shape="circle"
-                      size="small"
-                      @click="processZoomOut()"
-                      type="primary"
-                    >
-                      <MinusOutlined />
-                    </Button>
-                    <Button
-                      :title="isFitView ? '按窗口大小显示' : '实际大小'"
-                      shape="circle"
-                      size="small"
-                      @click="processFitContainer()"
-                      type="primary"
-                    >
-                      <CompressOutlined v-if="isFitView" />
-                      <ExpandOutlined v-else />
-                    </Button>
-                    <Button
-                      title="放大"
-                      shape="circle"
-                      size="small"
-                      @click="processZoomIn()"
-                      type="primary"
-                    >
-                      <PlusOutlined />
-                    </Button>
-                  </Space>
-                </div>
-              </div>
+
             </div>
           </TabPane>
           <template #rightExtra>
@@ -159,7 +113,7 @@
       />
     </div>
 
-    <template #insertFooter>
+    <footer>
       <Dropdown>
         <template #overlay>
           <Menu @click="handlePrintClick">
@@ -173,7 +127,7 @@
           <DownOutlined />
         </Button>
       </Dropdown>
-    </template>
+    </footer>
     <ApproveSelectorPersonalModal
       @register="registerApproveSelectorPersonalModal"
       @success="loadCommentList"
@@ -183,7 +137,6 @@
 <script lang="ts" setup>
   import { ref, unref, reactive, onMounted, watch, computed, defineEmits, defineExpose, nextTick, shallowRef } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
-  import {useVbenForm} from '#/adapter/form';
 
   import { Button, Dropdown, Menu, Space, Descriptions, Collapse, message,Tabs, Textarea, Popconfirm } from 'ant-design-vue';
   // import { CollapseContainer } from '@/components/Container';
@@ -202,7 +155,7 @@
   import CurrentApprover from '#/views/components/process/CurrentApprover.vue';
   import { getBizDataInfoByBusinessKeyAndModelKey } from '#/api/form/bizForm';
   import { getStartHeadInfoVoByProcessInstanceId } from '#/api/flowoperation/processInst';
-  import { formBaseDataSchema } from './processForm.data';
+  // import { formBaseDataSchema } from './processForm.data';
   import printJS from 'print-js';
   import {
     CompressOutlined,
@@ -211,7 +164,7 @@
     MinusOutlined,
     PlusOutlined,
   } from '@ant-design/icons-vue';
-  import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
+  // import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
   // import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
   import { updateCustomFormData } from '#/api/process/customForm';
   // import {useUserStore} from "@/store/modules/user";
@@ -221,12 +174,6 @@
   import ApproveSelectorPersonalModal from './actions/ApproveSelectorPersonalModal.vue';
   import {EmpInfo} from '#/views/components/EmpInfo';
   import { useUserStore } from '@vben/stores';
-  import { usePreferences } from '@vben/preferences';
-
-  // 人员选择弹窗
-  // const [registerApproveSelectorPersonalModal, { openModal: openApproveSelectorPersonalSelector, setModalProps: setApproveSelectorPersonalModalProps }] = useModal();
-  const { isDark } = usePreferences();
-  const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
 
   const reminderAuthPointer = ref(null);
   const turnReadAuthPointer = ref(null);
@@ -237,7 +184,6 @@
 
   const currentApproverList = ref([]);
 
-  const presetViewer = ref<any>();
   const MenuItem = Menu.Item;
 
   const emit = defineEmits(['reload', 'visible-change']);
@@ -431,20 +377,6 @@
     }
   }
 
-  // 催办
-  async function handleReminder() {
-    const {procInstId} = unref(params);
-    const {success, msg} = await reminderTask({
-      processInstanceId: procInstId,
-      message: reminderMsg.value,
-    });
-    if (success) {
-      reminderMsg.value = '';
-      message.success(msg);
-    } else {
-      message.error(msg);
-    }
-  }
   /**
    * 撤回操作
    */
@@ -511,9 +443,6 @@
     });
   }
 
-  /*useRequest(loadCurrTaskApplyersByBusinessKey, {
-    refreshOnWindowFocus: true,
-  });*/
 
   function handlePrintClick({ key }) {
     if (key === 'printAll') {
@@ -526,7 +455,7 @@
   }
 
   function changeModalLoading(loading) {
-    changeLoading(loading);
+    // changeLoading(loading);
   }
 
   function handleViewerInit(v) {
@@ -546,35 +475,6 @@
       canvas?.zoom('fit-viewport', { x: 0, y: 0 });
       canvas?.zoom(defaultZoom.value);
     }
-  }
-  function processFitViewer() {
-    setTimeout(() => {
-      isFitView.value = true;
-      const canvas = bpmnViewer.value?.get('canvas');
-      canvas.zoom(defaultZoom.value);
-      canvas.zoom('fit-viewport', { x: 0, y: 0 });
-      defaultZoom.value = canvas.zoom();
-    }, 100);
-  }
-
-  function processZoomIn(zoomStep = 0.1) {
-    let newZoom = Math.floor(defaultZoom.value * 100 + zoomStep * 100) / 100;
-    if (newZoom > 4) {
-      newZoom = 4;
-      // throw new Error("[Process Designer Warn ]: The zoom ratio cannot be greater than 4");
-    }
-    defaultZoom.value = newZoom;
-    bpmnViewer.value?.get('canvas').zoom(defaultZoom.value);
-  }
-
-  function processZoomOut(zoomStep = 0.1) {
-    let newZoom = Math.floor(defaultZoom.value * 100 - zoomStep * 100) / 100;
-    if (newZoom < 0.2) {
-      newZoom = 0.2;
-      // throw new Error("[Process Designer Warn ]: The zoom ratio cannot be less than 0.2");
-    }
-    defaultZoom.value = newZoom;
-    bpmnViewer.value?.get('canvas').zoom(defaultZoom.value);
   }
 
   function doPrint({ header, printable }) {

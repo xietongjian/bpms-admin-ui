@@ -63,10 +63,10 @@
     />
     <FlowPropertiesModal ref="flowPropertiesModalRef" />
     <ApproveHistoryModal ref="approveHistoryModalRef" @register="registerApproveHistoryModal" />
-    <ProcessFormModal ref="processFormModalRef"
+<!--    <ProcessFormModal ref="processFormModalRef"
       @register="registerProcessFormModal"
       @reload="handleProcessFormVisibleChange"
-    />
+    />-->
     <ProcessFormPreviewModal ref="processFormPreviewModalRef" />
   </Page>
 </template>

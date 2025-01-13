@@ -4,14 +4,15 @@ import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
 import Icon from '@/components/Icon/Icon.vue';
 import { OrderNoDefaultEnum } from '#/enums/commonEnum';
+import {VxeGridProps} from "@vben/plugins/src/vxe-table";
 
 const colProps = {
   span: 24,
 };
-export const columns: BasicColumn[] = [
+export const columns: VxeGridProps['columns'] = [
   {
     title: '标题',
-    dataIndex: 'name',
+    field: 'name',
     align: 'left',
     width: 300,
     resizable: true,
@@ -22,14 +23,14 @@ export const columns: BasicColumn[] = [
   },
   {
     title: 'URL',
-    dataIndex: 'url',
+    field: 'url',
     align: 'left',
     width: 180,
   },
  /* {
     resizable: true,
     title: '标识',
-    dataIndex: 'sn',
+    field: 'sn',
     align: 'left',
     width: 120,
   },
@@ -37,12 +38,12 @@ export const columns: BasicColumn[] = [
     resizable: true,
     width: 200,
     title: '组件',
-    dataIndex: 'component',
+    field: 'component',
     align: 'left',
   },*/
   {
     title: '菜单类型',
-    dataIndex: 'component',
+    field: 'component',
     width: 100,
     customRender: ({ record }) => {
       const isDictionary = record.component === 'LAYOUT';
@@ -53,7 +54,7 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '状态',
-    dataIndex: 'status',
+    field: 'status',
     width: 60,
     customRender: ({ record }) => {
       const status = record.status;
@@ -65,7 +66,7 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '是否显示',
-    dataIndex: 'showStatus',
+    field: 'showStatus',
     width: 100,
     customRender: ({ record }) => {
       const status = record.showStatus;
@@ -77,14 +78,14 @@ export const columns: BasicColumn[] = [
   },
 /*  {
     title: '权限值',
-    dataIndex: 'pvs',
+    field: 'pvs',
     align: 'left',
     width: 300,
     resizable: true,
   },*/
   {
     title: '排序',
-    dataIndex: 'orderNo',
+    field: 'orderNo',
     width: 60,
     align: 'right',
   },
@@ -92,7 +93,7 @@ export const columns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'keyword',
+    fieldName: 'keyword',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -111,26 +112,26 @@ export const searchFormSchema: FormSchema[] = [
 
 export const formSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
     show: false,
   },
   {
-    field: 'menuType',
+    fieldName: 'menuType',
     label: 'menuType',
     component: 'Input',
     defaultValue: 2,
     show: false,
   },
   {
-    field: 'pid',
+    fieldName: 'pid',
     label: 'pid',
     component: 'Input',
     show: false,
   },
   {
-    field: 'image',
+    fieldName: 'image',
     label: '图标',
     component: 'IconPicker',
     componentProps: {
@@ -139,7 +140,7 @@ export const formSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '名称',
     required: true,
     component: 'Input',
@@ -157,7 +158,7 @@ export const formSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'moduleType',
+    fieldName: 'moduleType',
     label: '菜单类型',
     component: 'RadioButtonGroup',
     defaultValue: 'dictionary',
@@ -170,7 +171,7 @@ export const formSchema: FormSchema[] = [
     colProps: {span: 24},
   },
   {
-    field: 'modelInfoSelector',
+    fieldName: 'modelInfoSelector',
     label: '表单流程模板',
     required: ({values}) => values.moduleType === 'menu',
     component: 'ModelInfoSelector',
@@ -182,7 +183,7 @@ export const formSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'url',
+    fieldName: 'url',
     label: 'URL',
     component: 'Input',
     show: false,
@@ -190,7 +191,7 @@ export const formSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'component',
+    fieldName: 'component',
     label: '组件地址',
     component: 'Input',
     show: false,
@@ -198,7 +199,7 @@ export const formSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'redirect',
+    fieldName: 'redirect',
     label: '跳转地址',
     help: '目录菜单跳转地址！',
     component: 'Input',
@@ -220,7 +221,7 @@ export const formSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'orderNo',
+    fieldName: 'orderNo',
     label: '排序号',
     help: '数值越小越靠前！',
     component: 'InputNumber',
@@ -231,7 +232,7 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    field: 'status',
+    fieldName: 'status',
     label: '状态',
     component: 'Switch',
     defaultValue: 1,
@@ -244,7 +245,7 @@ export const formSchema: FormSchema[] = [
     colProps,
   },
   {
-    field: 'showStatus',
+    fieldName: 'showStatus',
     label: '是否显示',
     component: 'Switch',
     defaultValue: 1,
@@ -260,13 +261,13 @@ export const formSchema: FormSchema[] = [
 
 export const pValueFormSchema: FormSchema[] = [
   {
-    field: 'id',
+    fieldName: 'id',
     label: 'ID',
     component: 'Input',
     show: false,
   },
   {
-    field: 'pvs',
+    fieldName: 'pvs',
     label: ' ',
     component: 'CheckboxGroup',
     labelWidth: 10,
