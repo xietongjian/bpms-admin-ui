@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { DrawerProps, ExtendedDrawerApi } from './drawer';
 
+import { computed, provide, ref, useId, watch } from 'vue';
+
 import {
   useIsMobile,
   usePriorityValues,
@@ -25,7 +27,6 @@ import {
 import { ELEMENT_ID_MAIN_CONTENT } from '@vben-core/shared/constants';
 import { globalShareState } from '@vben-core/shared/global-state';
 import { cn } from '@vben-core/shared/utils';
-import { computed, provide, ref, useId, watch } from 'vue';
 
 interface Props extends DrawerProps {
   drawerApi?: ExtendedDrawerApi;
@@ -67,6 +68,7 @@ const {
   loading: showLoading,
   modal,
   openAutoFocus,
+  overlayBlur,
   placement,
   showCancelButton,
   showConfirmButton,
@@ -139,6 +141,7 @@ const getAppendTo = computed(() => {
       :open="state?.isOpen"
       :side="placement"
       :z-index="zIndex"
+      :overlay-blur="overlayBlur"
       @close-auto-focus="handleFocusOutside"
       @closed="() => drawerApi?.onClosed()"
       @escape-key-down="escapeKeyDown"
