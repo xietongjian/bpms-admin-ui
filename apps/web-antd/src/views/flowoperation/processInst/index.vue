@@ -30,16 +30,13 @@
 
       <template #formName="{row}">
         <Tooltip title="查看流程图">
-          <a>
-            <PartitionOutlined @click="handlePreview(row)" />
-          </a>
+          <TypographyLink @click="handlePreview(row)" class="mr-2">
+            <PartitionOutlined  />
+          </TypographyLink>
         </Tooltip>
-        <Tooltip placement="topLeft" :mouseEnterDelay="0.3">
-          <template #title>
-            {{ row.formName }}
-          </template>
+        <TypographyLink @click="handleViewForm(row)">
           {{ row.formName }}
-        </Tooltip>
+        </TypographyLink>
       </template>
 
       <template #processStatusName="{row}">
@@ -68,6 +65,7 @@
       @success="handleReload"
     />
     <ProcessVariablesModal ref="processVariablesModalRef"  @register="registerProcessVariableModal" @success="handleReload" />
+    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
   </Page>
 </template>
 
@@ -90,7 +88,7 @@
   import ProcessNodeSelectionModal from '#/views/flowoperation/processTask/components/ProcessNodeSelectionModal.vue';
   import ProcessVersionSelectionModal from '#/views/flowoperation/processInst/ProcessVersionSelectionModal.vue';
   import { getAll } from '#/api/base/app';
-  import {BpmnPreviewModal} from '#/views/components/preview';
+  import {BpmnPreviewModal, ProcessFormPreviewDrawer, ProcessFormPreviewModal} from '#/views/components/preview';
   import { useClipboard } from '@vueuse/core';
 
   import { columns, searchFormSchema } from './processInst.data';
@@ -105,7 +103,7 @@
     PauseCircleFilled,
   } from '@ant-design/icons-vue';
   import ProcessFormModal from '../processTask/ProcessFormModal.vue';
-  import {Modal, Tooltip, Segmented, Badge, message, Button, RadioButton, RadioGroup} from 'ant-design-vue';
+  import {Modal, TypographyLink, Tooltip, Segmented, Badge, message, Button, RadioButton, RadioGroup} from 'ant-design-vue';
   import { backToStep, restartProcessInstance, stopProcess } from '#/api/flowoperation/processTask';
   import ProcessVariablesModal from '#/views/flowoperation/processInst/ProcessVariablesModal.vue';
 
@@ -115,6 +113,7 @@
       processFormModalRef = ref(),
       processNodeSelectionModalRef = ref(),
       processVersionSelectionModalRef = ref(),
+    processFormPreviewDrawerRef = ref(),
       processVariablesModalRef = ref();
 
   const { isSupported, copy, copied } = useClipboard({ legacy: true });
@@ -265,9 +264,18 @@
   }
 
   function handleViewForm(record: Recordable<any>) {
-    processFormModalRef.value.setData(record);
-    processFormModalRef.value.open();
-    processFormModalRef.value.setState({title: `查看流程【${record.formName}】的表单`});
+    // processFormModalRef.value.setData(record);
+    // processFormModalRef.value.open();
+    // processFormModalRef.value.setState({title: `查看流程【${record.formName}】的表单`});
+    debugger;
+    record.allowsOperation = true;
+    processFormPreviewDrawerRef.value.setData({
+      ...record,
+      procInstId: record.processInstanceId,
+      modelKey: record.processDefinitionKey,
+    });
+    processFormPreviewDrawerRef.value.open();
+    processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.formName}】的表单`});
   }
 
   function handleViewApproveHistory(record: Recordable<any>) {

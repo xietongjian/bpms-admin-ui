@@ -43,9 +43,8 @@ enum Api {
   GetCommentInfoByTaskId = '/flow/front/query/getCommentInfoByTaskId',
   GetCurrTaskApplyersByBusinessKey = '/flow/front/query/getCurrTaskApplyersByBusinessKey',
   UpdateCommentInfo = '/flow/front/operate/updateCommentInfo',
-  CheckRevokeProcess = '/flow/front/query/checkRevokeProcess',
+  CheckRevokeProcess = '/flow/query/checkRevokeProcess',
   ReminderTask = '/flow/operate/reminderTask',
-
 
 }
 
@@ -250,8 +249,8 @@ export function getBizInfoVoByModelKey(params) {
  * 判断是否可以撤回
  * @param params
  */
-export function checkRevokeProcess(params) {
-  return requestClient.post<any>(Api.CheckRevokeProcess, params, {isReturnNativeResponse: true});
+export function checkRevokeProcess(params: any) {
+  return requestClient.post<any>(Api.CheckRevokeProcess, params, {isTransformResponse: false});
 }
 
 // 我的草稿

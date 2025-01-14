@@ -1,17 +1,30 @@
 <template>
-  <BasicDrawer class="w-[1000px]" wrap-class-name="process-form-full-modal ">
-    <div class="h-full">
-      <div ref="allInfoId" class="h-full">
-        <Tabs v-model:activeKey="activeViewKey" size="small" class="h-full">
+  <BasicDrawer content-class="py-0">
+    <template #extra>
+      <div>
+        <Button
+          @click="handleFullScreen"
+          type="text"
+          shape="circle"
+          :icon="h(isFullScreen ? ShrinkOutlined : ArrowsAltOutlined)"
+          class="mr-2" />
+
+<!--        <ArrowsAltOutlined />
+        <ShrinkOutlined />-->
+      </div>
+    </template>
+    <div class="h-full w-full flex flex-row">
+      <div ref="allInfoId" class="h-full flex-1">
+        <Tabs v-model:activeKey="activeViewKey" size="small" class="h-full" tabBarStyle="">
           <TabPane key="viewForm" tab="查看表单">
             <div id="applyInfoId" class="w-full h-full">
-              <Collapse size="small" collapsible="header" default-active-key="1" class="mb-4">
+              <Collapse size="small" collapsible="header" default-active-key="1" class="mb-2">
                 <CollapsePanel key="1" header="基本信息">
                   <ProcessHeaderInfo :proc-inst-id="procInstInfo.procInstId"/>
                 </CollapsePanel>
               </Collapse>
 
-              <Collapse size="small" collapsible="header" default-active-key="1" class="mb-4">
+              <Collapse size="small" collapsible="header" default-active-key="1" class="mb-2">
                 <CollapsePanel key="1" header="表单信息">
                   <ProcessFormInfo
                       :procInstId="procInstInfo.procInstId"
@@ -50,10 +63,6 @@
                   <div v-if="showErrorMsg" class="show-error-tip">{{ errorMsg }}</div>
                 </div>
               </CollapseContainer>-->
-
-              <div>
-                <ApproveHistoryList :historyList="historyList" :loading="approvalHistoryLoading" />
-              </div>
 
               <div v-if="currentApproverList.length > 0" class="mt-2 desc-wrap">
                 <CurrentApprover :approverList="currentApproverList" ></CurrentApprover>
@@ -134,25 +143,41 @@
 
 <!--      <div v-if="showOperation" class="h-[120px]"></div>-->
 
-      <ApproveActionButtons
-        ref="approveActionButtonsRef"
-        v-if="showOperation"
-        @change-loading="changeModalLoading"
-        :authPoints="flowBaseInfo?.authPoints"
-        :params="params"
-        @approve-save-form="approveSaveFormData"
-        @success="handleCloseModal"
-      />
+
+      <div class="w-[400px]" v-if="procInstInfo?.showOperation && isFullScreen">
+        <ApproveActionButtons
+          ref="approveActionButtonsRef"
+          v-if="procInstInfo?.showOperation"
+          @change-loading="changeModalLoading"
+          :authPoints="flowBaseInfo?.authPoints"
+          :params="params"
+          @approve-save-form="approveSaveFormData"
+          @success="handleCloseModal"
+        />
+      </div>
     </div>
 
     <ApproveSelectorPersonalModal
       @register="registerApproveSelectorPersonalModal"
       @success="loadCommentList"
     />
+    <template #footer v-if="procInstInfo?.showOperation && !isFullScreen">
+      <div class="flex-1 pb-2 pr-4">
+        <ApproveActionButtons
+          ref="approveActionButtonsRef"
+          v-if="procInstInfo?.showOperation"
+          @change-loading="changeModalLoading"
+          :authPoints="flowBaseInfo?.authPoints"
+          :params="params"
+          @approve-save-form="approveSaveFormData"
+          @success="handleCloseModal"
+        />
+      </div>
+    </template>
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
-  import { ref, unref, reactive, onMounted, watch, computed, defineEmits, defineExpose, nextTick, shallowRef } from 'vue';
+  import { h, ref, unref, reactive, onMounted, watch, computed, defineEmits, defineExpose, nextTick, shallowRef } from 'vue';
   import {useVbenModal, useVbenDrawer} from '@vben/common-ui';
 
   import {
@@ -190,6 +215,8 @@
   import {
     CompressOutlined,
     DownOutlined,
+    ArrowsAltOutlined,
+    ShrinkOutlined,
     ExpandOutlined,
     MinusOutlined,
     PlusOutlined,
@@ -212,6 +239,8 @@
   const turnReadAuthPointer = ref(null);
   const revokeAuthPointer = ref(null);
   const revokeVisible = ref<boolean>(false);
+
+  const isFullScreen = ref(false);
 
   const userStore = useUserStore();
 
@@ -275,8 +304,12 @@
 
 
   const [BasicDrawer, drawerApi] = useVbenDrawer({
+    class: 'w-[1000px]',
     draggable: true,
     footer: false,
+    footerClass: 'justify-start p-0',
+    showCancelButton: false,
+    showConfirmButton: false,
     onCancel() {
       drawerApi.close();
     },
@@ -285,9 +318,12 @@
       if (isOpen) {
         const values = drawerApi.getData<Record<string, any>>();
         procInstInfo.value = values;
+        // showOperation.value = values
         if (values) {
           // formApi.setValues(values);
-          drawerApi.setState({loading: false, confirmLoading: false});
+          drawerApi.setState({footer: values?.showOperation, loading: false, confirmLoading: false});
+          // 初始化数据
+          initData();
         }
       }
     },
@@ -296,6 +332,35 @@
       // handleSubmit();
     },
   });
+
+  function handleFullScreen() {
+    drawerApi.setState({
+      class: unref(isFullScreen) ? 'w-[1000px]': 'w-full',
+    });
+    isFullScreen.value = !isFullScreen.value;
+  }
+
+  async function initData(){
+    // 设置任务为已读
+    const {taskId, modelKey, procInstId} = procInstInfo.value;
+    try {
+      // 设置任务为已读
+      taskId && saveOrUpdateReadInfo({taskId, status: 1});
+      // 查询流程基本信息
+      flowBaseInfo.value = await getProdModelInfoByModelKeyAndProcInstId({
+        modelKey,
+        procInstId,
+        taskId,
+      });
+      formType.value = flowBaseInfo.value?.formType;
+      // 判断转阅按钮
+      checkAuthPointer(flowBaseInfo.value?.authPoints);
+    } catch (e) {
+      flowBaseInfo.value = {};
+      console.error('查询流程基本信息异常！' + e);
+    }
+
+  }
 
   /*const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
     async (data) => {
@@ -386,6 +451,7 @@
   }
 
   function checkAuthPointer(authPoints) {
+    const {procInstId} = unref(procInstInfo);
     if (authPoints) {
       setTimeout(() => {
         authPoints.forEach(item => {
@@ -402,7 +468,7 @@
         });
 
         // 有撤回权限才进行检测
-        revokeAuthPointer.value && checkRevokeProcess({processInstanceId: formGeneratePropsInfo.procInstId}).then(res => {
+        revokeAuthPointer.value && checkRevokeProcess({processInstanceId: procInstId}).then(res => {
           if (res.success) {
             revokeVisible.value = res.data;
           } else {

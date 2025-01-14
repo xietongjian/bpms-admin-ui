@@ -1,17 +1,17 @@
 <template>
   <div
+    v-loading="loading"
       v-if="modelKey"
       class="generate-form-container"
       style="height: auto"
   >
     <GenerateForm
-        class="generateForm"
+        class="generateForm min-h-[200px]"
         id="generateFormId"
         ref="generateFormRef"
         :edit="showOperation"
         :data="jsonData"
         :print-read="printRead"
-        style="min-height: 200px"
     />
     <div v-if="showErrorMsg" class="show-error-tip">{{ errorMsg }}</div>
   </div>
@@ -57,7 +57,6 @@ watch(() => props.procInstId, (newVal, oldValue) => {
 */
 
 onMounted(() => {
-  // getStartHeadInfoVo();
   loadCustomFormAndData();
 });
 /**
@@ -65,28 +64,32 @@ onMounted(() => {
  */
 async function loadCustomFormAndData() {
   // showBizFormData.value = true;
-  // 渲染自定义表单数据
-  const { data, success, msg } = await getCustomFormInfoVoByModelKeyAndBusinessKey({
-    modelKey: props.modelKey,
-    businessKey: props.bizId,
-    procInstId: props.procInstId,
-    taskId: props.taskId,
-  });
-  if (success) {
-    const {formDatas, formInfo, itemList, activityFormItems} = data;
-    jsonData.value = JSON.parse(formInfo.formJson);
-    nextTick(() => {
-      generateFormRef.value.refresh();
-      generateFormRef.value.setData(formDatas);
-      setFormPermission(activityFormItems, itemList);
+  loading.value = true;
+  try { // 渲染自定义表单数据
+    const {data, success, msg} = await getCustomFormInfoVoByModelKeyAndBusinessKey({
+      modelKey: props.modelKey,
+      businessKey: props.bizId,
+      procInstId: props.procInstId,
+      taskId: props.taskId,
     });
-  } else {
-    showErrorMsg.value = true;
-    errorMsg.value = msg;
+    if (success) {
+      const {formDatas, formInfo, itemList, activityFormItems} = data;
+      jsonData.value = JSON.parse(formInfo.formJson);
+      nextTick(() => {
+        generateFormRef.value.refresh();
+        generateFormRef.value.setData(formDatas);
+        setFormPermission(activityFormItems, itemList);
+      });
+    } else {
+      showErrorMsg.value = true;
+      errorMsg.value = msg;
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
   }
-
 }
-
 
 function setFormPermission(activityFormItems, itemList) {
   // if(path.indexOf('/process/approve') !== -1){

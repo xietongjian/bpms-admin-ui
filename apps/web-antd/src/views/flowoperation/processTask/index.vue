@@ -14,13 +14,7 @@
             <PartitionOutlined />
           </TypographyLink>
         </Tooltip>
-
-        <Tooltip placement="topLeft" :mouseEnterDelay="0.3">
-          <template #title>
-            {{ row.formName }}
-          </template>
-          <TypographyLink @click="handleViewForm(row)">{{ row.formName }}</TypographyLink>
-        </Tooltip>
+        <TypographyLink @click="handleViewForm(row)">{{ row.formName }}</TypographyLink>
       </template>
 
       <template #assigneeName="{ row }">
@@ -299,6 +293,7 @@
       ...record,
       procInstId: record.processInstanceId,
       modelKey: record.processDefinitionKey,
+      showOperation: true,
     });
     processFormPreviewDrawerRef.value.open();
     processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.formName}】的表单`});

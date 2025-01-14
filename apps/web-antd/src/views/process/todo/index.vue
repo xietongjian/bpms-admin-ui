@@ -24,7 +24,9 @@
       </template>
     </BasicTable>
     <BpmnPreviewModal ref="bpmnPreviewModalRef" />
-    <ProcessFormModal ref="processFormModalRef" @register="registerProcessFormModal" @reload="reloadData" />
+<!--    <ProcessFormModal ref="processFormModalRef" @register="registerProcessFormModal" @reload="reloadData" />-->
+    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
+
   </Page>
 </template>
 <script lang="ts" setup>
@@ -32,7 +34,8 @@ import {ref} from 'vue';
   import { useVbenVxeGrid } from '#/adapter/vxe-table';
   import type {VxeGridProps} from '#/adapter/vxe-table';
   import type {VbenFormProps} from '@vben/common-ui';
-  import {Page} from '@vben/common-ui';
+import type {Recordable} from '@vben/types';
+import {Page} from '@vben/common-ui';
 
   import { TypographyLink, Tooltip } from 'ant-design-vue';
   import { PartitionOutlined } from '@ant-design/icons-vue';
@@ -40,7 +43,8 @@ import {ref} from 'vue';
   import { getAppingTasksPagerModel, getApps } from '#/api/process/process';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { timeDurationFormatter } from '#/utils';
-  import {BpmnPreviewModal} from '#/views/components/preview';
+import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
+
   //import { useProcessStore } from '@/store/modules/process';
   // import ProcessFormModal from '#/views/flowoperation/processTask/ProcessFormModal.vue';
 
@@ -53,7 +57,9 @@ import {ref} from 'vue';
     { openModal: openProcessFormModal, setModalProps: setProcessFormModalProps },
   ] = useModal();*/
 
-const bpmnPreviewModalRef = ref();
+const bpmnPreviewModalRef = ref(),
+    processFormPreviewDrawerRef = ref()
+;
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
   submitOnEnter: true,
@@ -125,8 +131,16 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
   });*/
 
   function handleViewForm(record: Recordable<any>) {
-    record.allowsOperation = true;
-    openProcessFormModal(true, {
+    processFormPreviewDrawerRef.value.setData({
+      ...record,
+      procInstId: record.processInstanceId,
+      modelKey: record.processDefinitionKey,
+      showOperation: true,
+    });
+    processFormPreviewDrawerRef.value.open();
+    processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.formName}】的表单`});
+
+    /*openProcessFormModal(true, {
       record,
     });
     setProcessFormModalProps({
@@ -136,7 +150,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
       centered: true,
       cancelText: '关闭',
       maskClosable: true,
-    });
+    });*/
   }
 
   function handleBpmnPreview(modelKey, procInstId) {

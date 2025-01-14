@@ -1,10 +1,23 @@
  <template>
-  <div class="approve-options mt-2 approve-ctrl">
+   <!--
+   position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #e1edff;
+    border-top: 3px solid #1890ff;
+    padding: 10px 20px;
+    z-index: 999999;
+
+    .approve-ctrl-btns {
+      margin: 10px 0 0;
+    }-->
+  <div class="ml-2 mt-2">
     <div v-if="authPoints && authPoints.length > 0">
       <BasicForm @register="registerApproveMsgForm" />
       <Spin :spinning="authPoints.length <= 0">
 
-      <Space class="mt-2 approve-ctrl-btns">
+      <Space class="approve-ctrl-btns">
         <!-- "[\"addsign\", \"claim\", \"turn_do\", \"refuse\", \"approve\", \"turn_read\", \"reject\", \"revoke\"]" -->
         <!-- ["approve", "claim", "turn_do", "addsign", "reject", "revoke", "turn_read", "delegate" ] -->
         <template v-for="item in authPoints">
@@ -35,7 +48,7 @@
           <Button type="primary" v-if="item.sn === 'addsign'" :title="item.name" @click="doApproveSelectPersonal('addsign', true)">
             {{item.name}}
           </Button>
-          <Button type="error" v-if="item.sn === 'reject'" :title="item.name" @click="doBackToStep" >
+          <Button danger v-if="item.sn === 'reject'" :title="item.name" @click="doBackToStep" >
             {{item.name}}
           </Button>
           <!-- 拒绝操作 -->
@@ -47,7 +60,7 @@
       </Spin>
     </div>
 
-    <div v-else> 无操作权限 </div>
+    <div v-else class="w-full"> 无操作权限 </div>
   </div>
 
   <ApproveSelectorPersonalModal
@@ -118,6 +131,8 @@
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
+      hideLabel: true,
+      hideRequiredMark: true,
       componentProps: {
         // class: 'w-full',
       },

@@ -47,17 +47,17 @@ export const todoTableSchema: VxeGridProps['columns'] = [
     },
   },
   {
-    title: '停留时间',
-    width: 150,
-    field: 'taskDurationStr',
-    align: 'left',
-  },
-  {
     title: '流程标题',
     field: 'formName',
     align: 'left',
     minWidth: 300,
     slots: {default: 'formName'}
+  },
+  {
+    title: '停留时间',
+    width: 150,
+    field: 'taskDurationStr',
+    align: 'left',
   },
   {
     title: '提交人',

@@ -65,10 +65,12 @@
       </template>
     </BasicTable>
     <BpmnPreviewModal ref="bpmnPreviewModalRef" />
-    <ProcessFormModal
+<!--    <ProcessFormModal
       @register="registerProcessFormModal"
       @visible-change="handleProcessFormVisibleChange"
-    />
+    />-->
+    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
+
     <ExportFormExcelModal
       @register="registerExportFormExcelModal"
     />
@@ -80,9 +82,11 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {Page, useVbenModal} from '@vben/common-ui';
+import type {Recordable} from '@vben/types';
+
   import {Space, Button, Badge, Popover, Tooltip, TypographyLink} from 'ant-design-vue';
   import {DownloadOutlined, PartitionOutlined} from '@ant-design/icons-vue';
-import {BpmnPreviewModal} from '#/views/components/preview';
+import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
 
 // import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
   import { launchedTableSchema, searchFormSchema } from './data';
@@ -128,7 +132,9 @@ import {getAppingTasksPagerModel} from "#/api/process/process";
     showIndexColumn: true,
     immediate: false
   });*/
-const bpmnPreviewModalRef = ref();
+const bpmnPreviewModalRef = ref(),
+    processFormPreviewDrawerRef = ref()
+;
 
 
 const formOptions: VbenFormProps = {
@@ -212,7 +218,15 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
   }
 
   function handleViewForm(record: Recordable<any>) {
-    openProcessFormModal(true, {
+    processFormPreviewDrawerRef.value.setData({
+      ...record,
+      procInstId: record.processInstanceId,
+      modelKey: record.processDefinitionKey,
+    });
+    processFormPreviewDrawerRef.value.open();
+    processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.formName}】的表单`});
+
+    /*openProcessFormModal(true, {
       record,
     });
     setProcessFormModalProps({
@@ -222,7 +236,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
       centered: true,
       cancelText: '关闭',
       maskClosable: false,
-    });
+    });*/
   }
 
   function handleProcessFormVisibleChange(visible) {

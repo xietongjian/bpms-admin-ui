@@ -23,6 +23,8 @@
       @register="registerProcessFormModal"
       @visible-change="handleProcessFormVisibleChange"
     />
+    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
+
   </Page>
 </template>
 <script lang="ts" setup>
@@ -31,11 +33,13 @@ import {ref} from 'vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
+import type {Recordable} from '@vben/types';
+
 import {Page} from '@vben/common-ui';
   // import { BasicTable, useTable } from '@/components/Table';
   import {TypographyLink, Tooltip} from 'ant-design-vue';
   import {PartitionOutlined} from '@ant-design/icons-vue';
-import {BpmnPreviewModal} from '#/views/components/preview';
+import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
   import { haveDownTableSchema, searchFormSchema } from './data';
   import {getApplyedTasksPagerModel, getApps} from "#/api/process/process";
   // import { useModal } from '@/components/Modal';
@@ -83,7 +87,8 @@ import {BpmnPreviewModal} from '#/views/components/preview';
     })
   })*/
 
-const bpmnPreviewModalRef = ref();
+const bpmnPreviewModalRef = ref(),
+    processFormPreviewDrawerRef = ref();
 
 
 const formOptions: VbenFormProps = {
@@ -134,7 +139,15 @@ function handleBpmnPreview(modelKey: string, procInstId: string) {
 }
 
   function handleViewForm(record: Recordable<any>) {
-    openProcessFormModal(true, {
+    processFormPreviewDrawerRef.value.setData({
+      ...record,
+      procInstId: record.processInstanceId,
+      modelKey: record.processDefinitionKey,
+    });
+    processFormPreviewDrawerRef.value.open();
+    processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.formName}】的表单`});
+
+    /*openProcessFormModal(true, {
       record,
     });
     setProcessFormModalProps({
@@ -144,7 +157,7 @@ function handleBpmnPreview(modelKey: string, procInstId: string) {
       centered: true,
       cancelText: '关闭',
       maskClosable: false,
-    });
+    });*/
   }
 
   function handleProcessFormVisibleChange(visible) {
