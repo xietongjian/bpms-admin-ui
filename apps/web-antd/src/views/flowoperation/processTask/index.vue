@@ -10,16 +10,16 @@
 
       <template #formName="{ row }">
         <Tooltip title="查看流程图">
-          <a>
-            <PartitionOutlined @click="handlePreview(row)" />
-          </a>
+          <TypographyLink @click="handlePreview(row)" class="mr-2">
+            <PartitionOutlined />
+          </TypographyLink>
         </Tooltip>
 
         <Tooltip placement="topLeft" :mouseEnterDelay="0.3">
           <template #title>
             {{ row.formName }}
           </template>
-          {{ row.formName }}
+          <TypographyLink @click="handleViewForm(row)">{{ row.formName }}</TypographyLink>
         </Tooltip>
       </template>
 
@@ -68,6 +68,7 @@
       @reload="handleProcessFormVisibleChange"
     />-->
     <ProcessFormPreviewModal ref="processFormPreviewModalRef" />
+    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
   </Page>
 </template>
 <script lang="ts" setup>
@@ -83,18 +84,18 @@
     stopProcess,
     updateAssignee,
   } from '#/api/flowoperation/processTask';
-  import {BpmnPreviewModal, ProcessFormPreviewModal} from '#/views/components/preview';
+  import {BpmnPreviewModal, ProcessFormPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
   // import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
   import FlowPropertiesModal from '../processInst/FlowPropertiesModal.vue';
   import { columns, searchFormSchema } from './processTask.data';
   import ApproveHistoryModal from '../processInst/ApproveHistoryModal.vue';
-  import ProcessFormModal from './ProcessFormModal.vue';
+  // import ProcessFormModal from './ProcessFormModal.vue';
   import {
     CopyOutlined,
     PartitionOutlined,
     ExclamationCircleOutlined,
   } from '@ant-design/icons-vue';
-  import { Tooltip, Space, Modal, Button, message } from 'ant-design-vue';
+  import { Tooltip, TypographyLink, Space, Modal, Button, message } from 'ant-design-vue';
   import { PerEnum } from '#/enums/perEnum';
   import {EmpInfo} from '#/views/components/EmpInfo';
   import {TableAction} from '#/components/table-action';
@@ -110,6 +111,8 @@
     personalSelectorModalRef = ref(),
     flowPropertiesModalRef = ref(),
     approveHistoryModalRef = ref(),
+    processFormPreviewModalRef = ref(),
+    processFormPreviewDrawerRef = ref(),
     processFormModalRef = ref();
 
   // 人员选择弹窗
@@ -292,9 +295,13 @@
 
   function handleViewForm(record: Recordable<any>) {
     record.allowsOperation = true;
-    processFormPreviewModalRef.value.setData(record);
-    processFormPreviewModalRef.value.open();
-    processFormPreviewModalRef.value.setState({title: `查看流程【${record.formName}】的表单`});
+    processFormPreviewDrawerRef.value.setData({
+      ...record,
+      procInstId: record.processInstanceId,
+      modelKey: record.processDefinitionKey,
+    });
+    processFormPreviewDrawerRef.value.open();
+    processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.formName}】的表单`});
   }
 
   function handleViewFlowProperties(record: Recordable<any>) {

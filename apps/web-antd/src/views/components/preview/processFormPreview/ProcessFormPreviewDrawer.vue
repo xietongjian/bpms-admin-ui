@@ -1,16 +1,34 @@
 <template>
-  <BasicModal class="w-[1000px]" wrap-class-name="process-form-full-modal ">
-    <div>
-      <div ref="allInfoId">
-        <Tabs v-model:activeKey="activeViewKey" size="small">
+  <BasicDrawer class="w-[1000px]" wrap-class-name="process-form-full-modal ">
+    <div class="h-full">
+      <div ref="allInfoId" class="h-full">
+        <Tabs v-model:activeKey="activeViewKey" size="small" class="h-full">
           <TabPane key="viewForm" tab="查看表单">
-            <div id="applyInfoId" class="w-full">
-              <div>
-                <template >
-                  <div style="font-weight: bold; width: 200px">基本信息</div>
-                </template>
-                <Descriptions @register="registerDescription" />
-              </div>
+            <div id="applyInfoId" class="w-full h-full">
+              <Collapse size="small" collapsible="header" default-active-key="1" class="mb-4">
+                <CollapsePanel key="1" header="基本信息">
+                  <ProcessHeaderInfo :proc-inst-id="procInstInfo.procInstId"/>
+                </CollapsePanel>
+              </Collapse>
+
+              <Collapse size="small" collapsible="header" default-active-key="1" class="mb-4">
+                <CollapsePanel key="1" header="表单信息">
+                  <ProcessFormInfo
+                      :procInstId="procInstInfo.procInstId"
+                      :bizId="procInstInfo.businessKey"
+                      :taskId="procInstInfo.taskId"
+                      :modelKey="procInstInfo.modelKey" />
+                </CollapsePanel>
+              </Collapse>
+
+              <Collapse size="small" collapsible="header" default-active-key="1">
+                <CollapsePanel key="1" header="审批信息">
+                  <ProcessApproveHistoryInfo
+                      :procInstId="procInstInfo.procInstId"
+                  />
+                </CollapsePanel>
+              </Collapse>
+<!--
               <CollapseContainer>
                 <template #title>
                   <div style="font-weight: bold; width: 200px">表单信息</div>
@@ -31,17 +49,42 @@
                   />
                   <div v-if="showErrorMsg" class="show-error-tip">{{ errorMsg }}</div>
                 </div>
-              </CollapseContainer>
+              </CollapseContainer>-->
+
+              <div>
+                <ApproveHistoryList :historyList="historyList" :loading="approvalHistoryLoading" />
+              </div>
+
+              <div v-if="currentApproverList.length > 0" class="mt-2 desc-wrap">
+                <CurrentApprover :approverList="currentApproverList" ></CurrentApprover>
+              </div>
             </div>
           </TabPane>
           <TabPane key="viewFlow" tab="查看流程图">
-            <div class="form-bpmn-container">
-
+            <div class="form-bpmn-container1 h-full">
+              <BpmnPreviewContainer
+                  :modelKey="procInstInfo.modelKey"
+                  :procInstId="procInstInfo.procInstId"
+                  ref="bpmnPreviewContainerRef"
+              />
             </div>
           </TabPane>
           <template #rightExtra>
             <!-- 转阅按钮的显示逻辑 -->
             <Space>
+              <Dropdown>
+                <template #overlay>
+                  <Menu @click="handlePrintClick">
+                    <MenuItem key="printAll">打印全部</MenuItem>
+                    <MenuItem key="printApplyInfo">打印申请单</MenuItem>
+                    <MenuItem key="printApplyForm">打印表单</MenuItem>
+                  </Menu>
+                </template>
+                <Button type="default" :loading="printBtnLoading">
+                  打印表单
+                  <DownOutlined />
+                </Button>
+              </Dropdown>
               <!-- 撤回功能逻辑 -->
               <Popconfirm
                 v-if="processViewType === 'launched' && revokeVisible"
@@ -87,20 +130,9 @@
             </Space>
           </template>
         </Tabs>
-
-        <div>
-<!--          <template #title>
-            <div style="font-weight: bold; width: 200px">审批记录</div>
-          </template>-->
-          <ApproveHistoryList :historyList="historyList" :loading="approvalHistoryLoading" />
-        </div>
-
-        <div v-if="currentApproverList.length > 0" class="mt-2 desc-wrap">
-          <CurrentApprover :approverList="currentApproverList" ></CurrentApprover>
-        </div>
       </div>
 
-      <div v-if="showOperation" class="h-[120px]"></div>
+<!--      <div v-if="showOperation" class="h-[120px]"></div>-->
 
       <ApproveActionButtons
         ref="approveActionButtonsRef"
@@ -113,32 +145,29 @@
       />
     </div>
 
-    <footer>
-      <Dropdown>
-        <template #overlay>
-          <Menu @click="handlePrintClick">
-            <MenuItem key="printAll">打印全部</MenuItem>
-            <MenuItem key="printApplyInfo">打印申请单</MenuItem>
-            <MenuItem key="printApplyForm">打印表单</MenuItem>
-          </Menu>
-        </template>
-        <Button type="default" :loading="printBtnLoading">
-          打印表单
-          <DownOutlined />
-        </Button>
-      </Dropdown>
-    </footer>
     <ApproveSelectorPersonalModal
       @register="registerApproveSelectorPersonalModal"
       @success="loadCommentList"
     />
-  </BasicModal>
+  </BasicDrawer>
 </template>
 <script lang="ts" setup>
   import { ref, unref, reactive, onMounted, watch, computed, defineEmits, defineExpose, nextTick, shallowRef } from 'vue';
-  import {useVbenModal} from '@vben/common-ui';
+  import {useVbenModal, useVbenDrawer} from '@vben/common-ui';
 
-  import { Button, Dropdown, Menu, Space, Descriptions, Collapse, message,Tabs, Textarea, Popconfirm } from 'ant-design-vue';
+  import {
+    Button,
+    Dropdown,
+    Menu,
+    Space,
+    Descriptions,
+    Collapse,
+    message,
+    Tabs,
+    Textarea,
+    Popconfirm,
+    CollapsePanel
+  } from 'ant-design-vue';
   // import { CollapseContainer } from '@/components/Container';
   // import { Description, useDescription } from '@/components/Description/index';
 
@@ -153,6 +182,7 @@
   import { GenerateForm } from '/public/static/form-making';
   import ApproveHistoryList from '#/views/components/process/ApproveHistoryList.vue';
   import CurrentApprover from '#/views/components/process/CurrentApprover.vue';
+  import ProcessHeaderInfo from './components/ProcessHeaderInfo.vue';
   import { getBizDataInfoByBusinessKeyAndModelKey } from '#/api/form/bizForm';
   import { getStartHeadInfoVoByProcessInstanceId } from '#/api/flowoperation/processInst';
   // import { formBaseDataSchema } from './processForm.data';
@@ -174,6 +204,9 @@
   import ApproveSelectorPersonalModal from '#/views/components/preview/processFormPreview/components/ApproveSelectorPersonalModal.vue';
   import {EmpInfo} from '#/views/components/EmpInfo';
   import { useUserStore } from '@vben/stores';
+  import BpmnPreviewContainer from "#/views/components/preview/bpmnPreview/bpmnPreviewContainer.vue";
+  import ProcessFormInfo from "#/views/components/preview/processFormPreview/components/ProcessFormInfo.vue";
+  import ProcessApproveHistoryInfo from "#/views/components/preview/processFormPreview/components/ProcessApproveHistoryInfo.vue";
 
   const reminderAuthPointer = ref(null);
   const turnReadAuthPointer = ref(null);
@@ -216,11 +249,13 @@
   const requiredFormFields = ref([]);
   const reminderMsg = ref('');
   const processViewType = ref('view');
+  ///////////////////////////////////////
+  const procInstInfo = ref(undefined);
 
   watch(activeViewKey, (val) => {
     if (val === 'viewFlow') {
       setTimeout(() => {
-        processFitViewer();
+        // processFitViewer();
       }, 500);
     }
   });
@@ -239,19 +274,20 @@
   // });
 
 
-  const [BasicModal, modalApi] = useVbenModal({
+  const [BasicDrawer, drawerApi] = useVbenDrawer({
     draggable: true,
     footer: false,
     onCancel() {
-      modalApi.close();
+      drawerApi.close();
     },
 
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
-        const values = modalApi.getData<Record<string, any>>();
+        const values = drawerApi.getData<Record<string, any>>();
+        procInstInfo.value = values;
         if (values) {
           // formApi.setValues(values);
-          modalApi.setState({loading: false, confirmLoading: false});
+          drawerApi.setState({loading: false, confirmLoading: false});
         }
       }
     },
@@ -790,7 +826,7 @@
     }
   }
 
-  defineExpose(modalApi)
+  defineExpose(drawerApi)
 </script>
 
 <style lang="less">
@@ -852,55 +888,23 @@
   }
 </style>
 
-<style lang="less">
-  //@import '@/assets/bpmn/viewer/lib/style.css';
-  .form-bpmn-container {
-    padding: 0;
-    position: relative;
-    width: 100%;
-    height: 400px;
-    overflow: visible;
-    .containers {
-      &:hover {
-        .svg-controller {
-          top: 0px;
-          opacity: 1;
-          z-index: 9;
-        }
-      }
-    }
+<style lang="scss">
 
-    .svg-controller {
-      z-index: 9999;
-      text-align: center;
-      position: absolute;
-      top: -20px;
-      opacity: 0;
-      transition: 0.8s;
-      margin: auto;
-      width: 100%;
+/* 设置Tabs组件的高度以适应父容器 */
+.ant-tabs {
+  height: 100%;
+}
 
-      .scale-rate {
-        font-size: 14px;
-        line-height: 20px;
-      }
-    }
+/* 如果需要调整标签栏的高度，可以通过修改下面的类 */
+.ant-tabs-top .ant-tabs-nav {
+  /* 根据需要调整标签栏的高度 */
+  height: 50px;
+}
 
-    .svg-container {
-      height: 100%;
-      cursor: move;
-    }
-    g.layer-djs-grid-line rect {
-      fill: transparent !important;
-    }
-    .bpmn-viewer__toolbar {
-      .arco-btn-group {
-        display: none;
-      }
-    }
-  }
-  .bjs-powered-by,
-  .bjs-breadcrumbs {
-    display: none;
-  }
+/* 调整内容区域的高度 */
+.ant-tabs-content {
+  height: calc(100% - 10px);
+  //padding-top: 50px; /* 与标签栏的高度相匹配 */
+  overflow-y: auto;
+}
 </style>

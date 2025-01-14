@@ -135,7 +135,7 @@ export function getCustomFormInfoVoByModelKeyAndBusinessKey(params: any) {
   return requestClient.post<any>(
       url,
       params,
-    { isReturnNativeResponse: true },
+    { isTransformResponse: false },
   );
 }
 
