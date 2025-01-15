@@ -103,6 +103,7 @@ import {computed, ref, unref, shallowRef, defineProps, defineEmits, defineExpose
       (newValues, oldValues) => {
         if(!sizeTimer.value){
           sizeTimer.value = true;
+          debugger;
           setTimeout(() => {
             processFitViewer();
             sizeTimer.value = false;
@@ -129,13 +130,16 @@ import {computed, ref, unref, shallowRef, defineProps, defineEmits, defineExpose
     }
   }
   function processFitViewer() {
-    setTimeout(() => {
-      isFitView.value = true;
+    isFitView.value = true;
+    try {
       const canvas = bpmnViewer.value?.get('canvas');
+
       canvas.zoom(defaultZoom.value);
-      canvas.zoom('fit-viewport', { x: 0, y: 0 });
+      canvas.zoom('fit-viewport', {x: 0, y: 0});
       defaultZoom.value = canvas.zoom();
-    }, 100);
+    } catch (e) {
+    } finally {
+    }
   }
 
   function processZoomIn(zoomStep = 0.1) {

@@ -10,6 +10,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
     field: 'name',
+    minWidth: 200,
     align: 'left',
   },
   {

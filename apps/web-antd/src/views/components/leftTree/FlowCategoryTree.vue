@@ -1,6 +1,7 @@
 <template>
-  <div class="bg-card w-full h-full" v-loading="treeLoading">
+  <div class="w-full h-full" v-loading="treeLoading">
     <Tree
+      class="h-full overflow-auto"
       title="流程分类"
       toolbar
       search

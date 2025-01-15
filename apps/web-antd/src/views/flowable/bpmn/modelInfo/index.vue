@@ -2,15 +2,18 @@
   <ColPage
       :left-max-width="50"
       :left-min-width="10"
-      :left-width="15"
-      :split-handle="true"
-      :split-line="true"
+      :left-width="20"
+      :split-handle="false"
+      :left-collapsed-width="5"
+      :split-line="false"
       :resizable="true"
       :left-collapsible="true"
       :auto-content-height="true"
       content-class="h-full">
     <template #left>
-      <FlowCategoryTree class="h-full" @select="handleSelect"/>
+      <div class="h-full bg-card mr-2" >
+        <FlowCategoryTree class="h-full" @select="handleSelect"/>
+      </div>
     </template>
     <div class="bg-card h-full">
       <BasicTable>

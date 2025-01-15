@@ -72,7 +72,7 @@
   };
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
-  function handleBpmnPreview(modelKey: string, procInstId="") {
+  function handleBpmnPreview(modelKey: string, procInstId = "") {
     bpmnPreviewModalRef.value.setData({modelKey, procInstId});
     bpmnPreviewModalRef.value.open();
   }
@@ -153,7 +153,7 @@
   }
 
   function handlePreview(record: Recordable<any>) {
-    handleBpmnPreview({modelKey: record.modelKey});
+    handleBpmnPreview(record.modelKey);
   }
 
   function handleSuccess() {

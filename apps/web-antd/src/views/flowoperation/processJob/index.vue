@@ -18,7 +18,8 @@
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix + PerEnum.UPDATE"
                 danger @click="handleBatchExe"
-                v-if="jobType === 'deadLetter'" :disabled="selectedRowsCount <= 0">
+                v-if="jobType === 'deadLetter'"
+                :disabled="selectedRowsCount <= 0">
           批量执行
         </Button>
       </template>
@@ -26,9 +27,9 @@
         <TableAction :actions="createActions(row)"/>
       </template>
       <template #processInstanceId="{row}">
-        <a class="cursor-pointer" v-if="!!row.processInstanceId" @click="doCopyContent(row.processInstanceId)">
+        <TypographyLink class="cursor-pointer" v-if="!!row.processInstanceId" @click="doCopyContent(row.processInstanceId)">
           <CopyOutlined />
-        </a>
+        </TypographyLink>
         {{ row.processInstanceId||'-' }}
       </template>
 
@@ -39,28 +40,26 @@
       <template #duedate="{row}">
         {{ row.duedate??'-' }}
         <Tooltip title="修改队列执行时间">
-          <HighlightOutlined @click="handleChangeDueDate(row)" class="cursor-pointer"/>
+          <TypographyLink @click="handleChangeDueDate(row)">
+            <HighlightOutlined class="cursor-pointer"/>
+          </TypographyLink>
         </Tooltip>
       </template>
 
       <template #processName="{row}">
         <Tooltip title="查看流程图">
-          <a>
-            <PartitionOutlined @click="handlePreview(row)" />
-          </a>
+          <TypographyLink @click="handlePreview(row)" class="mr-2">
+            <PartitionOutlined/>
+          </TypographyLink>
         </Tooltip>
-        <Tooltip placement="topLeft" :mouseEnterDelay="0.3">
-          <template #title>
-            {{ row.processName }}
-          </template>
-          {{ row.processName }}
-        </Tooltip>
+        <TypographyLink @click="handleViewForm(row)">{{ row.processName||'-' }}</TypographyLink>
       </template>
     </ProcInstJobTable>
     <ApproveHistoryModal ref="approveHistoryModalRef" @register="registerApproveHistoryModal" />
     <FlowPropertiesModal ref="flowPropertiesModalRef" @register="registerFlowPropertiesModal" />
     <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" />
     <TimerJobEditModal ref="timerJobEditModalRef" @success="handleRefresh" />
+    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
   </Page>
 </template>
 <script lang="ts" setup>
@@ -81,14 +80,14 @@
     queryDeadLetterJobPagerModel,
     queryTimerJobPagerModel,
   } from '#/api/flowoperation/processJob';
-  import {BpmnPreviewModal} from '#/views/components/preview';
+  import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
   import { getAll } from '#/api/base/app';
   import { timerJobColumns, deadLetterJobColumns, searchFormSchema } from './processJob.data';
   import ApproveHistoryModal from '../processInst/ApproveHistoryModal.vue';
   import FlowPropertiesModal from '../processInst/FlowPropertiesModal.vue';
   import TimerJobEditModal from './TimerJobEditModal.vue';
   import { CopyOutlined, PartitionOutlined, HighlightOutlined } from '@ant-design/icons-vue';
-  import { Tooltip, Modal, RadioGroup, RadioButton, Badge, Button, Space, message } from 'ant-design-vue';
+  import { Tooltip, TypographyLink, Modal, RadioGroup, RadioButton, Badge, Button, Space, message } from 'ant-design-vue';
 
   defineOptions({ name: 'ProcessJob' });
   const { copy } = useClipboard({ legacy: true });
@@ -103,7 +102,8 @@
   const approveHistoryModalRef = ref(),
     flowPropertiesModalRef = ref(),
     bpmnPreviewModalRef = ref(),
-    timerJobEditModalRef = ref();
+      processFormPreviewDrawerRef = ref(),
+      timerJobEditModalRef = ref();
 
   const formOptions: VbenFormProps = {
     showCollapseButton: true,
@@ -161,6 +161,17 @@
     }
   };
   const [ProcInstJobTable, tableApi] = useVbenVxeGrid({gridOptions, formOptions, gridEvents});
+
+
+  function handleViewForm(record: Recordable<any>) {
+    processFormPreviewDrawerRef.value.setData({
+      ...record,
+      procInstId: record.processInstanceId,
+      modelKey: record.processDefinitionId ? (record.processDefinitionId.split(":")[0]??'') : '',
+    });
+    processFormPreviewDrawerRef.value.open();
+    processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.processName??'-'}】的表单`});
+  }
 
   function createActions(record: Recordable<any>) {
     return [
