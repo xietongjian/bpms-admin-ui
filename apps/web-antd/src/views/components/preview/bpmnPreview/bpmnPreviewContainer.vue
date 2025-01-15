@@ -1,12 +1,15 @@
 <template>
   <div class="bpmn-viewer-container w-full h-full">
     <div class="containers group relative h-full w-full" ref="container" >
+      {{$t('bpmn/business.openFile')}}<br/>
+      {{t('bpmn/information.approver')}}<br/>
+      {{t('information.statusName')}}
       <BpmnPresetViewer
           v-if="modelKey || procInstId"
           ref="presetViewer"
           :theme="getTheme"
           local="zh_CN"
-          translate-prefix="bpmn.information."
+          translate-prefix="information."
           :procInstId="procInstId"
           :modelKey="modelKey"
           @viewer-init="handleViewerInit"
@@ -52,6 +55,7 @@
 </template>
 
 <script lang="ts" setup>
+import { $t, t } from '@vben/locales';
 import {computed, ref, unref, shallowRef, defineProps, defineEmits, defineExpose, watch} from 'vue';
   import { Button, Space } from 'ant-design-vue';
   import {
@@ -103,7 +107,6 @@ import {computed, ref, unref, shallowRef, defineProps, defineEmits, defineExpose
       (newValues, oldValues) => {
         if(!sizeTimer.value){
           sizeTimer.value = true;
-          debugger;
           setTimeout(() => {
             processFitViewer();
             sizeTimer.value = false;
