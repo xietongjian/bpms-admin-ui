@@ -60,11 +60,11 @@ theme: "dark" | "light";
 export declare const BpmnPresetViewer: DefineComponent<    {
 procInstId: {
 type: PropType_2<string>;
-required: true;
+default: string;
 };
 modelKey: {
 type: PropType_2<string>;
-required: true;
+default: string;
 };
 theme: {
 type: PropType_2<"dark" | "light">;
@@ -91,7 +91,7 @@ type: PropType_2<string>;
 default: string;
 };
 }, {
-reloadViewerXML: (modelKey?: string, procInstId?: string) => Promise<void>;
+reloadViewerXML: typeof reloadViewerXML;
 downloadProcess: (type?: "xml" | "bpmn" | "svg" | "png", fName?: string) => Promise<void>;
 toggleTheme: (theme?: "dark" | "light") => void;
 toggleLang: (lang?: "zh_CN" | "en_US") => void;
@@ -103,11 +103,11 @@ downloadProcessAsPng: (name: any) => Promise<void>;
 }, string, PublicProps, Readonly<ExtractPropTypes_2<    {
 procInstId: {
 type: PropType_2<string>;
-required: true;
+default: string;
 };
 modelKey: {
 type: PropType_2<string>;
-required: true;
+default: string;
 };
 theme: {
 type: PropType_2<"dark" | "light">;
@@ -144,6 +144,8 @@ translatePrefix: string;
 toolbar: boolean;
 showDownload: boolean;
 fileName: string;
+procInstId: string;
+modelKey: string;
 }, {}>;
 
 export declare const BpmnViewer: DefineComponent<    {
@@ -175,6 +177,9 @@ inPreset: {
 type: PropType_2<boolean>;
 default: boolean;
 };
+fullElement: {
+type: PropType_2<HTMLDivElement>;
+};
 showDownload: {
 type: PropType_2<boolean>;
 default: boolean;
@@ -188,6 +193,9 @@ createNewProcess: (xml: string) => Promise<void>;
 setPassedNodes: (nodeIds: string[]) => void;
 setActiveNodes: (nodeIds: string[]) => void;
 setProcessingMarker: (nodeIds: string[]) => void;
+isPassedNode: (node: string | BpmnElement) => any;
+isActiveNode: (node: string | BpmnElement) => any;
+isProcessingNode: (node: string | BpmnElement) => any;
 getModeler: () => any;
 toggleLang: (lang?: "zh_CN" | "en_US") => void;
 toggleTheme: (theme?: "dark" | "light") => void;
@@ -226,6 +234,9 @@ inPreset: {
 type: PropType_2<boolean>;
 default: boolean;
 };
+fullElement: {
+type: PropType_2<HTMLDivElement>;
+};
 showDownload: {
 type: PropType_2<boolean>;
 default: boolean;
@@ -249,6 +260,8 @@ inPreset: boolean;
 showDownload: boolean;
 fileName: string;
 }, {}>;
+
+declare function reloadViewerXML(modelKey?: string, procInstId?: string): Promise<void>;
 
 export { TippyPopover }
 

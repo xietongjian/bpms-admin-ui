@@ -25,7 +25,7 @@
 import {ComponentInstance, computed, nextTick, ref} from 'vue';
 import {LoadingOutlined,} from '@ant-design/icons-vue';
 import {BpmnMocker, BpmnPresetViewer} from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
-import '#/assets/bpmn/viewer/lib/style.css';
+import '#/assets/bpmn/viewer/lib/bpmn-viewer.css';
 import {getBpmnByModelKey, getCustomFlowSequenceFlows} from "#/api/process/process";
 import {useUserStore} from '@vben/stores';
 import {useVbenModal} from '@vben/common-ui';
@@ -141,7 +141,7 @@ function onCloseBpmnPreviewModal() {
 </script>
 
 <style lang="less">
-@import '#/assets/bpmn/viewer/lib/style.css';
+//@import '#/assets/bpmn/viewer/lib/style.css';
 
 .bpmn-viewer-container {
   .bpmn-viewer__toolbar {

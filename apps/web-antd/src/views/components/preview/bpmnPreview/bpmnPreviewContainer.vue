@@ -1,12 +1,11 @@
 <template>
   <div class="bpmn-viewer-container w-full h-full">
     <div class="containers group relative h-full w-full" ref="container" >
-      {{$t('bpmn/business.openFile')}}<br/>
       <BpmnPresetViewer
           v-if="modelKey || procInstId"
           ref="presetViewer"
           :theme="getTheme"
-          local="zh_CN"
+          local="zh-CN"
           translate-prefix="information."
           :procInstId="procInstId"
           :modelKey="modelKey"
@@ -53,8 +52,9 @@
 </template>
 
 <script lang="ts" setup>
-import { $t } from '@vben/locales';
-import {computed, ref, unref, shallowRef, defineProps, defineEmits, defineExpose, watch} from 'vue';
+import {i18n, useI18n } from '@vben/locales';
+
+import {computed, onMounted, ref, unref, shallowRef, defineProps, defineEmits, defineExpose, watch} from 'vue';
   import { Button, Space } from 'ant-design-vue';
   import {
     CompressOutlined,
@@ -65,12 +65,16 @@ import {computed, ref, unref, shallowRef, defineProps, defineEmits, defineExpose
   import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
   import { useElementSize  } from '@vueuse/core'
 
-  import '#/assets/bpmn/viewer/lib/style.css';
   import { usePreferences } from '@vben/preferences';
   const emit = defineEmits(['data-change']);
   const { isDark } = usePreferences();
   const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
 
+  const { messages } = i18n.global;
+  const { mergeLocaleMessage } = useI18n();
+  onMounted(() => {
+    mergeLocaleMessage('zh-CN', messages.value['zh-CN']);
+  });
 
   defineProps({
     title: {
@@ -236,7 +240,7 @@ import {computed, ref, unref, shallowRef, defineProps, defineEmits, defineExpose
 </script>
 
 <style lang="scss">
-  @import '#/assets/bpmn/viewer/lib/style.css';
+  //@import '#/assets/bpmn/viewer/lib/style.css';
   .bpmn-viewer-container {
     .bpmn-viewer__toolbar {
       display: none;

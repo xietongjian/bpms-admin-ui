@@ -63,7 +63,7 @@ import {computed, ref, unref, shallowRef, defineProps, defineExpose, nextTick} f
   } from '@ant-design/icons-vue';
   import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
 
-  import '#/assets/bpmn/viewer/lib/style.css';
+  import '#/assets/bpmn/viewer/lib/bpmn-viewer.css';
   import { usePreferences } from '@vben/preferences';
 
   const { isDark } = usePreferences();
@@ -209,7 +209,7 @@ import {computed, ref, unref, shallowRef, defineProps, defineExpose, nextTick} f
 </script>
 
 <style lang="less">
-  @import '#/assets/bpmn/viewer/lib/style.css';
+  //@import '#/assets/bpmn/viewer/lib/style.css';
   .bpmn-viewer-container {
     .bpmn-viewer__toolbar {
       display: none;
