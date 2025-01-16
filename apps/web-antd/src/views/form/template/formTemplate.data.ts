@@ -8,6 +8,8 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
 // import { useMessage } from '@/hooks/web/useMessage';
 // import { updateStatusById } from '#/api/form/formTemplate';
 import {OrderNoDefaultEnum} from "#/enums/commonEnum";
+import {getIconCategoryTreeData} from "#/api/base/iconInfo";
+import {getFormCategoryListData} from "#/api/form/formTemplate";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -155,18 +157,34 @@ export const searchFormSchema: FormSchema[] = [
 
 export const formSchema: FormSchema[] = [
   {
-    fieldName: 'id',
-    label: 'ID',
-    component: 'Input',
-    dependencies: {
-      show: false,
-      triggerFields: ['id']
-    }
+    fieldName: 'formCategory',
+    label: '分类',
+    rules: "required",
+    component: 'ApiTreeSelect',
+    wrapperClass: 'grid-cols-2',
+    componentProps: {
+      blockNode: true,
+      api: getFormCategoryListData,
+      // treeDataSimpleMode: true,
+      treeDataSimpleMode: { id: "id", pId: "pid", rootPId: null },
+      // 菜单接口转options格式
+      labelField: 'name',
+      valueField: 'code',
+      // fieldNames: {
+      //   label: 'name',
+      //   value: 'code',
+      // },
+      // getPopupContainer: () => document.body,
+    },
   },
   {
-    fieldName: 'name',
+    fieldName: 'formName',
     label: '名称',
     component: 'Input',
+    componentProps: {
+      placeholder: '请输入名称',
+    },
+    formItemClass: 'col-span-2 col-start-2',
     rules: z
         .string({
           required_error: '名称不能为空',

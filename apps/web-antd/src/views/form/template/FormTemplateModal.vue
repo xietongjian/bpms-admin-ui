@@ -1,20 +1,11 @@
 <template>
-  <BasicModal
-    class="w-[1000px]"
-    v-bind="$attrs"
-    @ok="handleSubmit"
-    :wrapperFooterOffset="50"
-    @visible-change="handleVisibleChange"
-    :footer="null"
-    :defaultFullscreen="false"
-    wrap-class-name="form-designer-container"
-  >
+  <BasicModal class="p-0" >
     <template #title>
       <div class="w-full">
         <Row>
-          <Col span="16">
+          <Col span="16" class="flex flex-row items-center">
             <span v-if="templateId">编辑模板 - </span>
-            <span v-else="templateId">新增模板 - </span>
+            <span v-else>新建模板 - </span>
             {{ formName }}
           </Col>
           <Col span="8" class="text-right">
@@ -26,8 +17,10 @@
         </Row>
       </div>
     </template>
-    <div style="height: 100%">
-      <MakingForm ref="makingFormRef" preview style="height: 100%; min-height: 500px">
+    <div class="h-full">
+      <MakingForm
+          ref="makingFormRef" preview
+          class="making-form-container [&_.center-container>header]:flex [&_>footer]:hidden h-full min-h-[500px]">
         <template #widgetconfig="{ type, data, customProps }">
           <div v-if="useInFlowTypes.includes(type)" class="m-2">
             <div class="mb-2">扩展属性</div>
@@ -58,14 +51,14 @@
                 />
               </div>
             </Space>
-
             <Divider />
           </div>
         </template>
         <template #action>
-          <div class="action-bar">
-            <div class="action-bar-left">
-              <TreeSelect
+          <div class="flex flex-row flex-grow-1 flex-1">
+            <div class="action-bar-left w-full text-left">
+              <BasicForm class="w-full"/>
+<!--              <TreeSelect
                 ref="formCategoryRef"
                 class="form-category"
                 style="width: 30%;"
@@ -75,14 +68,14 @@
                 :treeData="formCategoryTreeData"
               />
               <div style="width: 70%;" class="action-bar-input">
-                <a-input ref="formNameRef" v-model:value="formName" placeholder="请输入名称" />
-              </div>
+                <Input ref="formNameRef" status="error" v-model:value="formName" placeholder="请输入名称" />
+              </div>-->
             </div>
-            <div class="action-bar-right">
-              <!--            <a-button type="link" @click="handleSubmit">
+<!--            <div class="action-bar-right">
+              &lt;!&ndash;            <a-button type="link" @click="handleSubmit">
                             <save-outlined />保存
-                          </a-button>-->
-            </div>
+                          </a-button>&ndash;&gt;
+            </div>-->
           </div>
         </template>
       </MakingForm>
@@ -90,7 +83,7 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, unref, defineEmits, defineExpose } from 'vue';
+import {ref, unref, defineEmits, defineExpose, watch} from 'vue';
 
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
@@ -102,9 +95,10 @@
     getFormTemplateById,
     saveOrUpdate
   } from '#/api/form/formTemplate';
-  import { Space, message, TreeSelect, InputNumber, Checkbox, Divider, Tooltip, Row, Col, Button } from 'ant-design-vue';
+  import { Space, message, TreeSelect, Input, InputNumber, Checkbox, Divider, Tooltip, Row, Col, Button } from 'ant-design-vue';
   import { useInFlowTypes } from '#/views/components/form/formMaking/formMaking.data';
   import {listToTree} from "#/utils/helper/treeHelper";
+  import {formSchema} from "./formTemplate.data.ts";
 
   const emit = defineEmits(['success']);
   const treeLoading = ref(true);
@@ -119,6 +113,10 @@
   const saveLoading = ref(false);
   const formCategoryTreeData = ref([]);
 
+  function changeLoading(loading: boolean) {
+    modalApi.setState({loading});
+  }
+
   /*const [registerModal, { changeLoading, closeModal }] = useModalInner(async (data) => {
     loadData(data.id);
     formCategory.value = data.categoryCode;
@@ -130,7 +128,9 @@
     showCancelButton: false,
     closable: false,
     footer: false,
+    headerClass: 'p-2',
     fullscreen: true,
+    contentClass: 'p-0',
     onOpenChange: async (isOpen) => {
       if (!isOpen) {
         return null;
@@ -145,6 +145,24 @@
     },
   });
 
+
+const [BasicForm, baseFormApi] = useVbenForm({
+  compact: true,
+  // 所有表单项共用，可单独在表单内覆盖
+  commonConfig: {
+    hideLabel: true,
+    hideRequiredMark: true,
+    // 所有表单项
+    componentProps: {
+      class: 'w-full',
+    },
+  },
+  showDefaultActions: false,
+  layout: 'horizontal',
+  schema: formSchema,
+  wrapperClass: 'grid-cols-3',
+});
+
   async function initFormCategoryTree() {
     treeLoading.value = true;
     const res = await getFormCategoryListData();
@@ -158,11 +176,10 @@
     treeLoading.value = false;
   }
 
-  function loadData(id) {
+  function loadData(id: string) {
     initFormCategoryTree();
     if (id) {
       saveLoading.value = true;
-      // changeLoading(true);
       getFormTemplateById(id)
         .then((res) => {
           const formJson = typeof res.formJson === 'string' ? JSON.parse(res.formJson): res.formJson;
@@ -173,11 +190,10 @@
         })
         .finally(() => {
           saveLoading.value = false;
-          // changeLoading(false);
         });
     } else {
       formName.value = '';
-      unref(makingFormRef).clear();
+      unref(makingFormRef)?.clear();
     }
   }
 
@@ -228,9 +244,9 @@
   defineExpose(modalApi)
 </script>
 
-<style lang="less">
+<style lang="scss">
   //@import '../../components/form/formMaking/index.less';
-  .form-designer-container {
+  /*.form-designer-container {
     .ant-modal {
       .ant-modal-body {
         .scroll-container {
@@ -240,6 +256,15 @@
             font-size: 13px;
             color: rgb(96, 98, 102);
           }
+        }
+      }
+    }
+  }*/
+  .making-form-container {
+    .form-config-container {
+      .el-form {
+        .el-form-item:first-child {
+          display: none;
         }
       }
     }

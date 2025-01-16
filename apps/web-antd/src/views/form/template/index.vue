@@ -121,13 +121,12 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
-          // currentModelInfo.value = {};
           return await getFormTemplateList({
             query: {
               pageNum: page.currentPage,
               pageSize: page.pageSize,
             },
-            entity: formValues || {},
+            entity: {...formValues, categoryCode: currentNode.value?.code},
           });
         },
       },
@@ -277,9 +276,7 @@
     const selectedNode = e.selectedNodes[0];
     if (selectedNode) {
       currentNode.value = selectedNode;
-      const {getValues} = tableApi.formApi;
-      const values = getValues();
-      await tableApi.reload({searchInfo: {categoryCode: selectedNode.code, ...values}});
+      await tableApi.reload();
     } else {
       currentNode.value = undefined;
       await tableApi.reload();
