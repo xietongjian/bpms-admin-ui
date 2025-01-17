@@ -15,6 +15,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'type',
     width: 80,
     align: 'center',
+    slots: {default: 'type'},
   },
   {
     title: '名称',
@@ -34,6 +35,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'method',
     width: 80,
     align: 'center',
+    slots: {default: 'method'},
   },
   {
     title: 'Token名称',

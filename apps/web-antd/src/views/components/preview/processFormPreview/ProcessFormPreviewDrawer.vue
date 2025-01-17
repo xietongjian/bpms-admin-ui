@@ -117,9 +117,6 @@
         </Tabs>
       </div>
 
-<!--      <div v-if="showOperation" class="h-[120px]"></div>-->
-
-
       <div class="w-[400px]" v-if="procInstInfo?.showOperation && isFullScreen">
         <ApproveActionButtons
           ref="approveActionButtonsRef"
@@ -169,8 +166,6 @@
     Popconfirm,
     CollapsePanel
   } from 'ant-design-vue';
-  // import { CollapseContainer } from '@/components/Container';
-  // import { Description, useDescription } from '@/components/Description/index';
 
   import ApproveActionButtons from '#/views/components/preview/processFormPreview/components/ApproveActionButtons.vue';
   import { getCommentInfosByProcessInstanceId } from '#/api/flowable/bpmn/modelInfo';
@@ -180,7 +175,6 @@
     getProdModelInfoByModelKeyAndProcInstId,
     getCurrTaskApplyersByProcessInstanceId, saveOrUpdateReadInfo,
   } from '#/api/flowoperation/processTask';
-  import { GenerateForm } from '/public/static/form-making';
   import ApproveHistoryList from '#/views/components/process/ApproveHistoryList.vue';
   import CurrentApprover from '#/views/components/process/CurrentApprover.vue';
   import ProcessHeaderInfo from './components/ProcessHeaderInfo.vue';

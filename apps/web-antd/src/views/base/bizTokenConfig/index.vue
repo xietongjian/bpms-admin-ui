@@ -16,39 +16,39 @@
         <Tag v-else color="#87d068">POST</Tag>
       </template>
 
-      <template #expandedRowRender="{ record }">
-        <div v-if="record.type === 'sc'">
+<!--      <template #expandedRowRender="{ row }">
+        <div v-if="row.type === 'sc'">
           <Descriptions :title="null" size="small">
-            <DescriptionsItem label="请求地址" :span="3">{{ record.url || '-' }}</DescriptionsItem>
-            <DescriptionsItem label="请求方式">{{ record.method || '-' }}</DescriptionsItem>
-            <DescriptionsItem label="Token名称">{{ record.tokenName || '-' }}</DescriptionsItem>
-            <DescriptionsItem label="Token键名">{{ record.tokenKey || '-' }}</DescriptionsItem>
-            <DescriptionsItem label="注册地址">{{ record.serverAddr || '-' }}</DescriptionsItem>
-            <DescriptionsItem label="命名空间">{{ record.namespaceId || '-' }}</DescriptionsItem>
-            <DescriptionsItem label="组名">{{ record.groupName || '-' }}</DescriptionsItem>
+            <DescriptionsItem label="请求地址" :span="3">{{ row.url || '-' }}</DescriptionsItem>
+            <DescriptionsItem label="请求方式">{{ row.method || '-' }}</DescriptionsItem>
+            <DescriptionsItem label="Token名称">{{ row.tokenName || '-' }}</DescriptionsItem>
+            <DescriptionsItem label="Token键名">{{ row.tokenKey || '-' }}</DescriptionsItem>
+            <DescriptionsItem label="注册地址">{{ row.serverAddr || '-' }}</DescriptionsItem>
+            <DescriptionsItem label="命名空间">{{ row.namespaceId || '-' }}</DescriptionsItem>
+            <DescriptionsItem label="组名">{{ row.groupName || '-' }}</DescriptionsItem>
             <DescriptionsItem label="请求参数" :span="3">
-              {{ record.params || '{}' }}
+              {{ row.params || '{}' }}
             </DescriptionsItem>
             <DescriptionsItem label="备注" :span="3">
-              {{ record.remark || '-' }}
+              {{ row.remark || '-' }}
             </DescriptionsItem>
           </Descriptions>
         </div>
         <div v-else>
           <Descriptions :title="null" size="small">
-            <DescriptionsItem label="请求地址" :span="3">{{ record.url || '-' }}</DescriptionsItem>
-            <DescriptionsItem label="请求方式">{{ record.method || '-' }}</DescriptionsItem>
-            <DescriptionsItem label="Token名称">{{ record.tokenName || '-' }}</DescriptionsItem>
-            <DescriptionsItem label="Token键名">{{ record.tokenKey || '-' }}</DescriptionsItem>
+            <DescriptionsItem label="请求地址" :span="3">{{ row.url || '-' }}</DescriptionsItem>
+            <DescriptionsItem label="请求方式">{{ row.method || '-' }}</DescriptionsItem>
+            <DescriptionsItem label="Token名称">{{ row.tokenName || '-' }}</DescriptionsItem>
+            <DescriptionsItem label="Token键名">{{ row.tokenKey || '-' }}</DescriptionsItem>
             <DescriptionsItem label="请求参数" :span="3">
-              {{ record.params || '{}' }}
+              {{ row.params || '{}' }}
             </DescriptionsItem>
             <DescriptionsItem label="备注" :span="3">
-              {{ record.remark || '-' }}
+              {{ row.remark || '-' }}
             </DescriptionsItem>
           </Descriptions>
         </div>
-      </template>
+      </template>-->
     </BasicTable>
     <BizTokenConfigDrawer ref="bizTokenConfigDrawerRef" @register="registerDrawer" @success="handleSuccess" />
   </Page>
@@ -62,15 +62,13 @@
   import type {Recordable} from '@vben/types';
 
   import {Page} from '@vben/common-ui';
-  import {Button, Space, Image, Tag, message} from 'ant-design-vue';
+  import {Button, Space, Image, Tag, message, Descriptions} from 'ant-design-vue';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {TableAction} from '#/components/table-action';
 
   import { getAll, deleteBusinessTokenById } from '#/api/base/bizTokenConfig';
   import { columns, searchFormSchema } from './bizTokenConfig.data';
   import BizTokenConfigDrawer from './BizTokenConfigDrawer.vue';
-  import { Tag, Descriptions } from 'ant-design-vue';
-
 
   const DescriptionsItem = Descriptions.Item;
   const PerPrefix= 'BizTokenConfig:';
@@ -111,7 +109,7 @@
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
-  function createActions(row: Recordable<any>) {
+  function createActions(record: Recordable<any>) {
     return [
       {
         auth: [PerPrefix + PerEnum.UPDATE],
@@ -179,7 +177,7 @@
     });
   }
 
-  function handleEdit(record: Recordable, e) {
+  function handleEdit(record: Recordable<any>, e) {
     e.stopPropagation();
     openDrawer(true, {
       record,
