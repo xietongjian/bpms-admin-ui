@@ -157,34 +157,44 @@ export const searchFormSchema: FormSchema[] = [
 
 export const formSchema: FormSchema[] = [
   {
-    fieldName: 'formCategory',
+    fieldName: 'id',
+    label: 'id',
+    component: 'Input',
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
+  },
+  {
+    fieldName: 'categoryCode',
     label: '分类',
-    rules: "required",
+    rules: "selectRequired",
     component: 'ApiTreeSelect',
-    wrapperClass: 'grid-cols-2',
+    formItemClass: 'grid-cols-2 pb-0 [&_div_p]:z-10 [&_div_p]:border [&_div_p]:rounded [&_div_p]:border-destructive [&_div_p]:px-2 [&_div_p]:bg-card [&_div_p]:bottom-[-26px] [&_div_p]:leading-8',
     componentProps: {
       blockNode: true,
       api: getFormCategoryListData,
-      // treeDataSimpleMode: true,
       treeDataSimpleMode: { id: "id", pId: "pid", rootPId: null },
       // 菜单接口转options格式
       labelField: 'name',
       valueField: 'code',
-      // fieldNames: {
-      //   label: 'name',
-      //   value: 'code',
+      numberToString: true,
+      fieldNames: { title: 'name', key: 'code', children: 'children' }
+      // afterFetch: (dt) => {
+      //   return dt.map(item => {
+      //     return {label: item.name, value: item.code, pid: item.pid}
+      //   });
       // },
-      // getPopupContainer: () => document.body,
     },
   },
   {
-    fieldName: 'formName',
+    fieldName: 'name',
     label: '名称',
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称',
     },
-    formItemClass: 'col-span-2 col-start-2',
+    formItemClass: 'col-span-2 col-start-2 pb-0 [&_div_p]:z-10 [&_div_p]:border [&_div_p]:rounded [&_div_p]:border-destructive [&_div_p]:px-2 [&_div_p]:bg-card [&_div_p]:bottom-[-33px] [&_div_p]:leading-8',
     rules: z
         .string({
           required_error: '名称不能为空',
@@ -205,7 +215,7 @@ export const formSchema: FormSchema[] = [
       },
     ],*/
   },
-  {
+  /*{
     fieldName: 'status',
     label: '状态',
     component: 'RadioButtonGroup',
@@ -216,5 +226,5 @@ export const formSchema: FormSchema[] = [
         { label: '已生效', value: 1 },
       ],
     },
-  },
+  },*/
 ];

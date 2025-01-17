@@ -42,7 +42,7 @@ export const getFormTemplateList = (params: any) => {
 export const saveOrUpdate = (params: any) => {
   // 将html/xml内容进行转成Base64编码传入后端 - 避免xss防攻击拦截
   params.formJson = Base64.encode(params.formJson);
-  return requestClient.post<any>( Api.SaveOrUpdate, params);
+  return requestClient.post<any>( Api.SaveOrUpdate, params, {isTransformResponse: false});
 };
 
 export const checkEntityExist = (params: CheckExistParams) =>
