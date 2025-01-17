@@ -14,6 +14,12 @@
           {{row.formName}}
         </TypographyLink>
       </template>
+      <template #processStatus="{row}">
+        <ProcessStatus
+            :status="row.processStatus"
+            :statusName="row.processStatusName"
+        />
+      </template>
       <template #currentAssignees="{ row }">
         <template v-if="row.currentAssignees && row.currentAssignees.length>0" >
           <template v-if="row.currentAssignees.length > 2">
@@ -77,7 +83,7 @@
   </Page>
 </template>
 <script lang="ts" setup>
-import {ref} from 'vue';
+import {ref,h } from 'vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
@@ -89,7 +95,7 @@ import type {Recordable} from '@vben/types';
 import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
 
 // import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
-  import { launchedTableSchema, searchFormSchema } from './data';
+  import { launchedTableColumns, searchFormSchema } from './data';
   import {findMyProcessinstancesPagerModel, getApps} from "#/api/process/process";
   import { EmpInfo } from '#/views/components/EmpInfo';
   // import {timeDurationFormatter} from "@/utils";
@@ -98,9 +104,8 @@ import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/pre
   // import {downloadBlob, downloadByOnlineUrl} from "@/utils/file/download";
   // import {exportExcel} from "#/api/report/nodeCount";
   // import ExportFormExcelModal from "./ExportFormExcelModal.vue";
-  import {h} from "vue";
-import {todoTableSchema} from "#/views/process/todo/data";
 import {getAppingTasksPagerModel} from "#/api/process/process";
+import {ProcessStatus} from "#/views/components/common";
 
  /* const [registerBpmnPreviewModal, { openModal: openBpmnPreviewModal, setModalProps: setBpmnPreviewProps }] = useModal();
   const [
@@ -120,7 +125,7 @@ import {getAppingTasksPagerModel} from "#/api/process/process";
   /*const [registerLaunchedTable, { reload, getForm }] = useTable({
     api: findMyProcessinstancesPagerModel,
     title: '',
-    columns: launchedTableSchema,
+    columns: launchedTableColumns,
     formConfig: {
       labelWidth: 120,
       schemas: searchFormSchema,
@@ -133,8 +138,7 @@ import {getAppingTasksPagerModel} from "#/api/process/process";
     immediate: false
   });*/
 const bpmnPreviewModalRef = ref(),
-    processFormPreviewDrawerRef = ref()
-;
+    processFormPreviewDrawerRef = ref();
 
 
 const formOptions: VbenFormProps = {
@@ -151,12 +155,12 @@ const formOptions: VbenFormProps = {
   schema: searchFormSchema,
 };
 
-const gridOptions: VxeGridProps<any> = {
+const gridOptions: VxeGridProps = {
   checkboxConfig: {
     highlight: true,
     labelField: 'name',
   },
-  columns: launchedTableSchema,
+  columns: launchedTableColumns,
   columnConfig: {resizable: true},
   height: 'auto',
   keepSource: true,
@@ -225,41 +229,15 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
     });
     processFormPreviewDrawerRef.value.open();
     processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.formName}】的表单`});
-
-    /*openProcessFormModal(true, {
-      record,
-    });
-    setProcessFormModalProps({
-      width: 1000,
-      title: `查看流程【${record.formName}】的表单`,
-      showOkBtn: false,
-      centered: true,
-      cancelText: '关闭',
-      maskClosable: false,
-    });*/
   }
 
-  function handleProcessFormVisibleChange(visible) {
-    if (!visible) {
-      setTimeout(() => {
-        reload();
-      }, 200);
-    }
-  }
 
-function handleBpmnPreview(modelKey, procInstId) {
+function handleBpmnPreview(modelKey: string, procInstId: string) {
   bpmnPreviewModalRef.value.setData({modelKey, procInstId});
   bpmnPreviewModalRef.value.open();
 }
 
-  function reloadData(){
-    reload();
-  }
-
-  function dataChangeEvent(){
-    // processStore.reloadTodoTaskCount();
-  }
 </script>
 <style lang="scss">
-  @import '../index.less';
+  //@import '../index.scss';
 </style>

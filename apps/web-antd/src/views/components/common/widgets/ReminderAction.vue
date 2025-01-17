@@ -21,6 +21,7 @@
         :autosize="{ minRows: 2, maxRows: 6 }"
         class="w-80"
         placeholder="请输入催办内容"
+        allow-clear
       />
     </template>
     <slot>
@@ -29,8 +30,8 @@
   </Popconfirm>
 </template>
 <script lang="ts" setup>
-import {ref, defineProps, defineEmits} from 'vue';
-import {Tag, Popconfirm, message, Button, Textarea} from 'ant-design-vue';
+import {ref, defineProps} from 'vue';
+import {Popconfirm, message, Button, Textarea} from 'ant-design-vue';
 import {EmpInfo} from '#/views/components/EmpInfo';
 import {reminderTask} from "#/api/process/process";
 

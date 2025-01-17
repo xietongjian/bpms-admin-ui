@@ -28,16 +28,13 @@ export const searchFormSchema: FormSchema[] = [
     labelWidth: 60,
   }
 ];
-export const launchedTableSchema: VxeGridProps['columns'] = [
+export const launchedTableColumns: VxeGridProps['columns'] = [
   {
     title: '状态',
     width: 80,
     align: 'left',
-    field: 'processStatusName',
-    customRender: ({ record }) => {
-      let status = getApproveStatusIcon(record.processStatus)
-      return <Badge status={status} text={record.processStatusName} />;
-    },
+    field: 'processStatus',
+    slots: {default: 'processStatus'}
   },
   {
     title: '流程标题',

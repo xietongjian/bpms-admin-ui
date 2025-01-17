@@ -11,6 +11,12 @@
           {{ row.formName }}
         </TypographyLink>
       </template>
+      <template #processStatus="{row}">
+        <ProcessStatus
+            :status="row.processStatus"
+            :statusName="row.processStatusName"
+        />
+      </template>
       <template #startPersonName="{row}">
         <EmpInfo :no="row.startPersonCode" :name="row.startPersonName"/>
       </template>
@@ -24,7 +30,7 @@
   </Page>
 </template>
 <script lang="ts" setup>
-import {ref} from 'vue';
+import {ref, shallowRef} from 'vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
@@ -33,14 +39,15 @@ import {Page} from '@vben/common-ui';
 
 import {TypographyLink, Tooltip} from 'ant-design-vue';
 import {PartitionOutlined} from '@ant-design/icons-vue';
-import {todoTableSchema, searchFormSchema} from './data';
+import {todoTableColumns, searchFormSchema} from './data';
 import {getAppingTasksPagerModel} from '#/api/process/process';
 import {EmpInfo} from '#/views/components/EmpInfo';
+import {ProcessStatus} from '#/views/components/common';
 import {timeDurationFormatter} from '#/utils';
 import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
 
 const bpmnPreviewModalRef = ref(),
-  processFormPreviewDrawerRef = ref();
+  processFormPreviewDrawerRef = shallowRef();
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
   submitOnEnter: true,
@@ -60,7 +67,7 @@ const gridOptions: VxeGridProps<any> = {
     highlight: true,
     labelField: 'name',
   },
-  columns: todoTableSchema,
+  columns: todoTableColumns,
   columnConfig: {resizable: true},
   height: 'auto',
   keepSource: true,

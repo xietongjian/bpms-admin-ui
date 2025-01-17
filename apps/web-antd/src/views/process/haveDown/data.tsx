@@ -35,16 +35,13 @@ export const searchFormSchema: FormSchema[] = [
     },
   }
 ];
-export const haveDownTableSchema: VxeGridProps['columns']= [
+export const haveDownTableColumns: VxeGridProps['columns']= [
   {
     title: '状态',
     width: 80,
     align: 'left',
-    field: 'processStatusName',
-    customRender: ({ record }) => {
-      let status = getApproveStatusIcon(record.processStatus)
-      return <Badge status={status} text={record.processStatusName} />;
-    },
+    field: 'processStatus',
+    slots: { default: 'processStatus' }
   },
   {
     title: '流程标题',

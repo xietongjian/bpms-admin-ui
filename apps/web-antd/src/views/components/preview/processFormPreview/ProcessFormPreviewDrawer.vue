@@ -8,15 +8,18 @@
           shape="circle"
           :icon="h(isFullScreen ? ShrinkOutlined : ArrowsAltOutlined)"
           class="mr-2" />
-
-<!--        <ArrowsAltOutlined />
-        <ShrinkOutlined />-->
       </div>
     </template>
     <div class="h-full w-full flex flex-row">
       <div ref="allInfoId" class="h-full flex-1">
         <Tabs v-model:activeKey="activeViewKey" size="small" class="h-full" tabBarStyle="">
           <TabPane key="viewForm" tab="查看表单">
+            {{flowBaseInfo}}
+            <ProcessStatus
+                class="text-lg absolute right-0 top-0"
+                :status="'SPZ'"
+                :status-name="'审批中'"
+                type="icon"/>
             <div id="applyInfoId" class="w-full h-full">
               <Collapse size="small" collapsible="header" default-active-key="1" class="mb-2">
                 <CollapsePanel key="1" header="基本信息">
@@ -27,17 +30,17 @@
               <Collapse size="small" collapsible="header" default-active-key="1" class="mb-2">
                 <CollapsePanel key="1" header="表单信息">
                   <ProcessFormInfo
-                      :procInstId="procInstInfo.procInstId"
-                      :bizId="procInstInfo.businessKey"
-                      :taskId="procInstInfo.taskId"
-                      :modelKey="procInstInfo.modelKey" />
+                      :procInstId="procInstInfo?.procInstId"
+                      :bizId="procInstInfo?.businessKey"
+                      :taskId="procInstInfo?.taskId"
+                      :modelKey="procInstInfo?.modelKey" />
                 </CollapsePanel>
               </Collapse>
 
               <Collapse size="small" collapsible="header" default-active-key="1">
                 <CollapsePanel key="1" header="审批信息">
                   <ProcessApproveHistoryInfo
-                      :procInstId="procInstInfo.procInstId"
+                      :procInstId="procInstInfo?.procInstId"
                   />
                 </CollapsePanel>
               </Collapse>
@@ -104,37 +107,10 @@
                 </Button>
               </Popconfirm>
 
-              <Popconfirm
-                v-if="
-                  processViewType === 'launched' &&
-                  currentApproverList &&
-                  currentApproverList.length > 0
-                "
-                ok-text="确定"
-                cancel-text="关闭"
-                @confirm="handleReminder"
-              >
-                <template #title >
-                  <div class="!text-md font-thin w-full flex flex-row gap-1">
-                    向
-                    <EmpInfo :zIndex="2001" v-for="item in currentApproverList" :no="item.code" :name="item.name" >
-                      <span class="text-blue-500 flex flex-row gap-1">
-                      {{item.name}}
-                      </span>
-                    </EmpInfo>
-                    发送催办消息
-                  </div>
-                </template>
-                <template #description>
-                  <Textarea
-                    v-model:value="reminderMsg"
-                    :autosize="{ minRows: 2, maxRows: 6 }"
-                    class="w-80"
-                    placeholder="请输入催办信息"
-                  />
-                </template>
-                <Button v-if="reminderAuthPointer != null" type="primary">{{reminderAuthPointer.name}}</Button>
-              </Popconfirm>
+              <ReminderAction
+                  :proc-inst-id="procInstInfo?.procInstId"
+                  :send-to-personal-list="currentApproverList" />
+
               <Button v-if="turnReadAuthPointer != null" @click="handleTurnRead" type="default">{{turnReadAuthPointer.name}}</Button>
             </Space>
           </template>
@@ -234,6 +210,7 @@
   import BpmnPreviewContainer from "#/views/components/preview/bpmnPreview/bpmnPreviewContainer.vue";
   import ProcessFormInfo from "#/views/components/preview/processFormPreview/components/ProcessFormInfo.vue";
   import ProcessApproveHistoryInfo from "#/views/components/preview/processFormPreview/components/ProcessApproveHistoryInfo.vue";
+  import {ReminderAction, ProcessStatus} from "#/views/components/common";
 
   const reminderAuthPointer = ref(null);
   const turnReadAuthPointer = ref(null);
@@ -279,7 +256,7 @@
   const reminderMsg = ref('');
   const processViewType = ref('view');
   ///////////////////////////////////////
-  const procInstInfo = ref(undefined);
+  const procInstInfo = ref({});
 
   watch(activeViewKey, (val) => {
     if (val === 'viewFlow') {
@@ -560,25 +537,6 @@
     // changeLoading(loading);
   }
 
-  function handleViewerInit(v) {
-    bpmnViewer.value = v;
-  }
-
-  function processFitContainer() {
-    const canvas = bpmnViewer.value?.get('canvas');
-
-    if (isFitView.value) {
-      isFitView.value = false;
-      canvas?.zoom('fit-viewport', { x: 0, y: 0 });
-      defaultZoom.value = canvas?.zoom();
-    } else {
-      isFitView.value = true;
-      defaultZoom.value = 1;
-      canvas?.zoom('fit-viewport', { x: 0, y: 0 });
-      canvas?.zoom(defaultZoom.value);
-    }
-  }
-
   function doPrint({ header, printable }) {
     printJS({
       printable: printable,
@@ -605,25 +563,6 @@
       printRead.value = false;
       printBtnLoading.value = false;
     }, 1500);
-  }
-
-  /**
-   * 获取流程头信息
-   */
-  function getStartHeadInfoVo() {
-    const { procInstId } = unref(params);
-    getStartHeadInfoVoByProcessInstanceId({ procInstId }).then((res) => {
-      const { starterInfo, createTime } = res;
-      baseFormInfo.value = {
-        personalCode: starterInfo?.userCode,
-        personalName: starterInfo?.userName,
-        positionName: starterInfo?.positionName,
-        companyName: starterInfo?.companyName,
-        deptName: starterInfo?.deptName,
-        phoneNumber: starterInfo?.mobile,
-        launchTime: createTime,
-      };
-    });
   }
 
   /**

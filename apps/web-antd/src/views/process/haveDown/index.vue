@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height>
-    <BasicTable @fetch-success="dataChangeEvent" @register="registerHaveDownTable" >
+    <BasicTable >
       <template #formName="{ row }">
         <Tooltip placement="top" title="流程图预览">
           <TypographyLink @click="handleBpmnPreview(row.processDefinitionKey, row.processInstanceId)">
@@ -11,6 +11,12 @@
           {{row.name}}
         </TypographyLink>
       </template>
+      <template #processStatus="{row}">
+        <ProcessStatus
+            :status="row.processStatus"
+            :statusName="row.processStatusName"
+        />
+      </template>
       <template #startPersonName="{ row }">
         <EmpInfo :no="row.startPersonCode" :name="row.startPersonName" />
       </template>
@@ -19,10 +25,10 @@
       </template>
     </BasicTable>
     <BpmnPreviewModal ref="bpmnPreviewModalRef" />
-    <ProcessFormModal
+<!--    <ProcessFormModal
       @register="registerProcessFormModal"
       @visible-change="handleProcessFormVisibleChange"
-    />
+    />-->
     <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
 
   </Page>
@@ -40,10 +46,11 @@ import {Page} from '@vben/common-ui';
   import {TypographyLink, Tooltip} from 'ant-design-vue';
   import {PartitionOutlined} from '@ant-design/icons-vue';
 import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
-  import { haveDownTableSchema, searchFormSchema } from './data';
-  import {getApplyedTasksPagerModel, getApps} from "#/api/process/process";
+  import { haveDownTableColumns, searchFormSchema } from './data';
+  import {getApplyedTasksPagerModel} from "#/api/process/process";
   // import { useModal } from '@/components/Modal';
   import {EmpInfo} from '#/views/components/EmpInfo';
+import {ProcessStatus} from "#/views/components/common";
   // import {timeDurationFormatter} from "@/utils";
   // import { useProcessStore } from '@/store/modules/process';
   // import { useRequest } from '@vben/hooks';
@@ -59,7 +66,7 @@ import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/pre
   /*const [registerHaveDownTable, {reload, getForm }] = useTable({
     api: getApplyedTasksPagerModel,
     title: '',
-    columns: haveDownTableSchema,
+    columns: haveDownTableColumns,
     formConfig: {
       labelWidth: 120,
       schemas: searchFormSchema,
@@ -110,7 +117,7 @@ const gridOptions: VxeGridProps<any> = {
     highlight: true,
     labelField: 'name',
   },
-  columns: haveDownTableSchema,
+  columns: haveDownTableColumns,
   columnConfig: {resizable: true},
   height: 'auto',
   keepSource: true,
@@ -146,50 +153,9 @@ function handleBpmnPreview(modelKey: string, procInstId: string) {
     });
     processFormPreviewDrawerRef.value.open();
     processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.formName}】的表单`});
-
-    /*openProcessFormModal(true, {
-      record,
-    });
-    setProcessFormModalProps({
-      width: 1000,
-      title: `查看流程【${record.formName}】的表单`,
-      showOkBtn: false,
-      centered: true,
-      cancelText: '关闭',
-      maskClosable: false,
-    });*/
   }
 
-  function handleProcessFormVisibleChange(visible) {
-    if (!visible) {
-      setTimeout(() => {
-        reload();
-      }, 200);
-    }
-  }
-
-  function showFlowDiagram(modelKey, procInstId){
-    openBpmnPreviewModal(true, {
-      modelKey: modelKey,
-      procInstId: (!procInstId||procInstId==='0')?'':procInstId,    // 参数空时传过来的是0
-      isUpdate: true,
-    });
-    setBpmnPreviewProps({
-      centered: true,
-      useWrapper: false,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });
-  }
-
-  function reloadData(){
-    reload();
-  }
-
-  function dataChangeEvent(){
-    // processStore.reloadTodoTaskCount();
-  }
 </script>
 <style lang="scss">
-  @import '../index.less';
+  //@import '../index.scss';
 </style>
