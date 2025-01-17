@@ -200,7 +200,7 @@
   });
 </script>
 
-<style lang="less">
+<style lang="scss">
   .dictionary {
     .vben-basic-table-form-container {
       padding: 0;

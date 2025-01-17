@@ -37,7 +37,7 @@
     width: '220px',
   };
 </script>
-<style lang="less">
+<style lang="scss">
   .account-setting {
     margin: 12px;
 

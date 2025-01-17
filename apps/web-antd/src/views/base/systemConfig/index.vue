@@ -240,7 +240,7 @@ function handleSuccess() {
   }, 200);
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .view-img-wrapper {
   position: relative;
   overflow: hidden;

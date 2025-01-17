@@ -161,7 +161,7 @@
   }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .modelInfo-roles {
     > span {
       margin-right: 4px;

@@ -893,7 +893,7 @@
   defineExpose(modalApi)
 </script>
 
-<style lang="less">
+<style lang="scss">
   .process-form-full-modal {
     .ant-modal {
       top: 0;
@@ -952,7 +952,7 @@
   }
 </style>
 
-<style lang="less">
+<style lang="scss">
   //@import '@/assets/bpmn/viewer/lib/style.css';
   .form-bpmn-container {
     padding: 0;

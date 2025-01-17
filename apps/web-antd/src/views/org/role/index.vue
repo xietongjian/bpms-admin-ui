@@ -269,7 +269,7 @@ function handleSelect(node: any) {
   </ColPage>
 </template>
 
-<style lang="less">
+<style lang="scss">
   .companies-details {
     > .ant-tag {
       margin-right: 4px;

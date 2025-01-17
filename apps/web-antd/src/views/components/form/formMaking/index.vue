@@ -557,8 +557,8 @@
     handleSave,
   });
 </script>
-<style lang="less">
-  @import './index.less';
+<style lang="scss">
+  @import './index.scss';
   .fm-custom-label{
     font-size: 13px;
     color: rgb(96, 98, 102);

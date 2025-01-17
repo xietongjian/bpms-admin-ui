@@ -363,7 +363,7 @@ defineExpose(modalApi);
     }
   }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .accountForm {
     position: relative;
   }

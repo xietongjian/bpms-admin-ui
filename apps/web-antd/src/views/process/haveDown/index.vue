@@ -190,6 +190,6 @@ function handleBpmnPreview(modelKey: string, procInstId: string) {
     // processStore.reloadTodoTaskCount();
   }
 </script>
-<style lang="less">
+<style lang="scss">
   @import '../index.less';
 </style>

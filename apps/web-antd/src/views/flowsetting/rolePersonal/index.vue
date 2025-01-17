@@ -371,7 +371,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
   }
 </script>
 
-<style lang="less">
+<style lang="scss">
   .role-personal {
     .ant-table-expanded-row {
       .ant-table-cell {

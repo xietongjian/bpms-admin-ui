@@ -313,7 +313,7 @@
     message.success('已拷贝到剪切板！');
   }
 </script>
-<style lang="less">
+<style lang="scss">
   .job-search-form {
     & > .ant-row {
       & > :last-child {

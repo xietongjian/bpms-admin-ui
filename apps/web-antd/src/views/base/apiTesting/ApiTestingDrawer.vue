@@ -170,6 +170,6 @@ async function handleSubmit() {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 
 </style>

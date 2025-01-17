@@ -563,7 +563,7 @@
     handleSubmit,
   });
 </script>
-<style lang="less">
+<style lang="scss">
   .model-info-setting {
     border: 1px solid var(--border-color);
     border-top: 0;

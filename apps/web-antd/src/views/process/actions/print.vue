@@ -166,7 +166,7 @@
     },
   });
 </script>
-<style lang="less">
+<style lang="scss">
   .process-print{
     background: @content-bg;
     .vben-page-wrapper{
@@ -178,6 +178,6 @@
 
 </style>
 
-<style lang="less">
+<style lang="scss">
   @import '../index.less';
 </style>

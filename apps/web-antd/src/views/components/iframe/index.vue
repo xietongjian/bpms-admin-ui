@@ -145,7 +145,7 @@ onMounted(() => {
     },
   });*/
 </script>
-<style lang="less">
+<style lang="scss">
 .custom-spin-container {
   .ant-spin-container {
     width: 100%;
@@ -153,7 +153,7 @@ onMounted(() => {
   }
 }
 </style>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 //@prefix-cls: ~'@{namespace}-iframe-page';
 
 /*.@{prefix-cls} {

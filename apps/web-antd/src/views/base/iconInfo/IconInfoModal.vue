@@ -168,7 +168,7 @@
   }
   defineExpose(modalApi)
 </script>
-<style lang="less">
+<style lang="scss">
   .iconInfo_form .local_urlValue {
     width: calc(100% - 100px);
     margin-bottom: 0;

@@ -215,7 +215,7 @@ function getTooltip(data: string | TooltipProps): TooltipProps {
     </Dropdown>
   </div>
 </template>
-<style lang="less">
+<style lang="scss">
 /** 修复 iconify 位置问题 **/
 .m-table-action {
   .ant-btn > .iconify + span,

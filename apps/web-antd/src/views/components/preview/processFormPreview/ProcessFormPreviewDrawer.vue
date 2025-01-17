@@ -895,7 +895,7 @@
   defineExpose(drawerApi)
 </script>
 
-<style lang="less">
+<style lang="scss">
   .process-form-full-modal {
     .ant-modal {
       top: 0;

@@ -460,7 +460,7 @@ function handleUpdateSecretKeySuccess() {
   expandedRowKeys.value = [unref(currentListener).id];
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .custom-listener-table {
   .ant-table-expanded-row {
     .ant-table-cell {

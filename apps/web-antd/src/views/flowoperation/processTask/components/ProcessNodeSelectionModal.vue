@@ -245,7 +245,7 @@
   </BasicModal>
 </template>
 
-<style lang="less">
+<style lang="scss">
   //@import '@/assets/bpmn/viewer/lib/style.css';
   .bpmn-container-fill {
     min-height: inherit;

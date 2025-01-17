@@ -155,7 +155,7 @@ async function handleSubmit() {
 }
 defineExpose(drawerApi)
 </script>
-<style lang="less">
+<style lang="scss">
 .apiInfo_form .local_urlValue {
   width: calc(100% - 100px);
   margin-bottom: 0;

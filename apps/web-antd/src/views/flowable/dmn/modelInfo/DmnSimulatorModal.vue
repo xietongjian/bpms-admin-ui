@@ -200,7 +200,7 @@
   defineExpose(modalApi);
 </script>
 
-<style lang="less">
+<style lang="scss">
   .dmn-engine-container {
     .dmn-engine-result {
       border-radius: 8px;

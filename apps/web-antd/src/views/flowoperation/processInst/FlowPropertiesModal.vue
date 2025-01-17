@@ -78,7 +78,7 @@
 
   defineExpose(modalApi)
 </script>
-<style lang="less">
+<style lang="scss">
   .code-viewer-bg {
     //background: mix(@trigger-dark-bg-color, #ccc, 80%);
   }

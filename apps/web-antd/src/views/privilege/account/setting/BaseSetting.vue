@@ -69,7 +69,7 @@
   }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .change-avatar {
     img {
       display: block;

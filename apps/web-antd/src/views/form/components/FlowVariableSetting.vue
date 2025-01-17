@@ -287,7 +287,7 @@
   });
 </script>
 
-<style lang="less">
+<style lang="scss">
   .flow-variable-setting {
     border: 1px solid var(--border-color);
     border-top: 0;

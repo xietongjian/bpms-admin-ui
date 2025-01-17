@@ -221,7 +221,7 @@ defineExpose({
   handleSubmit,
 });
 </script>
-<style lang="less">
+<style lang="scss">
 .api-variable-setting {
   height: 100%;
   overflow-y: auto;

@@ -409,7 +409,7 @@ function handleSelect(node: any) {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
 .process-definition {
   .ant-table-expanded-row {
     .ant-table-cell {

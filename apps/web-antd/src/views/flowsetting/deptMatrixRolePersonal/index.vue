@@ -327,7 +327,7 @@
   }
 </script>
 
-<style lang="less">
+<style lang="scss">
   .personal-items {
     height: 100%;
     position: relative;

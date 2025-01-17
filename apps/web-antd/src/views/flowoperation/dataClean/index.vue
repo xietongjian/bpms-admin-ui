@@ -388,7 +388,7 @@ async function handleDmnModelSync() {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .center-align {
   text-align: center;
 }

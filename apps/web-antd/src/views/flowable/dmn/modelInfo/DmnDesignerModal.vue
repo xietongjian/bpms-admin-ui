@@ -561,7 +561,7 @@ function handleClose() {
 defineExpose(modalApi);
 </script>
 
-<style lang="less">
+<style lang="scss">
 .admn-designer-container {
   > .ant-modal {
     > .ant-modal-content {

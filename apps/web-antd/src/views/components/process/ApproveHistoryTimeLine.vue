@@ -179,7 +179,7 @@
     },
   );
 </script>
-<style lang="less">
+<style lang="scss">
   .approve-history-box {
     height: 100%;
     position: absolute;

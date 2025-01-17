@@ -145,7 +145,7 @@ function onCloseBpmnPreviewModal() {
 
 </script>
 
-<style lang="less">
+<style lang="scss">
 //@import '#/assets/bpmn/viewer/lib/style.css';
 
 .bpmn-viewer-container {

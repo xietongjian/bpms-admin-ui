@@ -531,7 +531,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
   }
 </script>
 
-<style lang="less">
+<style lang="scss">
   .word-light {
     transition:
       transform 0.5s,

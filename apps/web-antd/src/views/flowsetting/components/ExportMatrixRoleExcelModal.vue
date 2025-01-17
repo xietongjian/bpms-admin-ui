@@ -103,7 +103,7 @@
   }
 </script>
 
-<style lang="less">
+<style lang="scss">
   .export-matrix-role-modal {
     .ant-modal-body {
       .scroll-container {

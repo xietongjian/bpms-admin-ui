@@ -77,7 +77,7 @@ function onFocus (viewUpdate: any) {
       v-bind="$attrs"
   />
 </template>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 :deep(.cm-editor) {
   border-radius: 2px;
   outline: none;

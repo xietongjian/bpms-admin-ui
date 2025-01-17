@@ -362,7 +362,7 @@
   }
 
 </script>
-<style lang="less">
+<style lang="scss">
   .approve-options-panel{
     //max-width: 1200px;
     height: auto;

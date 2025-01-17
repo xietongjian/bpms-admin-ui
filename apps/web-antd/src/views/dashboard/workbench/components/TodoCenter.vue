@@ -308,7 +308,7 @@
   };
 
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .todo-center-card{
     .ant-list-items{
       .ant-list-item{

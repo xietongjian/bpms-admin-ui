@@ -807,7 +807,7 @@
     handleSave,
   });
 </script>
-<style lang="less">
+<style lang="scss">
   .form-designer {
     .ant-tabs-content {
       height: 100%;

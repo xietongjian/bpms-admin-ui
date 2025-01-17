@@ -202,7 +202,7 @@ function handleSuccess() {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .popover-details {
   .ant-space-align-center {
     flex-flow: wrap;

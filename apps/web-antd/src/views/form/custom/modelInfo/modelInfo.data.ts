@@ -82,38 +82,6 @@ export const columns: VxeGridProps['columns'] = [
   },
 ];
 
-export const formColumns: VxeGridProps['columns'] = [
-  {
-    title: '操作',
-    field: 'action',
-    width: 100,
-    align: 'center',
-  },
-  {
-    field: 'name',
-    align: 'left',
-    customRender: ({ record }) => {
-      return record.name;
-    },
-  },
-  {
-    title: '标识',
-    field: 'code',
-    align: 'left',
-    // width: 200,
-  },
-  {
-    title: '创建时间',
-    field: 'createTime',
-    width: 180,
-  },
-  {
-    title: '修改时间',
-    field: 'updateTime',
-    width: 180,
-  },
-];
-
 export const searchFormSchema: FormSchema[] = [
   {
     fieldName: 'keyword',

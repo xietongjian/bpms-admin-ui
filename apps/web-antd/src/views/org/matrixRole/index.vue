@@ -222,7 +222,7 @@
 
 </script>
 
-<style lang="less">
+<style lang="scss">
   .role-companies {
     .ant-space-align-center {
       flex-flow: wrap;

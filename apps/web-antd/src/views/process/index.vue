@@ -87,7 +87,7 @@
     history.replaceState('', '', '#/process/launch')
   }
 </script>
-<style lang="less">
+<style lang="scss">
 /*.process-list-container{
   .vben-page-wrapper-content{
     margin: 0;

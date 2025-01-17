@@ -354,7 +354,7 @@
 
   defineExpose({resetApproveMsg});
 </script>
-<style lang="less">
+<style lang="scss">
   .approve-msg-form{
     .ant-form-item{
       margin-bottom: 0;

@@ -1,5 +1,5 @@
 <template>
-  <BasicModal ref="bpmnContainerRef" class="aaaaaaaaaaaa w-[1000px] h-full">
+  <BasicModal ref="bpmnContainerRef" class="w-[1000px] h-full">
     <template #title>
       流程图 - {{modelName??'-'}}
       <LoadingOutlined v-if="modelName === ''" />
@@ -148,7 +148,7 @@ import {computed, ref, unref, shallowRef, defineExpose, nextTick} from 'vue';
   defineExpose(modalApi)
 </script>
 
-<style lang="less">
+<style lang="scss">
   .bpmn-viewer-container {
     .bpmn-viewer__toolbar {
       display: none;

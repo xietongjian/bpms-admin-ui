@@ -361,7 +361,7 @@
   }
 </script>
 
-<style lang="less">
+<style lang="scss">
   @import 'index.less';
   .dmn-viewer-container {
     overflow: visible;

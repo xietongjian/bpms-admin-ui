@@ -194,7 +194,7 @@
   };
   defineExpose(modalApi);
 </script>
-<style lang="less">
+<style lang="scss">
   .acl-modal {
     .ant-modal-body {
       .scroll-container {

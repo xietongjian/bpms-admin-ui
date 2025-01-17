@@ -40,7 +40,7 @@ const styles = computed(() => {
   <component :is="iconComp" v-if="iconComp" :style="styles" />
   <VbenIcon v-else :icon="props.icon" :style="styles" class="m-icon__" />
 </template>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .m-icon__ {
   display: inline-flex;
   align-items: center;

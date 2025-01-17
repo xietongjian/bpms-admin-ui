@@ -208,7 +208,7 @@ import {computed, ref, unref, shallowRef, defineProps, defineExpose, nextTick} f
 
 </script>
 
-<style lang="less">
+<style lang="scss">
   //@import '#/assets/bpmn/viewer/lib/style.css';
   .bpmn-viewer-container {
     .bpmn-viewer__toolbar {

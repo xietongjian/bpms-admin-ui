@@ -263,7 +263,7 @@
   defineExpose(modalApi);
 </script>
 
-<style lang="less">
+<style lang="scss">
   .form-template-modal {
     .ant-modal-body {
       .scroll-container {
