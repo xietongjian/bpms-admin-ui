@@ -161,6 +161,8 @@ async function handleSubmit() {
     return;
   }
   const formJson = unref(makingFormRef).getJSON();
+  const formModels = unref(makingFormRef).getFormModels()
+  console.log(formModels);
   const values = await formApi.getValues();
   const params = {
     formJson,

@@ -14,7 +14,6 @@
       <div ref="allInfoId" class="h-full flex-1">
         <Tabs v-model:activeKey="activeViewKey" size="small" class="h-full" tabBarStyle="">
           <TabPane key="viewForm" tab="查看表单">
-            {{flowBaseInfo}}
             <ProcessStatus
                 class="text-lg absolute right-0 top-0"
                 :status="'SPZ'"
