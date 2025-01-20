@@ -35,7 +35,7 @@ export const settingList = [
 ];
 
 // 基础设置 form
-export const baseSetschemas: FormSchema[] = [
+export const baseSetSchemas: FormSchema[] = [
   {
     fieldName: 'realName',
     component: 'Input',
@@ -68,10 +68,8 @@ export const baseSetschemas: FormSchema[] = [
     label: '测试组织选择',
     componentProps: {
       placeholder: '请选择组织',
-      multiple: true,
+      multiple: false,
       type: 'company',
-      closeOnSelect: false,
-      selectOnModal: false,
       modelValue: [{
         id: '1', value: '1', type: 'company',
       },{

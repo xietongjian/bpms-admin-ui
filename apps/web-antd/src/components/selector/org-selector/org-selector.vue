@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { defineComponent, ref, watch, unref, onMounted, computed, watchEffect } from 'vue';
+import { ref, watch, unref, useAttrs, onMounted, computed, watchEffect } from 'vue';
 import { SearchOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
 import OrgSelectorModal from './org-selector-modal.vue';
+import { ApiComponent } from '@vben/common-ui';
+
 import {
   Select,
   TreeSelect,
@@ -13,6 +15,7 @@ import {
 import {getCompanyTreeData} from "#/api/org/company";
 import {getOrgTree} from "#/api/org/dept";
 import {forEach} from "#/utils/helper/treeHelper";
+import {objectOmit} from "@vueuse/core";
 
 interface Props {
   multiple: {
@@ -162,6 +165,27 @@ function openSelectorModal() {
   });
   orgSelectorModalRef.value.open();
 }
+const attrs = useAttrs();
+
+const bindProps = computed(() => {
+  return {
+    ...objectOmit(attrs, ['onUpdate:value']),
+  };
+});
+
+const api = computed(() => {
+  switch (props.type){
+    case 'company':
+      return getCompanyTreeData;
+    case 'dept':
+      return getOrgTree;
+    case 'org':
+      return getOrgTree;
+    default:
+      return getOrgTree;
+  }
+})
+
 
 </script>
 <template>
@@ -195,6 +219,38 @@ function openSelectorModal() {
       <OrgSelectorModal ref="orgSelectorModalRef" @change="handleChange"/>
     </template>
     <template  v-else>
+      <ApiComponent
+          labelField="name"
+          valueField="code"
+          :api="api"
+          class="w-full"
+          placeholder="请选择"
+          :component="TreeSelect"
+          :treeDataSimpleMode="{id: 'id', pId: 'pid', rootPId: null}"
+          loadingSlot="suffixIcon"
+          modelPropName="value"
+          optionsPropName="treeData"
+          visibleEvent="onVisibleChange"
+          :multiple="multiple"
+          v-bind="bindProps"
+        />
+      <!--
+      h(
+        ApiComponent,
+        {
+          placeholder: $t('ui.placeholder.select'),
+          ...props,
+          ...attrs,
+          component: TreeSelect,
+          fieldNames: { label: 'label', value: 'value', children: 'children' },
+          loadingSlot: 'suffixIcon',
+          modelPropName: 'value',
+          optionsPropName: 'treeData',
+          visibleEvent: 'onVisibleChange',
+        },
+        slots,
+      );
+      -->
       <TreeSelect
           ref="selectorRef"
           popupClassName="border !block"

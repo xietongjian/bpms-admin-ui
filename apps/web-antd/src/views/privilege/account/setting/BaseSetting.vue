@@ -30,7 +30,7 @@
   // import { accountInfoApi } from '#/api/demo/account';
   import { uploadApi } from '#/api/sys/upload';
   // import headerImg from '#/assets/images/header.jpg';
-  import { baseSetschemas } from './data';
+  import {baseSetSchemas} from './data';
   import {getUserInfoApi} from "#/api/core/user";
   import { useUserStore } from '@vben/stores';
 
@@ -39,7 +39,7 @@
   const [BasicForm, formApi] = useVbenForm({
     showDefaultActions: false,
     layout: 'horizontal',
-    schema: baseSetschemas,
+    schema: baseSetSchemas,
     wrapperClass: 'grid-cols-1',
   });
 
