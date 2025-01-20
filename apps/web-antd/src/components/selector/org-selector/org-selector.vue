@@ -233,26 +233,23 @@ const api = computed(() => {
           visibleEvent="onVisibleChange"
           :multiple="multiple"
           v-bind="bindProps"
-        />
-      <!--
-      h(
-        ApiComponent,
-        {
-          placeholder: $t('ui.placeholder.select'),
-          ...props,
-          ...attrs,
-          component: TreeSelect,
-          fieldNames: { label: 'label', value: 'value', children: 'children' },
-          loadingSlot: 'suffixIcon',
-          modelPropName: 'value',
-          optionsPropName: 'treeData',
-          visibleEvent: 'onVisibleChange',
-        },
-        slots,
-      );
-      -->
-      <TreeSelect
+        >
+          <template #tagRender="{ label, closable, onClose, option }">
+            <Popover :z-index="1200">
+              <template #content>
+                {{ label || '-' }}
+              </template>
+              <Tag class="flex items-center gap-1 !text-sm p-px m-px mr-1" :closable="closable"
+                   :color="option.color" @close="onClose">
+                <span class="icon-[ix--building2] size-4"></span>
+                {{ label || '-' }}
+              </Tag>
+            </Popover>
+          </template>
+      </ApiComponent>
+<!--      <TreeSelect
           ref="selectorRef"
+          searchPlaceholder="请选择"
           popupClassName="border !block"
           v-model:value="currentSelect"
           :placeholder="placeholder"
@@ -271,12 +268,12 @@ const api = computed(() => {
               {{ label || '-' }}
             </template>
             <Tag class="flex items-center gap-1 !text-sm p-px m-px mr-1" :closable="closable" :color="option.color" @close="onClose">
-              <span class="icon-[ix--building2] size-4" ></span>
+              <span class="icon-[ix&#45;&#45;building2] size-4" ></span>
               {{ label || '-' }}
             </Tag>
           </Popover>
         </template>
-      </TreeSelect>
+      </TreeSelect>-->
     </template>
   </div>
 </template>
