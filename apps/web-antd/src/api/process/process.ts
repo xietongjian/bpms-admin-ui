@@ -67,7 +67,7 @@ export function complete(params: any) {
 
 // 催办
 export function reminderTask(params: any) {
-  return requestClient.post(Api.ReminderTask, params, {isTransformResponse: false});
+  return requestClient.post(Api.ReminderTask, params, {responseReturn: 'body'});
 }
 
 // 通过任务ID查询自定义审批配置项
@@ -250,7 +250,7 @@ export function getBizInfoVoByModelKey(params) {
  * @param params
  */
 export function checkRevokeProcess(params: any) {
-  return requestClient.post<any>(Api.CheckRevokeProcess, params, {isTransformResponse: false});
+  return requestClient.post<any>(Api.CheckRevokeProcess, params, {responseReturn: 'body'});
 }
 
 // 我的草稿

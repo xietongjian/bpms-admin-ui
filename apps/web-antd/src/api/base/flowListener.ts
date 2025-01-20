@@ -51,10 +51,10 @@ export const getListByPage = (params?: any) => {
   return requestClient.post<any>(Api.PageList, params);
 };
 
-export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params, {isTransformResponse: false});
+export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params, {responseReturn: 'body'});
 
 export const saveOrUpdateProperties = (params: any) =>
-  requestClient.post<any>(Api.SaveOrUpdateProperties, params, {isTransformResponse: false});
+  requestClient.post<any>(Api.SaveOrUpdateProperties, params, {responseReturn: 'body'});
 
 export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);

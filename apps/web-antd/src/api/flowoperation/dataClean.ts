@@ -13,7 +13,7 @@ enum Api {
  */
 export const cleanByModelKeys = (params: any) => {
   return requestClient.post<any>(Api.CleanByModelKeys + '/' + params.modelKeys, { },
-    { isTransformResponse: false },
+    { responseReturn: 'body' },
   );
 };
 
@@ -23,7 +23,7 @@ export const cleanByModelKeys = (params: any) => {
  */
 export const syncModel = (params: any) => {
   return requestClient.post<any>(Api.SyncModel + '/' + params.modelType, { },
-    { isTransformResponse: false },
+    { responseReturn: 'body' },
   );
 };
 
@@ -32,7 +32,7 @@ export const syncModel = (params: any) => {
  */
 export const cleanByBizKeys = (params: any) => {
   return requestClient.post<any>(Api.CleanByBizKeys + '/' + params.bizKeys,{ },
-    { isTransformResponse: false },
+    { responseReturn: 'body' },
   );
 };
 
@@ -41,7 +41,7 @@ export const cleanByBizKeys = (params: any) => {
  */
 export const cleanByProcInstIds = (params: any) => {
   return requestClient.post<any>(Api.CleanByProcInstIds + '/' + params.procInstIds, { },
-    { isTransformResponse: false },
+    { responseReturn: 'body' },
   );
 };
 
@@ -50,6 +50,6 @@ export const cleanByProcInstIds = (params: any) => {
  */
 export const deleteModelByModelKey = (params: any) => {
   return requestClient.post<any>(Api.DeleteModelByModelKey + '/' + params.modelKey,{ },
-    { isTransformResponse: false },
+    { responseReturn: 'body' },
   );
 };

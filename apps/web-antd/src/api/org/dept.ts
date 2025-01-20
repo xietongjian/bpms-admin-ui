@@ -65,7 +65,7 @@ export const getOrgTree = async () => {
   return treeData;
 };
 
-export const saveOrUpdate = (params: any) => requestClient.post(Api.SaveOrUpdate, params, {isTransformResponse: false});
+export const saveOrUpdate = (params: any) => requestClient.post(Api.SaveOrUpdate, params, {responseReturn: 'body'});
 
 export const deleteByIds = (params: Array<string>) => requestClient.post(Api.Delete, params);
 

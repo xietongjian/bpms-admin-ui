@@ -70,7 +70,7 @@ export const getJobsCount = () => {
  */
 export const moveDeadLetterJobToExecutableJobByJobIds = (jobIds: any) => {
   return requestClient.post<any>(Api.MoveDeadLetterJobToExecutableJobByJobIds, jobIds,
-    { isTransformResponse: false },
+    { responseReturn: 'body' },
   );
 };
 
@@ -81,6 +81,6 @@ export const moveDeadLetterJobToExecutableJobByJobIds = (jobIds: any) => {
  */
 export const updateDuedateById = (params: any) => {
   return requestClient.post<any>(Api.UpdateDuedateById, params,
-    { isTransformResponse: false },
+    { responseReturn: 'body' },
   );
 };

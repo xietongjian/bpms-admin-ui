@@ -145,11 +145,11 @@ export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>( Api.CheckEntityExist, params);
 
 export const validateBpmnModel = (params: Object) =>
-  requestClient.post<any>(Api.ValidateBpmnModel, params, { isTransformResponse: false });
+  requestClient.post<any>(Api.ValidateBpmnModel, params, { responseReturn: 'body' });
 
 export const saveBpmnModel = (params: any) => {
   params.modelXml = Base64.encode(params.modelXml);
-  return requestClient.post<any>(Api.SaveBpmnModel, params, { isTransformResponse: false });
+  return requestClient.post<any>(Api.SaveBpmnModel, params, { responseReturn: 'body' });
 };
 
 export const getModelInfoByModelKey = (params: any) =>
@@ -164,7 +164,7 @@ export const deployForm = (params: any) =>
     (params.formType === 'custom' ? Api.DeployCustomForm : Api.DeployBizForm) +
         '/' +
         params.modelKey,{},
-    { isTransformResponse: false }
+    { responseReturn: 'body' }
   );
 
 export const getInitBpmnXml = (params: any) => {

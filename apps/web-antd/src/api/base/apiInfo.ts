@@ -79,10 +79,10 @@ export const getApiCategoryTreeData = () => {
   });
 }
 
-export const saveOrUpdateApiInfo = (params: any) => requestClient.post(Api.SaveOrUpdateApiInfo, params, {isTransformResponse: false});
+export const saveOrUpdateApiInfo = (params: any) => requestClient.post(Api.SaveOrUpdateApiInfo, params, {responseReturn: 'body'});
 
-export const saveOrUpdateApiCategory = (params: any) => requestClient.post(Api.SaveOrUpdateApiCategory, params, {isTransformResponse: false});
+export const saveOrUpdateApiCategory = (params: any) => requestClient.post(Api.SaveOrUpdateApiCategory, params, {responseReturn: 'body'});
 
-export const deleteApiCategoryById = (id: any) => requestClient.post(Api.DeleteApiCategoryById, [id], {isTransformResponse: false});
+export const deleteApiCategoryById = (id: any) => requestClient.post(Api.DeleteApiCategoryById, [id], {responseReturn: 'body'});
 
-export const deleteApiInfoById = (id: any) => requestClient.post(Api.DeleteApiInfoById, [id], {isTransformResponse: false});
+export const deleteApiInfoById = (id: any) => requestClient.post(Api.DeleteApiInfoById, [id], {responseReturn: 'body'});

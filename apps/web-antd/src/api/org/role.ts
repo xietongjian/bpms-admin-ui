@@ -131,7 +131,7 @@ export const allocationPersonals = (params: any) =>
   requestClient.post<any>(Api.AllocationPersonals + '/' + params.roleId, params.personalList);
 
 export const deleteByIds = (params: any) =>
-  requestClient.post<any>(Api.Delete + '/' + params.id, {isTransformResponse: false});
+  requestClient.post<any>(Api.Delete + '/' + params.id, {responseReturn: 'body'});
 
 export const deleteRolePersonal = (params: Array<string>) =>
   requestClient.post<any>(Api.DeleteRolePersonal, params);

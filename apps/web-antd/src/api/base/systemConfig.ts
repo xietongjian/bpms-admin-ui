@@ -18,7 +18,7 @@ export const getSystemConfigListByPage = (params?: any) => {
   return requestClient.post<any>(Api.SystemConfigPageList, params);
 };
 
-export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params, {isTransformResponse: false});
+export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params, {responseReturn: 'body'});
 
 export const deleteByIds = (params: Array<string>) =>
   requestClient.post<any>(Api.Delete, params);

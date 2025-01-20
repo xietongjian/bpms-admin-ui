@@ -82,7 +82,7 @@ export const saveOrUpdateReadInfo = (params: any) => {
  */
 export const completeBackStage = (params: any) => {
   return requestClient.post<any>(Api.CompleteBackStage + '/' + params.taskId + '/' + params.processInstanceId, { },
-    { isTransformResponse: false },
+    { responseReturn: 'body' },
   );
 };
 
@@ -100,7 +100,7 @@ export const updateAssignee = (params: any) => {
  */
 export const stopProcess = (params: any) => {
   // /stopProcess/{taskId}/{processInstanceId}
-  return requestClient.post<any>(Api.StopProcess, params, { isTransformResponse: false });
+  return requestClient.post<any>(Api.StopProcess, params, { responseReturn: 'body' });
 };
 
 /**
@@ -135,7 +135,7 @@ export function getCustomFormInfoVoByModelKeyAndBusinessKey(params: any) {
   return requestClient.post<any>(
       url,
       params,
-    { isTransformResponse: false },
+    { responseReturn: 'body' },
   );
 }
 

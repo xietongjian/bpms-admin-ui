@@ -26,12 +26,12 @@ export const getDmnPagerModel = (params: any) => {
 };
 
 export const publishDmn = (params: any) =>
-  requestClient.post(Api.PublishDmn + '/' + params, { }, { isTransformResponse: false });
+  requestClient.post(Api.PublishDmn + '/' + params, { }, { responseReturn: 'body' });
 
 export const stopDmn = (params: any) =>
-  requestClient.post(Api.StopDmn + '/' + params , {}, { isTransformResponse: false });
+  requestClient.post(Api.StopDmn + '/' + params , {}, { responseReturn: 'body' });
 
-export const deleteByIds = (params?: Array<string>) => requestClient.post(Api.Delete, params, {isTransformResponse: false});
+export const deleteByIds = (params?: Array<string>) => requestClient.post(Api.Delete, params, {responseReturn: 'body'});
 
 export const saveOrUpdate = (params: any) => {
   // 将html/xml内容进行转成Base64编码传入后端 - 避免xss防攻击拦截

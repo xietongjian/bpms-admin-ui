@@ -17,5 +17,5 @@ export const exportExcel = (params: any) => {
   if (params.userNo && params.userNo.length > 0) {
     params.userNo = params.userNo[0].code;
   }
-  return requestClient.get<any>(Api.DownloadNodeCount, params, {responseType: 'blob', isTransformResponse: false });
+  return requestClient.get<any>(Api.DownloadNodeCount, params, {responseType: 'blob', responseReturn: 'body' });
 };

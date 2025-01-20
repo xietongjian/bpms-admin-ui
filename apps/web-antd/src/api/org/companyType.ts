@@ -12,7 +12,7 @@ export const getCompanyTypes = (params?: any) => {
 };
 
 export const saveOrUpdate = (params: any) =>
-  requestClient.post<any>(Api.SaveOrUpdate, params, {isTransformResponse: false});
+  requestClient.post<any>(Api.SaveOrUpdate, params, {responseReturn: 'body'});
 
 export const deleteByIds = (params?: Array<string>) =>
   requestClient.post<any>(Api.Delete, params);

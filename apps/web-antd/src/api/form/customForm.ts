@@ -40,13 +40,13 @@ export const saveFormInfo = (params: any) => {
 };
 
 export const deployForm = (params: any) =>
-  requestClient.post( Api.DeployForm + '/' + params, {}, { isTransformResponse: false });
+  requestClient.post( Api.DeployForm + '/' + params, {}, { responseReturn: 'body' });
 
 export const stopForm = (params: any) =>
-  requestClient.post(Api.StopForm + '/' + params, {}, { isTransformResponse: false });
+  requestClient.post(Api.StopForm + '/' + params, {}, { responseReturn: 'body' });
 
 export const copyCustForm = (params: any) =>
-  requestClient.post(Api.CopyCustForm, params, { isTransformResponse: false });
+  requestClient.post(Api.CopyCustForm, params, { responseReturn: 'body' });
 
 export const getById = (params: any) => requestClient.get(Api.GetById + '/' + params);
 

@@ -362,7 +362,7 @@
 </script>
 
 <style lang="scss">
-  @import 'index.less';
+  @import 'index.scss';
   .dmn-viewer-container {
     overflow: visible;
     padding: 10px;

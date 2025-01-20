@@ -17,10 +17,10 @@ export const getAllList = (params?: any) => {
 };
 
 export const saveOrUpdate = (params: any) =>
-    requestClient.post<any>(Api.SaveOrUpdate, params, {noTransformResponse: true });
+    requestClient.post<any>(Api.SaveOrUpdate, params, {responseReturn: 'body'});
 
 export const addUserGroups = (params: any) => {
-  return requestClient.post<any>(Api.AddUserGroups + '/' + params.groupId, params.users, {isTransformResponse: false});
+  return requestClient.post<any>(Api.AddUserGroups + '/' + params.groupId, params.users, {responseReturn: 'body'});
 };
 
 export const deleteByIds = (params: Array<string>) =>

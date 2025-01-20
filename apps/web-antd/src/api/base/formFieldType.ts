@@ -27,4 +27,4 @@ export const getListByPage = (params: any) => {
   return requestClient.post<any>(Api.PageList, params);
 };
 
-export const saveOrUpdate = (params: any) => requestClient.post(Api.SaveOrUpdate, params, {isTransformResponse: false});
+export const saveOrUpdate = (params: any) => requestClient.post(Api.SaveOrUpdate, params, {responseReturn: 'body'});

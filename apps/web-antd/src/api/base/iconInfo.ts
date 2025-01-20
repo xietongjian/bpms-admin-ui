@@ -65,13 +65,13 @@ export const getIconCategoryTreeData = () => {
 };
 
 export const saveOrUpdateIconInfo = (params: any) =>
-  requestClient.post(Api.SaveOrUpdateIconInfo, params, { isTransformResponse: false });
+  requestClient.post(Api.SaveOrUpdateIconInfo, params, { responseReturn: 'body' });
 
 export const saveOrUpdateIconCategory = (params: any) =>
-  requestClient.post(Api.SaveOrUpdateIconCategory, params, { isTransformResponse: false });
+  requestClient.post(Api.SaveOrUpdateIconCategory, params, { responseReturn: 'body' });
 
 export const deleteIconCategoryById = (id: any) =>
-  requestClient.post(Api.DeleteIconCategoryById, [id], { isTransformResponse: false });
+  requestClient.post(Api.DeleteIconCategoryById, [id], { responseReturn: 'body' });
 
 export const deleteIconInfoById = (id: any) =>
-  requestClient.post(Api.DeleteIconInfoById, [id], { isTransformResponse: false });
+  requestClient.post(Api.DeleteIconInfoById, [id], { responseReturn: 'body' });

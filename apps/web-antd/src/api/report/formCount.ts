@@ -45,7 +45,7 @@ export const exportExcel = (params: any) => {
   }
 
   return requestClient.get<any>(Api.DownloadFormCount, params,
-    { responseType: 'blob', isTransformResponse: false },
+    { responseType: 'blob', responseReturn: 'body' },
   );
 };
 
@@ -105,7 +105,7 @@ export const exportExcelByCode = (params: any) => {
   }
 
   return requestClient.post<any>(Api.DownloadFormCountByCode, params,
-      {responseType: 'blob', isTransformResponse: false },
+      {responseType: 'blob', responseReturn: 'body' },
   );
 };
 

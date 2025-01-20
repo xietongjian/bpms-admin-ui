@@ -30,7 +30,7 @@ export async function getAll(params?: any) {
  * @param data
  */
 export async function deleteByIds(data: Array<string>) {
-  return requestClient.post<any>(Api.Delete, data, { isTransformResponse: true });
+  return requestClient.post<any>(Api.Delete, data, { responseReturn: 'body' });
 }
 
 /**
@@ -43,7 +43,7 @@ export async function getAppListByPage(params: any) {
 
 export async function saveOrUpdate(params: any) {
   return requestClient.post<any>(Api.SaveOrUpdate, params, {
-    noTransformResponse: true,
+    responseReturn: 'body'
   });
 }
 export async function checkEntityExist(params: any) {
@@ -55,7 +55,7 @@ export async function checkEntityExist(params: any) {
  * @param params
  */
 export async function refreshSecretKey (params: string) {
-  return requestClient.post<string>(Api.RefreshSecretKey + '/' + params, {}, {noTransformResponse: true});
+  return requestClient.post<string>(Api.RefreshSecretKey + '/' + params, {}, {responseReturn: 'body'});
 }
 
 
