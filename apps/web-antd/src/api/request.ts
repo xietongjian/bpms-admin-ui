@@ -1,12 +1,13 @@
 /**
  * 该文件可自行根据业务逻辑进行调整
  */
-import type { HttpResponse } from '@vben/request';
+import type { RequestClientOptions } from '@vben/request';
 
 import { useAppConfig } from '@vben/hooks';
 import { preferences } from '@vben/preferences';
 import {
   authenticateResponseInterceptor,
+  defaultResponseInterceptor,
   errorMessageResponseInterceptor,
   RequestClient,
 } from '@vben/request';
@@ -20,8 +21,9 @@ import { refreshTokenApi } from './core';
 
 const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 
-function createRequestClient(baseURL: string) {
+function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   const client = new RequestClient({
+    ...options,
     baseURL,
   });
 
@@ -69,32 +71,14 @@ function createRequestClient(baseURL: string) {
     },
   });
 
-  // response数据解构
-  client.addResponseInterceptor<HttpResponse>({
-    fulfilled: (response) => {
-      const { data: responseData, status, config } = response;
-
-      // 不进行任何处理，直接返回
-      // 用于页面代码可能需要直接获取code，data，message这些信息时开启
-      // if (config?.noTransformResponse) {
-      //   return responseData;
-      // }
-      if (typeof config.isTransformResponse !== 'undefined' && !config.isTransformResponse) {
-        return responseData;
-      }
-
-      const { code, data } = responseData;
-      if (status >= 200 && status < 400 && code === '100') {
-        return data;
-      }
-      if(code === '401'){
-        const authStore = useAuthStore();
-        authStore.logout();
-      }
-
-      throw Object.assign({}, response, { response });
-    },
-  });
+  // 处理返回的响应数据格式
+  client.addResponseInterceptor(
+    defaultResponseInterceptor({
+      codeField: 'code',
+      dataField: 'data',
+      successCode: 0,
+    }),
+  );
 
   // token过期的处理
   client.addResponseInterceptor(
@@ -122,6 +106,8 @@ function createRequestClient(baseURL: string) {
   return client;
 }
 
-export const requestClient = createRequestClient(apiURL);
+export const requestClient = createRequestClient(apiURL, {
+  responseReturn: 'data',
+});
 
 export const baseRequestClient = new RequestClient({ baseURL: apiURL });
