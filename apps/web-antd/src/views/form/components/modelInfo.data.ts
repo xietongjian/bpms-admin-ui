@@ -4,15 +4,13 @@ import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { Tag } from 'ant-design-vue';
 import { checkEntityExist } from '#/api/form/bizForm';
+import {getAll} from '#/api/base/app';
+import { getAppliedRange, getSkipSet } from '#/api/form/form';
 
 import { h } from 'vue';
 import { OrderNoDefaultEnum } from '#/enums/commonEnum';
-import { uploadApi } from '#/api/sys/upload';
 import {getFlowCategories, getFlowCategoryTreeData} from "#/api/base/category";
 
-const colProps = {
-  span: 24,
-};
 export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
@@ -167,11 +165,17 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
   {
     fieldName: 'appSn',
     label: '所属系统',
-    required: true,
-    component: 'Select',
+    rules: 'selectRequired',
+    component: 'ApiSelect',
     componentProps: {
-      treeNodeFilterProp: 'name',
-      getPopupContainer: () => document.body,
+      api: getAll,
+      class: 'w-full',
+      placeholder: '请选择系统',
+      allowClear: true,
+      fieldNames: {
+        value: 'sn',
+        label: 'name'
+      },
     },
     dependencies: {
       show(values) {
@@ -187,10 +191,15 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
   {
     fieldName: 'categoryCode',
     label: '所属分类',
-    required: true,
-    component: 'TreeSelect',
+    rules: 'selectRequired',
+    component: 'ApiTreeSelect',
     componentProps: {
+      class: 'w-full',
+      api: getFlowCategories,
+      treeDataSimpleMode: {id: 'id', pId: 'pid'},
       treeNodeFilterProp: 'name',
+      labelField: 'name',
+      valueField: 'code',
       getPopupContainer: () => document.body,
     },
     wrapperClass: 'w-full'
@@ -283,8 +292,10 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
   {
     fieldName: 'appliedRange',
     label: '使用范围',
-    component: 'Select',
+    component: 'ApiSelect',
     componentProps: {
+      class: 'w-full',
+      api: getAppliedRange,
       getPopupContainer: () => document.body,
     },
     required: true,
@@ -322,9 +333,12 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     fieldName: 'skipSet',
     label: '跳过方式',
     help: '相同节点是否跳过',
-    component: 'RadioGroup',
+    component: 'ApiRadioGroup',
     defaultValue: 1,
-    componentProps: {},
+    componentProps: {
+      api: getSkipSet,
+      class: 'w-full',
+    },
   },
   {
     fieldName: 'backFlag',

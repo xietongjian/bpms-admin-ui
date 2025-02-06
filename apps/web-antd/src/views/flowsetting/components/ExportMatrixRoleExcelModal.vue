@@ -3,8 +3,6 @@
     wrapClassName="export-matrix-role-modal"
     v-bind="$attrs"
     :title="t('component.excel.exportModalTitle')"
-    @ok="handleOk"
-    @register="registerModal"
   >
     <BasicTable @register="registerRolesTable">
       <template #bodyCell="{ column, record }">
@@ -15,13 +13,35 @@
 </template>
 <script lang="ts" setup>
   import { ref, defineEmits } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
+  // import { BasicModal, useModalInner } from '@/components/Modal';
+  import {useVbenModal} from '@vben/common-ui';
+
   import { FormSchema } from '@/components/Form/index';
   import { BasicTable, useTable, BasicColumn } from '@/components/Table';
   import { useMessage } from '@/hooks/web/useMessage';
   import { useI18n } from '@/hooks/web/useI18n';
 
   const emit = defineEmits(['success', 'register']);
+
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          // formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // handleSubmit();
+    },
+  });
 
   const columns: BasicColumn[] = [
     {
