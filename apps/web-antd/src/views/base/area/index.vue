@@ -1,16 +1,3 @@
-<template>
-  <Page auto-content-height>
-    <BasicTable>
-      <template #toolbar-tools>
-        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
-      </template>
-      <template #action="{ row }">
-        <TableAction :actions="createActions(row)"/>
-      </template>
-    </BasicTable>
-    <AreaModal ref="areaModalRef" @success="handleSuccess"/>
-  </Page>
-</template>
 <script lang="ts" setup>
 import {ref} from 'vue';
 import {message, Button} from 'ant-design-vue';
@@ -19,7 +6,7 @@ import {PerEnum} from '#/enums/perEnum';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
-import {getAreas, deleteByIds, getAreasByPcode, getAreasListData, deleteById} from '#/api/base/area';
+import {getAreasListData, deleteById} from '#/api/base/area';
 import {columns, searchFormSchema} from './area.data';
 import AreaModal from './AreaModal.vue';
 import {Page} from "@vben/common-ui";
@@ -28,36 +15,6 @@ import {TableAction} from '#/components/table-action';
 
 const areaModalRef = ref();
 const PerPrefix = 'Area:';
-/*
-  const [registerModal, { openModal, setModalProps }] = useModal();
-
-  const [registerTable, { reload }] = useTable({
-    title: '列表',
-    api: getAreas,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    expandRowByClick: true,
-    isTreeTable: true,
-    canColDrag: true,
-    pagination: false,
-    useSearchForm: true,
-    showTableSetting: false,
-    bordered: true,
-    showIndexColumn: false,
-    actionColumn: {
-      width: 120,
-      title: '操作',
-      dataIndex: 'action',
-      fixed: false,
-    },
-  });*/
-
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -73,7 +30,7 @@ const formOptions: VbenFormProps = {
   actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
 };
 
-const gridOptions: VxeGridProps<any> = {
+const gridOptions: VxeGridProps = {
   columns,
   showOverflow: true,
   columnConfig: {resizable: true},
@@ -164,13 +121,13 @@ function handleCreateChild(record: Recordable<any>, e) {
   });
 }
 
-function handleDelete(record: Recordable<any>, e) {
+async function handleDelete(record: Recordable<any>, e) {
   e.stopPropagation();
   if (record.children && record.children.length > 0) {
     message.warning('有子节点，不能删除！');
     return;
   }
-  const {success, msg} = deleteById(record.code);
+  const {success, msg} = await deleteById(record.code);
   if (success) {
     message.success(msg);
     tableApi.reload();
@@ -183,3 +140,17 @@ function handleSuccess() {
   tableApi.reload();
 }
 </script>
+
+<template>
+  <Page auto-content-height>
+    <BasicTable>
+      <template #toolbar-tools>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
+      </template>
+      <template #action="{ row }">
+        <TableAction :actions="createActions(row)"/>
+      </template>
+    </BasicTable>
+    <AreaModal ref="areaModalRef" @success="handleSuccess"/>
+  </Page>
+</template>

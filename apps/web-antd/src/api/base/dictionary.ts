@@ -1,5 +1,4 @@
 import { requestClient } from '#/api/request';
-
 enum Api {
   DictionaryPageList = '/flow/base/dictionary/getPagerModel',
   DictionaryItemPageList = '/flow/base/dicItem/getPagerModel',
@@ -12,23 +11,10 @@ enum Api {
 }
 
 export const dictionaryPageList = (params: any) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { query, entity };
   return requestClient.post<any>(Api.DictionaryPageList, params);
 };
+
 export const dictionaryItemPageList = (params: any) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { query, entity };
   return requestClient.post<any>(Api.DictionaryItemPageList, params);
 };
 

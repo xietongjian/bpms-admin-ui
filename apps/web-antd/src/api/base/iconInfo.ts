@@ -10,20 +10,9 @@ enum Api {
   DeleteIconCategoryById = '/flow/privilege/iconCategory/delete',
   DeleteIconInfoById = '/flow/privilege/iconInfo/delete',
   CheckEntityExist = '/flow/base/app/checkEntityExist',
-
 }
 
 export const getIconInfoListByPage = (params: any) => {
-/*
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { query, entity };
-*/
-
   return requestClient.post(Api.IconInfoPageList, params);
 };
 

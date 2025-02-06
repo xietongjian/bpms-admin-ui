@@ -12,15 +12,6 @@ enum Api {
  * @param params
  */
 export const queryDeadLetterJobPagerModel = (params: any) => {
-  // console.log('queryDeadLetterJobPagerModel...', params);
-  //
-  // const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  // const entity = params || {};
-  // if (entity) {
-  //   delete entity['pageNum'];
-  //   delete entity['pageSize'];
-  // }
-  // const queryParam = { query, entity };
   return requestClient.post(Api.QueryDeadLetterJobPagerModel, params);
 };
 

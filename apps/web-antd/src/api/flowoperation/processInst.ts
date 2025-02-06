@@ -27,7 +27,7 @@ export function changeProcessInstanceVersion(processInstanceId: string, versionI
       params, { successMessageMode: 'message', errorMessageMode: 'message' });
 }
 // 执行流程实例
-export function executeProcessInstance(processInstanceId) {
+export function executeProcessInstance(processInstanceId: string) {
   return requestClient.post(Api.ExecuteProcessInstance + '/' + processInstanceId,{},
     { successMessageMode: 'message', errorMessageMode: 'message' }
   );

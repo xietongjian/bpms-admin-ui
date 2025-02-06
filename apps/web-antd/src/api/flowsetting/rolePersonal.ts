@@ -109,15 +109,15 @@ export const allocationPersonals = (params: any) =>
 export const deleteByIds = (params?: Array<string>) =>
   requestClient.post<any>(Api.Delete, params);
 
-export const deleteById = (id: string) => requestClient.post({ url: Api.DeleteById + '/' + id });
+export const deleteById = (id: string) => requestClient.post(Api.DeleteById + '/' + id, {});
 
 export const deleteMatrixPersonalById = (params: any) =>
   requestClient.post(Api.DeleteMatrixPersonalById + '/' + params.id,
     { isReturnNativeResponse: true },
   );
 
-export const deleteRolePersonal = (params?: any) =>
+export const deleteRolePersonal = (params: any) =>
   requestClient.post<any>(Api.DeleteRolePersonal + '/' + params.id);
 
-export const checkEntityExist = (params?: CheckExistParams) =>
+export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);

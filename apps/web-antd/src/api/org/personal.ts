@@ -20,18 +20,14 @@ enum Api {
 }
 
 export const getPersonalPageList = (params: any) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
   const entity = params || {};
   const showRoles = params.showRoles;
   if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
     delete entity['showRoles'];
   }
   const url = showRoles
     ? Api.PersonalPageListShowRows + `?showRoles=${showRoles}`
     : Api.PersonalPageList;
-  const queryParam = { query, entity };
   return requestClient.post<any>(url, params);
 };
 
@@ -56,7 +52,7 @@ export const downloadPersonalExcelTemplate = (params: any) => {
 export const allocationRoles = (params: any) =>
   requestClient.post(Api.AllocationRoles + '/' + params.personalId, params.roles );
 
-export const deleteByIds = (params?: Array<string>) => requestClient.post({ url: Api.Delete, params });
+export const deleteByIds = (params?: Array<string>) => requestClient.post(Api.Delete, params);
 
 export const deletePersonalRole = (params: any) =>
   requestClient.post( Api.DeletePersonalRole, params );

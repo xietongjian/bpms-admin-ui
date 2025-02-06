@@ -1,6 +1,4 @@
 import { requestClient } from '#/api/request';
-
-
 enum Api {
   GetPlatformConfigListByPage = '/flow/platform/config/getPagerModel',
   SaveOrUpdate = '/flow/platform/config/saveOrUpdate',
@@ -9,13 +7,6 @@ enum Api {
 }
 
 export const getPlatformConfigListByPage = (params?: any) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { query, entity };
   return requestClient.post<any>(Api.GetPlatformConfigListByPage, params);
 };
 

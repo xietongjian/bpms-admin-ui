@@ -19,13 +19,6 @@ enum Api {
 }
 
 export const getPagerModel = (params: any) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { query, entity };
   return requestClient.post<any>(Api.GetPagerModel, params);
 };
 // 加载XML
@@ -63,7 +56,7 @@ export const getFormInfoById = (params: any) =>
 
 export const deleteByIds = (params: Array<string>) => requestClient.post(Api.Delete, params);
 
-export const checkEntityExist = (params: CheckExistParams) =>
+export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
 export const getBizInfoByModelKey = (params: any) => {

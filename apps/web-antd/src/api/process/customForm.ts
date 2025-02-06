@@ -11,14 +11,7 @@ enum Api {
 }
 
 export const getCustomPagerModel = (params: any) =>{
-  const query = params&&{pageNum: params.pageNum, pageSize: params.pageSize};
-  let entity = params||{};
-  if(entity){
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = {query, entity} as BasicPageSearchParams<any>;
-  return requestClient.post<any>(Api.GetCustomPagerModel,  params);
+ return requestClient.post<any>(Api.GetCustomPagerModel,  params);
 }
 // 加载XML
 export function getBpmnByModelKey(params: any) {

@@ -15,13 +15,6 @@ enum Api {
 }
 
 export const getDmnPagerModel = (params: any) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { query, entity };
   return requestClient.post<any>(Api.GetDmnPagerModel, params);
 };
 
@@ -36,12 +29,12 @@ export const deleteByIds = (params?: Array<string>) => requestClient.post(Api.De
 export const saveOrUpdate = (params: any) => {
   // 将html/xml内容进行转成Base64编码传入后端 - 避免xss防攻击拦截
   params.modelXml = Base64.encode(params.modelXml);
-  return requestClient.post(Api.SaveOrUpdate, params, { }, { isReturnNativeResponse: true });
+  return requestClient.post(Api.SaveOrUpdate, params, { responseReturn: 'body' });
 };
 
 
 export const saveDmnModel = (params: any) =>
-  requestClient.post(Api.SaveDmnModel, params, { }, { isReturnNativeResponse: true });
+  requestClient.post(Api.SaveDmnModel, params, { responseReturn: 'body' });
 
 export const getByModelId = (params: any) =>
   requestClient.get(Api.GetByModelId + '/' + params.modelId);

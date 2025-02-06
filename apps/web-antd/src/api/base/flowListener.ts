@@ -1,10 +1,8 @@
 import { requestClient } from '#/api/request';
-
 enum Api {
   GetAll = '/flow/flowable/flowListener/getList',
   PageList = '/flow/flowable/flowListener/getPagerModel',
   SaveOrUpdate = '/flow/flowable/flowListener/saveOrUpdate',
-
   SaveOrUpdateProperties = '/flow/flowable/flowListenerParam/saveOrUpdate',
   Delete = '/flow/flowable/flowListener/deleteById',
   DeleteListenerParam = '/flow/flowable/flowListenerParam/deleteById',
@@ -41,13 +39,6 @@ export const getListenerTypes = () => {
 };
 
 export const getListByPage = (params?: any) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { query, entity };
   return requestClient.post<any>(Api.PageList, params);
 };
 

@@ -55,7 +55,7 @@ export const getFormInfoById = (params: any) =>
 
 export const deleteByIds = (params?: Array<string>) => requestClient.post(Api.Delete, params);
 
-export const checkEntityExist = (params: CheckExistParams) =>
+export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
 export const getFormInfoByModelKey = (params: any) =>

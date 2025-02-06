@@ -21,5 +21,5 @@ export const saveOrUpdate = (params: any) => requestClient.post(Api.SaveOrUpdate
 
 export const deleteByIds = (params: Array<string>) => requestClient.post( Api.Delete, params);
 
-export const checkEntityExist = (params: CheckExistParams) =>
+export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);

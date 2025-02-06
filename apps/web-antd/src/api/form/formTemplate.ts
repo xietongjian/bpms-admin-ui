@@ -45,11 +45,11 @@ export const saveOrUpdate = (params: any) => {
   return requestClient.post<any>( Api.SaveOrUpdate, params, {responseReturn: 'body'});
 };
 
-export const checkEntityExist = (params: CheckExistParams) =>
+export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
 
-export const checkTemplateCategoryEntityExist = (params: CheckExistParams) =>
+export const checkTemplateCategoryEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckTemplateCategoryEntityExist, params);
 
 export const deleteById = (params: Array<string>) => requestClient.post<any>(Api.Delete, params);

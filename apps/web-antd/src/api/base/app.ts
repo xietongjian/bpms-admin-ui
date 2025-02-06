@@ -8,15 +8,7 @@ enum Api {
   RefreshSecretKey = '/flow/base/app/refreshSecretKey',
   SaveOrUpdate = '/flow/base/app/saveOrUpdate',
 }
-// export const getAll = (params?: any) => {
-//   return requestClient.post({ url: Api.GetAll, params }).then((res: any) => {
-//     res.forEach((item) => {
-//       item.label = item.name;
-//       item.value = item.sn;
-//     });
-//     return Promise.resolve(res);
-//   });
-// };
+
 /**
  * 查询所有应用
  * @param params
@@ -57,16 +49,3 @@ export async function checkEntityExist(params: any) {
 export async function refreshSecretKey (params: string) {
   return requestClient.post<string>(Api.RefreshSecretKey + '/' + params, {}, {responseReturn: 'body'});
 }
-
-
-/*
-export const saveOrUpdate = (params: any) => requestClient.post({ url: Api.SaveOrUpdate, params });
-
-export const refreshSecretKey = (params: string) =>
-  requestClient.post<string>({ url: Api.RefreshSecretKey + '/' + params, params: {} });
-
-export const checkEntityExist = (params: any) =>
-  requestClient.post<boolean>({ url: Api.CheckEntityExist, params });
-
-export const deleteByIds = (params: Array<string>) => requestClient.post({ url: Api.Delete, params });
-*/

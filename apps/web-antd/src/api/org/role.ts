@@ -19,16 +19,8 @@ enum Api {
 }
 
 export const getRoleListByPage = (params: any) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params;
   const personalId = params.personalId;
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-    delete entity['personalId'];
-  }
   const url = personalId ? Api.PageListByPersonalId + `?personalId=${personalId}` : Api.PageList;
-  const queryParam = { query, entity };
   return requestClient.post<any>(url, params);
 };
 

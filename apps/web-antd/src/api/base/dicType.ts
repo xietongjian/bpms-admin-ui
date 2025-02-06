@@ -1,7 +1,5 @@
 import { requestClient } from '#/api/request';
 import { listToTree, forEach } from '#/utils/helper/treeHelper';
-
-
 enum Api {
   GetDicTypes = '/flow/base/dicType/getDicTypes',
   SaveOrUpdate = '/flow/base/dicType/saveOrUpdate',
