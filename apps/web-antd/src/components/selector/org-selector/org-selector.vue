@@ -268,7 +268,7 @@ const api = computed(() => {
               {{ label || '-' }}
             </template>
             <Tag class="flex items-center gap-1 !text-sm p-px m-px mr-1" :closable="closable" :color="option.color" @close="onClose">
-              <span class="icon-[ix&#45;&#45;building2] size-4" ></span>
+              <span class="icon-[ix--building2] size-4" ></span>
               {{ label || '-' }}
             </Tag>
           </Popover>

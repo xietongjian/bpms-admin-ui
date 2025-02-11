@@ -84,6 +84,9 @@
           </Tooltip>
           {{ row.name }}
         </template>
+        <template #status="{row}">
+          <Tag :color="row.status == 2 ? '#2db7f5' : row.status == 3 ? '#87d068' : row.status == 4 ? '#f50' : 'gray'">{{ row.statusName }}</Tag>
+        </template>
       </BasicTable>
     </div>
     <DmnDesignerModal
@@ -112,7 +115,7 @@ import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {ColPage, Page, useVbenModal} from '@vben/common-ui';
 import {TableAction} from '#/components/table-action';
 
-import {Avatar, Button, Popconfirm, Tooltip, message} from 'ant-design-vue';
+import {Tag, Button, Popconfirm, Tooltip, message} from 'ant-design-vue';
 
 import {
   getDmnPagerModel,
@@ -131,7 +134,6 @@ import CodePreviewModal from '#/views/components/preview/codePreview/index.vue';
 import {Dropdown, Menu} from 'ant-design-vue';
 
 import {columns, searchFormSchema} from './modelInfo.data';
-
 
 import {InsertRowAboveOutlined, ClusterOutlined, DownOutlined} from '@ant-design/icons-vue';
 
@@ -474,24 +476,10 @@ async function handleStop(record: Recordable<any>) {
 }
 
 function handleEditDmn(record: Recordable<any>) {
-  openDmnDesignerModal(true, {
-    isUpdate: true,
-    record: {modelId: record.modelId, id: record.id, dmnType: record.dmnType},
-  });
-
-  setDmnDesignerModalProps({
-    title: `新建决策`,
-    bodyStyle: {padding: '0px', margin: '0px'},
-    defaultFullscreen: true,
-    maskClosable: false,
-    centered: true,
-    keyboard: false,
-    showOkBtn: false,
-    showCancelBtn: false,
-    draggable: false,
-    canFullscreen: false,
-    closable: false,
-    destroyOnClose: true,
+  dmnDesignerModalRef.value.setData({modelId: record.modelId, id: record.id, dmnType: record.dmnType});
+  dmnDesignerModalRef.value.open();
+  dmnDesignerModalRef.value.setState({
+    title: `编辑决策`,
   });
 }
 
@@ -533,12 +521,21 @@ function changePublishStopBtnShow(status) {
   }
 }
 
-function clickRow(e) {
+/*function clickRow(e) {
   const selectedRows = getSelectRows();
   if (selectedRows && selectedRows.length > 0) {
     changePublishStopBtnShow(e.status);
     currentModelInfo.value = e;
   } else {
+    currentModelInfo.value = {};
+  }
+}*/
+function clickRow(row: Recordable<any>) {
+  if (row) {
+    changePublishStopBtnShow(row.status);
+    currentModelInfo.value = row;
+  } else {
+    changePublishStopBtnShow(0);
     currentModelInfo.value = {};
   }
 }

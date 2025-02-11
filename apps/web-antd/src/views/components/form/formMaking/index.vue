@@ -84,8 +84,8 @@
       ref="formTemplateSelectorModalRef"
       @success="handleInsertTemplate"
     />
-    <CodePreviewModal ref="codePreviewModalRef" @register="registerCodePreviewModal" :minHeight="200" />
-    <FormPreviewModal ref="formPreviewModalRef" @register="registerFormPreviewModal" />
+    <CodePreviewModal ref="codePreviewModalRef" type="json" />
+    <FormPreviewModal ref="formPreviewModalRef" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -116,12 +116,10 @@
   import { getBizInfoByModelKey, saveBizInfo, checkEntityExist } from '#/api/form/bizForm';
   import { getTaskFormMakInfoById, saveTaskFormInfo } from '#/api/form/customTaskForm';
   import FormTemplateSelectorModal from './FormTemplateSelectorModal.vue';
-  // import CodePreviewModal from '#/views/components/preview/codePreview/index.vue';
+  import CodePreviewModal from '#/views/components/preview/codePreview/index.vue';
   import FormPreviewModal from '#/views/components/form/formMaking/FormPreviewModal.vue';
   // import {useUserStore} from "#/store/modules/user";
   import {useUserStore} from '@vben/stores';
-
-
 
   import { formBaseInfoFormSchema } from './formBaseInfo.data';
   import { FormValidPatternEnum } from '#/enums/commonEnum';
@@ -129,7 +127,8 @@
   import { useInFlowTypes } from '#/views/components/form/formMaking/formMaking.data';
   import {useVbenForm} from "#/adapter/form";
 
-  const formTemplateSelectorModalRef = ref();
+  const formTemplateSelectorModalRef = ref(),
+      codePreviewModalRef = ref();
 
   const userStore = useUserStore();
 
@@ -157,8 +156,6 @@
   });
   const loading = ref<boolean>(false);
   const makingFormRef = ref(null);
-  const formNameRef = ref(null);
-  const modelKeyRef = ref(null);
   const { modelKey, modelName, formType, id } = toRefs(props);
 
   const [BasicForm, formApi] = useVbenForm({
@@ -171,27 +168,6 @@
     layout: 'horizontal',
     schema: formBaseInfoFormSchema,
   });
-
-
-/*  const [registerFormBaseInfoForm, { setFieldsValue, updateSchema, resetFields, validate }] =
-    useForm({
-      schemas: formBaseInfoFormSchema,
-      showActionButtonGroup: false,
-    });*/
-
-/*  const [
-    registerFormPreviewModal,
-    { openModal: openFormPreviewModal, setModalProps: setFormPreviewModalProps },
-  ] = useModal();
-
-  const [
-    registerFormTemplateSelectorModal,
-    { openModal: openFormTemplateSelectorModal, setModalProps: setFormTemplateSelectorModalProps },
-  ] = useModal();
-  const [
-    registerCodePreviewModal,
-    { openModal: openCodePreviewModal, setModalProps: setCodePreviewModalProps },
-  ] = useModal();*/
 
   watch(
     () => props.modelKey,
@@ -259,7 +235,7 @@
               formName: res.title,
             });
             formApi.updateSchema({
-              field: 'formKey',
+              fieldName: 'formKey',
               componentProps: {
                 disabled: true,
               },
@@ -389,36 +365,12 @@
     }
   }
 
-  function handlePreviewCode(type) {
+  function handlePreviewCode(type: string) {
     const code = unref(makingFormRef).getJSON();
-
-    openCodePreviewModal(true, {
-      record: { code: code, type: type },
-      isUpdate: false,
-    });
-    setCodePreviewModalProps({
-      width: 900,
-      centered: true,
-      title: `查看${type === 'application/json' ? 'JSON' : 'HTML'}`,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });
-  }
-
-  function handleFormPreview() {
-    const json = unref(makingFormRef).getJSON();
-    openFormPreviewModal(true, {
-      formJson: json,
-    });
-    setFormPreviewModalProps({
-      title: `预览`,
-      width: 900,
-      minHeight: 400,
-      maskClosable: true,
-      centered: true,
-      showOkBtn: false,
-      showCancelBtn: true,
-      cancelText: '关闭',
+    codePreviewModalRef.value.open();
+    codePreviewModalRef.value.setData({code, type});
+    codePreviewModalRef.value.setState({
+      title: `查看${type === 'application/json' ? 'JSON' : 'HTML'}`
     });
   }
 

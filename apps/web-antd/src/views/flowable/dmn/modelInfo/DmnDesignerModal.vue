@@ -32,7 +32,7 @@
             </Tooltip>
           </Col>
           <Col span="8">
-            <div style="width: 200px; margin: auto">
+            <div class="w-[200px] m-auto" >
               <Steps
                   class="designer-steps"
                   @change="handleStepChange"
@@ -57,7 +57,7 @@
               </Steps>
             </div>
           </Col>
-          <Col span="8" style="text-align: right">
+          <Col span="8" class="text-right">
             <Space>
               <Popconfirm v-access:code="PerPrefix+PerEnum.PUBLISH" v-if="publishBtnVisibility" @confirm="handlePublish">
                 <template #title>
@@ -86,9 +86,6 @@
               >
                 保存
               </Button>
-
-              <!--            <Button :disabled="currentStepValue === 0 || saveLoading" @click="handlePrev" >上一步</Button>
-            <Button :disabled="currentStepValue > 1 || saveLoading" type="primary" @click="handleNext">下一步</Button>-->
               <Button type="default" @click="handleClose">关闭</Button>
             </Space>
           </Col>
@@ -102,7 +99,8 @@
         <!--<div style="position:absolute; top: 0;left:0; z-index: 999; padding-left: 20px" class="">
           <a-button type="primary" @click="handleSaveData">保存</a-button>
         </div>-->
-        <FramePage ref="dmnDesignerRef" :frameSrc="url" @on-load-success="handleLoadSuccess"/>
+<!--        <FramePage ref="dmnDesignerRef" :frameSrc="url" @on-load-success="handleLoadSuccess"/>-->
+        <DmnDesigner @on-load-success="handleLoadSuccess" />
       </div>
     </div>
   </BasicModal>
@@ -148,6 +146,7 @@ import {updateXMLAttribute} from '#/utils/domUtils';
 import {apiCategoryFormSchema} from "#/views/base/apiInfo/apiInfo.data";
 // import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
 import {usePreferences} from '@vben/preferences';
+import DmnDesigner from "#/views/components/process/DmnDesigner.vue";
 
 const PerPrefix = 'Dmn:';
 const {isDark} = usePreferences();
@@ -161,9 +160,7 @@ const currentStepValue = ref<number>(0);
 const saveLoading = ref(false);
 const baseModelInfo = ref({});
 const emit = defineEmits(['success']);
-const isUpdate = ref(true);
 const dmnMode = ref(0);
-const frame = ref<object>({});
 const designerStatus = ref({
   formDesignerStatus: 0,
   bpmnDesignerStatus: 0,
@@ -448,44 +445,41 @@ async function initFormData(frameWindow) {
 
   if (modelId) {
     modalApi.setState({loading: true, confirmLoading: true});
+    await nextTick();
 
-    getByModelId({modelId})
-        .then((res) => {
-          res.name = res.modelName;
-          baseModelInfo.value.modelKey = res.modelKey;
-          res.id = id;
-          refreshModelStatus(modelId, res.status, res.statusName);
-          nextTick(async () => {
-            // xml渲染
-            try {
-              (await res.modelXml) &&
-              unref(dmnDesignerRef).frameRef.contentWindow.dmnModeler.importXML(res.modelXml);
-              setTimeout(() => {
-                dmnMode.value == 0 && hideViewDrdBtn(frameWindow);
-              });
-            } catch (e) {
-              console.error(e);
-            }
-            await updateModelKeyValidate(res.id);
-            await setFieldsValue(res);
-          });
-        })
-        .finally(() => {
-          modalApi.setState({loading: false, confirmLoading: false});
-        });
-  } else {
-    if (categoryCode) {
-      nextTick(async () => {
-        // 传入空会渲染默认xml
-        const {
-          data: {modelXml},
-        } = await initDmnDiagram({key: '', name: '', dmnType: dmnMode.value});
-        // unref(dmnDesignerRef).frameRef.contentWindow.importXML(modelXml);
-        (await modelXml) &&
-        unref(dmnDesignerRef).frameRef.contentWindow.dmnModeler.importXML(modelXml);
+    try {
+      const res = await getByModelId({modelId});
+      res.name = res.modelName;
+      baseModelInfo.value.modelKey = res.modelKey;
+      res.id = id;
+      refreshModelStatus(modelId, res.status, res.statusName);
+      // xml渲染
+      try {
+        debugger;
+        (await res.modelXml) &&
+        unref(dmnDesignerRef).frameRef.contentWindow.dmnModeler.importXML(res.modelXml);
         setTimeout(() => {
           dmnMode.value == 0 && hideViewDrdBtn(frameWindow);
         });
+      } catch (e) {
+        console.error(e);
+      }
+      // await updateModelKeyValidate(res.id);
+      await formApi.setValues(res);
+    } finally {
+      modalApi.setState({loading: false, confirmLoading: false});
+    }
+  } else {
+    if (categoryCode) {
+      // 传入空会渲染默认xml
+      const {
+        data: {modelXml},
+      } = await initDmnDiagram({key: '', name: '', dmnType: dmnMode.value});
+      // unref(dmnDesignerRef).frameRef.contentWindow.importXML(modelXml);
+      (await modelXml) &&
+      unref(dmnDesignerRef).frameRef.contentWindow.dmnModeler.importXML(modelXml);
+      setTimeout(() => {
+        dmnMode.value == 0 && hideViewDrdBtn(frameWindow);
       });
     } else {
       Modal.warning({
@@ -502,9 +496,10 @@ async function initFormData(frameWindow) {
 }
 
 async function updateModelKeyValidate(id) {
+  const {updateSchema} = formApi;
   await updateSchema([
     {
-      field: 'name',
+      fieldName: 'name',
       componentProps: ({formModel}) => {
         return {
           onChange: () => {
@@ -513,34 +508,7 @@ async function updateModelKeyValidate(id) {
         };
       },
     },
-    {
-      field: 'modelKey',
-      dynamicDisabled: () => !!id,
-      dynamicRules: () => {
-        return [
-          {
-            required: true,
-            whitespace: true,
-            message: '编码不能为空！',
-          },
-          {
-            pattern: new RegExp('^[a-zA-Z_]{1,}[0-9a-zA-Z_]{1,}$'),
-            type: 'string',
-            message: '请输入英文或数字且以英文或下划线开头！',
-          },
-          {
-            max: 150,
-            message: '字符长度不能大于150！',
-          },
-          ...getBaseDynamicRules({
-            id: id || '',
-            field: 'modelKey',
-            fieldValue: '',
-            fieldName: '编码',
-          }),
-        ];
-      },
-    },
+
   ]);
 }
 

@@ -3,12 +3,13 @@ import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 
-import { Tag } from 'ant-design-vue';
 import { getAll } from '#/api/base/app';
-import { h } from 'vue';
+import {checkEntityExist} from '#/api/flowable/bpmn/modelInfo';
+
 
 export const columns: VxeGridProps['columns'] = [
   {
+    type: 'radio',
     title: '名称',
     field: 'name',
     align: 'left',
@@ -33,35 +34,34 @@ export const columns: VxeGridProps['columns'] = [
     width: 100,
     align: 'left',
   },
-  /*{
-    title: '应用范围',
-    field: 'appliedRangeName',
-    width: 100,
-    align: 'left'
-  },*/
   {
     title: '状态',
-    field: 'statusName',
-    width: 80,
+    field: 'status',
+    width: 85,
     align: 'center',
-/*    customRender: ({ record }) => {
-      const { status, statusName } = record;
-      let color = '';
-      if (~~status === 2) {
-        color = '#2db7f5';
-      } else if (~~status === 3) {
-        color = '#87d068';
-      } else if (~~status === 4) {
-        color = '#f50';
-      } else {
-        color = 'gray';
-      }
-      return h(Tag, { color: color }, () => statusName);
-    },*/
+    slots: {default: 'status'},
+  },
+  {
+    title: '创建时间',
+    field: 'createTime',
+    width: 140,
+    align: 'center',
+  },
+  {
+    title: '创建人',
+    field: 'creator',
+    width: 140,
+    align: 'left',
   },
   {
     title: '更新时间',
     field: 'updateTime',
+    width: 140,
+    align: 'center',
+  },
+  {
+    title: '更新人',
+    field: 'updator',
     width: 140,
     align: 'left',
   },
@@ -125,18 +125,7 @@ export const modelInfoFormSchema: FormSchema[] = [
     fieldName: 'name',
     label: '名称',
     component: 'Input',
-    // required: true,
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 200,
-        message: '字符长度不能大于200！',
-      },
-    ],*/
+    rules: 'required',
   },
   {
     fieldName: 'modelKey',
@@ -205,27 +194,50 @@ export const dmnBaseFormSchema: FormSchema[] = [
     label: '名称',
     labelWidth: 60,
     component: 'Input',
-    // required: true,
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 200,
-        message: '字符长度不能大于200！',
-      },
-    ],*/
+    rules: z
+        .string({
+          required_error: '名称不能为空！',
+        })
+        .trim()
+        .min(1, "名称不能为空！")
+        .max(200, "字符长度不能大于200！"),
   },
   {
     fieldName: 'modelKey',
     label: '标识',
     labelWidth: 60,
     component: 'Input',
-    required: true,
-    itemProps: {
-      validateTrigger: ['focus', 'change'],
+    dependencies: {
+      rules(values) {
+        const { id, modelKey } = values;
+        return z
+            .string({
+              required_error: "标识不能为空"
+            })
+            .min(1, "标识不能为空")
+            .max(60, '字符长度不能大于60！')
+            .regex(new RegExp('^[a-zA-Z_]{1,}[0-9a-zA-Z_]{0,}$'), '请输入英文或数字且以英文或下划线开头！')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'modelKey',
+                      fieldValue: modelKey,
+                      fieldName: '流程标识',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '标识已存在',
+                },
+            );
+      },
+      triggerFields: ['modelKey'],
     },
   },
   {

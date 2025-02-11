@@ -3,6 +3,7 @@
     ok-text="确定"
     cancel-text="关闭"
     @confirm="handleReminder"
+    placement ="bottomRight"
   >
     <template #title>
       <div class="!text-md font-thin w-full flex flex-row gap-1">
@@ -24,9 +25,11 @@
         allow-clear
       />
     </template>
-    <slot>
-      <Button type="primary">催办</Button>
-    </slot>
+    <div>
+      <slot>
+        <Button type="primary">催办</Button>
+      </slot>
+    </div>
   </Popconfirm>
 </template>
 <script lang="ts" setup>

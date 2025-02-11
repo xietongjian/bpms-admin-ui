@@ -6,7 +6,7 @@
       size="large"
       class="w-full h-full"
     >
-      <iframe class="w-full h-full" :src="frameSrc" :class="`${prefixCls}__main`" ref="frameRef"></iframe>
+      <iframe class="w-full h-full" :src="frameSrc" ref="frameRef"></iframe>
     </Spin>
   </div>
 </template>
@@ -14,7 +14,7 @@
 
 import type {CSSProperties} from 'vue';
 import {defineProps, defineEmits, defineExpose} from 'vue';
-import {defineComponent, ref, unref, onMounted, nextTick, computed} from 'vue';
+import {ref, unref, onMounted, nextTick, computed} from 'vue';
 import {Spin} from 'ant-design-vue';
 import {getViewportOffset} from '#/utils/domUtils';
 // import { useWindowSizeFn } from '@vben/hooks';
@@ -134,8 +134,6 @@ onMounted(() => {
     },
     emits: ['onLoadSuccess'],
     setup(_, { emit }) {
-
-
       return {
         getWrapStyle,
         loading,

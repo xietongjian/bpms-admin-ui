@@ -52,6 +52,9 @@ const emits = defineEmits(['update:code', 'ready', 'change', 'focus', 'blur'])
 function handleReady (payload: any) {
   // console.log('ready')
   emits('ready', payload)
+  debugger;
+  //editor.autoFormatRange({ line: 0, ch: 0 }, { line: totalLines });
+
 }
 function onChange (value: string, viewUpdate: any) {
   emits('change', value, viewUpdate)

@@ -448,31 +448,6 @@
     return bpmnDesignerFrameRef.value.getIssuesMap();
   };
 
-  // function autoSaveHandle() {
-  //   getBpmnModelXml().then((res) => {
-  //     const { xml } = res;
-  //     const data = {
-  //       modelId: unref(processModelId),
-  //       // categoryCode: unref(categoryCode),
-  //       modelXml: xml,
-  //     };
-  //     data.modelXml = validXmlModelKey(data.modelXml);
-  //     autoSaveStatus.value = 1;
-  //     saveBpmnModel(data)
-  //       .then((res) => {
-  //         if (res.success) {
-  //           autoSaveStatus.value = 0;
-  //         } else {
-  //           autoSaveStatus.value = 2;
-  //         }
-  //         refreshStatus();
-  //       })
-  //       .catch((e) => {
-  //         autoSaveStatus.value = 2;
-  //       });
-  //   });
-  // }
-
   async function handleSave() {
     debugger;
     if (currentStepValue.value === 0) {
@@ -748,14 +723,6 @@
     }
     handleStepChange(unref(currentStepValue));
   };
-
-  function handleOpenChange(flag) {
-    if (!flag) {
-      processModelId.value = '';
-      processModelName.value = '';
-      modelKey.value = '';
-    }
-  }
 
   function doCopyContent(content: string) {
     copy(content);

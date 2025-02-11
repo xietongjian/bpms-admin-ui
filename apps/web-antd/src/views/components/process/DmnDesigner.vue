@@ -47,7 +47,7 @@ const props = defineProps({
   },
 });
 
-const frameSrc = '/static/bpmn/designer/index.html';
+const frameSrc = '/static/dmn/designer/index.html';
 
 const emit = defineEmits(['onLoadSuccess']);
 
@@ -154,7 +154,6 @@ const loadModelXml = async () => {
   loading.value = true;
   try {
     const res = await getBpmnByModelId({modelId: props.modelId});
-
     if (bpmnModeler.value) {
       bpmnModeler.value
           .importXML(res.modelXml)

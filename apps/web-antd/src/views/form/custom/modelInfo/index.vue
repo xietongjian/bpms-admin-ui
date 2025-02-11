@@ -42,10 +42,8 @@
                 <Button :disabled="!showStopBtn" type="primary" danger>停用</Button>
               </Popconfirm>
             </Tooltip>
-            <template v-access:code="PerPrefix+PerEnum.ADD" >
-              <Button type="primary" @click="handleCreate"> 新建 </Button>
-              <Button type="primary" @click="handleCopy"> 复制 </Button>
-            </template>
+            <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新建 </Button>
+            <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCopy"> 复制 </Button>
           </div>
         </template>
         <template #action="{ row }">
