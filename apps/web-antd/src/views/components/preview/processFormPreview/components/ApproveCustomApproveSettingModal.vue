@@ -1,6 +1,11 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal>
+    <BasicForm >
+      <template #signType="slotProps">
+<!--        <Input placeholder="请输入" v-bind="slotProps" />-->
+       aaa <Checkbox v-bind="slotProps" /> 加载
+      </template>
+    </BasicForm>
   </BasicModal>
 </template>
 <script lang="ts" setup>
@@ -11,7 +16,7 @@
   import {useVbenForm} from '#/adapter/form';
 
   import { approveActionFormSchema } from './action.data';
-  import { Button, Tag, message } from 'ant-design-vue';
+  import {Button, Tag, message, Input, Checkbox} from 'ant-design-vue';
   import {
     afterAddSign,
     beforeAddSign,
@@ -138,6 +143,7 @@
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
           formApi.setValues(values);
+          debugger;
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }

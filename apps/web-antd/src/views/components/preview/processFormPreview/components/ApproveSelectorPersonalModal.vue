@@ -1,10 +1,10 @@
 <template>
   <BasicModal v-bind="$attrs" @register="registerModal" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+    <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, defineEmits } from 'vue';
+  import { ref, defineEmits, defineExpose } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   // import { BasicForm, useForm } from '@/components/Form/index';
@@ -49,27 +49,6 @@
       const { actionType, multiple, taskId, procInstId, message } = data.selectorProps;
       selectorTypeRef.value = actionType;
 
-      const updatePropsByActionType = (title, actionPersonalLabel, messageLabel) => {
-        setModalProps({ title: title });
-        updateSchema({
-          field: 'actionPersonal',
-          label: actionPersonalLabel,
-          componentProps: {
-            multiple: !!multiple,
-          },
-          colProps: {
-            span: 24,
-          },
-        });
-        updateSchema({
-          field: 'message',
-          label: messageLabel,
-          colProps: {
-            span: 24,
-          },
-        });
-      };
-
       switch (actionType) {
         case 'reviewTask':
           updatePropsByActionType('流程转阅', '转阅人员', '转阅附言');
@@ -108,28 +87,74 @@
         if (values) {
           // formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
+          const { actionType, multiple, taskId, procInstId, approveMsg } = values;
+
+          switch (actionType) {
+            case 'reviewTask':
+              updatePropsByActionType('流程转阅', '转阅人员', multiple, '转阅附言');
+              break;
+            case 'delegateTask':
+              updatePropsByActionType('流程委派', '委派人员', multiple, '委派附言');
+              break;
+            case 'turnTask':
+              updatePropsByActionType('流程转办', '转办人员', multiple, '转办附言');
+              break;
+            case 'addsign':
+              updatePropsByActionType('流程加签', '加签人员', multiple, '加签附言');
+              break;
+          }
+          formApi.setValues({
+            message: approveMsg,
+            actionType,
+            taskId,
+            procInstId,
+          });
         }
       }
     },
     onConfirm() {
       // await formApi.submitForm();
-      // handleSubmit();
+      handleSubmit();
     },
   });
 
+  const updatePropsByActionType = (title, actionPersonalLabel, multiple, messageLabel) => {
+    const {updateSchema} = formApi;
+    modalApi.setState({ title: title });
+    updateSchema([
+      {
+        fieldName: 'actionPersonal',
+        label: actionPersonalLabel,
+        componentProps: {
+          multiple: !!multiple,
+        },
+      },
+      {
+        fieldName: 'message',
+        label: messageLabel,
+      }
+    ]);
+  };
 
   function closeCurrModal() {
-    setModalProps({ confirmLoading: false });
-    changeLoading(false);
-    closeModal();
+    // setModalProps({ confirmLoading: false });
+    // changeLoading(false);
+    // closeModal();
+    modalApi.close();
     emit('success');
   }
 
   async function handleSubmit() {
     const defaultMsg = '网络异常，请稍后再试！';
+    debugger;
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
+      const {valid} = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      modalApi.setState({loading: true, confirmLoading: true})
+
+      const values = await formApi.getValues();
       const params = {
         taskId: values.taskId,
         processInstanceId: values.procInstId,
@@ -147,14 +172,12 @@
                 closeCurrModal();
               } else {
                 message.error(result.msg || defaultMsg);
-                setModalProps({ confirmLoading: false });
-                changeLoading(false);
+                modalApi.setState({loading: false, confirmLoading: false})
               }
             })
             .catch(() => {
               message.error(defaultMsg);
-              setModalProps({ confirmLoading: false });
-              changeLoading(false);
+              modalApi.setState({loading: false, confirmLoading: false})
             })
             .finally(() => {});
           break;
@@ -168,14 +191,12 @@
                 closeCurrModal();
               } else {
                 message.error(result.msg || defaultMsg);
-                setModalProps({ confirmLoading: false });
-                changeLoading(false);
+                modalApi.setState({loading: false, confirmLoading: false})
               }
             })
             .catch(() => {
               message.error(defaultMsg);
-              setModalProps({ confirmLoading: false });
-              changeLoading(false);
+              modalApi.setState({loading: false, confirmLoading: false})
             })
             .finally(() => {});
           break;
@@ -189,14 +210,13 @@
                 closeCurrModal();
               } else {
                 message.error(result.msg || defaultMsg);
-                setModalProps({ confirmLoading: false });
-                changeLoading(false);
+                modalApi.setState({loading: false, confirmLoading: false})
               }
             })
             .catch(() => {
               message.error(defaultMsg);
-              setModalProps({ confirmLoading: false });
-              changeLoading(false);
+              modalApi.setState({loading: false, confirmLoading: false})
+
             })
             .finally(() => {});
           break;
@@ -216,7 +236,7 @@
             }).catch(() => {
               message.error(defaultMsg)
             }).finally(() => {
-              setModalProps({confirmLoading: false, loading: false});
+              modalApi.setState({loading: false, confirmLoading: false})
             });
           } else {
             afterAddSign(params).then(res => {
@@ -231,7 +251,7 @@
             }).catch(() => {
               message.error(defaultMsg)
             }).finally(() => {
-              setModalProps({confirmLoading: false, loading: false});
+              modalApi.setState({loading: false, confirmLoading: false})
             });
           }
           break;
@@ -245,14 +265,12 @@
                 closeCurrModal();
               } else {
                 message.error(result.msg || defaultMsg);
-                setModalProps({ confirmLoading: false });
-                changeLoading(false);
+                modalApi.setState({loading: false, confirmLoading: false})
               }
             })
             .catch(() => {
               message.error(defaultMsg);
-              setModalProps({ confirmLoading: false });
-              changeLoading(false);
+              modalApi.setState({loading: false, confirmLoading: false})
             })
             .finally(() => {});
           break;
@@ -267,23 +285,23 @@
                 closeCurrModal();
               } else {
                 message.error(result.msg || defaultMsg);
-                setModalProps({ confirmLoading: false });
-                changeLoading(false);
+                modalApi.setState({loading: false, confirmLoading: false})
               }
             })
             .catch(() => {
               message.error(defaultMsg);
-              setModalProps({ confirmLoading: false });
-              changeLoading(false);
+              modalApi.setState({loading: false, confirmLoading: false})
             })
             .finally(() => {});
           break;
       }
     } catch(e){
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false})
+
     } finally {
-      //setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false})
     }
   }
 
+  defineExpose(modalApi)
 </script>

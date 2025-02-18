@@ -246,7 +246,6 @@
   const allInfoId = ref();
   const editFormFields = ref([]);
   const requiredFormFields = ref([]);
-  const reminderMsg = ref('');
   const processViewType = ref('view');
   ///////////////////////////////////////
   const procInstInfo = ref({});
@@ -289,6 +288,7 @@
         const values = drawerApi.getData<Record<string, any>>();
         procInstInfo.value = values;
         // showOperation.value = values
+
         if (values) {
           // formApi.setValues(values);
           drawerApi.setState({footer: values?.showOperation, loading: false, confirmLoading: false});
@@ -312,8 +312,10 @@
 
   async function initData(){
     // 设置任务为已读
-    const {taskId, modelKey, procInstId} = procInstInfo.value;
+    const {taskId, modelKey, procInstId, businessKey} = procInstInfo.value;
     try {
+      params.value = { procInstId, taskId, modelKey, bizId: businessKey };
+
       // 设置任务为已读
       taskId && saveOrUpdateReadInfo({taskId, status: 1});
       // 查询流程基本信息
@@ -329,7 +331,6 @@
       flowBaseInfo.value = {};
       console.error('查询流程基本信息异常！' + e);
     }
-
   }
 
   /*const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
@@ -742,6 +743,7 @@
   }
 
   function approveSaveFormData(callback) {
+    debugger;
     return saveFormData()
       .then((res) => {
         console.log('》》》》》》》》》》》》》》》》》》》》保存表单数据结果：', res);

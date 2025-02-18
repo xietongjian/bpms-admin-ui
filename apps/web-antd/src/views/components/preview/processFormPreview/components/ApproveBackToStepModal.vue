@@ -1,7 +1,7 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" @ok="handleSubmit">
-    <BasicForm @register="registerForm">
-      <template #backToStepNodeRender="{ schame, field }">
+  <BasicModal title="驳回" class="w-[800px]" >
+    <BasicForm>
+      <template #backToStepNodeList="slotProps">
         <Table
           ref="backToStepNodeTableRef"
           :pagination="false"
@@ -19,7 +19,7 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { defineComponent, ref, computed, unref } from 'vue';
+  import { ref, computed, unref, defineExpose } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import { approveBackToStepFormSchema, backToStepTableColumns } from './action.data';
@@ -83,6 +83,8 @@
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
           formApi.setValues(values);
+          loadBackToStepNodes(values.taskId);
+
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -92,6 +94,19 @@
       handleSubmit();
     },
   });
+
+  async function loadBackToStepNodes(taskId) {
+    debugger;
+    backToStepNodeListLoading.value = true;
+    try {
+      const res = await getBackToStepNodes({taskId});
+      backToStepNodeList.value = res;
+    } catch (e) {
+      console.error(e);
+    } finally {
+      backToStepNodeListLoading.value = false;
+    }
+  }
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
@@ -119,7 +134,11 @@
   async function handleSubmit() {
     try {
       genLoading(true);
-      const values = await validate();
+      const {valid} = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
       const params = {
         taskId: values.taskId,
         processInstanceId: values.procInstId,
@@ -128,29 +147,21 @@
 
       if (unref(selectedKeys) && unref(selectedKeys).length > 0) {
         params['distFlowElementId'] = unref(selectedKeys)[0];
-        backToStep(params)
-            .then((res) => {
-              const result = res.data;
-              if (result.code === ResultEnum.SUCCESS) {
-                message.success(result.msg);
-                closeCurrModal();
-              } else {
-                message.error(result.msg);
-              }
-              genLoading(false);
-            })
-            .catch(() => {
-              message.error('网络异常，请稍后再试！');
-            })
-            .finally(() => {
-              genLoading(false);
-            });
+        const {success, msg, data} = backToStep(params);
+        if (success) {
+          message.success(msg);
+          closeCurrModal();
+        } else {
+          message.error(msg);
+        }
       } else {
         message.error('请选择要驳回的节点!');
         genLoading(false);
         return;
       }
     } catch (e) {
+      message.error('请选择要驳回的节点!');
+    } finally {
       genLoading(false);
     }
   }

@@ -128,6 +128,7 @@ function setFormPermission(activityFormItems, itemList) {
       const editFields = editItems.map((item) => item.fieldName);
       const requiredFields = requiredItems.map((item) => item.fieldName);
       const requiredFieldLabels = requiredItems.map((item) => item.labelName);
+      debugger;
       // 如果审批页面则不设置可编辑状态
       if (showOperation.value) {
         // 如果是审批页，获取当前节点可编辑的项

@@ -12,12 +12,12 @@
     .approve-ctrl-btns {
       margin: 10px 0 0;
     }-->
-  <div class="ml-2 mt-2">
+  <div class="ml-2 mt-2" v-loading="approveActionLoading">
     <div v-if="authPoints && authPoints.length > 0">
       <BasicForm @register="registerApproveMsgForm" />
       <Spin :spinning="authPoints.length <= 0">
 
-      <Space class="approve-ctrl-btns">
+      <Space class="approve-ctrl-btns" >
         <!-- "[\"addsign\", \"claim\", \"turn_do\", \"refuse\", \"approve\", \"turn_read\", \"reject\", \"revoke\"]" -->
         <!-- ["approve", "claim", "turn_do", "addsign", "reject", "revoke", "turn_read", "delegate" ] -->
         <template v-for="item in authPoints">
@@ -59,22 +59,21 @@
       </Space>
       </Spin>
     </div>
-
     <div v-else class="w-full"> 无操作权限 </div>
   </div>
 
   <ApproveSelectorPersonalModal
-      ref="approveSelectorPersonalModalRef"
-    @register="registerApproveSelectorPersonalModal"
+    ref="approveSelectorPersonalModalRef"
     @success="closeFormModal"
   />
   <ApproveCustomApproveSettingModal
     ref="approveCustomApproveSettingRef"
-    @register="registerCustomApproveSettingModal"
     @saveForm="handleSaveForm"
     @success="closeFormModal"
   />
-  <ApproveBackToStepModal ref="approveBackToStepModalRef" @register="registerApproveBackToStepModal" @success="closeFormModal" />
+  <ApproveBackToStepModal
+    ref="approveBackToStepModalRef"
+    @success="closeFormModal" />
 </template>
 <script lang="ts" setup>
   import { ref, defineProps, defineEmits, nextTick, defineExpose } from 'vue';
@@ -101,6 +100,7 @@
   const approveSelectorPersonalModalRef = ref(),
       approveCustomApproveSettingRef = ref(),
       approveBackToStepModalRef = ref();
+  const approveActionLoading = ref(false);
 
   const emit = defineEmits(['success', 'changeLoading', 'approveSaveForm']);
   const props = defineProps({
@@ -162,171 +162,149 @@
   // 审批操作处理
   async function doApprove() {
     const { modelKey, bizId, taskId, procInstId } = props.params;
-    await validateFields();
-    const { approveMsg: message } = getFieldsValue();
+    debugger;
+    const {valid} = await formApi.validate();
+    if(!valid){
+      return;
+    }
+    const { approveMsg } = await formApi.getValues();
+
     emit('changeLoading', true);
+    approveActionLoading.value = true;
     // 审批前查询当前节点是否有自定义审批配置项
     // 如果有则弹出自定义审批配置弹窗
-    getCustomApproveSettings({ taskId: taskId })
-      .then((res) => {
-        if (res.data && Object.keys(res.data.data).length > 0) {
-          // res.data.data.nextUser
-          // res.data.data.flow_to
-          // 弹出自定义审批配置页面
-          openCustomApproveSettingModal(true, {
-            selectorProps: {
-              taskId,
-              procInstId,
-              approveSettings: res.data.data, // flow_to, next_user
-              message,
-            },
-          });
-          setCustomApproveSettingModalProps({
-            width: 800,
-          });
-        } else {
-          const approveComplete = () => {
-            complete({ taskId: taskId, processInstanceId: procInstId, message })
-              .then((res) => {
-                const result = res.data;
-                if (result.success) {
-                  message.success(result.msg);
-                  emit('success');
-                } else {
-                  message.error(result.msg);
-                  emit('changeLoading', false);
-                }
-              })
-              .catch((e) => {
-                console.error(e);
-                emit('changeLoading', false);
-              });
-          };
-          // 如果没有自定义审批配置则直接进行审批操作
+    const {data, success, msg} = await getCustomApproveSettings({ taskId: taskId });
 
-          // 审批前判断是否需要编辑表单
-          emit('approveSaveForm', (validRes) => {
-            // 保存数据成功后
-            if (validRes.success) {
-              approveComplete();
-            } else {
-              console.error(validRes.msg);
-              validRes.msg && message.error(validRes.msg);
-              emit('changeLoading', false);
-            }
-          });
+    if (data && Object.keys(data).length > 0) {
+      // data.nextUser
+      // data.flow_to
+      // 弹出自定义审批配置页面
+      //FIXME
+      approveCustomApproveSettingRef.value.setData({
+        selectorProps: {
+          taskId,
+          procInstId,
+          approveSettings: data, // flow_to, next_user
+          message,
         }
-      })
-      .catch((e) => {
-        console.error(e);
-        emit('changeLoading', false);
       });
+      approveCustomApproveSettingRef.value.open();
+      /*openCustomApproveSettingModal(true, {
+        selectorProps: {
+          taskId,
+          procInstId,
+          approveSettings: data, // flow_to, next_user
+          message,
+        },
+      });
+      setCustomApproveSettingModalProps({
+        width: 800,
+      });*/
+    } else {
+      const approveComplete = async () => {
+        const {success, msg, data} = await complete({ taskId: taskId, processInstanceId: procInstId, message: approveMsg });
+
+        if (success) {
+            message.success(msg);
+            emit('success');
+        } else {
+            message.error(msg);
+        }
+        approveActionLoading.value = false;
+      };
+      // 如果没有自定义审批配置则直接进行审批操作
+
+      // 审批前判断是否需要编辑表单
+      emit('approveSaveForm', async (validRes) => {
+        // 保存数据成功后
+        if (validRes.success) {
+          await approveComplete();
+        } else {
+          console.error(validRes.msg);
+          validRes.msg && message.error(validRes.msg);
+        }
+        approveActionLoading.value = false;
+      });
+    }
   }
   function handleSaveForm(callback){
       emit('approveSaveForm', (res)=>{
-        emit('changeLoading', false);
+        approveActionLoading.value = false;
         callback(res);
       });
   }
-  function doStop() {
+  async function doStop() {
     const { modelKey, bizId, taskId, procInstId } = props.params;
     emit('changeLoading', true);
-    stopProcess({ taskId: taskId, processInstanceId: procInstId, message: approveMsg.value })
-      .then((res) => {
-        const result = res.data;
-        if (result.code === ResultEnum.SUCCESS) {
-          message.success(result.msg);
-          emit('success');
-        } else {
-          message.error(result.msg);
-        }
-      })
-      .finally(() => {
-        emit('changeLoading', false);
-      });
+    const {data, msg, success} = await stopProcess({ taskId: taskId, processInstanceId: procInstId, message: approveMsg.value });
+    if (success) {
+      message.success(msg);
+      emit('success');
+    } else {
+      message.error(msg);
+    }
   }
 
-  function doUnClaimTask() {
+  async function doUnClaimTask() {
     const { modelKey, bizId, taskId, procInstId } = props.params;
     emit('changeLoading', true);
-    unClaimTask({ taskId: taskId, processInstanceId: procInstId, message: approveMsg.value })
-      .then((res) => {
-        const result = res.data;
-        if (result.code === ResultEnum.SUCCESS) {
-          message.success(result.msg);
-          emit('success');
-        } else {
-          message.error(result.msg);
-        }
-      })
-      .finally(() => {
-        emit('changeLoading', false);
-      });
+    const {success, msg, data} = await unClaimTask({ taskId: taskId, processInstanceId: procInstId, message: approveMsg.value });
+    if (success) {
+      message.success(msg);
+      emit('success');
+    } else {
+      message.error(msg);
+    }
   }
-  function doClaimTask() {
+  async function doClaimTask() {
     const { modelKey, bizId, taskId, procInstId } = props.params;
 
     emit('changeLoading', true);
-    claimTask({ taskId: taskId, processInstanceId: procInstId, message: approveMsg.value })
-      .then((res) => {
-        const result = res.data;
-        if (result.code === ResultEnum.SUCCESS) {
-          message.success(result.msg);
-          emit('success');
-        } else {
-          message.error(result.msg);
-        }
-      })
-      .catch(() => {})
-      .finally(() => {
-        emit('changeLoading', false);
-      });
+    const {success, msg, data} = await claimTask({ taskId: taskId, processInstanceId: procInstId, message: approveMsg.value });
+    if (success) {
+      message.success(msg);
+      emit('success');
+    } else {
+      message.error(msg);
+    }
   }
-  function doHoldTask() {
+  async function doHoldTask() {
     const { modelKey, bizId, taskId, procInstId } = props.params;
     emit('changeLoading', true);
-    holdTask({ taskId: taskId, processInstanceId: procInstId, message: approveMsg.value })
-      .then((res) => {
-        const result = res.data;
-        if (result.code === ResultEnum.SUCCESS) {
-          message.success(result.msg);
-          emit('success');
-        } else {
-          message.error(result.msg);
-        }
-      })
-      .catch(() => {})
-      .finally(() => {
-        emit('changeLoading', false);
-      });
+    const {success, msg, data} = await holdTask({ taskId: taskId, processInstanceId: procInstId, message: approveMsg.value });
+    if (success) {
+      message.success(msg);
+      emit('success');
+    } else {
+      message.error(msg);
+    }
   }
 
   // 拒绝操作
-  function doRefuseTask(){
+  async function doRefuseTask(){
     const { modelKey, bizId, taskId, procInstId } = props.params;
 
     emit('changeLoading', true);
-    const { approveMsg } = getFieldsValue();
-    stopProcess({ processInstanceId: procInstId, taskId: taskId, message: approveMsg||""}).then(res=>{
-      const result = res.data;
-      if(result.success){
-        message.success(result.msg, 1, ()=>{
-          emit('success');
-        });
-      }else{
-        message.error(result.msg)
-        emit('success');
-      }
-    }).catch(()=>{
-      emit('changeLoading', false);
-    }).finally(()=>{
-
-    });
+    const { approveMsg } = await formApi.getValues();
+    const {data, msg, success} = await stopProcess({ taskId: taskId, processInstanceId: procInstId, message: approveMsg.value });
+    if (success) {
+      message.success(msg);
+      emit('success');
+    } else {
+      message.error(msg);
+    }
   }
-  function doBackToStep() {
+  async function doBackToStep() {
     const { modelKey, bizId, taskId, procInstId } = props.params;
-    const { approveMsg: message } = getFieldsValue();
-    openApproveBackToStepModal(true, {
+    const { approveMsg: message } = await formApi.getValues();
+      approveBackToStepModalRef.value.setData({
+          taskId,
+          procInstId,
+          message,
+      });
+      approveBackToStepModalRef.value.open();
+
+    /*openApproveBackToStepModal(true, {
       selectorProps: {
         taskId,
         procInstId,
@@ -335,13 +313,22 @@
     });
     setApproveBackToStepModalProps({
       width: 800,
-    });
+    });*/
   }
 
-  function doApproveSelectPersonal(actionType, multiple) {
+  async function doApproveSelectPersonal(actionType, multiple) {
     const { modelKey, bizId, taskId, procInstId } = props.params;
-    const { approveMsg: message } = getFieldsValue();
-    openApproveSelectorPersonalSelector(true, {
+    const { approveMsg } = await formApi.getValues();
+      approveSelectorPersonalModalRef.value.setData({
+          multiple,
+          actionType,
+          taskId,
+          procInstId,
+          approveMsg,
+      });
+      approveSelectorPersonalModalRef.value.open();
+
+    /*openApproveSelectorPersonalSelector(true, {
       selectorProps: {
         multiple,
         actionType,
@@ -352,7 +339,7 @@
     });
     setApproveSelectorPersonalModalProps({
       width: 800,
-    });
+    });*/
   }
 
   function closeFormModal() {
@@ -368,25 +355,3 @@
 
   defineExpose({resetApproveMsg});
 </script>
-<style lang="scss">
-  .approve-msg-form{
-    .ant-form-item{
-      margin-bottom: 0;
-    }
-  }
-
-  .approve-ctrl {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: #e1edff;
-    border-top: 3px solid #1890ff;
-    padding: 10px 20px;
-    z-index: 999999;
-
-    .approve-ctrl-btns {
-      margin: 10px 0 0;
-    }
-  }
-</style>

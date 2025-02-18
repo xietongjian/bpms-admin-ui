@@ -148,8 +148,12 @@
   // 审批操作处理
   async function doApprove() {
     const { modelKey, bizId, taskId, procInstId } = props.params;
-    await validateFields();
-    const { approveMsg: message } = getFieldsValue();
+      const { valid } =await formApi.validate();
+      if(!valid){
+        return;
+      }
+    const { approveMsg: message } = formApi.getValues();
+    debugger;
     emit('changeLoading', true);
     // 审批前查询当前节点是否有自定义审批配置项
     // 如果有则弹出自定义审批配置弹窗

@@ -1,7 +1,7 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
+import {h} from "vue";
 
 export const backToStepTableColumns: VxeGridProps['columns'] = [
   {
@@ -58,9 +58,11 @@ export const approveActionFormSchema: FormSchema[] = [
   {
     fieldName: 'procInstId',
     label: 'procInstId',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['procInstId']
+    }
   },
 
   {
@@ -69,28 +71,33 @@ export const approveActionFormSchema: FormSchema[] = [
     component: 'PersonalSelector',
     componentProps: {
       multiple: true,
+      class: 'w-full'
     },
-    required: true,
+    rules: "selectRequired"
   },
 
   {
     fieldName: 'signType',
-    component: 'Checkbox',
+    component: 'Input',
     label: ' ',
-    ifShow: ({values})=>values.actionType === 'addsign',
-    renderComponentContent: '加签审批完成之后是否流转到我审批',
+    suffix: () => h('span', { class: 'text-red-600' }, '加签审批完成之后是否流转到我审批'),
+    /*renderComponentContent: () => ({
+      prefix: () => 'prefix',
+      suffix: () => 'suffix',
+    }),*/
+    dependencies: {
+      if: (values)=> values.actionType === 'addsign',
+      triggerFields: ['signType']
+    },
   },
   {
     fieldName: 'message',
     label: '审批意见',
     component: 'Textarea',
-    required: true,
-    rules: [
-      {
-        max: 4000,
-        message: '字符长度不能大于4000！',
-      },
-    ],
+    rules: z
+        .string({required_error: '审批意见不能为空！'})
+        .min(1, {message: '审批意见不能为空！'})
+        .max(4000, '字符长度不能大于4000！'),
     componentProps: {
       autoSize: {
         minRows: 2,
@@ -103,27 +110,29 @@ export const fetchBackMessageFormSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'id',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'taskId',
     label: 'taskId',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['taskId']
+    }
   },
   {
     fieldName: 'message',
     label: '审批意见',
     component: 'Textarea',
-    rules: [
-      {
-        max: 256,
-        message: '字符长度不能大于256！',
-      },
-    ],
+    rules: z
+        .string({required_error: '审批意见不能为空！'})
+        .min(1, {message: '审批意见不能为空！'})
+        .max(4000, '字符长度不能大于4000！'),
     componentProps: {
       autoSize: {
         minRows: 2,
@@ -137,36 +146,39 @@ export const approveBackToStepFormSchema: FormSchema[] = [
   {
     fieldName: 'actionType',
     label: 'actionType',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['taskId']
+    }
   },
   {
     fieldName: 'taskId',
     label: 'taskId',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['taskId']
+    }
   },
   {
     fieldName: 'procInstId',
     label: 'procInstId',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['taskId']
+    }
   },
 
   {
     fieldName: 'message',
     label: '驳回意见',
     component: 'Textarea',
-    required: true,
-    rules: [
-      {
-        max: 256,
-        message: '字符长度不能大于256！',
-      },
-    ],
+    rules: z
+        .string({required_error: '审批意见不能为空！'})
+        .min(1, {message: '审批意见不能为空！'})
+        .max(4000, '字符长度不能大于4000！'),
     componentProps: {
       autoSize: {
         minRows: 2,
@@ -179,7 +191,6 @@ export const approveBackToStepFormSchema: FormSchema[] = [
     label: '选择驳回节点',
     component: 'Input',
     defaultValue: '0',
-    slot: 'backToStepNodeRender',
-    ifShow: true,
+    formItemClass: '!items-start',
   },
 ];

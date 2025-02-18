@@ -210,6 +210,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     component: 'PersonalSelector',
     required: true,
     componentProps: {
+      class: 'w-full',
       multiple: false,
       placeholder: '请选择人员',
       onChange: (data) => {
@@ -224,6 +225,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     component: 'OrgSelector',
     required: true,
     componentProps: {
+      class: 'w-full',
       multiple: false,
       selectType: '2',
       placeholder: '请选择流程归属部门',
@@ -237,6 +239,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     component: 'PersonalSelector',
     required: true,
     componentProps: {
+      class: 'w-full',
       labelInValue: true,
       multiple: false,
       placeholder: '请选择人员',
@@ -325,6 +328,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     label: '授权管理人员',
     component: 'PersonalSelector',
     componentProps: {
+      class: 'w-full',
       multiple: true,
       placeholder: '请选择人员',
     },

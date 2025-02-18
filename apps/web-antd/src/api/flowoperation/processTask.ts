@@ -154,10 +154,7 @@ export function getBizInfoVoByModelKey(params) {
 }
 // 驳回 => 流程干预
 export function backToStep(params: any) {
-  return requestClient.post(
-    Api.BackToStep, params,
-    { successMessageMode: 'message', errorMessageMode: 'message' },
-  );
+  return requestClient.post(Api.BackToStep, params, { responseReturn: 'body'});
 }
 // 流程复活
 export function restartProcessInstance(processInstanceId: string, activityIds: string[]) {
@@ -198,23 +195,23 @@ export function reviewTask(params: any) {
 
 // 审批
 export function complete(params: any) {
-  return requestClient.post(Api.Complete, params, { isReturnNativeResponse: true });
+  return requestClient.post(Api.Complete, params, { responseReturn: 'body' });
 }
 
 // 通过任务ID查询自定义审批配置项
 export function getCustomApproveSettings(params: any) {
   return requestClient.get(Api.GetCustomApproveSettings + '/' + params.taskId,
-    { isReturnNativeResponse: true });
+      { responseReturn: 'body' });
 }
 // 反签收
 export function unClaimTask(params: any) {
-  return requestClient.post(Api.UnClaimTask, params, { isReturnNativeResponse: true });
+  return requestClient.post(Api.UnClaimTask, params, { responseReturn: 'body' });
 }
 // 签收
 export function claimTask(params: any) {
-  return requestClient.post(Api.ClaimTask, params, { isReturnNativeResponse: true });
+  return requestClient.post(Api.ClaimTask, params, { responseReturn: 'body' });
 }
 // 暂存
 export function holdTask(params: any) {
-  return requestClient.post(Api.HoldTask, params, { isReturnNativeResponse: true });
+  return requestClient.post(Api.HoldTask, params, { responseReturn: 'body' });
 }

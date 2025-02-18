@@ -140,6 +140,7 @@
       componentProps: {
         // class: 'w-full',
       },
+      labelWidth: 120,
     },
     showDefaultActions: false,
     layout: 'horizontal',
@@ -175,7 +176,7 @@
     getAppliedRange().then(async (res) => {
       await formApi.updateSchema([
         {
-          field: 'appliedRange',
+          fieldName: 'appliedRange',
           componentProps: { options: res },
           colProps: { span: 12 },
         },
@@ -184,7 +185,7 @@
     getSkipSet().then(async (res) => {
       await formApi.updateSchema([
         {
-          field: 'skipSet',
+          fieldName: 'skipSet',
           componentProps: { options: res },
         },
       ]);
@@ -198,7 +199,7 @@
         }
         await formApi.updateSchema([
           {
-            field: 'appSn',
+            fieldName: 'appSn',
             dynamicDisabled: currentFormType.value === 'custom',
             defaultValue: currentFormType.value === 'custom' ? 'portal' : null,
             componentProps: { options: res },
@@ -212,7 +213,7 @@
         const defaultAuthPointList = res.filter(item => item.ifDefault === 1).map(item => item.sn);
         await formApi.updateSchema([
           {
-            field: 'authPointList',
+            fieldName: 'authPointList',
             componentProps: { options: res },
           },
         ]);
@@ -227,7 +228,7 @@
     getFlowCategories().then(res => {
       formApi.updateSchema([
         {
-          field: 'categoryCode',
+          fieldName: 'categoryCode',
           defaultValue: props.categoryCode || null,
           componentProps: {
             treeData: res,
@@ -293,7 +294,7 @@
       // 业务表单增加表单验证
       formApi.updateSchema([
         {
-          field: 'modelKey',
+          fieldName: 'modelKey',
           dynamicRules: () => {
             return [
               {
@@ -320,7 +321,7 @@
           },
         },
         {
-          field: 'flowOwnerNo',
+          fieldName: 'flowOwnerNo',
           componentProps: {
             onChange: (values) => {
               // 新建时，选择流程Owner的时候自动带出归属部门
