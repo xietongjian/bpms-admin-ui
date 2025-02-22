@@ -4,33 +4,20 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, defineEmits, defineProps, defineExpose } from 'vue';
+  import { ref, defineEmits, defineExpose } from 'vue';
   import {message} from 'ant-design-vue';
 
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import { copyModelInfoFormSchema, copyBizModelInfoFormSchema } from './modelInfo.data';
-  import { getFlowCategories } from '#/api/base/category';
   import { copyCustForm } from '#/api/form/customForm';
   import { copyBizForm, checkEntityExist } from '#/api/form/bizForm';
-  import { FormValidPatternEnum } from '#/enums/commonEnum';
 
   const emit = defineEmits(['success', 'register']);
 
   const formType = ref('custom');
 
-
-  // const { message } = useMessage();
-
-  /*const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
-    labelWidth: 100,
-    schemas: props.formType === 'custom' ? copyModelInfoFormSchema : copyBizModelInfoFormSchema,
-    showActionButtonGroup: false,
-    actionColOptions: {
-      span: 23,
-    },
-  });
-
+  /*
   const getBaseDynamicRules = (params: any) => {
     return [
       {
@@ -66,21 +53,6 @@
       resetFields();
       changeLoading(true);
       let formData = data.record;
-      // 加载分类
-      getFlowCategories()
-        .then(async (res) => {
-          await updateSchema([
-            {
-              field: 'newCategoryCode',
-              componentProps: {
-                treeData: res,
-              },
-            },
-          ]);
-        })
-        .finally(() => {
-          changeLoading(false);
-        });
 
       if (props.formType === 'biz') {
         await updateSchema([
@@ -128,7 +100,6 @@
     },
   );*/
 
-
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
     onCancel() {
@@ -140,7 +111,6 @@
         formType.value = values.formType === 0 ? 'custom' : 'biz';
         formApi.setState({ schema: values.formType === 0 ? copyModelInfoFormSchema: copyBizModelInfoFormSchema });
 
-        debugger;
         if (values) {
           formApi.setValues({
             fromModelKey: values.modelKey,
@@ -157,7 +127,6 @@
       }
     },
     onConfirm() {
-      // await formApi.submitForm();
       handleSubmit();
     },
   });
@@ -165,7 +134,7 @@
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
       componentProps: {
-        // class: 'w-full',
+        class: 'w-full',
       },
     },
     showDefaultActions: false,
