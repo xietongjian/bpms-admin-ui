@@ -51,7 +51,7 @@ import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/pre
   // import { useModal } from '@/components/Modal';
   import {EmpInfo} from '#/views/components/EmpInfo';
 import {ProcessStatus} from "#/views/components/common";
-  // import {timeDurationFormatter} from "@/utils";
+  import {timeDurationFormatter} from "#/utils";
   // import { useProcessStore } from '@/store/modules/process';
   // import { useRequest } from '@vben/hooks';
   // import ProcessFormModal from '#/views/flowoperation/processTask/ProcessFormModal.vue';

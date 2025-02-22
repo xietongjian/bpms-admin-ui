@@ -4,29 +4,33 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, Rule, useForm } from '@/components/Form/index';
+  import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
+  import {useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from '#/adapter/form';
+  import { approveBackToStepFormSchema, backToStepTableColumns } from './action.data';
+
+  // import { BasicModal, useModalInner } from '@/components/Modal';
+  // import { BasicForm, Rule, useForm } from '@/components/Form/index';
   import { companyRoleFormSchema } from './rolePersonal.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/org/role';
   import { getCompanies } from '#/api/org/company';
-  import { CheckExistParams } from '#/api/model/baseModel';
-  import { FormValidPatternEnum } from '#/enums/commonEnum';
+  // import { CheckExistParams } from '#/api/model/baseModel';
+  // import { FormValidPatternEnum } from '#/enums/commonEnum';
 
   const emit = defineEmits(['success', 'register']);
 
   const isUpdate = ref(true);
 
-  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
+/*  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
     labelWidth: 100,
     schemas: companyRoleFormSchema,
     showActionButtonGroup: false,
     actionColOptions: {
       span: 23,
     },
-  });
+  });*/
 
-  const getBaseDynamicRules = (params: CheckExistParams) => {
+  /*const getBaseDynamicRules = (params: CheckExistParams) => {
     return [
       {
         trigger: 'blur',
@@ -54,9 +58,44 @@
         },
       },
     ] as Rule[];
-  };
+  };*/
 
-  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: companyRoleFormSchema,
+    wrapperClass: 'grid-cols-1',
+  });
+
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          formApi.setValues(values);
+          // loadBackToStepNodes(values.taskId);
+
+          modalApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // await formApi.submitForm();
+      handleSubmit();
+    },
+  });
+
+  /*const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     await resetFields();
     setModalProps({ confirmLoading: false });
     isUpdate.value = !!data?.isUpdate;
@@ -102,14 +141,18 @@
         ...data.record,
       });
     }
-  });
+  });*/
 
   const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 
   async function handleSubmit() {
     try {
       setModalProps({ confirmLoading: true });
-      const values = await validate();
+      const {valid} = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
       await saveOrUpdate(values);
       closeModal();
       emit('success');
@@ -117,4 +160,5 @@
       setModalProps({ confirmLoading: false });
     }
   }
+  defineExpose(modalApi);
 </script>

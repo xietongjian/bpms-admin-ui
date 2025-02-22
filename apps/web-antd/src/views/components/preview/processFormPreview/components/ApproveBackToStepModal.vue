@@ -122,13 +122,14 @@
 
   function closeCurrModal() {
     genLoading(false);
-    closeModal();
+    modalApi.close();
     emit('success');
   }
 
   function genLoading(status) {
-    setModalProps({ confirmLoading: status });
-    changeLoading(status);
+    // setModalProps({ confirmLoading: status });
+    modalApi.setState({loading: status, confirmLoading: status})
+    // changeLoading(status);
   }
 
   async function handleSubmit() {
@@ -147,7 +148,7 @@
 
       if (unref(selectedKeys) && unref(selectedKeys).length > 0) {
         params['distFlowElementId'] = unref(selectedKeys)[0];
-        const {success, msg, data} = backToStep(params);
+        const {success, msg, data} = await backToStep(params);
         if (success) {
           message.success(msg);
           closeCurrModal();

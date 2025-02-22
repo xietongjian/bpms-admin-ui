@@ -107,7 +107,7 @@ export const getPersonalsByRole = (params: any) => {
 };
 
 export const saveOrUpdate = (params?: any) =>
-  requestClient.post<any>(Api.SaveOrUpdate, params);
+  requestClient.post<any>(Api.SaveOrUpdate, params, {responseReturn: 'body'});
 
 export const saveBatch = (params: any) =>
   requestClient.post(Api.SaveBatch, params);

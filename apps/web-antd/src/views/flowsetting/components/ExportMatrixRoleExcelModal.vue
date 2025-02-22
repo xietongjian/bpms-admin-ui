@@ -16,10 +16,11 @@
   // import { BasicModal, useModalInner } from '@/components/Modal';
   import {useVbenModal} from '@vben/common-ui';
 
-  import { FormSchema } from '@/components/Form/index';
-  import { BasicTable, useTable, BasicColumn } from '@/components/Table';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { useI18n } from '@/hooks/web/useI18n';
+  // import { FormSchema } from '@/components/Form/index';
+  // import { BasicTable, useTable, BasicColumn } from '@/components/Table';
+  // import { useMessage } from '@/hooks/web/useMessage';
+  // import { useI18n } from '@/hooks/web/useI18n';
+  import {message} from 'ant-design-vue';
 
   const emit = defineEmits(['success', 'register']);
 
@@ -62,7 +63,7 @@
     },
   ];
 
-  const searchFormSchema: FormSchema[] = [
+  const searchFormSchema = [
     {
       field: 'keyword',
       label: '关键字',
@@ -76,8 +77,6 @@
     },
   ];
   const { t } = useI18n();
-
-  const { createMessage } = useMessage();
 
   const fileName = ref('');
   const [registerRolesTable, { reload, setTableData, getSelectRows }] = useTable({
@@ -114,7 +113,7 @@
   async function handleOk() {
     const selectedRows = getSelectRows();
     if (selectedRows.length <= 0) {
-      createMessage.warn('请选择要导出的角色！');
+      message.warn('请选择要导出的角色！');
       return;
     }
     emit('success', {
