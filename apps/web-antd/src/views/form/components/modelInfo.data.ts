@@ -6,6 +6,7 @@ import { Tag } from 'ant-design-vue';
 import { checkEntityExist } from '#/api/form/bizForm';
 import {getAll} from '#/api/base/app';
 import { getAppliedRange, getSkipSet } from '#/api/form/form';
+import { getAll as getAuthPoints } from '#/api/form/authPoint';
 
 import { h } from 'vue';
 import { OrderNoDefaultEnum } from '#/enums/commonEnum';
@@ -137,7 +138,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
   {
     fieldName: 'name',
     label: '流程名称',
-    required: true,
+    rules: 'required',
     component: 'Input',
 
     dependencies: {
@@ -150,7 +151,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
   {
     fieldName: 'modelKey',
     label: '流程编码',
-    required: true,
+    rules: 'required',
     component: 'Input',
     dependencies: {
       show(values) {
@@ -208,7 +209,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     fieldName: 'flowOwnerNo',
     label: '流程Owner',
     component: 'PersonalSelector',
-    required: true,
+    rules: 'selectRequired',
     componentProps: {
       class: 'w-full',
       multiple: false,
@@ -223,7 +224,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     fieldName: 'ownDeptId',
     label: '归属部门',
     component: 'OrgSelector',
-    required: true,
+    rules: 'selectRequired',
     componentProps: {
       class: 'w-full',
       multiple: false,
@@ -237,7 +238,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     label: '流程BP',
     help: '流程对接人',
     component: 'PersonalSelector',
-    required: true,
+    rules: 'selectRequired',
     componentProps: {
       class: 'w-full',
       labelInValue: true,
@@ -320,7 +321,14 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     fieldName: 'authPointList',
     label: '授权功能',
     component: 'CheckboxGroup',
-    required: true,
+    rules: 'selectRequired',
+    componentProps: {
+      class: 'w-full',
+      api: getAuthPoints,
+      labelField: 'name',
+      valueField: 'code',
+      getPopupContainer: () => document.body,
+    },
   },
 
   {
@@ -337,10 +345,10 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     fieldName: 'skipSet',
     label: '跳过方式',
     help: '相同节点是否跳过',
-    component: 'ApiRadioGroup',
+    component: 'RadioGroup',
     defaultValue: 1,
     componentProps: {
-      api: getSkipSet,
+      // api: getSkipSet,
       class: 'w-full',
     },
   },

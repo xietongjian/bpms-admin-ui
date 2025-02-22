@@ -14,7 +14,6 @@
   import { copyCustForm } from '#/api/form/customForm';
   import { copyBizForm, checkEntityExist } from '#/api/form/bizForm';
   import { FormValidPatternEnum } from '#/enums/commonEnum';
-  import {formSchema} from "#/views/base/app/app.data";
 
   const emit = defineEmits(['success', 'register']);
 
@@ -141,8 +140,18 @@
         formType.value = values.formType === 0 ? 'custom' : 'biz';
         formApi.setState({ schema: values.formType === 0 ? copyModelInfoFormSchema: copyBizModelInfoFormSchema });
 
+        debugger;
         if (values) {
-          formApi.setValues(values);
+          formApi.setValues({
+            fromModelKey: values.modelKey,
+            newCategoryCode: values.categoryCode,
+            newModelName: values.name + '-copy',
+            newModelKey: values.modelKey + '_copy',
+          });
+          // 自定义表单
+          if(values.formType === 0){
+            // 设置表单规则
+          }
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }

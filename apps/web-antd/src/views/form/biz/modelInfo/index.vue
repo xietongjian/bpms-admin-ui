@@ -45,48 +45,49 @@
                 <Button type="primary" danger>停用</Button>
               </Popconfirm>
             </Tooltip>
-            <template v-access:code="PerPrefix+PerEnum.ADD" >
-              <Dropdown placement="bottom">
-                <template #overlay>
-                  <Menu @click="handleCreate">
-                    <MenuItem key="bizNoForm">
-                      <template #icon>
-                        <PartitionOutlined :style="{ fontSize: '26px', color: 'purple' }" />
-                      </template>
-                      <div style="width: 200px">
-                        <TypographyText strong>无表单流程</TypographyText>
-                        <br />
-                        <TypographyText type="secondary">
-                          流程不包含表单，适用于服务编排流程
-                        </TypographyText>
-                      </div>
-                    </MenuItem>
-                    <MenuItem key="biz">
-                      <template #icon>
-                        <ProfileOutlined :style="{ fontSize: '26px', color: '#2db7f5' }" />
-                      </template>
-                      <div style="width: 200px">
-                        <TypographyText strong>有表单流程</TypographyText>
-                        <br />
-                        <TypographyText type="secondary">
-                          流程默认绑定表单，适用于需要用户参与查看表单数据的流程
-                        </TypographyText>
-                      </div>
-                    </MenuItem>
-                  </Menu>
-                </template>
-                <Button type="primary">
-                  新建
-                  <DownOutlined />
-                </Button>
-              </Dropdown>
-              <Button type="primary" @click="handleCopy">复制</Button>
-            </template>
+            <Dropdown v-access:code="PerPrefix+PerEnum.ADD" placement="bottom">
+              <template #overlay>
+                <Menu @click="handleCreate">
+                  <MenuItem key="bizNoForm">
+                    <template #icon>
+                      <PartitionOutlined :style="{ fontSize: '26px', color: 'purple' }" />
+                    </template>
+                    <div style="width: 200px">
+                      <TypographyText strong>无表单流程</TypographyText>
+                      <br />
+                      <TypographyText type="secondary">
+                        流程不包含表单，适用于服务编排流程
+                      </TypographyText>
+                    </div>
+                  </MenuItem>
+                  <MenuItem key="biz">
+                    <template #icon>
+                      <ProfileOutlined :style="{ fontSize: '26px', color: '#2db7f5' }" />
+                    </template>
+                    <div style="width: 200px">
+                      <TypographyText strong>有表单流程</TypographyText>
+                      <br />
+                      <TypographyText type="secondary">
+                        流程默认绑定表单，适用于需要用户参与查看表单数据的流程
+                      </TypographyText>
+                    </div>
+                  </MenuItem>
+                </Menu>
+              </template>
+              <Button type="primary">
+                新建
+                <DownOutlined />
+              </Button>
+            </Dropdown>
+            <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCopy">复制</Button>
+
           </div>
+        </template>
+        <template #action="{row}">
+          <TableAction :actions="createActions(row)" />
         </template>
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
-            <TableAction :actions="createActions(record)" />
           </template>
           <template v-if="column.key === 'name'">
             <Badge>
@@ -129,8 +130,8 @@
       </BasicTable>
     </div>
 
-    <CopyModelInfoModal ref="copyModelInfoModalRef" @register="registerCopyModal" @success="handleSuccess" formType="biz" />
-    <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" @success="handleSuccess" />
+    <CopyModelInfoModal ref="copyModelInfoModalRef" @success="handleSuccess" formType="biz" />
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" @success="handleSuccess" />
     <BizBpmnDesignerModal ref="bizBpmnDesignerModalRef"
       @register="registerBpmnDesignerModal"
       @success="handleBpmnDesignerModalSuccess"
@@ -145,10 +146,10 @@
   import { nextTick, ref, unref, watch } from 'vue';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
-  import type {VxeGridProps} from '#/adapter/vxe-table';
+  import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
-  import {ColPage, Page} from '@vben/common-ui';
+  import {ColPage} from '@vben/common-ui';
   import {TableAction} from '#/components/table-action';
 
   import { deployForm, getPagerModel, stopForm } from '#/api/form/bizForm';
@@ -170,7 +171,9 @@
 
   const MenuItem = Menu.Item;
   const PerPrefix = 'Biz:';
-
+  const bpmnDesignerModalRef = ref(),
+      copyModelInfoModalRef = ref(),
+      bpmnPreviewModalRef = ref();
   // const [registerCopyModal, { openModal: openCopyModal, setModalProps: setCopyModalProps }] =
   //   useModal();
   // const [
@@ -260,7 +263,12 @@
     },
   };
 
-  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+  const gridEvents: VxeGridListeners = {
+    radioChange: ({row}) => {
+      clickRow(row);
+    }
+  };
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
 
 
   watch(
@@ -323,10 +331,10 @@
     });
   }
 
-  function createActions(record: Recordable<any>): ActionItem[] {
+  function createActions(record: Recordable<any>) {
     return [
       {
-        auth: 'Biz:' + PerEnum.UPDATE,
+        auth: [PerPrefix + PerEnum.UPDATE],
         icon: 'clarity:note-edit-line',
         tooltip: '编辑',
         label: '',
@@ -336,22 +344,13 @@
         icon: 'ant-design:partition-outlined',
         tooltip: '流程图预览',
         label: '',
-        onClick: handlePreview.bind(null, record),
+        onClick: handleBpmnPreview.bind(null, record.modelKey),
       },
     ];
   }
-
-  function handlePreview(record: Recordable<any>) {
-    openBpmnPreviewModal(true, {
-      modelKey: record.modelKey,
-    });
-    setBpmnPreviewProps({
-      title: `预览-${record.name}`,
-      centered: true,
-      useWrapper: false,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });
+  function handleBpmnPreview(modelKey: string) {
+    bpmnPreviewModalRef.value.setData({modelKey});
+    bpmnPreviewModalRef.value.open();
   }
 
   function handleEdit(record: Recordable<any>) {

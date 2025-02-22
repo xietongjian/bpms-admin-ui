@@ -174,16 +174,16 @@
 
   async function initDefaultData() {
     getAppliedRange().then(async (res) => {
-      await formApi.updateSchema([
+      formApi.updateSchema([
         {
           fieldName: 'appliedRange',
           componentProps: { options: res },
-          colProps: { span: 12 },
         },
       ]);
     });
+
     getSkipSet().then(async (res) => {
-      await formApi.updateSchema([
+      formApi.updateSchema([
         {
           fieldName: 'skipSet',
           componentProps: { options: res },
@@ -191,13 +191,14 @@
       ]);
     });
 
+
     // 加载系统
     getAllApps()
       .then(async (res) => {
         if (currentFormType.value !== 'custom') {
           res = res.filter((item) => item.sn !== 'flow');
         }
-        await formApi.updateSchema([
+        formApi.updateSchema([
           {
             fieldName: 'appSn',
             dynamicDisabled: currentFormType.value === 'custom',
@@ -211,7 +212,7 @@
     getAll()
       .then(async (res) => {
         const defaultAuthPointList = res.filter(item => item.ifDefault === 1).map(item => item.sn);
-        await formApi.updateSchema([
+        formApi.updateSchema([
           {
             fieldName: 'authPointList',
             componentProps: { options: res },
@@ -225,7 +226,8 @@
       })
       .finally(() => {});
     // 加载分类
-    getFlowCategories().then(res => {
+    /*getFlowCategories().then(res => {
+        debugger;
       formApi.updateSchema([
         {
           fieldName: 'categoryCode',
@@ -235,7 +237,7 @@
           },
         },
       ]);
-    });
+    });*/
 
     if (props.modelId) {
       loadFormData(props.modelId);
@@ -293,7 +295,7 @@
       };
       // 业务表单增加表单验证
       formApi.updateSchema([
-        {
+        /*{
           fieldName: 'modelKey',
           dynamicRules: () => {
             return [
@@ -319,7 +321,7 @@
               }),
             ];
           },
-        },
+        },*/
         {
           fieldName: 'flowOwnerNo',
           componentProps: {
