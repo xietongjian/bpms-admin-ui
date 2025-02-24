@@ -76,28 +76,28 @@
   </ColPage>
 </template>
 <script lang="ts" setup>
-import { ref, unref, watch } from 'vue';
-import { PerEnum } from '#/enums/perEnum';
-  import type {VbenFormProps} from '@vben/common-ui';
-  import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
+import {ref, unref, watch} from 'vue';
+import {PerEnum} from '#/enums/perEnum';
+import type {VbenFormProps} from '@vben/common-ui';
+import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
 
-  import {useVbenVxeGrid} from '#/adapter/vxe-table';
+import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import type {Recordable} from '@vben/types';
-  import {ColPage} from '@vben/common-ui';
-  import {TableAction} from '#/components/table-action';
+import {ColPage} from '@vben/common-ui';
+import {TableAction} from '#/components/table-action';
 
-  import { getModelInfoByModelKey } from '#/api/flowable/bpmn/modelInfo';
-  import { getCustomPagerModel, deployForm, stopForm } from '#/api/form/customForm';
-  import { getTaskFormInfoByModelKey } from '#/api/form/customTaskForm';
-  import FlowCategoryTree from '#/views/components/leftTree/FlowCategoryTree.vue';
-  import { PictureFilled } from '@ant-design/icons-vue';
+import {getModelInfoByModelKey} from '#/api/flowable/bpmn/modelInfo';
+import {getCustomPagerModel, deployForm, stopForm} from '#/api/form/customForm';
+import {getTaskFormInfoByModelKey} from '#/api/form/customTaskForm';
+import FlowCategoryTree from '#/views/components/leftTree/FlowCategoryTree.vue';
+import {PictureFilled} from '@ant-design/icons-vue';
 
-  import CopyModelInfoModal from '#/views/form/components/CopyModelInfoModal.vue';
-  import {BpmnPreviewModal} from '#/views/components/preview';
-  import TaskFormDesignerModal from '#/views/form/components/TaskFormDesignerModal.vue';
-  import BpmnDesignerModal from '#/views/form/components/BpmnDesignerModal.vue';
-  import { Avatar, Button, Popconfirm, Tooltip, message } from 'ant-design-vue';
-  import { columns, searchFormSchema } from './modelInfo.data';
+import CopyModelInfoModal from '#/views/form/components/CopyModelInfoModal.vue';
+import {BpmnPreviewModal} from '#/views/components/preview';
+import TaskFormDesignerModal from '#/views/form/components/TaskFormDesignerModal.vue';
+import BpmnDesignerModal from '#/views/form/components/BpmnDesignerModal.vue';
+import {Avatar, Button, Popconfirm, Tooltip, message} from 'ant-design-vue';
+import {columns, searchFormSchema} from './modelInfo.data';
 
   const PerPrefix = 'Custom:';
 

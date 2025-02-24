@@ -6,8 +6,8 @@
         @fetch-success="fetchSuccess"
     >
       <template #toolbar>
-        <a-button type="primary" @click="handleLaunch"> 发起表单 </a-button>
-        <a-button type="default" @click="handleExport"> 导出Excel </a-button>
+        <Button type="primary" @click="handleLaunch"> 发起表单 </Button>
+        <Button type="default" @click="handleExport"> 导出Excel </Button>
       </template>
 
       <template #bodyCell="{ column, record }">

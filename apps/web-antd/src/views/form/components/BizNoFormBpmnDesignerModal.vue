@@ -66,7 +66,7 @@
                       确定要发布【{{ modelBaseInfo.name }}】流程吗？
                     </div>
                   </template>
-                  <a-button color="success" :disabled="saveLoading">发布</a-button>
+                  <Button color="success" :disabled="saveLoading">发布</Button>
                 </Popconfirm>
               </Authority>
 
@@ -161,8 +161,8 @@
       <div v-show="currentStepValue === 3">
         <Result status="success" title="发布成功" sub-title="流程已发布！">
           <template #extra>
-            <a-button key="continue" @click="handleContinueEdit"> 继续编辑 </a-button>
-            <a-button key="back" type="primary" @click="handleClose"> 返回列表 </a-button>
+            <Button key="continue" @click="handleContinueEdit"> 继续编辑 </Button>
+            <Button key="back" type="primary" @click="handleClose"> 返回列表 </Button>
           </template>
         </Result>
       </div>

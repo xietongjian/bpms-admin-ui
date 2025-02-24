@@ -7,10 +7,10 @@
       <template #extra>
         <div class="no-print">
           <Space>
-            <a-button type="primary" @click="handlePrint" >打印全部</a-button>
-            <a-button type="primary" @click="handlePrintApply" >打印申请单</a-button>
-            <a-button type="primary" @click="handlePrintForm" >打印表单</a-button>
-            <a-button @click="doBack" >关闭</a-button>
+            <Button type="primary" @click="handlePrint" >打印全部</Button>
+            <Button type="primary" @click="handlePrintApply" >打印申请单</Button>
+            <Button type="primary" @click="handlePrintForm" >打印表单</Button>
+            <Button @click="doBack" >关闭</Button>
             <!--        <a-button type="primary" >打印审批记录</a-button>-->
           </Space>
         </div>

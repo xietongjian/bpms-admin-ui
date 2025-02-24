@@ -4,7 +4,6 @@
   import { Button, Upload, message } from 'ant-design-vue';
   import { UploadOutlined } from '@ant-design/icons-vue';
   import { defineEmits, ref, shallowRef } from 'vue';
-  // import { useMessage } from '@/hooks/web/useMessage';
   import { uploadVariableFileFormSchema } from '#/views/form/components/modelInfo.data';
   // import { ResultEnum } from '#/enums/httpEnum';
   import { uploadVariableTemplate } from '#/api/flowable/bpmn/modelInfo';
@@ -53,12 +52,6 @@
       // handleSubmit();
     },
   });
-
-  // const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(() => {
-  //   fileList.value = [];
-  //   setModalProps({ confirmLoading: false });
-  //   changeLoading(false);
-  // });
 
   const handleRemove: UploadProps['onRemove'] = (file) => {
     const index = fileList.value!.indexOf(file);

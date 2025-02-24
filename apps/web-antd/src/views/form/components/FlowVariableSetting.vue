@@ -15,16 +15,16 @@
     </BasicTable>
 
     <div style="width: 500px; margin: auto">
-      <a-button
+      <Button
         :loading="gridOptions.loading"
         type="dashed"
         style="width: 100%"
         @click="handleAddRow"
-        >添加流程变量</a-button
+        >添加流程变量</Button
       >
       <!--      <a-button type="primary" style="width: 100%;" @click="handleSubmit">保存</a-button>-->
     </div>
-    <div style="height: 50px"></div>
+    <div class="h-[50px]"></div>
 
     <FlowVariableFileModal @register="registerModal" @success="handleResetVariables" />
   </div>

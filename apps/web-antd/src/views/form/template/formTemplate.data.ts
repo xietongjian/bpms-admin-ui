@@ -106,27 +106,17 @@ export const formCategoryFormSchema: FormSchema[] = [
     component: 'Input',
     rules: z
         .string({
-          required_error: '名称不能为空',
+          required_error: '分类名称不能为空',
         })
         .trim()
-        .min(1, "名称不能为空")
+        .min(1, "分类名称不能为空")
         .max(200, "字符长度不能大于200！")
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '分类名称不能为空！',
-      },
-      {
-        max: 255,
-        message: '分类名称长度不能大于255！',
-      },
-    ],*/
   },
   {
     fieldName: 'code',
     label: '标识',
     // required: true,
+    rules: 'required',
     component: 'Input',
   },
   {

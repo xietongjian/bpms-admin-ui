@@ -3,7 +3,7 @@
     <BasicTable @register="registerTable" @fetch-success="onFetchSuccess">
       <template #toolbar>
         <Authority :value="'Module:' + PerEnum.ADD">
-          <a-button type="primary" @click="handleCreate"> 新增 </a-button>
+          <Button type="primary" @click="handleCreate"> 新增 </Button>
         </Authority>
       </template>
       <template #bodyCell="{ column, record }">
@@ -34,7 +34,7 @@
   // import { useModal } from '@/components/Modal';
   // import { Authority } from '@/components/Authority';
   import { PerEnum } from '#/enums/perEnum';
-  import { Tag, Space, message } from 'ant-design-vue';
+  import { Tag, Space, Button, message } from 'ant-design-vue';
 
   const { createMessage } = useMessage();
 

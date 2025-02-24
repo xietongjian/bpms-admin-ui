@@ -5,7 +5,7 @@
     </template>
     <template #extra>
       <div v-if="currentTabKey !== 'launch'">
-        <a-button type="primary" @click="toLaunch"> 发起流程 </a-button>
+        <Button type="primary" @click="toLaunch"> 发起流程 </Button>
       </div>
     </template>
     <Tabs class="process-list-tabs" :tabBarGutter="40" :activeKey="currentTabKey" @change="handleChangeProcessTabs">

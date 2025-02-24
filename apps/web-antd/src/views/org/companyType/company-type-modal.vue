@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
+import { defineEmits, defineExpose } from 'vue';
 import { formSchema } from './companyType.data';
-import { saveOrUpdate, checkEntityExist } from '#/api/org/companyType';
+import { saveOrUpdate } from '#/api/org/companyType';
 import {useVbenForm} from "#/adapter/form";
 import {useVbenModal} from '@vben/common-ui';
 

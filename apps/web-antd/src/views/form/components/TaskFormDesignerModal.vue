@@ -12,11 +12,11 @@
         <div style="float: left">
           <div style="display: inline-flex; float: left">
             <Space>
-              <a-input ref="formNameRef" v-model:value="formName" placeholder="请输入名称" />
+              <Input ref="formNameRef" v-model:value="formName" placeholder="请输入名称" />
             </Space>
           </div>
         </div>
-        <a-button type="link" @click="handleSubmit"> <save-outlined />保存 </a-button>
+        <Button type="link" @click="handleSubmit"> <save-outlined />保存 </Button>
       </template>
     </MakingForm>
   </BasicModal>
@@ -26,7 +26,7 @@
 
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
-  import { Space } from 'ant-design-vue';
+  import { Space, Input } from 'ant-design-vue';
   import { MakingForm } from '/public/static/form-making';
   import { SaveOutlined } from '@ant-design/icons-vue';
   import { getTaskFormMakInfoById, saveTaskFormInfo } from '#/api/form/customTaskForm';
