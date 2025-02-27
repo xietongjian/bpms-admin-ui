@@ -290,6 +290,24 @@ const routes: RouteRecordRaw[] = [
           title: 'CountTo',
         },
       },
+      {
+        name: 'Loading',
+        path: '/examples/loading',
+        component: () => import('#/views/examples/loading/index.vue'),
+        meta: {
+          icon: 'mdi:circle-double',
+          title: 'Loading',
+        },
+      },
+      {
+        name: 'ButtonGroup',
+        path: '/examples/button-group',
+        component: () => import('#/views/examples/button-group/index.vue'),
+        meta: {
+          icon: 'mdi:check-circle',
+          title: $t('examples.button-group.title'),
+        },
+      },
     ],
   },
 ];
