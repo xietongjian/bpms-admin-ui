@@ -50,7 +50,7 @@ const convertSearchInfo = (entity: any) => {
 export const getFlowCountReport = (params: any) => {
   let entity = params || {};
   entity = convertSearchInfo(entity);
-  return requestClient.post<any>({ url: Api.GetFlowCountReport, params: entity });
+  return requestClient.post<any>(Api.GetFlowCountReport, params);
 };
 
 // 查询已发
@@ -63,7 +63,7 @@ export const getMyProcessDetail = (params: any) => {
     entity = convertSearchInfo(entity);
   }
   const queryParam = { query, entity } as BasicPageSearchParams<any>;
-  return requestClient.post<any>({ url: Api.GetMyProcessDetail, params: queryParam });
+  return requestClient.post<any>(Api.GetMyProcessDetail, params);
 };
 
 // 查询待办，已办 taskFinishFlag： true已办  false待办
@@ -118,7 +118,7 @@ export const getProcessCountBi = async (params: any) => {
   params.num = params.dateRangeCount;
   delete params.dateRangeCount;
   const taskCounts = await requestClient
-    .post<any>({ url: Api.CountLatestNumDaysTask, params: params })
+    .post<any>(Api.CountLatestNumDaysTask, params)
     .then((res) => {
       res.forEach((item) => {
         item.date = item.statName;
@@ -131,7 +131,7 @@ export const getProcessCountBi = async (params: any) => {
     taskDates[item.date] = item;
   });
 
-  return requestClient.post<any>({ url: Api.CountLatestNumDaysProcInst, params: params }).then((res) => {
+  return requestClient.post<any>(Api.CountLatestNumDaysProcInst, params).then((res) => {
     const dateItemMap = {};
     res.forEach((item) => {
       item.date = item.statName;
@@ -161,7 +161,7 @@ export const getProcessCountBi = async (params: any) => {
 
 // 获取流程数据统计
 export const countProcInstTask = () => {
-  return requestClient.get<any>(Api.CountProcInstTask ).then((res) => {
+  return requestClient.get<any>(Api.CountProcInstTask).then((res) => {
     const countData = [];
     for (const itm in res) {
       switch (itm) {
@@ -210,7 +210,7 @@ export const countProcInstTask = () => {
 // 获取最近几天的最快或最慢的流程任务
 export const countLatestNumDaysFastSlowTaskAssignee = (params) => {
   return requestClient
-    .post<any>({ url: Api.CountLatestNumDaysFastSlowTaskAssignee, params })
+    .post<any>(Api.CountLatestNumDaysFastSlowTaskAssignee, params)
     .then((res) => {
       res.forEach((item) => {});
       return Promise.resolve(res);
@@ -219,7 +219,7 @@ export const countLatestNumDaysFastSlowTaskAssignee = (params) => {
 
 // 获取最近几天的最快或最慢的流程任务
 export const countLatestNumDaysFastSlowProcInst = (params) => {
-  return requestClient.post<any>({ url: Api.CountLatestNumDaysFastSlowProcInst, params }).then((res) => {
+  return requestClient.post<any>( Api.CountLatestNumDaysFastSlowProcInst, params).then((res) => {
     res.forEach((item) => {});
     return Promise.resolve(res);
   });
