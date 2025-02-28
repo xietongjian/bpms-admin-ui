@@ -38,8 +38,7 @@
 </template>
 <script lang="ts" setup>
   import { nextTick, onMounted, ref, unref, watch } from 'vue';
-  import { useGo } from '@/hooks/web/usePage';
-  import { Descriptions, DescriptionsItem, Skeleton } from 'ant-design-vue';
+  import { Collapse, Descriptions, DescriptionsItem, Skeleton } from 'ant-design-vue';
   import { useRouter } from 'vue-router';
 
   import {
@@ -47,12 +46,12 @@
     getCustomFormInfoVoByModelKeyAndBusinessKey,
     startCustomFormProcess,
   } from '#/api/process/process';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { CollapseContainer } from '@/components/Container';
-  import { GenerateForm } from '/public/form-making';
-  import { getFormItemShowsByTaskId } from '#/api/process/form';
-  import { updateCustomFormData } from '#/api/process/customForm';
+  // import { CollapseContainer } from '@/components/Container';
+  import { GenerateForm } from '/public/static/form-making';
+  import { updateCustomFormData, getFormItemShowsByTaskId } from '#/api/process/customForm';
+  const router = useRouter();
 
+  const CollapseItem = Collapse.Item;
   const props = defineProps({
     formType: {
       type: Number,

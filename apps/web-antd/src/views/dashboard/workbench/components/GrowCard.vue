@@ -94,7 +94,7 @@ const growCardList = countData;
 </script>
 
 <template>
-  <div v-if="growCardList" class="grid grid-cols-2 gap-4">
+  <div v-if="growCardList" class="grid grid-cols-2 gap-4 mb-4">
     <template v-for="(item, index) in growCardList" :key="item.title">
       <Card
         size="small"

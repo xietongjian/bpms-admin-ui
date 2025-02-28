@@ -464,7 +464,7 @@
 </script>
 
 <style lang="scss">
-  @import '../index.less';
+  @import '../index.scss';
 
   .process-launch {
     overflow: visible;

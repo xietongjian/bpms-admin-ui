@@ -8,6 +8,8 @@ enum Api {
   GetBpmnByModelKey = '/flow/flowable/bpmn/getBpmnByModelKey',
 
   UpdateCustomFormData = '/flow/form/custom/updateCustomFormData',
+  GetFormItemShowsByTaskId = '/flow/front/form/process/getFormItemShowsByTaskId', // /getFormItemShowsByTaskId/{formType}/{taskId}
+
 }
 
 export const getCustomPagerModel = (params: any) =>{
@@ -26,3 +28,7 @@ export const getFormInfoById = (params: any) =>
 
 export const updateCustomFormData = (params: any) =>
   requestClient.post(Api.UpdateCustomFormData, params, {isReturnNativeResponse: true});
+
+export const getFormItemShowsByTaskId = (params: any) => {
+  return requestClient.post(Api.GetFormItemShowsByTaskId + '/' + params.formType + '/' + params.taskId);
+}

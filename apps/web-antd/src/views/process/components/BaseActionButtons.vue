@@ -20,10 +20,11 @@
   import {ApartmentOutlined, PrinterOutlined} from '@ant-design/icons-vue';
   import {Button, Space} from 'ant-design-vue';
   import {useRouter} from 'vue-router';
-  import {useModal} from '@/components/Modal';
+  // import {useModal} from '@/components/Modal';
   import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
   // import PrintPreviewModal from '#/views/components/preview/printPreview/index.vue';
-  import {useGo} from '@/hooks/web/usePage';
+  // import {useGo} from '@/hooks/web/usePage';
+  const router = useRouter();
 
   const props = defineProps({
     formType: {
@@ -48,7 +49,7 @@
     },
   });
   const {currentRoute} = useRouter();
-  const go = useGo();
+  // const go = useGo();
   // const {params: {modelKey, procInstId, bizId, taskId}} = unref(currentRoute);
 
   const [registerBpmnPreviewModal, {
@@ -79,6 +80,7 @@
   }
 
   function handlePrintProcess() {
-    go(`/process/print/${props.modelKey}/${props.procInstId}/${props.bizId}/${props.taskId}/0`);
+    // go(`/process/print/${props.modelKey}/${props.procInstId}/${props.bizId}/${props.taskId}/0`);
+    router.push({ name: 'VbenAbout' });
   }
 </script>

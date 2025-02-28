@@ -11,7 +11,7 @@ import { useRouter } from 'vue-router';
 
 import {
   AnalysisChartCard,
-  WorkbenchHeader,
+  // WorkbenchHeader,
   WorkbenchProject,
   WorkbenchQuickNav,
   WorkbenchTodo,
@@ -20,10 +20,14 @@ import {
 import { preferences } from '@vben/preferences';
 import { useUserStore } from '@vben/stores';
 import { openWindow } from '@vben/utils';
+import QuickNav from './components/QuickNav.vue';
+import WorkbenchHeader from './components/WorkbenchHeader.vue';
 
 import AnalyticsVisitsSource from '../analytics/analytics-visits-source.vue';
 import GrowCard from './components/GrowCard.vue';
 import TodoCenter from './components/TodoCenter.vue';
+import CalendarCard from './components/CalendarCard.vue';
+import CommonSystem from './components/CommonSystem.vue';
 
 const userStore = useUserStore();
 
@@ -237,24 +241,27 @@ function navTo(nav: WorkbenchProjectItem | WorkbenchQuickNavItem) {
 
 <template>
   <div class="p-4">
-    <WorkbenchHeader
+<!--    <WorkbenchHeader
       :avatar="userStore.userInfo?.avatar || preferences.app.defaultAvatar"
     >
       <template #title>
         早安, {{ userStore.userInfo?.realName }}, 开始您一天的工作吧！
       </template>
       <template #description> 今日晴，20℃ - 32℃！ </template>
-    </WorkbenchHeader>
-    <div class="mt-4 flex flex-col lg:flex-row">
+    </WorkbenchHeader>-->
+    <div class="flex flex-col lg:flex-row">
       <div class="mr-4 w-full lg:w-1/3">
         <GrowCard />
         <TodoCenter :loading="loading" class="!mb-4 enter-y" />
       </div>
       <div class="mr-4 w-full lg:w-1/3">
-
+        <QuickNav :loading="loading" class="enter-y mb-4" />
+        <CommonSystem :loading="loading" class="enter-y" />
       </div>
-      <div class="mr-4 w-full lg:w-1/3">
-
+      <div class="w-full lg:w-1/3">
+        <WorkbenchHeader class="mb-4" />
+        <CalendarCard class="mb-4" />
+        <NoticeInfo />
       </div>
     </div>
     <div class="mt-5 flex flex-col lg:flex-row">

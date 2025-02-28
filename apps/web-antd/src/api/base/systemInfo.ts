@@ -29,11 +29,11 @@ export const saveUserSystemOrderNo = (params: any) =>
   requestClient.post<any>(Api.SaveUserSystemOrderNo, params, {responseReturn: 'body'});
 
 export const deleteMySystemById = (params: any) =>
-  requestClient.post<any>(Api.DeleteMySystemById + '/' + params.id, {responseReturn: 'body'});
+  requestClient.post<any>(Api.DeleteMySystemById + '/' + params.id, {}, {responseReturn: 'body'});
 
 export const deleteSystemById = (ids: any) =>
   requestClient.post<any>(Api.DeleteSystemById , ids, {responseReturn: 'body'});
 
 export const getAllSystemList = (params: any) => {
-  return requestClient.post<any>(Api.GetAllSystem, params);
+  return requestClient.post<any>(Api.GetAllSystem, params||{});
 }

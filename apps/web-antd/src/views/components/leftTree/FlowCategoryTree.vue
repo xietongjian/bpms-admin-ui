@@ -1,18 +1,23 @@
 <template>
-  <div class="w-full h-full" v-loading="treeLoading">
-    <Tree
-      class="h-full overflow-auto"
-      title="流程分类"
-      toolbar
-      search
-      treeWrapperClassName="h-[calc(100%-35px)] overflow-auto"
-      :clickRowToExpand="false"
-      :treeData="treeData"
-      @select="handleSelect"
-      ref="basicTreeRef"
-      :fieldNames="{title: 'name'}"
-      block-node
-    />
+  <div class="w-full h-full flex flex-col bg-card" >
+    <div class="flex items-center p-2 border-b">
+      流程分类
+    </div>
+    <div v-loading="treeLoading" class="h-full">
+      <Tree
+        class="overflow-auto"
+        toolbar
+        search
+        treeWrapperClassName="h-[calc(100%-35px)] overflow-auto"
+        :clickRowToExpand="false"
+        :treeData="treeData"
+        @select="handleSelect"
+        ref="basicTreeRef"
+        :fieldNames="{title: 'name'}"
+        block-node
+      >
+      </Tree>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
