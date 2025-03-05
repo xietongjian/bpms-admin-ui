@@ -14,6 +14,9 @@ async function cleanTargetsRecursively(currentDir, targets) {
     try {
       const itemPath = join(currentDir, item);
       if (targets.includes(item)) {
+        if(itemPath.includes('form-making')){
+          continue;
+        }
         // 匹配到目标目录或文件时直接删除
         await fs.rm(itemPath, { force: true, recursive: true });
         console.log(`Deleted: ${itemPath}`);

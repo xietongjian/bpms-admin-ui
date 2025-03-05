@@ -95,6 +95,23 @@ export const baseSetSchemas: FormSchema[] = [
     }
   },
   {
+    fieldName: 'testOrgSelectorModal',
+    component: 'PersonalSelector',
+    label: '测试人员选择',
+    componentProps: {
+      placeholder: '请选择人员',
+      multiple: true,
+      type: 'personal',
+      closeOnSelect: false,
+      selectOnModal: true,
+      modelValue: [{
+        id: '1', value: '1', type: 'company',
+      },{
+        id: '2', value: '2', type: 'company',
+      }]
+    }
+  },
+  {
     fieldName: 'iconSelector',
     component: 'IconPicker',
     label: '测试组织选择',

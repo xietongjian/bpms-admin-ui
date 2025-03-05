@@ -1,67 +1,46 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
-// import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
+import {h} from 'vue'
+import {Tag, Tree, Table, Input, Checkbox, Radio} from 'ant-design-vue';
 
 
-export const columns: VxeGridProps['columns'] = [
+export const columns = [
   {
     title: '姓名',
-    field: 'name',
-    width: 80,
+    dataIndex: 'name',
+    width: 100,
     align: 'left',
   },
   {
     title: '工号',
-    field: 'code',
-    width: 80,
+    dataIndex: 'code',
+    width: 100,
     align: 'left',
   },
   {
     title: '性别',
-    field: 'sex',
+    dataIndex: 'sex',
     width: 50,
-    /*customRender: ({ record }) => {
+    slots: {default: 'sex'},
+    customRender: ({ record }) => {
       const status = record.sex;
       const enable = ~~status === 1;
       const color = enable ? 'green' : 'red';
       const text = enable ? '男' : '女';
       return h(Tag, { color: color }, () => text);
-    },*/
+    },
   },
   {
     title: '公司',
-    field: 'companyName',
-    width: 120,
+    dataIndex: 'companyName',
     align: 'left',
   },
   {
     title: '部门',
-    field: 'deptName',
-    width: 120,
+    dataIndex: 'deptName',
     align: 'left',
   },
 ];
-
-export const positionColumns: VxeGridProps['columns'] = [
-  {
-    title: '名称',
-    field: 'name',
-    align: 'left',
-  },
-  {
-    title: '编码',
-    field: 'code',
-    width: 120,
-    align: 'left',
-  },
-  {
-    title: '所属序列',
-    field: 'positionSeqName',
-    align: 'left',
-  },
-];
-
 
 export const searchFormSchema: FormSchema[] = [
   {

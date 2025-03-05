@@ -1,74 +1,110 @@
 <template>
-  <BasicModal :title="getTitle"
-      @ok="handleSubmit"
-  >
-    <div class="selected-items mb-2">
-      <template
-          v-if="selectedList && selectedList.length > 0"
-          v-for="(item, index) in selectedList"
-          :key="item.code"
-      >
-        <Tag color="processing" closable @close="removeSelectedItem(item.code)">
-          {{ item.name }}
-        </Tag>
-      </template>
-      <template v-else>
-        <div class="ant-select-selection-placeholder">请选择人员</div>
-      </template>
+  <BasicModal class="w-[1000px]">
+    <div class="selected-items mb-2 min-h-8">
+      <!--          <template
+                        v-if="selectedList && selectedList.length > 0"
+                        v-for="(item, index) in selectedList"
+                        :key="item.code"
+                >
+                    <Tag color="processing" closable @close="removeSelectedItem(item.code)">
+                        {{ item.name }}
+                    </Tag>
+                </template>
+                <template v-else>
+                    <div class="ant-select-selection-placeholder">请选择人员</div>
+                </template>-->
     </div>
-    <div class="flex">
-      <div class="left-tree bg-white w-1/4 xl:w-3/10 mr-2 overflow-hidden h-full">
-        <Tree
-            title="组织"
-            toolbar
-            search
-            treeWrapperClassName="h-[calc(100%-35px)] overflow-auto"
-            :clickRowToExpand="false"
-            :treeData="treeData"
-            @select="handleSelect"
-            ref="treeRef"
-        />
-      </div>
+    <div class="flex-1 overflow-hidden h-full p-0" style="border: 1px solid red;">
+      <ColPage
+          :left-max-width="50"
+          :left-min-width="10"
+          :left-width="20"
+          :split-handle="true"
+          :split-line="true"
+          :resizable="true"
+          :left-collapsible="false" >
+        <template #left>
+          <div class="flex flex-col h-full">
+            <div class="h-8">
+              组织
+            </div>
+            <Tree
+                class="flex-1 overflow-y-auto"
+                title="组织"
+                toolbar
+                search
+                :clickRowToExpand="false"
+                :treeData="treeData"
+                @select="handleSelect"
+                ref="treeRef"
+            />
+          </div>
+        </template>
+        <div class="bg-card">
+          <Search
+              v-model:value="searchTxt"
+              placeholder="请输入姓名/工号/手机/邮箱"
+              style="width: 100%"
+              @search="doSearchFilter"
+              @press-enter="doSearchFilter"
+              :allowClear="true"
+          />
+          <Table
+              size="small"
+              :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)"
+              class="mt-2 ant-table-striped"
+              :row-selection="{
+                                type: multiSelect ? 'checkbox' : 'radio',
+                                selectedRowKeys: selectedRowKeys,
+                                onChange: onSelectChange,
+                              }"
+              :columns="columns"
+              :dataSource="tableData"
+              :pagination="pagination"
+              :scroll="{ y: 260 }"
+              :loading="personalTableLoading"
+              rowKey="code"
+              :customRow="customRow"
+          />
+        </div>
+      </ColPage>
 
-      <div class="w-3/4 xl:w-7/10 mb-0">
-        <Search
-            v-model:value="searchTxt"
-            placeholder="请输入姓名/工号/手机/邮箱"
-            style="width: 100%"
-            @search="doSearchFilter"
-            @press-enter="doSearchFilter"
-            :allowClear="true"
-        />
-        <Table
-            size="small"
-            :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)"
-            class="mt-2 ant-table-striped"
-            :row-selection="{
-              type: multiSelect ? 'checkbox' : 'radio',
-              selectedRowKeys: selectedRowKeys,
-              onChange: onSelectChange,
-            }"
-            :columns="columns"
-            :dataSource="tableData"
-            :pagination="pagination"
-            :scroll="{ y: 260 }"
-            :loading="personalTableLoading"
-            rowKey="code"
-            :customRow="customRow"
-        />
-      </div>
+      <!--          <div class="flex">
+                    <div class="left-tree bg-white w-1/4 xl:w-3/10 mr-2 overflow-hidden h-full">
+
+                    </div>
+
+                    <div class="w-3/4 xl:w-7/10 mb-0">
+                        &lt;!&ndash;        <Search
+                                    v-model:value="searchTxt"
+                                    placeholder="请输入姓名/工号/手机/邮箱"
+                                    style="width: 100%"
+                                    @search="doSearchFilter"
+                                    @press-enter="doSearchFilter"
+                                    :allowClear="true"
+                                />&ndash;&gt;
+
+                        &lt;!&ndash;        &ndash;&gt;
+                    </div>
+                </div>-->
     </div>
   </BasicModal>
 </template>
 <script lang="ts" setup>
 import {defineExpose, computed, reactive, toRefs, ref, defineEmits, unref, nextTick} from 'vue';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormProps} from '@vben/common-ui';
 // import { useUserStore } from '@/store/modules/user';
-import {useVbenModal} from '@vben/common-ui';
+import {ColPage, useVbenModal} from '@vben/common-ui';
+// import {useVbenVxeGrid} from '#/adapter/vxe-table';
 
 import {getPersonalPageList} from '#/api/org/personal';
 import {Tag, Tree, Table, Input, Checkbox, Radio} from 'ant-design-vue';
 import {getOrgTree} from '#/api/org/dept';
-import {columns} from './selector.data';
+import {columns, searchFormSchema} from './selector.data';
+// import {searchFormSchema} from "#/views/privilege/account/account.data";
+import {getAccountPageList} from "#/api/privilege/account";
+
 const {Search} = Input;
 
 const emit = defineEmits(['change'])
@@ -76,6 +112,7 @@ const emit = defineEmits(['change'])
 
 const [BasicModal, modalApi] = useVbenModal({
   draggable: true,
+  contentClass: 'flex flex-col xxx',
   onCancel() {
     modalApi.close();
   },
@@ -84,6 +121,7 @@ const [BasicModal, modalApi] = useVbenModal({
       const values = modalApi.getData<Record<string, any>>();
       if (values) {
         debugger;
+        await fetchTreeData(values);
         // await initData(values);
         // baseFormApi.setValues(values);
         modalApi.setState({loading: false, confirmLoading: false});
@@ -95,6 +133,7 @@ const [BasicModal, modalApi] = useVbenModal({
     // handleSubmit();
   },
 });
+
 
 const multiSelect = ref<boolean>(false);
 const personalTableLoading = ref<boolean>(false);
@@ -153,15 +192,14 @@ const state = reactive({
   selectedRowKeys: [],
 });
 
-async function fetch() {
+async function fetchTreeData() {
   const data = await getOrgTree();
-  treeData.value = data as unknown as TreeItem[];
-  nextTick(() => {
-    // 加载后展开节层级
-    if (data.length < 10) {
-      getTree()?.filterByLevel(1);
-    }
-  });
+  treeData.value = data;
+  await nextTick();
+  // 加载后展开节层级
+  if (data.length < 10) {
+    // getTree()?.filterByLevel(1);
+  }
 }
 
 async function fetchPageList(params) {
@@ -178,10 +216,14 @@ async function fetchPageList(params) {
     }
     personalTableLoading.value = true;
     const searchInfo = {
-      pageSize: unref(queryParam).pageSize,
-      pageNum: unref(queryParam).pageNum,
-      ...params,
-      ...org,
+      query: {
+        pageSize: unref(queryParam).pageSize,
+        pageNum: unref(queryParam).pageNum
+      },
+      entity: {
+        ...params,
+        ...org,
+      },
     };
     const {rows, total} = await getPersonalPageList(searchInfo);
     tableData.value = rows;
