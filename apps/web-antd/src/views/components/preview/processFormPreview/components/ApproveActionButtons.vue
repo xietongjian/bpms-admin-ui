@@ -13,50 +13,97 @@
       margin: 10px 0 0;
     }-->
   <div class="ml-2 mt-2" v-loading="approveActionLoading">
-    <div v-if="authPoints && authPoints.length > 0">
-      <BasicForm @register="registerApproveMsgForm" />
-      <Spin :spinning="authPoints.length <= 0">
+    <div v-if="authPoints && authPoints.length > 0" class="relative">
+      <div class="approve-files [&_.ant-upload-list]:gap-2 [&_.ant-upload-list-item-container]:bg-gray-100 pb-2">
+        <Upload
+          v-model:file-list="fileList"
+          name="file"
+          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          :headers="headers"
+          @change="handleChange"
+        >
+          <TypographyLink>
+            <PaperClipOutlined />
+          </TypographyLink>
+          <template #itemRender="{ file, actions }">
+            <div class="relative flex flex-row items-center w-[250px] group">
+              <div class="w-10 min-w-10 h-10 border text-center leading-10 mr-2 text-[32px]">
+                <LoadingOutlined v-if="file.status === 'uploading'" />
+                <FileOutlined v-else />
+              </div>
+              <div class="w-full overflow-hidden flex-wrap flex-1 flex flex-col">
+                <div class="w-full " :style="file.status === 'error' ? 'color: red' : ''">
+<!--                  {{ file.name }}-->
+                  <EllipsisText :line="1">{{ file.name }}</EllipsisText>
+                </div>
+                <div class="text-[12px]">
+                  <span v-if="file.status === 'uploading'" class="color-red" >上传中...&nbsp;{{Math.floor(file.percent)}}%</span>
+                  <span v-else >{{file.name.split('.').pop().toUpperCase()}}</span>
+                  <span class="ml-2">{{formatFileSize(file.size)}}</span>
+                </div>
+                <div class="absolute hidden -right-1 -top-2 group-hover:block">
+                  <a href="javascript:;" @click="actions.remove">
+                    <CloseOutlined />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </template>
+        </Upload>
+      </div>
+      <BasicForm />
+      <div class="absolute right-10 bottom-[43px] flex items-center gap-2">
+        <div class="flex items-center">
+          <Esign />
+        </div>
+<!--        <span class="cursor-pointer">
+          <TypographyLink @click="">
 
-      <Space class="approve-ctrl-btns" >
-        <!-- "[\"addsign\", \"claim\", \"turn_do\", \"refuse\", \"approve\", \"turn_read\", \"reject\", \"revoke\"]" -->
-        <!-- ["approve", "claim", "turn_do", "addsign", "reject", "revoke", "turn_read", "delegate" ] -->
-        <template v-for="item in authPoints">
-          <Button type="primary" v-if="item.sn === 'approve'" :title="item.name" @click="doApprove" >
-            {{item.name}}
-          </Button>
-          <Button type="primary" v-if="item.sn === 'claim'" :title="item.name" @click="doClaimTask" >
-            {{item.name}}
-          </Button>
-          <Button type="primary" v-if="item.sn === 'hold_task'" :title="item.name" @click="doHoldTask">
-            {{item.name}}
-          </Button>
-          <Button type="primary" v-if="item.sn === 'un_claim'" :title="item.name" @click="doUnClaimTask" >
-            {{item.name}}
-          </Button>
-          <Button type="error" v-if="item.sn === 'stop'" :title="item.name" @click="doStop" >
-            {{item.name}}
-          </Button>
-          <Button type="primary" v-if="item.sn === 'delegate'" :title="item.name" @click="doApproveSelectPersonal('delegateTask', false)">
-            {{item.name}}
-          </Button>
-          <Button type="primary" v-if="item.sn === 'turn_do'" :title="item.name" @click="doApproveSelectPersonal('turnTask', false)">
-            {{item.name}}
-          </Button>
-          <!--          <Button type="primary" v-else-if="item.sn === 'after_addsign'" :title="item.name" @click="doApproveSelectPersonal('afterAddSign', true)">
-                      {{item.name}}
-                    </Button>-->
-          <Button type="primary" v-if="item.sn === 'addsign'" :title="item.name" @click="doApproveSelectPersonal('addsign', true)">
-            {{item.name}}
-          </Button>
-          <Button danger v-if="item.sn === 'reject'" :title="item.name" @click="doBackToStep" >
-            {{item.name}}
-          </Button>
-          <!-- 拒绝操作 -->
-          <Button type="error" v-if="item.sn === 'refuse'" :title="item.name" @click="doRefuseTask" >
-            {{item.name}}
-          </Button>
-        </template>
-      </Space>
+            <PaperClipOutlined />
+          </TypographyLink>
+        </span>-->
+      </div>
+      <Spin :spinning="authPoints.length <= 0">
+        <Space class="approve-ctrl-btns" >
+          <!-- "[\"addsign\", \"claim\", \"turn_do\", \"refuse\", \"approve\", \"turn_read\", \"reject\", \"revoke\"]" -->
+          <!-- ["approve", "claim", "turn_do", "addsign", "reject", "revoke", "turn_read", "delegate" ] -->
+          <template v-for="item in authPoints">
+            <Button type="primary" v-if="item.sn === 'approve'" :title="item.name" @click="doApprove" >
+              {{item.name}}
+            </Button>
+            <Button type="primary" v-if="item.sn === 'claim'" :title="item.name" @click="doClaimTask" >
+              {{item.name}}
+            </Button>
+            <Button type="primary" v-if="item.sn === 'hold_task'" :title="item.name" @click="doHoldTask">
+              {{item.name}}
+            </Button>
+            <Button type="primary" v-if="item.sn === 'un_claim'" :title="item.name" @click="doUnClaimTask" >
+              {{item.name}}
+            </Button>
+            <Button type="error" v-if="item.sn === 'stop'" :title="item.name" @click="doStop" >
+              {{item.name}}
+            </Button>
+            <Button type="primary" v-if="item.sn === 'delegate'" :title="item.name" @click="doApproveSelectPersonal('delegateTask', false)">
+              {{item.name}}
+            </Button>
+            <Button type="primary" v-if="item.sn === 'turn_do'" :title="item.name" @click="doApproveSelectPersonal('turnTask', false)">
+              {{item.name}}
+            </Button>
+            <!--          <Button type="primary" v-else-if="item.sn === 'after_addsign'" :title="item.name" @click="doApproveSelectPersonal('afterAddSign', true)">
+                        {{item.name}}
+                      </Button>-->
+            <Button type="primary" v-if="item.sn === 'addsign'" :title="item.name" @click="doApproveSelectPersonal('addsign', true)">
+              {{item.name}}
+            </Button>
+            <Button danger v-if="item.sn === 'reject'" :title="item.name" @click="doBackToStep" >
+              {{item.name}}
+            </Button>
+            <!-- 拒绝操作 -->
+            <Button type="error" v-if="item.sn === 'refuse'" :title="item.name" @click="doRefuseTask" >
+              {{item.name}}
+            </Button>
+          </template>
+        </Space>
       </Spin>
     </div>
     <div v-else class="w-full"> 无操作权限 </div>
@@ -77,13 +124,17 @@
 </template>
 <script lang="ts" setup>
   import { ref, defineProps, defineEmits, nextTick, defineExpose } from 'vue';
-  import { Space, Spin, Button, message } from 'ant-design-vue';
+  import { Space, Spin, Button, message, Upload, TypographyLink } from 'ant-design-vue';
   // import { useModal } from '@/components/Modal';
+  import {EditOutlined, PaperClipOutlined, CloseOutlined, LoadingOutlined, FileOutlined} from '@ant-design/icons-vue'
   import ApproveSelectorPersonalModal from './ApproveSelectorPersonalModal.vue';
   import ApproveCustomApproveSettingModal from './ApproveCustomApproveSettingModal.vue';
   import ApproveBackToStepModal from './ApproveBackToStepModal.vue';
   // import { BasicForm, useForm } from '@/components/Form/index';
   import {useVbenForm} from '#/adapter/form';
+  import {formatFileSize} from '#/utils/index'
+  import { EllipsisText } from '@vben/common-ui';
+  import type { UploadChangeParam, UploadProps } from 'ant-design-vue';
 
   import {
     complete,
@@ -96,7 +147,7 @@
   // import { useMessage } from '@/hooks/web/useMessage';
   // import { ResultEnum } from '@/enums/httpEnum';
   import {approveMsgSchemas} from "#/views/process/components/action.data";
-
+  import Esign from "#/views/components/common/widgets/esign/index.vue";
   const approveSelectorPersonalModalRef = ref(),
       approveCustomApproveSettingRef = ref(),
       approveBackToStepModalRef = ref();
@@ -113,6 +164,42 @@
       default: {},
     },
   })
+
+  const handleChange = (info: UploadChangeParam) => {
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  };
+
+  const fileList = ref<UploadProps['fileList']>([
+    {
+      uid: '-1',
+      name: 'xxx.png',
+      status: 'done',
+      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+      thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+    {
+      uid: '-2',
+      name: 'yyy.png',
+      status: 'done',
+      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+      thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+    {
+      uid: '3',
+      name: 'zzz.png',
+      status: 'error',
+      response: 'Server Error 500', // custom error message to show
+      url: 'http://www.baidu.com/zzz.png',
+    },
+  ]);
+  const headers = { authorization: 'authorization-text' };
 
   // 人员选择弹窗
   /*const [
@@ -131,6 +218,7 @@
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
+      formItemClass: 'pb-2 [&_.text-destructive]:left-3 [&_.text-destructive]:bottom-[20px]',
       hideLabel: true,
       hideRequiredMark: true,
       componentProps: {
@@ -202,7 +290,13 @@
       });*/
     } else {
       const approveComplete = async () => {
-        const {success, msg, data} = await complete({ taskId: taskId, processInstanceId: procInstId, message: approveMsg });
+        // 组装审批的数据
+        const params = {
+          taskId: taskId,
+          processInstanceId: procInstId,
+          message: approveMsg
+        };
+        const {success, msg, data} = await complete(params);
 
         if (success) {
             message.success(msg);
@@ -355,3 +449,28 @@
 
   defineExpose({resetApproveMsg});
 </script>
+<style lang="scss">
+.approve-files{
+  .ant-upload-select{
+    position: absolute;
+    right: 12px;
+    bottom: 48px;
+    z-index: 10;
+
+  }
+  .ant-upload-list{
+    &::before{
+      display: none;
+    }
+    display: flex;
+    flex-wrap: wrap;
+    .ant-upload-list-item-container{
+      border-radius: 4px;
+      padding: 4px;
+      height: auto!important;
+      //min-height: 40px!important;
+    }
+  }
+
+}
+</style>

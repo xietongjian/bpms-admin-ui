@@ -4,7 +4,12 @@
       <ListItem v-if="item.type !== 'SPJS'">
         <ListItemMeta>
           <template #description>
-            <div v-if="item.type !== 'SPJS'" v-html="getFormatCode(item.message || '无')"></div>
+            <div class="flex">
+              <div class="flex-1" v-if="item.type !== 'SPJS'" v-html="getFormatCode(item.message || '无')"></div>
+              <div v-if="item.signImg" class="w-[120px] h-[40px] object-contain">
+                <img :src="item.signImg" class="w-[120px] h-[40px] object-contain">
+              </div>
+            </div>
           </template>
           <template #title>
             <Row type="flex">
@@ -15,7 +20,7 @@
                     <span v-if="item.orgLevel" class="font-size-[10px] font-thin ml-1">
                       ({{ item.orgLevel }})
                     </span>
-                    <span style="font-weight: normal; color: gray" v-if="item.activityName">
+                    <span class="font-normal text-gray-500" v-if="item.activityName">
                       （{{ item.activityName }}）
                     </span>
                   </span>

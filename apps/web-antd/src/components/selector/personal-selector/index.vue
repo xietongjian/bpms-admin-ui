@@ -1,7 +1,9 @@
 <template>
   <div>
+    ={{currentSelect}}=
     <Select
-      :value="selectorListRef"
+      v-bind="$attrs"
+      :value="currentSelect"
       style="width: 100%"
       :open="false"
       :mode="selectMode"
@@ -13,6 +15,7 @@
       :showArrow="true"
     >
       <template #tagRender="{ value: val, label, closable, onClose, option }">
+        aaa
         <EmpInfo :no="val" :name="label">
           <Tag
             class="personal-multiple-tag"
@@ -46,7 +49,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref, watch, unref, onMounted, defineProps } from 'vue';
+  import { ref, watch, unref, onMounted, defineProps, watchEffect, defineExpose } from 'vue';
   import PersonalSelectorModal from './PersonalSelectorModal.vue';
   // import Icon from '#/components/Icon/Icon.vue';
   import { Tooltip, Select, Tag } from 'ant-design-vue';
@@ -59,13 +62,17 @@
     CloseOutlined,
   } from '@ant-design/icons-vue';
   import { EmpInfo } from '#/views/components/EmpInfo';
+  const modelValue = defineModel({ default: [], type: Array });
+  const currentSelect = ref<any[]>([]);
+
+  const emit = defineEmits<{
+      change: [string];
+  }>();
 
   const personalSelectorModalRef = ref();
   const props = defineProps({
 
   })
-  const emit = defineEmits([]);
-
   // const attrs = useAttrs();
 /*  const [
     registerPersonalModal,
@@ -75,6 +82,10 @@
   const selectorValue = ref<any[]>([]);
   const selectMode = ref<string>('');
 
+  watchEffect(() => {
+    currentSelect.value = modelValue.value;
+  });
+
   onMounted(() => {
     // if (props.multiple) {
     //   selectMode.value = 'multiple';
@@ -82,6 +93,12 @@
     //   selectMode.value = '';
     // }
   });
+  watch(
+      () => currentSelect.value,
+      (v) => {
+          emit('change', v);
+      },
+  );
 
   watch(
       () => props.value,
@@ -105,7 +122,9 @@
       item.title = item.name;
     });
     selectorListRef.value = items || [];
-    emit('change', selectorListRef.value);
+    // emit('change', selectorListRef.value);
+    currentSelect.value = items;
+    modelValue.value = items;
   }
 
   function clearSelectedList(e) {
@@ -121,7 +140,7 @@
           return { code: item.key, name: item.label, ...item };
         });
     selectorListRef.value = result;
-    emit('change', result);
+    // emit('change', result);
   }
 
   // 选择弹窗

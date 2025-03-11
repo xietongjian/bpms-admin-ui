@@ -76,6 +76,7 @@
     "highlight.js": "^11.11.1",
     "vue-codemirror": "^6.1.1",
     "vue-json-pretty": "^2.4.0",
-    "sortablejs": "^1.15.2"
+    "sortablejs": "^1.15.2",
+    "vue-esign": "^1.1.4"
   }
 }

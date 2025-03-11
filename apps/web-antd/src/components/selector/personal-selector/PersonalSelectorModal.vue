@@ -1,18 +1,18 @@
 <template>
   <BasicModal class="w-[1000px]">
     <div class="selected-items mb-2 min-h-8">
-      <!--          <template
-                        v-if="selectedList && selectedList.length > 0"
-                        v-for="(item, index) in selectedList"
-                        :key="item.code"
-                >
-                    <Tag color="processing" closable @close="removeSelectedItem(item.code)">
-                        {{ item.name }}
-                    </Tag>
-                </template>
-                <template v-else>
-                    <div class="ant-select-selection-placeholder">请选择人员</div>
-                </template>-->
+      <template
+        v-if="selectedList && selectedList.length > 0"
+        v-for="(item, index) in selectedList"
+        :key="item.code"
+      >
+        <Tag color="processing" closable @close="removeSelectedItem(item.code)">
+          {{ item.name }}
+        </Tag>
+      </template>
+      <template v-else>
+        <div class="ant-select-selection-placeholder">请选择人员</div>
+      </template>
     </div>
     <div class="flex-1 overflow-hidden h-full p-0" style="border: 1px solid red;">
       <ColPage
@@ -120,8 +120,8 @@ const [BasicModal, modalApi] = useVbenModal({
     if (isOpen) {
       const values = modalApi.getData<Record<string, any>>();
       if (values) {
-        debugger;
         await fetchTreeData(values);
+        fetchPageList({keyword: ''});
         // await initData(values);
         // baseFormApi.setValues(values);
         modalApi.setState({loading: false, confirmLoading: false});
@@ -130,7 +130,7 @@ const [BasicModal, modalApi] = useVbenModal({
   },
   onConfirm() {
     // await baseFormApi.submitForm();
-    // handleSubmit();
+    handleSubmit();
   },
 });
 

@@ -2,9 +2,9 @@
   <div>
     <Affix :offset-bottom="bottom" class="approve-options-panel" >
       <div class="approve-options pt-2">
-        <BasicForm @register="registerApproveMsgForm" />
+        <BasicForm />
         <Spin :spinning="authPoints.length <= 0">
-          <Space class="mt-2" >
+          <Space class="mt-1" >
             <template v-for="item in authPoints">
               <Button type="primary" v-if="item.sn === 'approve'" :title="item.name" @click="doApprove" >
                 {{item.name}}
@@ -97,8 +97,9 @@
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
+      formItemClass: '!pb-1 xxxxxxxxxxxxxx',
       componentProps: {
-        // class: 'w-full',
+        class: 'w-full',
       },
     },
     showDefaultActions: false,
