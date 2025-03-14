@@ -18,7 +18,7 @@
         <Upload
           v-model:file-list="fileList"
           name="file"
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          action="/flow/api/public/uploadFile"
           :headers="headers"
           @change="handleChange"
         >
@@ -125,12 +125,10 @@
 <script lang="ts" setup>
   import { ref, defineProps, defineEmits, nextTick, defineExpose } from 'vue';
   import { Space, Spin, Button, message, Upload, TypographyLink } from 'ant-design-vue';
-  // import { useModal } from '@/components/Modal';
   import {EditOutlined, PaperClipOutlined, CloseOutlined, LoadingOutlined, FileOutlined} from '@ant-design/icons-vue'
   import ApproveSelectorPersonalModal from './ApproveSelectorPersonalModal.vue';
   import ApproveCustomApproveSettingModal from './ApproveCustomApproveSettingModal.vue';
   import ApproveBackToStepModal from './ApproveBackToStepModal.vue';
-  // import { BasicForm, useForm } from '@/components/Form/index';
   import {useVbenForm} from '#/adapter/form';
   import {formatFileSize} from '#/utils/index'
   import { EllipsisText } from '@vben/common-ui';
@@ -144,10 +142,9 @@
     holdTask,
     getCustomApproveSettings,
   } from '#/api/flowoperation/processTask';
-  // import { useMessage } from '@/hooks/web/useMessage';
-  // import { ResultEnum } from '@/enums/httpEnum';
   import {approveMsgSchemas} from "#/views/process/components/action.data";
   import Esign from "#/views/components/common/widgets/esign/index.vue";
+
   const approveSelectorPersonalModalRef = ref(),
       approveCustomApproveSettingRef = ref(),
       approveBackToStepModalRef = ref();
@@ -255,7 +252,7 @@
     if(!valid){
       return;
     }
-    const { approveMsg } = await formApi.getValues();
+    const { approveMsg, signImg } = await formApi.getValues();
 
     emit('changeLoading', true);
     approveActionLoading.value = true;
@@ -448,6 +445,7 @@
   }
 
   defineExpose({resetApproveMsg});
+
 </script>
 <style lang="scss">
 .approve-files{

@@ -1,6 +1,9 @@
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {z} from "@vben/common-ui";
+import {h} from "vue";
+import {Input} from "ant-design-vue";
+import Esign from "#/views/components/common/widgets/esign/index.vue";
 
 export const backToStepTableColumns: VxeGridProps['columns'] = [
   {
@@ -194,6 +197,9 @@ export const approveBackToStepFormSchema: FormSchema[] = [
   },
 ];
 
+/**
+ * 审批意见
+ */
 export const approveMsgSchemas: FormSchema[] = [
   {
     fieldName: 'approveMsg',
@@ -214,5 +220,11 @@ export const approveMsgSchemas: FormSchema[] = [
         .min(1, "审批意见不能为空！")
         .max(4000, "字符长度不能大于4000！"),
     labelWidth: 0,
+  },
+  {
+    fieldName: 'signImg',
+    modelPropName: 'value',
+    label: '',
+    component: h(Esign),
   },
 ];
