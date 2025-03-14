@@ -1,6 +1,6 @@
 <template>
-  <BasicModal title="编辑签名" class="w-[800px] min-h-[400px]" >
-    <div class="h-full flex flex-row border border-3 mb-2 border-dashed">
+  <BasicModal title="编辑签名" content-class="flex flex-col h-full p-0" class="w-[800px] h-[400px] min-h-[300px]" >
+    <div class="flex-1 border border-3 mb-2 border-dashed">
       <VueEsign
         class="h-full flex-1"
         ref="vueSignRef"
@@ -11,7 +11,7 @@
         :lineColor="'#000000'"
         v-model:bgColor="bgColor" />
     </div>
-    <div class="text-center">
+    <div class="h-20 text-center leading-20">
       <Button danger @click="handleReset">清空画板</Button>
     </div>
   </BasicModal>

@@ -1,9 +1,9 @@
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {z} from "@vben/common-ui";
-import {h} from "vue";
-import {Input} from "ant-design-vue";
 import Esign from "#/views/components/common/widgets/esign/index.vue";
+import Upload from "#/views/components/common/widgets/upload/index.vue";
+import { h, markRaw } from 'vue';
 
 export const backToStepTableColumns: VxeGridProps['columns'] = [
   {
@@ -202,6 +202,25 @@ export const approveBackToStepFormSchema: FormSchema[] = [
  */
 export const approveMsgSchemas: FormSchema[] = [
   {
+    fieldName: 'attachmentList',
+    modelPropName: 'value',
+    defaultValue: [],
+    disabledOnChangeListener: false,
+    component: markRaw(Upload),
+    wrapperClass: 'approve-attachment-wrapper',
+    formItemClass: 'approve-attachment-form-item'
+  },
+  {
+    fieldName: 'signImg',
+    modelPropName: 'value',
+    label: '',
+    defaultValue: '',
+    disabledOnChangeListener: false,
+    component: markRaw(Esign),
+    wrapperClass: 'approve-sign-wrapper',
+    formItemClass: 'approve-sign-form-item'
+  },
+  {
     fieldName: 'approveMsg',
     label: '',
     component: 'Textarea',
@@ -221,10 +240,5 @@ export const approveMsgSchemas: FormSchema[] = [
         .max(4000, "字符长度不能大于4000！"),
     labelWidth: 0,
   },
-  {
-    fieldName: 'signImg',
-    modelPropName: 'value',
-    label: '',
-    component: h(Esign),
-  },
+
 ];

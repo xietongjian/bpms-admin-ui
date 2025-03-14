@@ -3,7 +3,7 @@
     v-bind="$attrs"
     @register="registerNoticePreviewModal"
   >
-    <ScrollContainer class="h-full">
+    <div class="h-full">
       <div class="notice-wrapper">
         <h1 class="notice-title">{{ noticeInfo?.title || '无标题' }}</h1>
         <div>
@@ -46,19 +46,20 @@
           </div>
         </div>
       </div>
-    </ScrollContainer>
+    </div>
   </BasicModal>
 </template>
 <script lang="ts" setup>
   import { ref, unref } from 'vue';
-  import { getNoticeById } from '@/api/portal/cms/notice';
-  import { getNoticeTitleById } from '@/api/portal/cms/noticeTitle';
-  import { getNoticeSubjectById } from '@/api/portal/cms/noticeSubject';
-  import { formatToDate } from '@/utils/dateUtil';
+  import { getNoticeById } from '#/api/portal/cms/notice';
+  import { getNoticeTitleById } from '#/api/portal/cms/noticeTitle';
+  import { getNoticeSubjectById } from '#/api/portal/cms/noticeSubject';
+  import { formatToDate } from '#/utils/dateUtil';
   import { Row, Col } from 'ant-design-vue';
   import { BasicModal, useModalInner } from '@/components/Modal';
-  import { useUserStore } from '@/store/modules/user';
-  import {ScrollContainer} from "@/components/Container";
+  import { useUserStore } from '@vben/stores';
+
+  // import {ScrollContainer} from "@/components/Container";
 
   const userStore = useUserStore();
 

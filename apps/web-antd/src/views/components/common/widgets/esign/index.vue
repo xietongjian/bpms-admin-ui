@@ -1,26 +1,26 @@
 <template>
-  <div>
-    <Input :value="currentSignImg" v-bind="$attrs" type="hidden"/>
+  <div class="">
+<!--    <Input :value="currentSignImg" v-bind="$attrs" type="hidden"/>-->
     <div class="flex items-center h-8">
-      <span v-if="!!signImg" >
-        <img :src="signImg" alt="签名图片" class="w-25 h-8 border-1"/>
+      <span v-if="!!signImg" class="w-25 h-8 border border-dotted border-gray-500 mr-2" @click="editSign" >
+        <img :src="signImg" alt="签名图片" class="w-full h-full"/>
       </span>
-      <TypographyLink @click="editSign">
-        <EditOutlined />
-      </TypographyLink>
+      <Tooltip title="编辑签名">
+        <TypographyLink @click="editSign">
+          <EditOutlined />
+        </TypographyLink>
+      </Tooltip>
     </div>
     <SignModal ref="signModalRef" @success="signSuccess" />
   </div>
 </template>
 <script lang="ts" setup>
-import {ref,watch, watchEffect, defineProps, defineEmits, nextTick, defineExpose} from 'vue';
-import {Input, Popover, Spin, Button, message, TypographyLink} from 'ant-design-vue';
-import {EditOutlined, PaperClipOutlined} from '@ant-design/icons-vue'
+import {ref,watch, watchEffect, defineEmits } from 'vue';
+import {Input, Tooltip, TypographyLink} from 'ant-design-vue';
+import {EditOutlined} from '@ant-design/icons-vue'
 import SignModal from './SignModal.vue';
+const emit = defineEmits(['blur', 'change']);
 
-const emit = defineEmits<{
-  change: [string];
-}>();
 const signImg = ref('');
 const currentSignImg = ref('');
 
@@ -46,3 +46,11 @@ watch(
   },
 );
 </script>
+<style lang="scss" >
+.approve-sign-form-item {
+  position: absolute;
+  bottom: 35px;
+  right: 50px;
+  z-index: 9;
+}
+</style>

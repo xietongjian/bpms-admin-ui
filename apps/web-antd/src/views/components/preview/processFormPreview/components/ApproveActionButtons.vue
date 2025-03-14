@@ -14,55 +14,7 @@
     }-->
   <div class="ml-2 mt-2" v-loading="approveActionLoading">
     <div v-if="authPoints && authPoints.length > 0" class="relative">
-      <div class="approve-files [&_.ant-upload-list]:gap-2 [&_.ant-upload-list-item-container]:bg-gray-100 pb-2">
-        <Upload
-          v-model:file-list="fileList"
-          name="file"
-          action="/flow/api/public/uploadFile"
-          :headers="headers"
-          @change="handleChange"
-        >
-          <TypographyLink>
-            <PaperClipOutlined />
-          </TypographyLink>
-          <template #itemRender="{ file, actions }">
-            <div class="relative flex flex-row items-center w-[250px] group">
-              <div class="w-10 min-w-10 h-10 border text-center leading-10 mr-2 text-[32px]">
-                <LoadingOutlined v-if="file.status === 'uploading'" />
-                <FileOutlined v-else />
-              </div>
-              <div class="w-full overflow-hidden flex-wrap flex-1 flex flex-col">
-                <div class="w-full " :style="file.status === 'error' ? 'color: red' : ''">
-<!--                  {{ file.name }}-->
-                  <EllipsisText :line="1">{{ file.name }}</EllipsisText>
-                </div>
-                <div class="text-[12px]">
-                  <span v-if="file.status === 'uploading'" class="color-red" >上传中...&nbsp;{{Math.floor(file.percent)}}%</span>
-                  <span v-else >{{file.name.split('.').pop().toUpperCase()}}</span>
-                  <span class="ml-2">{{formatFileSize(file.size)}}</span>
-                </div>
-                <div class="absolute hidden -right-1 -top-2 group-hover:block">
-                  <a href="javascript:;" @click="actions.remove">
-                    <CloseOutlined />
-                  </a>
-                </div>
-              </div>
-            </div>
-          </template>
-        </Upload>
-      </div>
       <BasicForm />
-      <div class="absolute right-10 bottom-[43px] flex items-center gap-2">
-        <div class="flex items-center">
-          <Esign />
-        </div>
-<!--        <span class="cursor-pointer">
-          <TypographyLink @click="">
-
-            <PaperClipOutlined />
-          </TypographyLink>
-        </span>-->
-      </div>
       <Spin :spinning="authPoints.length <= 0">
         <Space class="approve-ctrl-btns" >
           <!-- "[\"addsign\", \"claim\", \"turn_do\", \"refuse\", \"approve\", \"turn_read\", \"reject\", \"revoke\"]" -->
@@ -143,7 +95,6 @@
     getCustomApproveSettings,
   } from '#/api/flowoperation/processTask';
   import {approveMsgSchemas} from "#/views/process/components/action.data";
-  import Esign from "#/views/components/common/widgets/esign/index.vue";
 
   const approveSelectorPersonalModalRef = ref(),
       approveCustomApproveSettingRef = ref(),
@@ -161,42 +112,6 @@
       default: {},
     },
   })
-
-  const handleChange = (info: UploadChangeParam) => {
-    if (info.file.status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-    if (info.file.status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  };
-
-  const fileList = ref<UploadProps['fileList']>([
-    {
-      uid: '-1',
-      name: 'xxx.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-2',
-      name: 'yyy.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '3',
-      name: 'zzz.png',
-      status: 'error',
-      response: 'Server Error 500', // custom error message to show
-      url: 'http://www.baidu.com/zzz.png',
-    },
-  ]);
-  const headers = { authorization: 'authorization-text' };
 
   // 人员选择弹窗
   /*const [
@@ -247,12 +162,27 @@
   // 审批操作处理
   async function doApprove() {
     const { modelKey, bizId, taskId, procInstId } = props.params;
-    debugger;
     const {valid} = await formApi.validate();
     if(!valid){
       return;
     }
-    const { approveMsg, signImg } = await formApi.getValues();
+    const { approveMsg, signImg, attachmentList } = await formApi.getValues();
+    const commentAttachmentList = attachmentList.filter(item => item.status === "done" && !!item.response?.data).map(item => {
+      return {
+        fileName: item.name,
+        fileSize: item.size,
+        filePath: item.response.data,
+        fileType: item.name.split('.').pop().toUpperCase()
+      }
+    });
+
+    const approveParams = {
+      taskId: taskId,
+      processInstanceId: procInstId,
+      message: approveMsg,
+      signatureImg: signImg,
+      commentAttachmentList
+    };
 
     emit('changeLoading', true);
     approveActionLoading.value = true;
@@ -288,12 +218,7 @@
     } else {
       const approveComplete = async () => {
         // 组装审批的数据
-        const params = {
-          taskId: taskId,
-          processInstanceId: procInstId,
-          message: approveMsg
-        };
-        const {success, msg, data} = await complete(params);
+        const {success, msg, data} = await complete(approveParams);
 
         if (success) {
             message.success(msg);
@@ -318,6 +243,7 @@
       });
     }
   }
+
   function handleSaveForm(callback){
       emit('approveSaveForm', (res)=>{
         approveActionLoading.value = false;
