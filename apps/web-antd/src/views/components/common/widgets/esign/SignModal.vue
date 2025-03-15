@@ -1,8 +1,9 @@
 <template>
-  <BasicModal title="编辑签名" content-class="flex flex-col h-full p-0" class="w-[800px] h-[400px] min-h-[300px]" >
+  <BasicModal title="编辑签名" content-class="flex flex-col h-full p-0" class="w-[800px]" >
     <div class="flex-1 border border-3 mb-2 border-dashed">
       <VueEsign
         class="h-full flex-1"
+        :class="{'invert': isDark}"
         ref="vueSignRef"
         :width="800"
         height="300"
@@ -11,7 +12,7 @@
         :lineColor="'#000000'"
         v-model:bgColor="bgColor" />
     </div>
-    <div class="h-20 text-center leading-20">
+    <div class="h-14 text-center leading-10">
       <Button danger @click="handleReset">清空画板</Button>
     </div>
   </BasicModal>
@@ -21,6 +22,9 @@
   import {useVbenModal} from '@vben/common-ui';
   import VueEsign from 'vue-esign'
   import {Button} from 'ant-design-vue';
+  import { usePreferences } from '@vben/preferences';
+
+  const { isDark } = usePreferences();
 
   const emit = defineEmits(['success']);
 

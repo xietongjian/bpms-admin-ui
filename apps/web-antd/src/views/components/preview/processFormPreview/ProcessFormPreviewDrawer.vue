@@ -118,7 +118,7 @@
 
       <div class="w-[400px]" v-if="procInstInfo?.showOperation && isFullScreen">
         <ApproveActionButtons
-          ref="approveActionButtonsRef"
+          ref="rightApproveActionButtonsRef"
           v-if="procInstInfo?.showOperation"
           @change-loading="changeModalLoading"
           :authPoints="flowBaseInfo?.authPoints"
@@ -136,7 +136,7 @@
     <template #footer v-if="procInstInfo?.showOperation && !isFullScreen">
       <div class="flex-1 pb-2 pr-4">
         <ApproveActionButtons
-          ref="approveActionButtonsRef"
+          ref="footerApproveActionButtonsRef"
           v-if="procInstInfo?.showOperation"
           @change-loading="changeModalLoading"
           :authPoints="flowBaseInfo?.authPoints"
@@ -226,7 +226,8 @@
   // const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
   const defaultZoom = ref<number>(1);
   const isFitView = ref<boolean>(false);
-  const approveActionButtonsRef = ref();
+  const rightApproveActionButtonsRef = ref();
+  const footerApproveActionButtonsRef = ref();
   const activeViewKey = ref('viewForm');
   const historyList = ref([]);
   const approvalHistoryLoading = ref(false);
@@ -303,11 +304,25 @@
     },
   });
 
-  function handleFullScreen() {
+  async function handleFullScreen() {
     drawerApi.setState({
       class: unref(isFullScreen) ? 'w-[1000px]': 'w-full',
     });
-    isFullScreen.value = !isFullScreen.value;
+
+    if(isFullScreen.value){
+      const values = await rightApproveActionButtonsRef.value.getFormValues();
+      isFullScreen.value = !isFullScreen.value;
+      setTimeout(() => {
+        footerApproveActionButtonsRef.value.setFormValues(values);
+      }, 10);
+    } else {
+      const values = await footerApproveActionButtonsRef.value.getFormValues();
+      isFullScreen.value = !isFullScreen.value;
+      debugger
+      setTimeout(() => {
+        rightApproveActionButtonsRef.value.setFormValues(values);
+      }, 10);
+    }
   }
 
   async function initData(){

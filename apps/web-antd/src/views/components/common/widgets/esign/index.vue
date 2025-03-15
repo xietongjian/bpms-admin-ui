@@ -1,9 +1,8 @@
 <template>
   <div class="">
-<!--    <Input :value="currentSignImg" v-bind="$attrs" type="hidden"/>-->
     <div class="flex items-center h-8">
-      <span v-if="!!signImg" class="w-25 h-8 border border-dotted border-gray-500 mr-2" @click="editSign" >
-        <img :src="signImg" alt="签名图片" class="w-full h-full"/>
+      <span v-if="!!currentSignImg" class="w-25 h-8 border border-dotted border-gray-500 mr-2" @click="editSign" >
+        <img :src="currentSignImg" alt="签名图片" class="w-full h-full" :class="{'invert': isDark}"/>
       </span>
       <Tooltip title="编辑签名">
         <TypographyLink @click="editSign">
@@ -15,13 +14,20 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {ref,watch, watchEffect, defineEmits } from 'vue';
-import {Input, Tooltip, TypographyLink} from 'ant-design-vue';
+import {ref,watch, watchEffect, defineModel, defineEmits } from 'vue';
+import {Tooltip, TypographyLink} from 'ant-design-vue';
 import {EditOutlined} from '@ant-design/icons-vue'
 import SignModal from './SignModal.vue';
-const emit = defineEmits(['blur', 'change']);
+import { usePreferences } from '@vben/preferences';
 
-const signImg = ref('');
+const emit = defineEmits<{
+  change: [string];
+}>();
+
+const { isDark } = usePreferences();
+
+const modalValue = defineModel({ default: '', type: String });
+
 const currentSignImg = ref('');
 
 const signModalRef = ref();
@@ -32,11 +38,11 @@ function editSign() {
 }
 
 function signSuccess(imgBase64) {
-  signImg.value = imgBase64;
+  currentSignImg.value = imgBase64;
 }
 
 watchEffect(() => {
-  currentSignImg.value = signImg.value;
+  currentSignImg.value = modalValue.value;
 });
 
 watch(
@@ -45,6 +51,7 @@ watch(
     emit('change', v);
   },
 );
+
 </script>
 <style lang="scss" >
 .approve-sign-form-item {

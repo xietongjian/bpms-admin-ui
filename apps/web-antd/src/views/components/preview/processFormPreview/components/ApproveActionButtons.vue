@@ -370,7 +370,7 @@
     });
   }
 
-  defineExpose({resetApproveMsg});
+  defineExpose({resetApproveMsg, getFormValues: formApi.getValues, setFormValues: formApi.setValues});
 
 </script>
 <style lang="scss">

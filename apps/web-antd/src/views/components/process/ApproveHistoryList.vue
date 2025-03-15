@@ -15,8 +15,8 @@
                   />
                 </div>
               </div>
-              <div v-if="item.signatureImg" class="w-[120px] h-[40px] object-contain">
-                <img :title="item.personalName" v-if="item.signatureImg" :src="item.signatureImg" class="w-20 h-8" />
+              <div v-if="item.signatureImg" class="w-25 h-8 object-contain">
+                <img :title="item.personalName" v-if="item.signatureImg" :src="item.signatureImg" class="h-8" :class="{'invert': isDark}" />
               </div>
             </div>
           </template>
@@ -113,6 +113,7 @@
   import {EmpInfo} from '#/views/components/EmpInfo';
   import { getFormatCode } from '#/utils';
   import ProcessFileItem from '#/views/components/common/widgets/processFileItem/index.vue';
+  import { usePreferences } from '@vben/preferences';
 
   const props = defineProps({
     historyList: {
@@ -124,6 +125,7 @@
       default: false,
     },
   });
+  const { isDark } = usePreferences();
 
   const ListItem = List.Item;
   const ListItemMeta = List.Item.Meta;
