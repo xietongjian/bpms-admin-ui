@@ -39,8 +39,8 @@
 <script lang="ts" setup>
   import { ref, onMounted } from 'vue';
   import { Card, List, TypographyLink } from 'ant-design-vue';
-  import { formatToDateTime } from '@/utils/dateUtil';
-  import { getNoticeListByPage } from '@/api/portal/cms/notice';
+  import { formatToDateTime } from '#/utils/dateUtil';
+  import { getNoticeListByPage } from '#/api/portal/cms/notice';
   import NoticePreviewModal from "./NoticePreviewModal.vue";
   import { useModal } from '@/components/Modal';
   import { useGo } from '@/hooks/web/usePage';

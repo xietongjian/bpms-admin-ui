@@ -5,9 +5,18 @@
         <ListItemMeta>
           <template #description>
             <div class="flex">
-              <div class="flex-1" v-if="item.type !== 'SPJS'" v-html="getFormatCode(item.message || '无')"></div>
-              <div v-if="item.signImg" class="w-[120px] h-[40px] object-contain">
-                <img :src="item.signImg" class="w-[120px] h-[40px] object-contain">
+              <div class="flex-1">
+                <div v-if="item.type !== 'SPJS'" v-html="getFormatCode(item.message || '无')"></div>
+                <div v-if="item.commentAttachmentList" class="flex flex-row gap-2 mt-2">
+                  <ProcessFileItem v-for="file in item.commentAttachmentList"
+                      :file-name="file.fileName"
+                      :file-path="file.filePath"
+                      :file-size="file.fileSize"
+                  />
+                </div>
+              </div>
+              <div v-if="item.signatureImg" class="w-[120px] h-[40px] object-contain">
+                <img :title="item.personalName" v-if="item.signatureImg" :src="item.signatureImg" class="w-20 h-8" />
               </div>
             </div>
           </template>
@@ -103,6 +112,7 @@
   import { List, Avatar, Tag, Space, Row, Col } from 'ant-design-vue';
   import {EmpInfo} from '#/views/components/EmpInfo';
   import { getFormatCode } from '#/utils';
+  import ProcessFileItem from '#/views/components/common/widgets/processFileItem/index.vue';
 
   const props = defineProps({
     historyList: {
