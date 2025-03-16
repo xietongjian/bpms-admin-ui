@@ -174,31 +174,19 @@
     getProdModelInfoByModelKeyAndProcInstId,
     getCurrTaskApplyersByProcessInstanceId, saveOrUpdateReadInfo,
   } from '#/api/flowoperation/processTask';
-  import ApproveHistoryList from '#/views/components/process/ApproveHistoryList.vue';
   import CurrentApprover from '#/views/components/process/CurrentApprover.vue';
   import ProcessHeaderInfo from './components/ProcessHeaderInfo.vue';
   import { getBizDataInfoByBusinessKeyAndModelKey } from '#/api/form/bizForm';
-  import { getStartHeadInfoVoByProcessInstanceId } from '#/api/flowoperation/processInst';
-  // import { formBaseDataSchema } from './processForm.data';
   import printJS from 'print-js';
   import {
-    CompressOutlined,
     DownOutlined,
     ArrowsAltOutlined,
     ShrinkOutlined,
-    ExpandOutlined,
-    MinusOutlined,
-    PlusOutlined,
   } from '@ant-design/icons-vue';
-  // import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
-  // import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
   import { updateCustomFormData } from '#/api/process/customForm';
-  // import {useUserStore} from "@/store/modules/user";
-  // import {useRequest} from "@vben/hooks";
-  // import { useModal } from '@/components/Modal';
-  import {checkRevokeProcess, revokeProcess, reminderTask} from "#/api/process/process";
+
+  import {checkRevokeProcess, revokeProcess} from "#/api/process/process";
   import ApproveSelectorPersonalModal from '#/views/components/preview/processFormPreview/components/ApproveSelectorPersonalModal.vue';
-  import {EmpInfo} from '#/views/components/EmpInfo';
   import { useUserStore } from '@vben/stores';
   import BpmnPreviewContainer from "#/views/components/preview/bpmnPreview/bpmnPreviewContainer.vue";
   import ProcessFormInfo from "#/views/components/preview/processFormPreview/components/ProcessFormInfo.vue";
@@ -221,17 +209,11 @@
   const emit = defineEmits(['reload', 'visible-change']);
 
   const TabPane = Tabs.TabPane;
-  const bpmnViewer = shallowRef();
-
-  // const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
-  const defaultZoom = ref<number>(1);
-  const isFitView = ref<boolean>(false);
   const rightApproveActionButtonsRef = ref();
   const footerApproveActionButtonsRef = ref();
   const activeViewKey = ref('viewForm');
   const historyList = ref([]);
   const approvalHistoryLoading = ref(false);
-  const baseFormInfo = ref({});
   const flowBaseInfo = ref({});
   const formType = ref(0);
   const params = ref({});
@@ -265,13 +247,6 @@
     taskId: '',
     procInstId: '',
   });
-
-  // const [registerDescription] = useDescription({
-  //   data: baseFormInfo,
-  //   bordered: false,
-  //   schema: formBaseDataSchema,
-  // });
-
 
   const [BasicDrawer, drawerApi] = useVbenDrawer({
     class: 'w-[1000px]',
@@ -319,7 +294,6 @@
       } else {
         const values = await footerApproveActionButtonsRef.value.getFormValues();
         isFullScreen.value = !isFullScreen.value;
-        debugger
         setTimeout(() => {
           rightApproveActionButtonsRef.value.setFormValues(values);
         }, 10);
