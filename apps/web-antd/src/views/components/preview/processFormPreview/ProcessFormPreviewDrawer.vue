@@ -288,7 +288,7 @@
       if (isOpen) {
         const values = drawerApi.getData<Record<string, any>>();
         procInstInfo.value = values;
-        // showOperation.value = values
+        showOperation.value = values?.showOperation
 
         if (values) {
           // formApi.setValues(values);
@@ -309,19 +309,23 @@
       class: unref(isFullScreen) ? 'w-[1000px]': 'w-full',
     });
 
-    if(isFullScreen.value){
-      const values = await rightApproveActionButtonsRef.value.getFormValues();
+    if(showOperation.value){
+      if(isFullScreen.value){
+        const values = await rightApproveActionButtonsRef.value.getFormValues();
+        isFullScreen.value = !isFullScreen.value;
+        setTimeout(() => {
+          footerApproveActionButtonsRef.value.setFormValues(values);
+        }, 10);
+      } else {
+        const values = await footerApproveActionButtonsRef.value.getFormValues();
+        isFullScreen.value = !isFullScreen.value;
+        debugger
+        setTimeout(() => {
+          rightApproveActionButtonsRef.value.setFormValues(values);
+        }, 10);
+      }
+    }else {
       isFullScreen.value = !isFullScreen.value;
-      setTimeout(() => {
-        footerApproveActionButtonsRef.value.setFormValues(values);
-      }, 10);
-    } else {
-      const values = await footerApproveActionButtonsRef.value.getFormValues();
-      isFullScreen.value = !isFullScreen.value;
-      debugger
-      setTimeout(() => {
-        rightApproveActionButtonsRef.value.setFormValues(values);
-      }, 10);
     }
   }
 

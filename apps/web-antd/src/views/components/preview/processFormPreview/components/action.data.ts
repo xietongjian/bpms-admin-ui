@@ -1,7 +1,63 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-import {h} from "vue";
+import {h, markRaw} from "vue";
+import Upload from "#/views/components/common/widgets/upload/index.vue";
+import Esign from "#/views/components/common/widgets/esign/index.vue";
+
+/**
+ * 审批意见
+ */
+export const approveMsgSchemas: FormSchema[] = [
+  {
+    fieldName: 'attachmentList',
+    modelPropName: 'value',
+    defaultValue: [],
+    disabledOnChangeListener: false,
+    component: markRaw(Upload),
+    wrapperClass: 'approve-attachment-wrapper',
+    formItemClass: 'approve-attachment-form-item'
+      /**
+       * .ant-upload-select {
+       *     position: absolute;
+       *     bottom: 48px;
+       *     right: 20px;
+       *     z-index: 9;
+       *   }
+       */
+  },
+  {
+    fieldName: 'signImg',
+    modelPropName: 'value',
+    label: '',
+    defaultValue: '',
+    disabledOnChangeListener: false,
+    component: markRaw(Esign),
+    wrapperClass: 'approve-sign-wrapper',
+    formItemClass: 'absolute bottom-[35px] right-[50px] z-10'
+  },
+  {
+    fieldName: 'approveMsg',
+    label: '',
+    component: 'Textarea',
+    componentProps: {
+      placeholder: '请输入审批意见！',
+      autoSize: {
+        minRows: 3,
+        maxRows: 5,
+      },
+      resizable: false,
+    },
+    rules: z
+        .string({
+          required_error: '审批意见不能为空！'
+        })
+        .min(1, "审批意见不能为空！")
+        .max(4000, "字符长度不能大于4000！"),
+    labelWidth: 0,
+  },
+];
+
 
 export const backToStepTableColumns: VxeGridProps['columns'] = [
   {
@@ -81,16 +137,51 @@ export const approveActionFormSchema: FormSchema[] = [
     component: 'Input',
     label: ' ',
     suffix: () => h('span', { class: 'text-red-600' }, '加签审批完成之后是否流转到我审批'),
-    /*renderComponentContent: () => ({
-      prefix: () => 'prefix',
-      suffix: () => 'suffix',
-    }),*/
     dependencies: {
       if: (values)=> values.actionType === 'addsign',
       triggerFields: ['signType']
     },
   },
-  {
+    {
+        fieldName: 'attachmentList',
+        modelPropName: 'value',
+        defaultValue: [],
+        disabledOnChangeListener: false,
+        component: markRaw(Upload),
+        wrapperClass: 'approve-attachment-wrapper ![&_.ant-upload-select]:bottom-10',
+        formItemClass: 'approve-attachment-form-item pb-2 [&_.ant-upload-select]:!bottom-8'
+    },
+    {
+        fieldName: 'signImg',
+        modelPropName: 'value',
+        label: '',
+        defaultValue: '',
+        disabledOnChangeListener: false,
+        component: markRaw(Esign),
+        wrapperClass: 'approve-sign-wrapper',
+        formItemClass: 'absolute bottom-[3px] right-[50px] z-10'
+    },
+    {
+        fieldName: 'approveMsg',
+        label: '审批意见',
+        formItemClass: 'items-start',
+        component: 'Textarea',
+        componentProps: {
+            placeholder: '请输入审批意见！',
+            autoSize: {
+                minRows: 3,
+                maxRows: 5,
+            },
+            resizable: false,
+        },
+        rules: z
+            .string({
+                required_error: '审批意见不能为空！'
+            })
+            .min(1, "审批意见不能为空！")
+            .max(4000, "字符长度不能大于4000！"),
+    },
+  /*{
     fieldName: 'message',
     label: '审批意见',
     component: 'Textarea',
@@ -104,7 +195,7 @@ export const approveActionFormSchema: FormSchema[] = [
         maxRows: 10,
       },
     },
-  },
+  },*/
 ];
 export const fetchBackMessageFormSchema: FormSchema[] = [
   {

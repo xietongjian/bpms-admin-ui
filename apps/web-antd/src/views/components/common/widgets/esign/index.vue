@@ -53,11 +53,3 @@ watch(
 );
 
 </script>
-<style lang="scss" >
-.approve-sign-form-item {
-  position: absolute;
-  bottom: 35px;
-  right: 50px;
-  z-index: 9;
-}
-</style>

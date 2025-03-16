@@ -4,6 +4,7 @@
  */
 
 import type { Component } from 'vue';
+import type { CustomComponentType } from '#/components/form/types';
 
 import type { BaseFormComponentType } from '@vben/common-ui';
 import type { Recordable } from '@vben/types';
@@ -12,6 +13,7 @@ import { defineComponent, getCurrentInstance, h, ref } from 'vue';
 
 import { ApiComponent, globalShareState, IconPicker } from '@vben/common-ui';
 import { $t } from '@vben/locales';
+import { OrgSelector, PersonalSelector } from '#/components/selector';
 
 import {
   AutoComplete,

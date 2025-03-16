@@ -1,6 +1,6 @@
 <template>
-  <BasicModal>
-    <BasicForm >
+  <BasicModal title="自由审批" class="w-[800px]">
+    <BasicForm class="relative">
       <template #signType="slotProps">
 <!--        <Input placeholder="请输入" v-bind="slotProps" />-->
        aaa <Checkbox v-bind="slotProps" /> 加载
@@ -32,6 +32,9 @@
   const nextUserPrefix = 'next_user__';
   // const isUpdate = ref(true);
   const selectorTypeRef = ref('');
+
+  const emit = defineEmits(['success']);
+
   // const go = useGo();
 
   /*const [registerForm, { setFieldsValue, resetSchema, updateSchema, resetFields, validate }] =
@@ -141,6 +144,7 @@
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
+        debugger;
         if (values) {
           formApi.setValues(values);
           debugger;
@@ -150,7 +154,7 @@
     },
     onConfirm() {
       // await formApi.submitForm();
-      // handleSubmit();
+      handleSubmit();
     },
   });
 
@@ -176,6 +180,7 @@
         return;
       }
       const values = await formApi.getValues();
+      debugger;
       // 审批参数封装
       // 封装nextUsers字段(code,name,values)
       let nextUsers = [];
@@ -188,30 +193,37 @@
           });
         }
       }
+
+      const { approveMsg, signImg, attachmentList } = values;
+      const commentAttachmentList = attachmentList.filter(item => item.status === "done" && !!item.response?.data).map(item => {
+        return {
+          fileName: item.name,
+          fileSize: item.size,
+          filePath: item.response.data,
+          fileType: item.name.split('.').pop().toUpperCase()
+        }
+      });
       const params = {
         taskId: values.taskId,
-        message: values.message,
+        message: approveMsg,
         nextSequenceFlow: { code: values.flowTo },
         nextUsers: nextUsers,
+        signatureImg: signImg,
+        commentAttachmentList
       };
-      complete(params)
-          .then((res) => {
-            const result = res.data;
-            if (result.success) {
-              message.success(result.msg);
-              // go("/process/todo");
-              alert('操作成功后关闭窗口');
-            } else {
-              message.error(result.msg || defaultMsg);
-            }
-            modalApi.setState({loading: false, confirmLoading: false});
-          })
-          .catch(() => {
-            message.error(defaultMsg);
-          });
+
+      const {success, msg, data} = await complete(params);
+      if (success) {
+        message.success(msg);
+        await modalApi.close();
+        emit('success');
+      } else {
+        message.error(msg || defaultMsg);
+      }
     } catch (e) {
-      modalApi.setState({loading: false, confirmLoading: false});
+      message.error(defaultMsg);
     } finally {
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
   defineExpose(modalApi);

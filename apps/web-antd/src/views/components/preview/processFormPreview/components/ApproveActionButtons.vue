@@ -94,7 +94,7 @@
     holdTask,
     getCustomApproveSettings,
   } from '#/api/flowoperation/processTask';
-  import {approveMsgSchemas} from "#/views/process/components/action.data";
+  import {approveMsgSchemas} from "./action.data";
 
   const approveSelectorPersonalModalRef = ref(),
       approveCustomApproveSettingRef = ref(),
@@ -184,24 +184,23 @@
       commentAttachmentList
     };
 
-    emit('changeLoading', true);
-    approveActionLoading.value = true;
+    handleChangeLoading(true);
     // 审批前查询当前节点是否有自定义审批配置项
     // 如果有则弹出自定义审批配置弹窗
     const {data, success, msg} = await getCustomApproveSettings({ taskId: taskId });
 
     if (data && Object.keys(data).length > 0) {
+      handleChangeLoading(false);
       // data.nextUser
       // data.flow_to
       // 弹出自定义审批配置页面
       //FIXME
       approveCustomApproveSettingRef.value.setData({
-        selectorProps: {
-          taskId,
-          procInstId,
-          approveSettings: data, // flow_to, next_user
-          message,
-        }
+        taskId,
+        procInstId,
+        approveSettings: data, // flow_to, next_user
+        message,
+        approveMsg, signImg, attachmentList
       });
       approveCustomApproveSettingRef.value.open();
       /*openCustomApproveSettingModal(true, {
@@ -242,6 +241,11 @@
         approveActionLoading.value = false;
       });
     }
+  }
+
+  function handleChangeLoading(loading) {
+      emit('changeLoading', loading);
+      approveActionLoading.value = loading;
   }
 
   function handleSaveForm(callback){
