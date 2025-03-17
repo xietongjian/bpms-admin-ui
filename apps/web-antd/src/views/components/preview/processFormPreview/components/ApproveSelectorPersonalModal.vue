@@ -1,6 +1,6 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" @ok="handleSubmit">
-    <BasicForm />
+  <BasicModal v-bind="$attrs" class="w-[800px]">
+    <BasicForm class="relative" />
   </BasicModal>
 </template>
 <script lang="ts" setup>
@@ -17,7 +17,6 @@
     turnTask,
     reviewTask,
   } from '#/api/flowoperation/processTask';
-  import {formSchema} from "#/views/org/jobGrade/jobGrade.data";
 
   const emit = defineEmits(['success', 'register']);
   const selectorTypeRef = ref('');
@@ -106,6 +105,7 @@
             actionType,
             taskId,
             procInstId,
+            ...values
           });
         }
       }

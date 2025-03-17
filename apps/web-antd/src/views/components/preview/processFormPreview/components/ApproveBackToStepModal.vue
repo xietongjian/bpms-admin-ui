@@ -1,6 +1,6 @@
 <template>
   <BasicModal title="驳回" class="w-[800px]" >
-    <BasicForm>
+    <BasicForm class="relative">
       <template #backToStepNodeList="slotProps">
         <Table
           ref="backToStepNodeTableRef"
@@ -80,7 +80,6 @@
         if (values) {
           formApi.setValues(values);
           loadBackToStepNodes(values.taskId);
-
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -92,7 +91,6 @@
   });
 
   async function loadBackToStepNodes(taskId) {
-    debugger;
     backToStepNodeListLoading.value = true;
     try {
       const res = await getBackToStepNodes({taskId});

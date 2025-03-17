@@ -1,6 +1,6 @@
 <template>
   <div>
-    ={{currentSelect}}=
+<!--    ={{currentSelect}}=-->
     <Select
       v-bind="$attrs"
       :value="currentSelect"
