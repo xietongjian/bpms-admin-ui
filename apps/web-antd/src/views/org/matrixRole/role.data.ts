@@ -70,7 +70,7 @@ export const roleFormSchema: FormSchema[] = [
   {
     fieldName: 'type',
     label: '类型',
-    component: 'RadioButtonGroup',
+    component: 'RadioGroup',
     defaultValue: 1,
     componentProps: {
       options: [

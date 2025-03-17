@@ -91,7 +91,6 @@ const gridOptions: VxeGridProps<any> = {
 const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 function handleViewForm(record: Recordable<any>) {
-  // record.processStatus // record.processStatus === 'BH' && record.name === '提交人'
   processFormPreviewDrawerRef.value.setData({
     ...record,
     procInstId: record.processInstanceId,

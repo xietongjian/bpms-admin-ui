@@ -206,7 +206,7 @@
 
   const MenuItem = Menu.Item;
 
-  const emit = defineEmits(['reload', 'visible-change']);
+  const emit = defineEmits(['reload', 'visible-change', 'on-close']);
 
   const TabPane = Tabs.TabPane;
   const rightApproveActionButtonsRef = ref();
@@ -271,6 +271,8 @@
           // 初始化数据
           initData();
         }
+      } else {
+        emit('on-close');
       }
     },
     onConfirm() {

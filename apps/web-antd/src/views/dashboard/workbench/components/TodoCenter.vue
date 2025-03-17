@@ -123,6 +123,7 @@
         </template>
       </List>
     </p>
+    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" @onClose="handleProcessFormVisibleChange"/>
 <!--    <ProcessFormModal
         @register="registerProcessFormModal"
         @visible-change="handleProcessFormVisibleChange"
@@ -130,7 +131,7 @@
   </Card>
 </template>
 <script lang="ts" setup>
-  import {ref, onMounted} from 'vue';
+import {ref, onMounted, shallowRef} from 'vue';
   import {Card, List, Space, Badge, TypographyLink, Popover} from 'ant-design-vue';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import {
@@ -138,9 +139,14 @@
     getAppingTasksPagerModel,
     getApplyedTasksPagerModel,
   } from "#/api/process/process";
-  // import ProcessFormModal from "#/views/flowoperation/processTask/ProcessFormModal.vue";
   import {AuditOutlined} from "@ant-design/icons-vue";
   import type {Recordable} from '@vben/types';
+  import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const processFormPreviewDrawerRef = shallowRef();
 
   const ListItem = List.Item;
   const ListItemMeta = List.Item.Meta;
@@ -190,15 +196,15 @@
   //   { openModal: openProcessFormModal, setModalProps: setProcessFormModalProps },
   // ] = useModal();
 
-  function handleProcessFormVisibleChange(visible) {
-    if (!visible) {
+  function handleProcessFormVisibleChange() {
+    if(activeKey.value === 'todo'){
       setTimeout(() => {
         fetchTodoData(1);
-      }, 200);
+      }, 2);
     }
   }
 
-  function handleViewForm(record: Recordable<any>) {
+/*  function handleViewForm(record: Recordable<any>) {
     record.allowsOperation = activeKey.value === 'todo';
     openProcessFormModal(true, {
       record,
@@ -211,15 +217,26 @@
       cancelText: '关闭',
       maskClosable: true,
     });
+  }*/
+
+  function handleViewForm(record: Recordable<any>) {
+    processFormPreviewDrawerRef.value.setData({
+      ...record,
+      procInstId: record.processInstanceId,
+      modelKey: record.processDefinitionKey,
+      showOperation: activeKey.value === 'todo',
+    });
+    processFormPreviewDrawerRef.value.open();
+    processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.title}】的表单`});
   }
 
   function handleToMore() {
     if(activeKey.value === 'todo'){
-      // go({ name: 'Todo'});
+      router.push({ name: 'Todo' });
     } else if(activeKey.value === 'haveDown'){
-      // go({ name: 'HaveDown'});
+      router.push({ name: 'HaveDown'});
     } else if(activeKey.value === 'launched'){
-      // go({ name: 'Launched'});
+      router.push({ name: 'Launched'});
     }
   }
 

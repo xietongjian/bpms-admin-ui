@@ -247,7 +247,6 @@ async function initApiTestingInfo() {
   const {setState: resetQueryVariableSchema } = queryVariableFormApi;
   if (apiInfo) {
     if (apiInfo.headers && apiInfo.headers.length > 0) {
-      debugger;
       apiInfo.headers.forEach(item => {
         item.colProps = {span: 12};
         item.component = 'Input';
@@ -383,7 +382,6 @@ async function handleTesting() {
 
 async function handleSelect(node: any, e: any) {
   const selectedNode = e.selectedNodes[0];
-debugger;
   apiTestingErrorMsg.value = '';
   if (selectedNode) {
     if (selectedNode.type === 'api') {

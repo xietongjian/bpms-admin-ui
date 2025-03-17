@@ -1,8 +1,5 @@
-// import {BasicColumn} from '@/components/Table/src/types/table';
-// import {FormSchema} from '@/components/Table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-import {z} from "@vben/common-ui";
 
 export const searchFormSchema: FormSchema[] = [
   {
@@ -28,8 +25,6 @@ export const searchFormSchema: FormSchema[] = [
       ],
       placeholder: '请输入名称/编码',
     },
-    labelWidth: 60,
-    colProps: {span: 6, lg:{span: 6, offset:0}, sm:{span: 10, offset: 0}, xs:{span: 16, offset: 0}},
   },
   {
     fieldName: 'title',
@@ -37,26 +32,17 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称/编码',
+      allowClear: true
     },
     labelWidth: 60,
-    colProps: {span: 6, lg:{span: 6, offset:0}, sm:{span: 10, offset: 0}, xs:{span: 16, offset: 0}},
   },
-  /*{
-    fieldName: 'dateRange',
-    label: '发布时间',
-    component: 'RangePicker',
-    componentProps: {
-      format: "YYYY-MM-DD"
-    },
-    labelWidth: 80,
-    colProps: {span: 8},
-  }*/
 ];
 export const messageTableSchema: VxeGridProps['columns'] = [
   {
     title: '标题',
     field: 'title',
     align: 'left',
+    slots: {default: 'formName'}
   },
   {
     title: '发送人',

@@ -77,7 +77,7 @@ import type {VbenFormProps} from '@vben/common-ui';
 
 import {useAccess} from "@vben/access";
   import { ref, unref, nextTick, onMounted, h } from 'vue';
-  import { Button, Tag, Space, Popconfirm, Tooltip } from 'ant-design-vue';
+  import { Button, Tag, Space, Popconfirm, Tooltip, message } from 'ant-design-vue';
   import { ImportOutlined, CloseOutlined, DownloadOutlined } from '@ant-design/icons-vue';
 import { TableAction } from '#/components/table-action';
 
@@ -124,7 +124,7 @@ const {hasAccessByCodes}  = useAccess();
 
   onMounted(() => {
     nextTick(() => {
-      loadMatrixColumn();
+      // loadMatrixColumn();
     });
   });
 
@@ -199,6 +199,9 @@ const gridOptions: VxeGridProps<any> = {
           entity: formValues || {},
         });
       },
+      querySuccess: (params) => {
+        loadMatrixColumn();
+      }
     },
   },
 };
@@ -223,7 +226,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
         .then((res) => {
           const { data } = res;
           if (data.success) {
-            createMessage.success(data.msg);
+            message.success(data.msg);
             // 根据角色ID和组织（部门）ID刷新某个单元格的数据
             reloadRolePersonal(unref(currentRole).id, unref(currentRow).id);
           }
@@ -246,33 +249,33 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
   }
 
   // 加载矩阵列
-  function loadMatrixColumn() {
-    getMatrixRoleList({ roleType: 1 }).then((res) => {
-      if (res) {
-        matrixRoles.value = res;
-        const columns = res.map((item) => {
-          return {
-            ...item,
-            title: item.name,
-            dataIndex: 'customColumn_' + item.id,
-            helpMessage: item.name + '【' + item.sn + '】',
-            minWidth: 180,
-            width: 180,
-            align: 'left',
-          };
-        });
-        columns.unshift({
-          title: '公司名称',
-          dataIndex: 'name',
-          align: 'left',
-          minWidth: 300,
-          width: 300,
-          resizable: true,
-          fixed: true,
-        });
-        setColumns(columns);
-      }
+  async function loadMatrixColumn() {
+    const res = await getMatrixRoleList({ roleType: 1 });
+    const {refreshColumn, loadColumn, getTableColumn, getColumns} = tableApi.grid;
+    debugger;
+    matrixRoles.value = res;
+    const columns = res.map((item) => {
+      return {
+        ...item,
+        title: item.name,
+        dataIndex: 'customColumn_' + item.id,
+        helpMessage: item.name + '【' + item.sn + '】',
+        minWidth: 180,
+        width: 180,
+        align: 'left',
+      };
     });
+    columns.unshift({
+      title: '公司名称',
+      dataIndex: 'name',
+      align: 'left',
+      minWidth: 300,
+      width: 300,
+      resizable: true,
+      fixed: true,
+      treeNode: true
+    });
+    loadColumn(columns);
   }
 
   function handleDeletePersonal(id, roleId, orgId) {
@@ -281,10 +284,10 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
       .then((res) => {
         const { data } = res;
         if (data.success) {
-          createMessage.success(data.msg);
+          message.success(data.msg);
           reloadRolePersonal(roleId, orgId);
         } else {
-          createMessage.error(data.msg);
+          message.error(data.msg);
         }
       })
       .finally(() => {
@@ -304,7 +307,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
     if (pItemHandleEl) {
       const pItemEl = pItemHandleEl;
       if (!hasPermission('DeptMatrixRolePersonal:' + PerEnum.UPDATE, '')) {
-        createMessage.warn('无操作权限，请联系管理员！');
+        message.warn('无操作权限，请联系管理员！');
         return;
       }
       // 获取当前已有的人员
@@ -369,7 +372,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
         },
       });
     } else {
-      createMessage.warn('无矩阵角色数据！');
+      message.warn('无矩阵角色数据！');
     }
   }
 
@@ -419,7 +422,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
         }
       }
       if (saveDataList.length === 0) {
-        createMessage.error('未找到角色数据！');
+        message.error('未找到角色数据！');
         return;
       }
 
@@ -436,7 +439,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
           }
           if (index === saveDataList.length - 1) {
             setLoading(false);
-            createMessage.success('导入成功！');
+            message.success('导入成功！');
           }
         }
       }

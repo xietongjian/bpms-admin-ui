@@ -1,177 +1,112 @@
 <template>
-  <div >
-    <BasicTable @register="registerNoticeTable">
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'fromAssigneeName'">
-          <EmpInfo :no="record.fromAssignee" :name="record.fromAssigneeName" />
-        </template>
-        <template v-if="column.key === 'title'">
-          <a @click="handleNoticeClick(record)" href="javascript: void(0);">
-            <Tooltip v-if="record.status === '0'">
-              <template #title>
-                未读
-              </template>
-              <Badge color="#f50"/>
-            </Tooltip>
-            <TypographyText :type="record.status === '1'?'secondary':'default'">{{ record.title }}</TypographyText>
-          </a>
-        </template>
+  <Page auto-content-height>
+    <BasicTable>
+      <template #formName="{ row }">
+        <Tooltip v-if="row.status === 0">
+          <template #title>
+            未读
+          </template>
+          <Badge color="#f50"/>
+        </Tooltip>
+        <Tooltip placement="top" title="流程图预览">
+          <TypographyLink
+            @click="handleBpmnPreview(row.processDefinitionKey, row.processInstanceId)">
+            <PartitionOutlined class="mr-2"/>
+          </TypographyLink>
+        </Tooltip>
+        <TypographyLink @click="handleViewForm(row)">
+          {{ row.title }}
+        </TypographyLink>
+      </template>
+      <template #startPersonName="{row}">
+        <EmpInfo :no="row.fromAssignee" :name="row.fromAssigneeName"/>
       </template>
     </BasicTable>
-    <ProcessFormModal
-        ref="processFormModalRef"
-      @register="registerProcessFormModal"
-      @visible-change="handleProcessFormVisibleChange"
-    />
-  </div>
+    <BpmnPreviewModal ref="bpmnPreviewModalRef"/>
+    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" @onClose="handleProcessFormVisibleChange"/>
+  </Page>
 </template>
 <script lang="ts" setup>
-  import { onMounted, ref } from 'vue';
+import {onMounted, ref, shallowRef} from 'vue';
 
-  import type {VxeGridProps} from '#/adapter/vxe-table';
-  import type {VbenFormProps} from '@vben/common-ui';
-  import type {Recordable} from '@vben/types';
+import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormProps} from '@vben/common-ui';
+import type {Recordable} from '@vben/types';
 
-  import {Page} from '@vben/common-ui';
+import {Page} from '@vben/common-ui';
 
-  import {Badge, Breadcrumb, Tooltip, TypographyText} from 'ant-design-vue';
-  import {messageTableSchema, searchFormSchema} from "./data";
-  import {pagerModelOnSiteMessage, updateOnSiteMessageStatus} from "#/api/process/siteMessage";
-  import {EmpInfo} from '#/views/components/EmpInfo';
-  // import {useGo} from '@/hooks/web/usePage';
-  import ProcessFormModal from '#/views/flowoperation/processTask/ProcessFormModal.vue';
-  import {columns} from "#/views/privilege/account/account.data";
-  import {getAccountPageList} from "#/api/privilege/account";
-  import {useVbenVxeGrid} from "#/adapter/vxe-table";
-  // import {useModal} from "@/components/Modal";
+import {Badge, Breadcrumb, Tooltip, TypographyLink, TypographyText} from 'ant-design-vue';
+import {messageTableSchema, searchFormSchema} from "./data";
+import {pagerModelOnSiteMessage, updateOnSiteMessageStatus} from "#/api/process/siteMessage";
+import {EmpInfo} from '#/views/components/EmpInfo';
+import {useVbenVxeGrid} from "#/adapter/vxe-table";
+import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
+import {PartitionOutlined} from "@ant-design/icons-vue";
 
-  // const [
-  //   registerProcessFormModal,
-  //   { openModal: openProcessFormModal, setModalProps: setProcessFormModalProps },
-  // ] = useModal();
+const bpmnPreviewModalRef = ref(),
+  processFormPreviewDrawerRef = shallowRef();
 
-  const processFormModalRef = ref();
+const formOptions: VbenFormProps = {
+  showCollapseButton: false,
+  submitOnEnter: true,
+  submitOnChange: true,
+  commonConfig: {
+    labelWidth: 60,
+  },
+  actionWrapperClass: 'col-span-1 col-start-3 text-left ml-2',
+  schema: searchFormSchema,
+  wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+};
 
-  const BreadcrumbItem = Breadcrumb.Item;
-  // const go = useGo();
-
-/*  const [registerNoticeTable, {getForm, setLoading, reload}] = useTable({
-    api: pagerModelOnSiteMessage,
-    title: '',
-    columns: messageTableSchema,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: true,
-    showIndexColumn: true,
-    canResize: true,
-  });*/
-
-
-  const formOptions: VbenFormProps = {
-    showCollapseButton: false,
-    submitOnEnter: true,
-    commonConfig: {
-      labelWidth: 60,
-    },
-    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
-    resetButtonOptions: {
-      show: false,
-    },
-    schema: searchFormSchema,
-    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-  };
-
-  const gridOptions: VxeGridProps<any> = {
-    checkboxConfig: {
-      highlight: true,
-      labelField: 'name',
-    },
-    columns: messageTableSchema,
-    columnConfig: {resizable: true},
-    height: 'auto',
-    keepSource: true,
-    border: false,
-    stripe: true,
-    proxyConfig: {
-      ajax: {
-        query: async ({page}, formValues) => {
-          return await pagerModelOnSiteMessage({
-            query: {
-              pageNum: page.currentPage,
-              pageSize: page.pageSize,
-            },
-            entity: formValues || {},
-          }).then(res => {
-            return Promise.resolve(res);
-          });
-        },
+const gridOptions: VxeGridProps<any> = {
+  checkboxConfig: {
+    highlight: true,
+    labelField: 'name',
+  },
+  columns: messageTableSchema,
+  columnConfig: {resizable: true},
+  height: 'auto',
+  keepSource: true,
+  border: false,
+  stripe: true,
+  proxyConfig: {
+    ajax: {
+      query: async ({page}, formValues) => {
+        return await pagerModelOnSiteMessage({
+          query: {
+            pageNum: page.currentPage,
+            pageSize: page.pageSize,
+          },
+          entity: formValues || {},
+        }).then(res => {
+          return Promise.resolve(res);
+        });
       },
     },
-  };
+  },
+};
 
-  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
-  function handleProcessFormVisibleChange(visible) {
-    if (!visible) {
-      setTimeout(() => {
-        reload();
-      }, 200);
-    }
-  }
-  onMounted(() => {
-    const {updateSchema} = getForm();
-    updateSchema([
-      {
-        field: 'status',
-        componentProps: {
-          onChange: function (e) {
-            reload({searchInfo: {status: e.target.value}});
-          }
-        }
-      }
-    ]);
+function handleProcessFormVisibleChange() {
+  setTimeout(() => {
+    tableApi.reload();
+  }, 2);
+}
+
+function handleViewForm(record: Recordable<any>) {
+  processFormPreviewDrawerRef.value.setData({
+    ...record,
+    procInstId: record.processInstanceId,
+    modelKey: record.processDefinitionKey,
+    showOperation: true,
   });
+  processFormPreviewDrawerRef.value.open();
+  processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.title}】的表单`});
+}
 
-  async function handleNoticeClick(record) {
-    setLoading(true);
-    if(record.status === '0'){
-      // 如果是未读才执行设置为已读的动作
-      await updateOnSiteMessageStatus({id: record.id});
-      setTimeout(() => {
-        reload();
-      }, 200);
-    }
-    // procInstId, bizId, taskId, modelKey
-    const modelKey = record.processDefinitionId ? record.processDefinitionId.split(':')[0]:'';
-    handleViewForm({
-      ...record,
-      bizId: record.businessKey,
-      procInstId: record.processInstanceId,
-      modelKey: modelKey,
-      processDefinitionKey: modelKey,
-      formName: record.title,
-    });
-    setLoading(false);
-  }
-
-  function handleViewForm(record: Recordable) {
-    processFormModalRef.value.open();
-    /*openProcessFormModal(true, {
-      record,
-    });
-    setProcessFormModalProps({
-      title: `查看流程【${record.formName}】的表单`,
-      showOkBtn: false,
-      centered: true,
-      cancelText: '关闭',
-      maskClosable: false,
-    });*/
-  }
+function handleBpmnPreview(modelKey, procInstId) {
+  bpmnPreviewModalRef.value.setData({modelKey, procInstId});
+  bpmnPreviewModalRef.value.open();
+}
 </script>

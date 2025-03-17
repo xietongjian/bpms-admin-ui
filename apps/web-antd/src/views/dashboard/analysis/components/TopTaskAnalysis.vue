@@ -41,7 +41,6 @@
   import { Radio, List } from 'ant-design-vue';
   import { basicProps } from './props';
   import { CrownOutlined } from '@ant-design/icons-vue';
-
   import { countLatestNumDaysFastSlowTaskAssignee } from '#/api/report/flowCount';
   import { formatSecToStr } from '#/utils/dateUtil';
 
@@ -70,7 +69,6 @@
   }
 
   function fetchData() {
-    debugger;
     topFastDurationTaskLoading.value = true;
     countLatestNumDaysFastSlowTaskAssignee({
       orderBy: props.orderBy,
@@ -78,12 +76,10 @@
       num: 8,
     })
       .then((res) => {
-        debugger;
         topFastDurationTaskPersonal.value = res;
         topFastDurationTaskLoading.value = false;
       })
       .catch((e) => {
-        debugger;
         console.error(e);
         topFastDurationTaskLoading.value = false;
       });

@@ -267,7 +267,6 @@
     // processFormModalRef.value.setData(record);
     // processFormModalRef.value.open();
     // processFormModalRef.value.setState({title: `查看流程【${record.formName}】的表单`});
-    debugger;
     record.allowsOperation = true;
     processFormPreviewDrawerRef.value.setData({
       ...record,

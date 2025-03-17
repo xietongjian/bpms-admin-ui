@@ -506,7 +506,7 @@ function fetchSuccess(e) {
 function handleSelect(node: any) {
   currentCategory.value = node;
   let searchInfo = {categoryCode: node ? node.code : ''};
-  tableApi.reload({searchInfo});
+  tableApi.reload(searchInfo);
 }
 function changePublishStopBtnShow(status) {
   if (status === 2) {
