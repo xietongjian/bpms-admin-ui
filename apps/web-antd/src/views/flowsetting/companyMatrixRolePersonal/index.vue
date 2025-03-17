@@ -7,7 +7,7 @@
       @fetch-success="handleScrollTag"
       titleHelpMessage="点击单元格给角色设置人员"
       defaultExpandLevel="1"
-      class="matrix-list !h-full"
+      class="matrix-list"
     >
       <template #toolbar>
         <!--        <Authority :value="'App:'+PerEnum.ADD">
@@ -275,7 +275,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
       fixed: true,
       treeNode: true
     });
-    loadColumn(columns);
+    await loadColumn(columns);
   }
 
   function handleDeletePersonal(id, roleId, orgId) {

@@ -47,6 +47,7 @@ export const getCompanyMatrixList = async (params: any) => {
   delete params['roleKeyword'];
   const result = requestClient.post<any>(Api.GetCompanyList, params);
   return Promise.resolve(result).then((res) => {
+    return res;
     const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
     forEach(
       treeData,
