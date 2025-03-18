@@ -111,6 +111,7 @@ const emit = defineEmits(['change'])
 
 
 const [BasicModal, modalApi] = useVbenModal({
+  title: '选择人员',
   draggable: true,
   contentClass: 'flex flex-col xxx',
   onCancel() {

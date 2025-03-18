@@ -2,7 +2,6 @@
   <Page auto-content-height>
     <BasicTable
       ref="companyMatrixTable"
-      @register="registerTable"
       @row-click="handleRowClick"
       @fetch-success="handleScrollTag"
       titleHelpMessage="点击单元格给角色设置人员"
@@ -13,54 +12,50 @@
         <!--        <Authority :value="'App:'+PerEnum.ADD">
 
         </Authority>-->
-        <Button :loading="exportLoading" type="link" @click="handleOpenExportModal"
-          >导出模板</Button
-        >
-        <ImpExcel @success="loadDataSuccess" dateFormat="xlsx">
+        <Button :loading="exportLoading" type="link" @click="handleOpenExportModal" >导出模板</Button>
+<!--        <ImpExcel @success="loadDataSuccess" dateFormat="xlsx">
           <Button>
             <template #icon>
               <ImportOutlined />
             </template>
             导入Excel
           </Button>
-        </ImpExcel>
+        </ImpExcel>-->
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'name'">
-          <Tooltip placement="top" :mouseEnterDelay="0.3">
-            <template #title> {{ record.name }} -【{{ record.code }}】 </template>
-            {{ record.name }} -【{{ record.code }}】
-          </Tooltip>
-        </template>
 
-        <template v-if="column.key.indexOf('customColumn_') !== -1">
-          <div class="personal-items" :roleid="column.id" :rolename="column.name">
-            <Space v-if="record[column.id] && record[column.id].length > 0">
-              <Tag
-                v-for="item in record[column.id]"
+      <template #name="{row}">
+        <Tooltip placement="top" :mouseEnterDelay="0.3">
+          <template #title> {{ row.name }} -【{{ row.code }}】 </template>
+          {{ row.name }} -【{{ row.code }}】
+        </Tooltip>
+      </template>
+
+      <template #customColumn="{row, column}">
+        <div class="personal-items" :roleid="column.params.id" :rolename="column.name">
+          <Space v-if="row[column.params.id] && row[column.params.id].length > 0">
+            <Tag v-for="item in row[column.params.id]"
                 :personalname="item.personalName"
                 :personalcode="item.personalCode"
                 class="personal-item"
                 color="processing"
+            >
+              {{ item.personalName }}
+              <Popconfirm
+                  v-access:code="PerPrefix + PerEnum.DELETE"
+                  title="确定要删除吗？"
+                  @confirm="handleDeletePersonal(item.rspId, column.params.id, row.id)"
+                  :okButtonProps="{danger: true}"
               >
-                {{ item.personalName }}
-                <Authority :value="'CompanyMatrixRolePersonal:' + PerEnum.DELETE">
-                  <Popconfirm
-                    title="确定要删除吗？"
-                    @confirm="handleDeletePersonal(item.rspId, column.id, record.id)"
-                  >
-                    <CloseOutlined class="delete-btn" />
-                  </Popconfirm>
-                </Authority>
-              </Tag>
-            </Space>
-            <div class="empty" v-else>设置人员</div>
-          </div>
-        </template>
+                <CloseOutlined class="delete-btn" />
+              </Popconfirm>
+            </Tag>
+          </Space>
+          <div class="empty" v-else>设置人员</div>
+        </div>
       </template>
     </BasicTable>
     <PersonalSelectorModal
-      @register="registerPersonalModal"
+      ref="personalSelectorModalRef"
       @change="handleSettingPersonalSuccess"
     />
     <ExportMatrixRoleExcelModal
@@ -72,8 +67,11 @@
 <script lang="ts" setup>
 import {PerEnum} from '#/enums/perEnum';
 import type { Recordable } from '@vben/types';
-import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
+
 import type {VbenFormProps} from '@vben/common-ui';
+import PersonalSelectorModal from '#/components/selector/personal-selector/PersonalSelectorModal.vue';
+import {useVbenVxeGrid} from "#/adapter/vxe-table";
 
 import {useAccess} from "@vben/access";
   import { ref, unref, nextTick, onMounted, h } from 'vue';
@@ -94,11 +92,12 @@ import {getMatrixRoleList, getRoleListByPage} from '#/api/org/role';
   import { baseColumns, searchFormSchema } from './companyMatrix.data';
   // import { jsonToSheetXlsx, ImpExcel, ExcelData } from '@/components/Excel';
   import { treeToList } from '#/utils/helper/treeHelper';
-import {columns} from "#/views/flowsetting/rolePersonal/rolePersonal.data";
-import {useVbenVxeGrid} from "#/adapter/vxe-table";
 
 const {hasAccessByCodes}  = useAccess();
-// const PerPrefix = "App:";
+
+const PerPrefix = 'CompanyMatrixRolePersonal:';
+
+const personalSelectorModalRef = ref();
 
   // 人员选择弹窗
   // const [
@@ -114,7 +113,6 @@ const {hasAccessByCodes}  = useAccess();
       setModalProps: setExportMatrixRoleExcelModalProps,
     },
   ] = useModal();*/
-  // const { hasPermission } = usePermission();
   const currentRole = ref<Recordable<any>>({});
   const currentRow = ref<Recordable<any>>({});
   const currentNode = ref<Recordable<any>>({});
@@ -124,7 +122,7 @@ const {hasAccessByCodes}  = useAccess();
 
   onMounted(() => {
     nextTick(() => {
-      // loadMatrixColumn();
+      loadMatrixColumn();
     });
   });
 
@@ -170,7 +168,7 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  actionWrapperClass: 'col-span-3 col-start-3 text-left ml-4',
   resetButtonOptions: {
     show: false,
   },
@@ -178,16 +176,27 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeGridProps<any> = {
-  checkboxConfig: {
-    highlight: true,
-    labelField: 'name',
-  },
+  // checkboxConfig: {
+  //   highlight: true,
+  //   labelField: 'name',
+  // },
   columns: baseColumns,
   columnConfig: {resizable: true},
   height: 'auto',
-  keepSource: true,
   border: false,
   stripe: true,
+  pagerConfig: {
+    enabled: false,
+  },
+  rowConfig: {
+    keyField: 'id',
+    isHover: true,
+  },
+  treeConfig: {
+    parentField: 'pid',
+    rowField: 'id',
+    transform: true,
+  },
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
@@ -205,13 +214,29 @@ const gridOptions: VxeGridProps<any> = {
     },
   },
 };
+const gridEvents: VxeGridListeners = {
+  cellClick: ({row, column, $event}) => {
+    if (column.field === 'name'
+        || $event?.target?.closest('.delete-btn')
+        || $event?.target?.closest('.personal-item')) {
+      return;
+    }
 
-const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+    const personals = row[column.field]
 
+    currentRole.value = column.params;
+    currentRow.value = row;
+    personalSelectorModalRef.value.open();
+    personalSelectorModalRef.value.setData(personals);
 
+  }
+};
+
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
   // 人员选择后回调
-  function handleSettingPersonalSuccess(selectedPersonal) {
+  async function handleSettingPersonalSuccess(selectedPersonal) {
     setLoading(true);
+    debugger;
     const personals = selectedPersonal.map((item) => item.code);
     const data = {
       orgId: unref(currentRow).id,
@@ -221,78 +246,67 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
         personalCodes: personals,
       },
     };
-    setTimeout(() => {
-      saveOrUpdateRoleScope(data)
-        .then((res) => {
-          const { data } = res;
-          if (data.success) {
-            message.success(data.msg);
-            // 根据角色ID和组织（部门）ID刷新某个单元格的数据
-            reloadRolePersonal(unref(currentRole).id, unref(currentRow).id);
-          }
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }, 200);
+    const {success, msg} = await saveOrUpdateRoleScope(data);
+    debugger;
+    if (success) {
+      message.success(msg);
+      // 根据角色ID和组织（部门）ID刷新某个单元格的数据
+      await reloadRolePersonal(unref(currentRole).id, unref(currentRow).id);
+    }
   }
 
-  function reloadRolePersonal(roleId, orgId) {
-    // 加载当前一个单元格的时候导致表格布局错乱，暂时屏蔽
-    getMatrixPersonal({ orgId: orgId, roleId: roleId, orgType: 1 }).then((res) => {
-      nextTick(() => {
-        const rolePersonal = {};
-        rolePersonal[roleId] = res;
-        updateTableDataRecord(orgId, rolePersonal);
-      });
-    });
+  async function reloadRolePersonal(roleId, orgId) {
+    const {setRow, getRowById} = tableApi.grid;
+    const res = await getMatrixPersonal({ orgId: orgId, roleId: roleId, orgType: 1 });
+    await nextTick();
+    const row = getRowById(orgId);
+    const newRow = {...row}
+    newRow[roleId] = res;
+    await setRow(row, newRow)
   }
 
   // 加载矩阵列
   async function loadMatrixColumn() {
     const res = await getMatrixRoleList({ roleType: 1 });
-    const {refreshColumn, loadColumn, getTableColumn, getColumns} = tableApi.grid;
-    debugger;
+    const {loadColumn} = tableApi.grid;
+
     matrixRoles.value = res;
     const columns = res.map((item) => {
       return {
-        ...item,
+        params: item,
         title: item.name,
-        dataIndex: 'customColumn_' + item.id,
+        field: 'customColumn_' + item.id,
         helpMessage: item.name + '【' + item.sn + '】',
         minWidth: 180,
-        width: 180,
         align: 'left',
+        slots: { default: 'customColumn'}
       };
     });
     columns.unshift({
       title: '公司名称',
-      dataIndex: 'name',
+      field: 'name',
       align: 'left',
       minWidth: 300,
-      width: 300,
       resizable: true,
       fixed: true,
-      treeNode: true
+      treeNode: true,
+      slots: { default: 'name'}
     });
     await loadColumn(columns);
   }
 
-  function handleDeletePersonal(id, roleId, orgId) {
+  async function handleDeletePersonal(id, roleId, orgId) {
     setLoading(true);
-    deleteMatrixPersonalById({ id: id })
-      .then((res) => {
-        const { data } = res;
-        if (data.success) {
-          message.success(data.msg);
-          reloadRolePersonal(roleId, orgId);
-        } else {
-          message.error(data.msg);
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    const res = await deleteMatrixPersonalById({ id: id });
+    const { success, msg } = res;
+    if (success) {
+      message.success(msg);
+      reloadRolePersonal(roleId, orgId);
+    } else {
+      message.error(msg);
+    }
+    setLoading(false);
+    return Promise.resolve(true);
   }
 
   function handleRowClick(record, index, event) {
@@ -306,7 +320,8 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
     if (pItemHandleEl) {
       const pItemEl = pItemHandleEl;
-      if (!hasPermission('DeptMatrixRolePersonal:' + PerEnum.UPDATE, '')) {
+
+      if (!hasAccessByCodes(['DeptMatrixRolePersonal:' + PerEnum.UPDATE])) {
         message.warn('无操作权限，请联系管理员！');
         return;
       }
@@ -380,7 +395,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
    * 导入数据
    * @param excelDataList
    */
-  async function loadDataSuccess(excelDataList: ExcelData[]) {
+  async function loadDataSuccess(excelDataList: any[]) {
     const dataList = excelDataList[0];
     const { header, results } = dataList;
     // 验证Excel数据的正确性
@@ -446,10 +461,15 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
     }
   }
 
+  function setLoading(loading) {
+
+  }
+
   // 横向查找
   async function handleScrollTag() {
-    const form = getForm();
+    const form = tableApi.formApi;
     const values = await form.validate();
+    debugger;
     setTimeout(() => {
       if (values.roleKeyword) {
         const thList = companyMatrixTable.value.$el.querySelectorAll('.ant-table-thead th');
@@ -543,10 +563,13 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
     font-weight: bold !important;
   }
   .personal-items {
-    height: 100%;
-    position: relative;
-    overflow: hidden;
+    //height: 100%;
+    //position: relative;
+    //overflow: hidden;
     text-indent: 2px;
+    white-space: normal !important;
+    word-break: break-all;
+    overflow-wrap: break-word;
     .ant-space {
       gap: 2px 6px !important;
     }

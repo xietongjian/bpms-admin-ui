@@ -206,9 +206,9 @@ function createActions(record: Recordable<any>) {
         title: '确认停用吗?',
         confirm: handleStop.bind(null, record),
         placement: 'left',
-      },
-      okButtonProps: {
-        danger: true,
+        okButtonProps: {
+          danger: true,
+        },
       },
       ifShow: status === 3 || status === 2,
     },

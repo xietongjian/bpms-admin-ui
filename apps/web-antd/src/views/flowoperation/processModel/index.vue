@@ -126,6 +126,9 @@
         popConfirm: {
           title: '确认停用吗?',
           confirm: handleStop.bind(null, record),
+          okButtonProps: {
+            danger: true,
+          },
         },
         ifShow: status === 3 || status === 2,
       },

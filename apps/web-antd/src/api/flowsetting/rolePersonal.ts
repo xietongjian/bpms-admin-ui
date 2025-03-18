@@ -92,7 +92,7 @@ export const saveOrUpdate = (params: any) =>
 
 export const saveOrUpdateRoleScope = (params: any) =>
   requestClient.post<any>(Api.SaveOrUpdateRoleScope, params,
-    { isReturnNativeResponse: true },
+    { responseReturn: 'body' },
   );
 
 export const addPersonalRoles = (params: any) =>
@@ -114,7 +114,7 @@ export const deleteById = (id: string) => requestClient.post(Api.DeleteById + '/
 
 export const deleteMatrixPersonalById = (params: any) =>
   requestClient.post(Api.DeleteMatrixPersonalById + '/' + params.id,
-    { isReturnNativeResponse: true },
+      {}, { responseReturn: 'body' },
   );
 
 export const deleteRolePersonal = (params: any) =>
