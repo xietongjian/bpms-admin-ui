@@ -1,16 +1,13 @@
 <template>
   <Page auto-content-height>
     <BasicTable
+      table-title="列表"
       ref="companyMatrixTable"
-      @row-click="handleRowClick"
-      @fetch-success="handleScrollTag"
-      titleHelpMessage="点击单元格给角色设置人员"
-      defaultExpandLevel="1"
+      tableTitleHelp="点击单元格给角色设置人员"
       class="matrix-list"
     >
-      <template #toolbar>
+      <template #toolbar-tools>
         <!--        <Authority :value="'App:'+PerEnum.ADD">
-
         </Authority>-->
         <Button :loading="exportLoading" type="link" @click="handleOpenExportModal" >导出模板</Button>
 <!--        <ImpExcel @success="loadDataSuccess" dateFormat="xlsx">
@@ -77,10 +74,9 @@ import {useAccess} from "@vben/access";
   import { ref, unref, nextTick, onMounted, h } from 'vue';
   import { Button, Tag, Space, Popconfirm, Tooltip, message } from 'ant-design-vue';
   import { ImportOutlined, CloseOutlined, DownloadOutlined } from '@ant-design/icons-vue';
-import { TableAction } from '#/components/table-action';
 
   // import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
-  // import ExportMatrixRoleExcelModal from '#/views/flowsetting/components/ExportMatrixRoleExcelModal.vue';
+  import ExportMatrixRoleExcelModal from '#/views/flowsetting/components/ExportMatrixRoleExcelModal.vue';
 import {Page} from '@vben/common-ui';
 import {getMatrixRoleList, getRoleListByPage} from '#/api/org/role';
   import {
@@ -115,7 +111,6 @@ const personalSelectorModalRef = ref();
   ] = useModal();*/
   const currentRole = ref<Recordable<any>>({});
   const currentRow = ref<Recordable<any>>({});
-  const currentNode = ref<Recordable<any>>({});
   const exportLoading = ref(false);
   const companyMatrixTable = ref();
   const matrixRoles = ref([]);
@@ -176,10 +171,8 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeGridProps<any> = {
-  // checkboxConfig: {
-  //   highlight: true,
-  //   labelField: 'name',
-  // },
+  showHeaderOverflow: true,
+  showOverflow: false,
   columns: baseColumns,
   columnConfig: {resizable: true},
   height: 'auto',
@@ -200,16 +193,11 @@ const gridOptions: VxeGridProps<any> = {
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
-        return await getCompanyMatrixList({
-          query: {
-            pageNum: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          entity: formValues || {},
-        });
+        return await getCompanyMatrixList(formValues);
       },
-      querySuccess: (params) => {
-        loadMatrixColumn();
+      querySuccess: async (params) => {
+        await loadMatrixColumn();
+        await handleScrollTag();
       }
     },
   },
@@ -222,13 +210,17 @@ const gridEvents: VxeGridListeners = {
       return;
     }
 
+    if (!hasAccessByCodes([PerPrefix + PerEnum.UPDATE])) {
+      message.warn('无操作权限，请联系管理员！');
+      return;
+    }
+
     const personals = row[column.field]
 
     currentRole.value = column.params;
     currentRow.value = row;
     personalSelectorModalRef.value.open();
     personalSelectorModalRef.value.setData(personals);
-
   }
 };
 
@@ -236,7 +228,6 @@ const gridEvents: VxeGridListeners = {
   // 人员选择后回调
   async function handleSettingPersonalSuccess(selectedPersonal) {
     setLoading(true);
-    debugger;
     const personals = selectedPersonal.map((item) => item.code);
     const data = {
       orgId: unref(currentRow).id,
@@ -247,7 +238,6 @@ const gridEvents: VxeGridListeners = {
       },
     };
     const {success, msg} = await saveOrUpdateRoleScope(data);
-    debugger;
     if (success) {
       message.success(msg);
       // 根据角色ID和组织（部门）ID刷新某个单元格的数据
@@ -277,7 +267,7 @@ const gridEvents: VxeGridListeners = {
         title: item.name,
         field: 'customColumn_' + item.id,
         helpMessage: item.name + '【' + item.sn + '】',
-        minWidth: 180,
+        minWidth: 200,
         align: 'left',
         slots: { default: 'customColumn'}
       };
@@ -288,7 +278,7 @@ const gridEvents: VxeGridListeners = {
       align: 'left',
       minWidth: 300,
       resizable: true,
-      fixed: true,
+      fixed: 'left',
       treeNode: true,
       slots: { default: 'name'}
     });
@@ -354,21 +344,6 @@ const gridEvents: VxeGridListeners = {
         showOkBtn: true,
         showCancelBtn: true,
       });
-    }
-  }
-
-  async function handleSelect(node: any) {
-    currentNode.value = node;
-    if (!node) {
-      setTableData([]);
-      return;
-    }
-    try {
-      setProps({
-        searchInfo: { companyId: node.id },
-      });
-      reload();
-    } finally {
     }
   }
 
@@ -468,26 +443,21 @@ const gridEvents: VxeGridListeners = {
   // 横向查找
   async function handleScrollTag() {
     const form = tableApi.formApi;
-    const values = await form.validate();
-    debugger;
-    setTimeout(() => {
-      if (values.roleKeyword) {
-        const thList = companyMatrixTable.value.$el.querySelectorAll('.ant-table-thead th');
-        for (let i = 0; i < thList.length; i++) {
-          if (thList[i].textContent.indexOf(values.roleKeyword) != -1) {
-            companyMatrixTable.value.$el.querySelector('.ant-table-body').scrollLeft =
-              thList[i].offsetLeft - thList[0].offsetWidth;
-            companyMatrixTable.value.$el.querySelector('.ant-table-header').scrollLeft =
-              thList[i].offsetLeft - thList[0].offsetWidth;
-            thList[i].classList.add('word-light');
-            setTimeout(() => {
-              thList[i].classList.remove('word-light');
-            }, 500);
-            break;
-          }
-        }
+
+    const {scrollToColumn, getColumns} = tableApi.grid;
+
+    const values = await form.getValues();
+    if (values.roleKeyword) {
+      const columns = getColumns();
+      const col = columns.find(item => {
+        return item.title.indexOf(values.roleKeyword) !== -1;
+      });
+      if(!col){
+        return;
       }
-    }, 100);
+      col.headerClassName = 'word-light';
+      await scrollToColumn(col);
+    }
   }
 
   /**
