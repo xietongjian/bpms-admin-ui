@@ -2,7 +2,6 @@
   <BasicModal
     wrapClassName="export-matrix-role-modal"
     v-bind="$attrs"
-    :title="t('component.excel.exportModalTitle')"
   >
     <BasicTable @register="registerRolesTable">
       <template #bodyCell="{ column, record }">
@@ -15,8 +14,9 @@
   import { ref, defineEmits } from 'vue';
   // import { BasicModal, useModalInner } from '@/components/Modal';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
+  import type {VbenFormProps} from '@vben/common-ui';
 
-  import {useVbenModal, VbenFormProps} from '@vben/common-ui';
+  import {useVbenModal} from '@vben/common-ui';
   import {useVbenVxeGrid} from "#/adapter/vxe-table";
 
   // import { FormSchema } from '@/components/Form/index';
@@ -127,10 +127,10 @@
       colProps: { span: 18 },
     },
   ];
-  const { t } = useI18n();
+  // const { t } = useI18n();
 
   const fileName = ref('');
-  const [registerRolesTable, { reload, setTableData, getSelectRows }] = useTable({
+  /*const [registerRolesTable, { reload, setTableData, getSelectRows }] = useTable({
     title: '',
     columns,
     formConfig: {
@@ -153,13 +153,13 @@
       field: 'name',
       order: 'ascend',
     },
-  });
-  const [registerModal, { closeModal }] = useModalInner((data) => {
+  });*/
+  /*const [registerModal, { closeModal }] = useModalInner((data) => {
     const { roles, exportFileName } = data;
     fileName.value = exportFileName;
     // 展示用于导出的数据列
     setTableData(roles);
-  });
+  });*/
 
   async function handleOk() {
     const selectedRows = getSelectRows();
