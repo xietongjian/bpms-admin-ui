@@ -56,7 +56,7 @@
       @change="handleSettingPersonalSuccess"
     />
     <ExportMatrixRoleExcelModal
-      @register="registerExportMatrixRoleExcelModal"
+      ref="exportMatrixRoleExcelModalRef"
       @success="defaultHeader"
     />
   </Page>
@@ -93,7 +93,7 @@ const {hasAccessByCodes}  = useAccess();
 
 const PerPrefix = 'CompanyMatrixRolePersonal:';
 
-const personalSelectorModalRef = ref();
+const personalSelectorModalRef = ref(), exportMatrixRoleExcelModalRef = ref();
 
   // 人员选择弹窗
   // const [
@@ -181,6 +181,9 @@ const gridOptions: VxeGridProps<any> = {
   pagerConfig: {
     enabled: false,
   },
+  mouseConfig: {
+    selected: true
+  },
   rowConfig: {
     keyField: 'id',
     isHover: true,
@@ -259,7 +262,6 @@ const gridEvents: VxeGridListeners = {
   async function loadMatrixColumn() {
     const res = await getMatrixRoleList({ roleType: 1 });
     const {loadColumn} = tableApi.grid;
-
     matrixRoles.value = res;
     const columns = res.map((item) => {
       return {
@@ -299,58 +301,20 @@ const gridEvents: VxeGridListeners = {
     return Promise.resolve(true);
   }
 
-  function handleRowClick(record, index, event) {
-    const pItemHandleEl = event.target.querySelector('.personal-items');
-
-    const delBtn = event.target.closest('.delete-btn');
-    if (delBtn) {
-      event.stopPropagation();
-      return;
-    }
-
-    if (pItemHandleEl) {
-      const pItemEl = pItemHandleEl;
-
-      if (!hasAccessByCodes(['DeptMatrixRolePersonal:' + PerEnum.UPDATE])) {
-        message.warn('无操作权限，请联系管理员！');
-        return;
-      }
-      // 获取当前已有的人员
-      const items = pItemEl.querySelectorAll('.personal-item');
-      const selectedList = [];
-      if (items) {
-        items.forEach((item) => {
-          const name = item.getAttribute('personalname');
-          const code = item.getAttribute('personalcode');
-          selectedList.push({ name: name, label: name, value: code, code: code });
-        });
-      }
-
-      const roleId = pItemEl.getAttribute('roleid');
-      const roleName = pItemEl.getAttribute('rolename');
-      currentRole.value = { id: roleId };
-      currentRow.value = record;
-      openPersonalSelector(true, {
-        selectorProps: {
-          multiple: true,
-          selectedList: selectedList,
-        },
-      });
-
-      setPersonalModalProps({
-        title: `设置公司【${record.name}】->角色【${roleName}】下的人员`,
-        bodyStyle: { padding: '0px', margin: '0px' },
-        width: 850,
-        showOkBtn: true,
-        showCancelBtn: true,
-      });
-    }
-  }
-
   function handleOpenExportModal() {
     // exportLoading.value = true;
     if (matrixRoles.value.length > 0) {
-      openExportMatrixRoleExcelModal(true, {
+      exportMatrixRoleExcelModalRef.value.setData({
+        roles: matrixRoles.value,
+        fileName: '公司矩阵角色',
+      });
+      exportMatrixRoleExcelModalRef.value.setState({
+        title: '下载模板'
+      });
+
+      exportMatrixRoleExcelModalRef.value.open();
+
+      /*openExportMatrixRoleExcelModal(true, {
         roles: matrixRoles.value,
         fileName: '公司矩阵角色',
       });
@@ -360,7 +324,7 @@ const gridEvents: VxeGridListeners = {
         okButtonProps: {
           icon: h(DownloadOutlined),
         },
-      });
+      });*/
     } else {
       message.warn('无矩阵角色数据！');
     }

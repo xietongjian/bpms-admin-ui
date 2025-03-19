@@ -82,7 +82,6 @@ async function bootstrap(namespace: string) {
     kindEditorUrl: '/form-making/dist/lib/kindeditor',
     aceurl: '/form-making/dist/lib/ace',
   });
-
   app.mount('#app');
 }
 

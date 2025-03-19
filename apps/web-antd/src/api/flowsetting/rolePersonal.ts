@@ -28,6 +28,7 @@ enum Api {
 export const getDeptMatrixList = async (params: any) => {
   const result = requestClient.post<any>(Api.GetDeptList, params);
   return Promise.resolve(result).then((res) => {
+    return res;
     const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
     forEach(
       treeData,

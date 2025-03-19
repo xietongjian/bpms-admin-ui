@@ -2,6 +2,7 @@ import { h } from 'vue';
 
 import { globalShareState } from '@vben/common-ui';
 import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
+import VxeUIPluginExportXLSX from '@vxe-ui/plugin-export-xlsx'
 
 import { Button, Image } from 'ant-design-vue';
 
@@ -60,6 +61,7 @@ setupVbenVxeTable({
         );
       },
     });
+    vxeUI.use(VxeUIPluginExportXLSX);
 
     // 这里可以自行扩展 vxe-table 的全局配置，比如自定义格式化
     // vxeUI.formats.add

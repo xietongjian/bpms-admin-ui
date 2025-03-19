@@ -77,6 +77,8 @@
     "vue-codemirror": "^6.1.1",
     "vue-json-pretty": "^2.4.0",
     "sortablejs": "^1.15.2",
-    "vue-esign": "^1.1.4"
+    "vue-esign": "^1.1.4",
+    "@vxe-ui/plugin-export-xlsx": "^4.1.0",
+    "exceljs": "^4.4.0"
   }
 }
