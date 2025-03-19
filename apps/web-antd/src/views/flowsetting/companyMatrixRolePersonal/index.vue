@@ -47,7 +47,7 @@
               </Popconfirm>
             </Tag>
           </Space>
-          <div class="empty" v-else>设置人员</div>
+          <div class="empty !text-gray-500/90" v-else>设置人员</div>
         </div>
       </template>
     </BasicTable>
@@ -176,7 +176,7 @@ const gridOptions: VxeGridProps<any> = {
   columns: baseColumns,
   columnConfig: {resizable: true},
   height: 'auto',
-  border: false,
+  border: true,
   stripe: true,
   pagerConfig: {
     enabled: false,
@@ -512,55 +512,6 @@ const gridEvents: VxeGridListeners = {
 
       .ant-space-item {
         margin: 2px 0;
-      }
-    }
-  }
-
-  .matrix-list {
-    .ant-table-content {
-      .ant-table-tbody {
-        tr {
-          td:nth-child(n + 2) {
-            padding: 0 !important;
-          }
-        }
-      }
-    }
-
-    .ant-table-tbody > tr > td:nth-child(n + 2) {
-      position: relative;
-      &:hover {
-        .personal-items {
-          .empty {
-            color: #666;
-          }
-        }
-        &:after {
-          content: '';
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          left: 0;
-          top: 0;
-          background: rgba(100, 100, 100, 0.1);
-          cursor: pointer;
-        }
-      }
-      .personal-items {
-        cursor: pointer;
-        .ant-space-item {
-          z-index: 1;
-        }
-        .empty {
-          text-align: center;
-          color: transparent;
-        }
-      }
-    }
-
-    .ant-table-row {
-      td {
-        padding: 0;
       }
     }
   }

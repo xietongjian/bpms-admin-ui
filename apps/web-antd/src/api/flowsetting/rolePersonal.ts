@@ -100,7 +100,8 @@ export const allocationPersonals = (params: any) =>
 export const deleteByIds = (params?: Array<string>) =>
   requestClient.post<any>(Api.Delete, params);
 
-export const deleteById = (id: string) => requestClient.post(Api.DeleteById + '/' + id, {});
+export const deleteById = (id: string) => requestClient.post(Api.DeleteById + '/' + id,
+    {}, {responseReturn: 'body'});
 
 export const deleteMatrixPersonalById = (params: any) =>
   requestClient.post(Api.DeleteMatrixPersonalById + '/' + params.id,

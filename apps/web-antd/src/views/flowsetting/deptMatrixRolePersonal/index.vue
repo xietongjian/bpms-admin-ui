@@ -43,7 +43,7 @@
               </Popconfirm>
             </Tag>
           </Space>
-          <div class="empty" v-else>设置人员</div>
+          <div class="empty !text-gray-500/90" v-else>设置人员</div>
         </div>
       </template>
     </BasicTable>
@@ -142,6 +142,8 @@
   };
 
   const gridOptions: VxeGridProps<any> = {
+    showHeaderOverflow: true,
+    showOverflow: false,
     checkboxConfig: {
       highlight: true,
       labelField: 'name',
@@ -151,7 +153,7 @@
     columnConfig: {resizable: true},
     height: 'auto',
     keepSource: true,
-    border: false,
+    border: true,
     stripe: true,
     pagerConfig: {
       enabled: false,
@@ -169,15 +171,22 @@
       transform: true,
     },
     proxyConfig: {
+      autoLoad: false,
       ajax: {
         query: async ({page}, formValues) => {
-          return await getDeptMatrixList(formValues);
+          if(currentNode.value.id){
+            formValues.companyId = currentNode.value.id;
+            return await getDeptMatrixList(formValues);
+          } else {
+            message.warn('请选择公司！');
+            return Promise.resolve([]);
+          }
         },
+        querySuccess: async (params) => {
+          await loadMatrixColumn();
+          // await handleScrollTag();
+        }
       },
-      querySuccess: async (params) => {
-        await loadMatrixColumn();
-        // await handleScrollTag();
-      }
     },
   };
 
@@ -215,7 +224,7 @@
 
   // 人员选择后回调
   async function handleSettingPersonalSuccess(selectedPersonal) {
-    tableApi.setLoading(true);
+    // tableApi.setLoading(true);
     const personals = selectedPersonal.map((item) => item.code);
     const data = {
       orgId: unref(currentRow).id,
@@ -231,7 +240,7 @@
       // 根据角色ID和组织（部门）ID刷新某个单元格的数据
       await reloadRolePersonal(unref(currentRole).id, unref(currentRow).id);
     }
-    tableApi.setLoading(false);
+    //tableApi.setLoading(false);
   }
 
   async function reloadRolePersonal(roleId, orgId) {
@@ -274,7 +283,7 @@
   }
 
   async function handleDeletePersonal(id, roleId, orgId) {
-    tableApi.setLoading(true);
+    // tableApi.setLoading(true);
     const res = await deleteMatrixPersonalById({ id: id });
 
     const { success, msg } = res;
@@ -326,37 +335,6 @@
           td:nth-child(n + 2) {
             padding: 0 !important;
           }
-        }
-      }
-    }
-
-    .ant-table-tbody > tr > td:nth-child(n + 2) {
-      position: relative;
-      &:hover {
-        .personal-items {
-          .empty {
-            color: #666;
-          }
-        }
-        &:after {
-          content: '';
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          left: 0;
-          top: 0;
-          background: rgba(100, 100, 100, 0.1);
-          cursor: pointer;
-        }
-      }
-      .personal-items {
-        cursor: pointer;
-        .ant-space-item {
-          z-index: 1;
-        }
-        .empty {
-          text-align: center;
-          color: transparent;
         }
       }
     }

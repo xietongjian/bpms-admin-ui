@@ -15,24 +15,13 @@
       </div>
     </template>
     <BasicTable
-      @register="registerTable"
       class="role-personal !pt-0 !pl-0 !pr-0 !pb-0 !h-full"
     >
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-            :actions="[
-                    {
-                      auth: 'RolePersonal:' + PerEnum.ADD,
-                      tooltip: '添加人员',
-                      icon: 'ant-design:user-add',
-                      onClick: handleAddPersonal.bind(null, record),
-                    },
-                  ]"
-          />
-        </template>
+      <template #action="{row}">
+        <TableAction
+            :actions="createMainActions(row)"
+        />
       </template>
-
       <template #expandedRowRender="{ record, index, indent, expanded }">
         <BasicTable
           size="small"
@@ -52,35 +41,21 @@
           :loading="personalTableLoading"
           :dataSource="rolePersonalData[currentNode?.id + '_' + record.id]"
         >
-          <template #bodyCell="{ column, record: rcd }">
-            <template v-if="column.key === 'action'">
-              <TableAction
-                :actions="[
-                        {
-                          auth: 'RolePersonal:' + PerEnum.DELETE,
-                          icon: 'ant-design:delete-outlined',
-                          danger: true,
-                          tooltip: '删除',
-                          popConfirm: {
-                            title: '是否确认删除',
-                            confirm: handleDeletePersonal.bind(null, rcd),
-                            okButtonProps: { danger: true },
-                          },
-                        },
-                      ]"
-              />
-            </template>
+          <template #action="{row}">
+            <TableAction
+                :actions="createActions(row)"
+            />
+          </template>
 
-            <template v-else-if="column.key === 'personalName'">
-              <EmpInfo :no="rcd.personalCode" :name="rcd.personalName" />
-            </template>
+          <template #personalName="{row: rcd}">
+            <EmpInfo :no="rcd.personalCode" :name="rcd.personalName" />
           </template>
         </BasicTable>
       </template>
     </BasicTable>
 
     <PersonalSelectorModal
-      @register="registerPersonalModal"
+      ref="personalSelectorModalRef"
       @change="handleSettingPersonalSuccess"
     />
   </ColPage>
@@ -91,6 +66,7 @@ import {PerEnum} from "#/enums/perEnum";
   // import { useForm } from '@/components/Form/index';
 import type { Recordable } from '@vben/types';
 import type {VxeGridProps} from '#/adapter/vxe-table';
+import PersonalSelectorModal from '#/components/selector/personal-selector/PersonalSelectorModal.vue';
 
   // import { BasicTable, useTable, TableAction } from '@/components/Table';
   // import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
@@ -101,6 +77,7 @@ import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';
   // import { useMessage } from '@/hooks/web/useMessage';
   // import { useModal } from '@/components/Modal';
   import { EmpInfo } from '#/views/components/EmpInfo';
+  import {message} from 'ant-design-vue'
 
   import {
     companyRoleFormSchema,
@@ -117,6 +94,10 @@ import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
 import {listColumns} from "#/views/base/app/app.data";
 import {getAppListByPage} from "#/api/base/app";
+import type {VbenFormProps} from '@vben/common-ui';
+const PerPrefix = 'RolePersonal:';
+
+const personalSelectorModalRef = ref(), exportMatrixRoleExcelModalRef = ref();
 
   // 人员选择弹窗
   // const [
@@ -124,7 +105,7 @@ import {getAppListByPage} from "#/api/base/app";
   //   { openModal: openPersonalSelector, setModalProps: setPersonalModalProps },
   // ] = useModal();
 
-  const currentRole = ref<Recordable>({});
+  const currentRole = ref<Recordable<any>>({});
   const expandedRowKeys = ref([]);
   const searchPersonTxt = ref<object>({});
 
@@ -134,7 +115,7 @@ import {getAppListByPage} from "#/api/base/app";
     nextTick(() => {});
   });
 
-  const currentNode = ref<Recordable>({});
+  const currentNode = ref<Recordable<any>>({});
   const personalTableLoading = ref(false);
   const roleLoading = ref(false);
 
@@ -176,7 +157,32 @@ import {getAppListByPage} from "#/api/base/app";
     },
   });*/
 
+function createMainActions (row) {
+  return [
+    {
+      auth: [PerPrefix + PerEnum.ADD],
+      tooltip: '添加人员',
+      icon: 'ant-design:user-add',
+      onClick: handleAddPersonal.bind(null, row),
+    },
+  ];
+}
 
+function createActions (row) {
+  return [
+    {
+      auth: [PerPrefix + PerEnum.DELETE],
+      icon: 'ant-design:delete-outlined',
+      danger: true,
+      tooltip: '删除',
+      popConfirm: {
+        title: '是否确认删除',
+        confirm: handleDeletePersonal.bind(null, row),
+        okButtonProps: { danger: true },
+      },
+    },
+  ];
+}
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
   submitOnEnter: true,
@@ -204,6 +210,7 @@ const gridOptions: VxeGridProps<any> = {
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
+        formValues.companyId = currentNode.value?.id;
         return await getRoleListByPage({
           query: {
             pageNum: page.currentPage,
@@ -224,7 +231,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
     if (!selectedPersonal || selectedPersonal.length <= 0) {
       return;
     }
-    setLoading(true);
+    // setLoading(true);
     const personals = selectedPersonal.map((item) => item.code);
     const data = {
       orgId: unref(currentNode).id,
@@ -271,12 +278,12 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
         const result = await saveOrUpdate(companyRoles);
         const { data } = result;
         if (data.success) {
-          createMessage.success(data.msg, 2);
+          message.success(data.msg, 2);
         } else {
-          createMessage.error(data.msg, 2);
+          message.error(data.msg, 2);
         }
       } else {
-        createMessage.error('未指定公司，添加失败！', 2);
+        message.error('未指定公司，添加失败！', 2);
       }
     } finally {
       roleLoading.value = false;
@@ -296,7 +303,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
         personalTableLoading.value = false;
       });
     } else {
-      createMessage.warning('未选择公司');
+      message.warning('未选择公司');
     }
   }
 
@@ -304,11 +311,18 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
   function handleAddPersonal(record: Recordable, e) {
     e.stopPropagation();
     if (!unref(currentNode).id) {
-      createMessage.warning('未选择公司');
+      message.warning('未选择公司');
       return;
     }
     currentRole.value = record;
-    openPersonalSelector(true, {
+
+    personalSelectorModalRef.value.setData([]);
+    personalSelectorModalRef.value.setState({
+      title: `设置角色【${record.name}】下的人员`
+    });
+    personalSelectorModalRef.value.open();
+
+    /*openPersonalSelector(true, {
       selectorProps: {
         multiple: true,
         selectedList: [],
@@ -321,12 +335,12 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
       width: 850,
       showOkBtn: true,
       showCancelBtn: true,
-    });
+    });*/
   }
 
-  function handleDelete(record: Recordable<any>) {
+  async function handleDelete(record: Recordable<any>) {
     if (record.children && record.children.length > 0) {
-      createMessage.warning('有子节点，不能删除！');
+      message.warning('有子节点，不能删除！');
       return;
     }
     deleteByIds({ id: record.id }).then((res) => {
@@ -334,29 +348,30 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
     });
   }
 
-  function handleDeletePersonal(record: Recordable<any>) {
-    deleteById(record.id)
-      .then(() => {
-        reloadRolePersonal(unref(currentRole).id, '');
-      })
-      .finally(() => {});
+  async function handleDeletePersonal(record: Recordable<any>) {
+    const {success, msg} = await deleteById(record.id);
+    if(success){
+      reloadRolePersonal(unref(currentRole).id, '');
+    }
   }
 
   async function handleSelect(node: any) {
+    const {loadData} = tableApi.grid;
     roleLoading.value = true;
     currentNode.value = node;
     rolePersonalData.value = {};
     expandedRowKeys.value = [];
     if (!node) {
-      setTableData([]);
-      setPagination({ total: 0, current: 1 });
+      loadData([]);
+      // setPagination({ total: 0, current: 1 });
       return;
     }
     try {
-      setProps({
-        searchInfo: { companyId: node.id },
-      });
-      reload();
+      // setProps({
+      //   searchInfo: { companyId: node.id },
+      // });
+      // reload();
+      tableApi.reload();
     } finally {
       roleLoading.value = false;
     }
