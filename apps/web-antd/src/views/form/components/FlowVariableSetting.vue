@@ -26,7 +26,7 @@
     </div>
     <div class="h-[50px]"></div>
 
-    <FlowVariableFileModal @register="registerModal" @success="handleResetVariables" />
+    <FlowVariableFileModal ref="flowVariableFileModalRef" @register="registerModal" @success="handleResetVariables" />
   </div>
 </template>
 
@@ -45,6 +45,8 @@
   import { downloadByUrl } from '#/utils/file/download';
   import FlowVariableFileModal from '#/views/form/components/FlowVariableFileModal.vue';
   // import { useModal } from '@/components/Modal';
+
+  const flowVariableFileModalRef = ref();
 
   defineComponent({
     name: 'FlowVariableSetting',
@@ -266,7 +268,7 @@
     }
   }
 
-  const [registerModal, { openModal }] = useModal();
+  // const [registerModal, { openModal }] = useModal();
 
   watch(
     () => props.modelKey,

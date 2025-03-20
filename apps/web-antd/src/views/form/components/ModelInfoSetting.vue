@@ -395,7 +395,8 @@
           });
         }
 
-        const applyCompanies = JSON.parse(res.applyCompanies) || [];
+        debugger;
+        const applyCompanies = JSON.parse(res.applyCompanies||'[]') || [];
         applyCompanies &&
           applyCompanies.forEach((item) => {
             item.shortName = item.name;
@@ -404,6 +405,7 @@
             item.label = item.name;
           });
 
+        debugger;
         const superuser = res.superuser ? JSON.parse(res.superuser) : [];
         superuser &&
           superuser.forEach((item) => {
@@ -488,12 +490,15 @@
         return;
       }
       const values = await formApi.getValues();
+      debugger;
       // 适用单位（公司）
       if (values.applyCompanies && values.applyCompanies.length > 0) {
         let applyCompanies = values.applyCompanies.map((item) => {
           return { id: item.id, name: item.shortName };
         });
         values.applyCompanies = JSON.stringify(applyCompanies);
+      } else {
+        values.applyCompanies = '[]';
       }
 
       if (values.flowOwnerNo && values.flowOwnerNo.length > 0) {
@@ -543,6 +548,7 @@
       if (success && data) {
         message.success({ content: msg, style: { marginTop: '40px' } });
         loadFormData(data.modelId);
+        debugger;
         return Promise.resolve(data);
       } else {
         message.error(msg);

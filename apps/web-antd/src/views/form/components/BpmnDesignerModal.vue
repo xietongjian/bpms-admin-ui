@@ -403,7 +403,7 @@
 
   async function getBpmnModelXml() {
     return bpmnDesignerFrameRef.value.getBpmnXml();
-  };
+  }
   const getIssuesMap = () => {
     return bpmnDesignerFrameRef.value.getIssuesMap();
   };
@@ -421,7 +421,7 @@
           title: '温馨提示',
           content: `目前流程图存在 ${errorLen} 个错误, 确定要保存吗？`,
           onOk: () => {
-            await saveBpmnModelInfo(xml);
+            saveBpmnModelInfo(xml);
           },
           onCancel: () => {
             changeLoading(false);
