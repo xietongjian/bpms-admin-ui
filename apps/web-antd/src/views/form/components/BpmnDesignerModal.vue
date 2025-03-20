@@ -186,16 +186,15 @@
 
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
-  // import { copyText } from '#/utils/copyTextToClipboard';
   import { getXMLAttribute, updateXMLAttribute } from '#/utils/domUtils';
   import { useClipboard } from '@vueuse/core';
 
   // import { useAppStore } from '@/store/modules/app';
   const {hasAccessByCodes} = useAccess();
 
-  const { isSupported, copy, copied } = useClipboard({ legacy: true });
+  const { copy } = useClipboard({ legacy: true });
 
-  const PerPrefix = 'Biz:';
+  const PerPrefix = 'Custom:';
   // const appStore = useAppStore();
 
   // 0保存成功，1保存中，2保存失败
@@ -296,45 +295,6 @@
     bpmnDesigner: true,
     settingInfo: true,
   });
-
-  /*const [registerModal, { changeLoading, closeModal }] = useModalInner(async (data) => {
-    // 从缓存中获取当前编辑的步骤
-    const currentStep = processSettingStore.getDesignerCurrentStepValue(data.modelId);
-    currentStepValue.value = currentStep;
-    saveLoading.value = false;
-
-    modelKey.value = data.modelKey;
-    // formType: custom/biz
-    formType.value = data.formType;
-    processModelId.value = data.modelId;
-    modelId.value = data.modelId;
-    categoryCode.value = data.categoryCode;
-
-    // 如果是新增
-    if (!data.modelId) {
-      stepsDisabled.value = { formDesigner: false, bpmnDesigner: true, settingInfo: true };
-    } else {
-      stepsDisabled.value = { formDesigner: false, bpmnDesigner: false, settingInfo: false };
-    }
-    refreshStatus();
-    autoSaveStatus.value = -1;
-    stepLoadStatus.value = {
-      formDesigner: currentStep === 0,
-      bpmnDesigner: currentStep === 1,
-      settingInfo: currentStep === 2,
-    };
-    if (data.modelId) {
-      getByModelId(data.modelId)
-        .then((res) => {
-          modelBaseInfo.value = res;
-          processModelName.value = res.name;
-        })
-        .catch(() => {
-          console.error('通过ModelId查询modelInfo失败！');
-        });
-    }
-    modelBaseInfo.value = {};
-  });*/
 
   async function initData(params) {
     // 从缓存中获取当前编辑的步骤
@@ -449,11 +409,9 @@
   };
 
   async function handleSave() {
-    debugger;
     if (currentStepValue.value === 0) {
-      saveFormDesignerInfo();
-    }
-    if (currentStepValue.value === 1) {
+      await saveFormDesignerInfo();
+    } else if (currentStepValue.value === 1) {
       const issues = getIssuesMap();
       const errorLen = Object.keys(issues).length;
       const {xml} = await getBpmnModelXml();
@@ -463,7 +421,7 @@
           title: '温馨提示',
           content: `目前流程图存在 ${errorLen} 个错误, 确定要保存吗？`,
           onOk: () => {
-            saveBpmnModelInfo(xml);
+            await saveBpmnModelInfo(xml);
           },
           onCancel: () => {
             changeLoading(false);
@@ -471,10 +429,9 @@
           },
         });
       } else {
-        saveBpmnModelInfo(xml);
+        await saveBpmnModelInfo(xml);
       }
-    }
-    if (currentStepValue.value === 2) {
+    } else if (currentStepValue.value === 2) {
       saveBaseInfo();
     }
     refreshStatus();
@@ -622,8 +579,6 @@
     }
   }
 
-  onMounted(() => {});
-
   if (modelId.value) {
     // 修改可用状态
     processInfoDisabled.value = false;
@@ -719,7 +674,7 @@
     if (unref(currentStepValue) === 3) {
       currentStepValue.value = unref(publishLastStepValue);
     } else {
-      currentStepValue.value--;
+      currentStepValue.value --;
     }
     handleStepChange(unref(currentStepValue));
   };

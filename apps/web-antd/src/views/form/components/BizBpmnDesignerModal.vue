@@ -227,7 +227,7 @@
 
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
-  // import { copyText } from '#/utils/copyTextToClipboard';
+  import { useClipboard } from '@vueuse/core';
   import { getXMLAttribute, updateXMLAttribute } from '#/utils/domUtils';
   // import { useAppStore } from '@/store/modules/app';
 
@@ -387,24 +387,42 @@
 
 
   const [BasicModal, modalApi] = useVbenModal({
-    draggable: true,
+    fullscreen: true,
+    fullscreenButton: false,
+    draggable: false,
+    closable: false,
+    footer: false,
     onCancel() {
       modalApi.close();
+    },
+    onClosed() {
+      dataStatusIsDraft.value = {
+        formDesigner: false,
+        bpmnDesigner: false,
+        settingInfo: false,
+        finallyStatus: false,
+      };
+      emit('success');
     },
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
+        //initData(values);
         if (values) {
-          formApi.setValues(values);
+          // formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
     },
     onConfirm() {
       // await formApi.submitForm();
-      handleSubmit();
+      // handleSubmit();
     },
   });
+
+  function changeLoading(loading) {
+    modalApi.setState({loading: loading, confirmLoading: loading});
+  }
 
   function publish(modelKey) {
     changeLoading(true);
@@ -699,14 +717,15 @@
   }
 
   function handleClose() {
-    closeModal();
-    dataStatusIsDraft.value = {
-      formDesigner: false,
-      bpmnDesigner: false,
-      settingInfo: false,
-      finallyStatus: false,
-    };
-    emit('success');
+    modalApi.close();
+    // closeModal();
+    // dataStatusIsDraft.value = {
+    //   formDesigner: false,
+    //   bpmnDesigner: false,
+    //   settingInfo: false,
+    //   finallyStatus: false,
+    // };
+    // emit('success');
   }
 
   // 加载三个步骤的状态
@@ -803,9 +822,7 @@
   function doCopyContent(content) {
     copyText(content);
   }
-  defineExpose({
-    handleSave,
-  });
+  defineExpose(modalApi);
 </script>
 <style lang="scss">
   .form-designer {

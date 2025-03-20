@@ -10,11 +10,13 @@ import {getAll} from "#/api/base/app";
 
 export const columns: VxeGridProps['columns'] = [
   {
+    type: 'radio',
     title: '名称',
     field: 'name',
     align: 'left',
     minWidth: 300,
     resizable: true,
+    slots: {default: 'name'}
   },
   {
     title: 'KEY',

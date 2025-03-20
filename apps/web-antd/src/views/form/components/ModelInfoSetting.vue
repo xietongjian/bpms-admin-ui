@@ -539,7 +539,7 @@
         values.modelIcon = values.modelIcon[0];
       }
 
-      const {data: {data, success, msg}} = await saveOrUpdate(values);
+      const {data, success, msg} = await saveOrUpdate(values);
       if (success && data) {
         message.success({ content: msg, style: { marginTop: '40px' } });
         loadFormData(data.modelId);

@@ -148,7 +148,6 @@
     // if (unref(attrs).disabled) {
     //   return;
     // }
-    personalSelectorModalRef.value.open();
     personalSelectorModalRef.value.setData({
       ...props,
       // defaultSelectedOrgKeys: props.defaultSelectedOrgKeys,
@@ -158,6 +157,7 @@
     personalSelectorModalRef.value.setState({
       title: '选择人员'
     });
+    personalSelectorModalRef.value.open();
     // 加载已选择的数据
     /*openPersonalSelector(true, {
       selectorProps: {

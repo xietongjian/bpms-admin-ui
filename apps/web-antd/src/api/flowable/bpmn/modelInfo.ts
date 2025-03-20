@@ -122,7 +122,7 @@ export function getBpmnByModelKey(params: any) {
 }
 
 export const saveOrUpdate = (params: any) =>
-  requestClient.post(Api.SaveOrUpdate, params, { }, { isReturnNativeResponse: true });
+  requestClient.post(Api.SaveOrUpdate, params, { responseReturn: 'body' });
 
 export const publishBpmn = (params: any) => requestClient.post( Api.PublishBpmn + '/' + params);
 

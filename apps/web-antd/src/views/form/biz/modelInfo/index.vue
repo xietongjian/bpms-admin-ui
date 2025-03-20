@@ -24,10 +24,9 @@
               <Popconfirm
                   :title="`确定要发布【${currentModelInfo.name}】流程吗？`"
                   @confirm="handlePublish"
-                  type="primary"
                   :disabled="!showPublishBtn"
               >
-                <Button type="primary">发布</Button>
+                <Button :disabled="!showPublishBtn" type="primary">发布</Button>
               </Popconfirm>
             </Tooltip>
             <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH"
@@ -38,11 +37,10 @@
               <Popconfirm
                   :title="`确定要停用【${currentModelInfo.name}】流程吗？`"
                   @confirm="handleStop"
-                  color="error"
-                  type="danger"
                   :disabled="!showStopBtn"
+                  :okButtonProps="{ danger: true }"
               >
-                <Button type="primary" danger>停用</Button>
+                <Button :disabled="!showStopBtn" type="primary" danger>停用</Button>
               </Popconfirm>
             </Tooltip>
             <Dropdown v-access:code="PerPrefix+PerEnum.ADD" placement="bottom">
@@ -80,8 +78,28 @@
               </Button>
             </Dropdown>
             <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCopy">复制</Button>
-
           </div>
+        </template>
+        <template #name="{row}">
+          <Badge>
+            <template #count>
+              <Tooltip :title="row.formType === 1 ? '有表单流程' : '无表单流程'" placement="top" :mouseEnterDelay="0.3">
+                <ProfileOutlined v-if="row.formType === 1" style="color: #2db7f5; font-size: 12px" />
+                <PartitionOutlined v-else style="color: purple; font-size: 12px" />
+              </Tooltip>
+            </template>
+            <Avatar :src="row.modelIcon">
+              <template #icon>
+                <PictureFilled />
+              </template>
+            </Avatar>
+          </Badge>
+          <Tooltip placement="top" :mouseEnterDelay="0.3">
+            <template #title>
+              {{ row.name }}
+            </template>
+            &nbsp;{{ row.name }}
+          </Tooltip>
         </template>
         <template #action="{row}">
           <TableAction :actions="createActions(row)" />
@@ -89,27 +107,7 @@
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
           </template>
-          <template v-if="column.key === 'name'">
-            <Badge>
-              <template #count>
-                <Tooltip :title="record.formType===1 ? '有表单流程' : '无表单流程'" placement="top" :mouseEnterDelay="0.3">
-                  <ProfileOutlined v-if="record.formType === 1" style="color: #2db7f5; font-size: 12px" />
-                  <PartitionOutlined v-else style="color: purple; font-size: 12px" />
-                </Tooltip>
-              </template>
-              <Avatar :src="record.modelIcon">
-                <template #icon>
-                  <PictureFilled />
-                </template>
-              </Avatar>
-            </Badge>
-            <Tooltip placement="top" :mouseEnterDelay="0.3">
-              <template #title>
-                {{ record.name }}
-              </template>
-              &nbsp;{{ record.name }}
-            </Tooltip>
-          </template>
+
           <template v-if="column.key === 'modelKey'">
             <Tooltip placement="top" :mouseEnterDelay="0.3">
               <template #title>
@@ -171,7 +169,8 @@
 
   const MenuItem = Menu.Item;
   const PerPrefix = 'Biz:';
-  const bpmnDesignerModalRef = ref(),
+  const bizBpmnDesignerModalRef = ref(),
+      bizNoFormBpmnDesignerModalRef = ref(),
       copyModelInfoModalRef = ref(),
       bpmnPreviewModalRef = ref();
   // const [registerCopyModal, { openModal: openCopyModal, setModalProps: setCopyModalProps }] =
@@ -238,19 +237,23 @@
   };
 
   const gridOptions: VxeGridProps<any> = {
-    checkboxConfig: {
-      highlight: true,
-      labelField: 'name',
-    },
     columns,
     columnConfig: {resizable: true},
     height: 'auto',
-    keepSource: true,
     border: false,
+    keepSource: true,
+    autoResize: false,
     stripe: true,
+    round: false,
+    radioConfig: {
+      highlight: true,
+      labelField: 'name',
+      trigger: 'row',
+    },
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
+          currentModelInfo.value = {};
           return await getPagerModel({
             query: {
               pageNum: page.currentPage,
@@ -270,48 +273,59 @@
   };
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
 
-
   watch(
     () => unref(currentModelInfo),
     (v) => {
-      if (!v.modelKey) {
+      if (v.modelKey) {
+        showPublishBtn.value = true;
+        showStopBtn.value = true;
+      } else {
         showPublishBtn.value = false;
         showStopBtn.value = false;
       }
     },
   );
-  nextTick(() => {
-    /*const { updateSchema } = getForm();
-    getAll().then((res) => {
-      updateSchema([
-        {
-          field: 'appSn',
-          componentProps: { options: res, labelField: 'id' },
-        },
-      ]);
-    });*/
-  });
 
-  function handleCreate(e) {
+  function handleCreate (e) {
+    debugger;
+    if (!unref(currentCategory).code) {
+      message.warning('请选择分类！', 2);
+      return;
+    }
     //custom/biz/bizNoForm
     if (e.key === 'biz') {
       // 业务流程 - 有表单
-      openBpmnDesignerModal(true, {
+      bizBpmnDesignerModalRef.value.setData({
         modelKey: '',
         modelId: '',
         formType: e.key,
         categoryCode: unref(currentCategory)?.code,
       });
-      setDesignerModalProps(setBpmnDesignerModalProps);
+      bizBpmnDesignerModalRef.value.open();
+
+      /*openBpmnDesignerModal(true, {
+        modelKey: '',
+        modelId: '',
+        formType: e.key,
+        categoryCode: unref(currentCategory)?.code,
+      });
+      setDesignerModalProps(setBpmnDesignerModalProps);*/
     } else if (e.key === 'bizNoForm') {
       // 业务流程 - 无表单
-      openNoFormBpmnDesignerModal(true, {
+      bizNoFormBpmnDesignerModalRef.value.setData({
         modelKey: '',
         modelId: '',
         formType: e.key,
         categoryCode: unref(currentCategory)?.code,
       });
-      setDesignerModalProps(setNoFormBpmnDesignerModalProps);
+      bizNoFormBpmnDesignerModalRef.value.open();
+      // openNoFormBpmnDesignerModal(true, {
+      //   modelKey: '',
+      //   modelId: '',
+      //   formType: e.key,
+      //   categoryCode: unref(currentCategory)?.code,
+      // });
+      // setDesignerModalProps(setNoFormBpmnDesignerModalProps);
     }
   }
 
@@ -362,18 +376,36 @@
       formType: formType === 1 ? 'biz' : 'bizNoForm',
     };
     if(formType === 1){
-      openBpmnDesignerModal(true, { ...query });
+      bizBpmnDesignerModalRef.value.setData({
+        ...query
+      });
+      bizBpmnDesignerModalRef.value.open();
     }else{
-      openNoFormBpmnDesignerModal(true, { ...query });
+      bizNoFormBpmnDesignerModalRef.value.setData({
+        ...query
+      });
+      bizNoFormBpmnDesignerModalRef.value.open();
     }
-    setDesignerModalProps(
-      formType === 1 ? setBpmnDesignerModalProps : setNoFormBpmnDesignerModalProps
-    );
+    // setDesignerModalProps(
+    //   formType === 1 ? setBpmnDesignerModalProps : setNoFormBpmnDesignerModalProps
+    // );
   }
 
   // 复制
   function handleCopy() {
-    const selectedRows = getSelectRows();
+    const selectedRow = tableApi.grid.getRadioRecord();
+    if (!selectedRow) {
+      message.warn('请选择行！');
+      return;
+    }
+
+    copyModelInfoModalRef.value.setData(selectedRow);
+    copyModelInfoModalRef.value.open();
+    copyModelInfoModalRef.value.setState({
+      title: '复制【' + selectedRow.name + '】表单、流程',
+    });
+
+    /*const selectedRows = getSelectRows();
     if (selectedRows && selectedRows.length <= 0) {
       message.warn('请选择行！');
       return;
@@ -384,66 +416,61 @@
     setCopyModalProps({
       title: '复制【' + selectedRows[0].name + '】表单、流程',
       width: 600,
-    });
+    });*/
   }
 
-  function publish(modelKey) {
-    loadingRef.value = true;
-    deployForm(modelKey)
-      .then((res) => {
-        const { data } = res;
-        if (data.success) {
-          message.success(data.msg, 2);
-          tableApi.reload();
-        } else {
-          message.error(data.msg, 2);
-        }
-      })
-      .finally(() => {
-        loadingRef.value = false;
-      });
+  async function publish(modelKey: string) {
+    try {
+      const {success, msg} = await deployForm(modelKey);
+      if (success) {
+        message.success(msg, 2);
+        tableApi.reload();
+      } else {
+        message.error(msg, 2);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 
-  function stop(modelKey) {
-    loadingRef.value = true;
-    stopForm(modelKey)
-      .then((res) => {
-        const { data } = res;
-        if (data.success) {
-          message.success(data.msg, 2);
-          tableApi.reload();
-        } else {
-          message.error(data.msg, 2);
-        }
-      })
-      .finally(() => {
-        loadingRef.value = false;
-      });
+  async function stop(modelKey: string) {
+    try {
+      const {success, msg} = await stopForm(modelKey);
+      if (success) {
+        message.success(msg, 2);
+        tableApi.reload();
+      } else {
+        message.error(msg, 2);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   function handlePublish(record: Recordable<any>) {
     if (record.modelKey) {
       publish(record.modelKey);
     } else {
-      const selectedRows = getSelectRows();
-      if (selectedRows && selectedRows.length <= 0) {
+      const selectedRow = tableApi.grid.getRadioRecord();
+
+      if (!selectedRow) {
         message.warn('请选择行！');
         return;
       }
-      publish(selectedRows[0].modelKey);
+      return publish(selectedRow.modelKey);
     }
   }
 
-  function handleStop(record: Recordable<any>) {
+  async function handleStop(record: Recordable<any>) {
     if (record.modelKey) {
-      stop(record.modelKey);
+      return stop(record.modelKey);
     } else {
-      const selectedRows = getSelectRows();
-      if (selectedRows && selectedRows.length <= 0) {
+      const selectedRow = tableApi.grid.getRadioRecord();
+      if (!selectedRow) {
         message.warn('请选择行！');
         return;
       }
-      stop(selectedRows[0].modelKey);
+      return stop(selectedRow.modelKey);
     }
   }
 
@@ -456,28 +483,35 @@
     showStopBtn.value = status === 3 || status === 2;
   }
 
-  function clickRow() {
-    const selectedRows = getSelectRows();
+  function clickRow(row: Recordable<any>) {
+    if (row) {
+      changePublishStopBtnShow(row.status);
+      currentModelInfo.value = row;
+    } else {
+      changePublishStopBtnShow(0);
+      currentModelInfo.value = {};
+    }
+    /*const selectedRows = getSelectRows();
     if (selectedRows.length > 0) {
       changePublishStopBtnShow(selectedRows[0].status);
       currentModelInfo.value = selectedRows[0];
     } else {
       changePublishStopBtnShow(0);
       currentModelInfo.value = {};
-    }
+    }*/
   }
 
-  function fetchSuccess() {
-    clearSelectedRowKeys();
-    const selectedRows = getSelectRows();
-    if (selectedRows && selectedRows.length > 0) {
-      currentModelInfo.value = selectedRows[0];
+  function fetchSuccess(e) {
+    // clearSelectedRowKeys();
+    const selectedRow = tableApi.grid.getRadioRecord();
+    if (!selectedRow) {
+      currentModelInfo.value = selectedRow;
     } else {
       currentModelInfo.value = {};
     }
   }
 
-  function changeSelection({ rows }) {
+  function changeSelection({ keys, rows }) {
     if (!rows[0]) {
       return;
     }
@@ -486,17 +520,12 @@
   }
 
   async function handleSelect(node: any) {
-    const { setFieldsValue } = getForm();
-
     currentCategory.value = node;
-    await setFieldsValue({ categoryCode: node ? node.code : '' });
-    tableApi.reload();
+    tableApi.reload({categoryCode: node?.code});
   }
 
   function handleBpmnDesignerModalSuccess() {
-    setTimeout(() => {
-      tableApi.reload();
-    }, 500);
+    tableApi.reload();
   }
 </script>
 

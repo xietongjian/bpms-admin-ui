@@ -180,7 +180,6 @@ import {columns, searchFormSchema} from './modelInfo.data';
     columns,
     columnConfig: {resizable: true},
     height: 'auto',
-    maxHeight: '100%',
     border: false,
     keepSource: true,
     autoResize: false,
@@ -420,9 +419,7 @@ import {columns, searchFormSchema} from './modelInfo.data';
   }
 
   function handleSuccess() {
-    setTimeout(() => {
-      tableApi.reload();
-    }, 500);
+    tableApi.reload();
   }
 
   function handleBpmnDesignerModalSuccess() {

@@ -1,17 +1,11 @@
 <template>
-  <BasicModal
-    wrap-class-name="designer-container"
-    :footer="null"
-    v-bind="$attrs"
-    @register="registerModal"
-    @open-change="handleOpenChange"
-  >
+  <BasicModal content-class="designer-container p-0" >
     <template #title>
-      <div style="width: 100%">
+      <div class="w-full">
         <Row>
-          <Col span="8">
+          <Col span="8" class="flex items-center">
             <span v-if="!modelBaseInfo.name">新建流程</span>
-            <Tooltip v-else placement="leftBottom">
+            <Tooltip :zIndex="10000" v-else placement="buttom">
               <template #title>
                 {{ modelBaseInfo.name }}
               </template>
@@ -24,7 +18,7 @@
                 processModelKey
               }}</TypographyText>
               -
-              <Tag :color="finallyStatusStyle.color">{{ finallyStatusStyle.statusName }}</Tag>
+              <Tag :color="finallyStatusStyle.color">{{ finallyStatusStyle.statusName||'草稿' }}</Tag>
             </Tooltip>
           </Col>
           <Col span="8">
@@ -59,32 +53,14 @@
           </Col>
           <Col span="8" style="text-align: right">
             <Space>
-              <Authority :value="privilegeSn + ':' + PerEnum.PUBLISH">
-                <Popconfirm v-if="publishBtnVisibility" @confirm="handlePublish">
-                  <template #title>
-                    <div style="max-width: 300px; word-wrap: break-word; white-space: break-spaces">
-                      确定要发布【{{ modelBaseInfo.name }}】流程吗？
-                    </div>
-                  </template>
-                  <Button color="success" :disabled="saveLoading">发布</Button>
-                </Popconfirm>
-              </Authority>
-
-              <Tag
-                v-if="
-                  bpmnDesignerAutoSaveSwitch == '1' &&
-                  autoSaveStatus !== -1 &&
-                  currentStepValue === 1 &&
-                  designerStatus.finallyStatus !== 3
-                "
-                :color="
-                  autoSaveStatus === 1 ? 'processing' : autoSaveStatus === 0 ? 'success' : 'error'
-                "
-              >
-                <span v-if="autoSaveStatus === 1">正在保存...</span>
-                <span v-if="autoSaveStatus === 0">保存成功</span>
-                <span v-if="autoSaveStatus === 2">保存失败</span>
-              </Tag>
+              <Popconfirm v-access:code="PerPrefix+PerEnum.PUBLISH" v-if="publishBtnVisibility" @confirm="handlePublish">
+                <template #title>
+                  <div style="max-width: 300px; word-wrap: break-word; white-space: break-spaces">
+                    确定要发布【{{ modelBaseInfo.name }}】流程吗？
+                  </div>
+                </template>
+                <Button color="success" :disabled="saveLoading">发布</Button>
+              </Popconfirm>
 
               <Popconfirm
                 v-if="designerStatus.finallyStatus === 3 && currentStepValue !== 4"
@@ -182,6 +158,7 @@
     deployForm,
   } from '#/api/flowable/bpmn/modelInfo';
   import {
+    Modal,
     Badge,
     Button,
     Space,
@@ -206,15 +183,19 @@
 
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
-  // import { copyText } from '@/utils/copyTextToClipboard';
+  import { useClipboard } from '@vueuse/core';
   import { getXMLAttribute, updateXMLAttribute } from '#/utils/domUtils';
+  import {useProcessSettingStore} from "#/store";
   // import { useAppStore } from '@/store/modules/app';
 
+  const {getDesignerCurrentStepValue, setDesignerStepObj} = useProcessSettingStore();
 
   // const appStore = useAppStore();
+  const PerPrefix = 'Biz:';
 
   // 0保存成功，1保存中，2保存失败
   const autoSaveStatus = ref(-1);
+  const { copy } = useClipboard({ legacy: true });
 
   // const { bpmnDesignerAutoSaveSwitch } = appStore.getSystemConfig;
 
@@ -309,24 +290,25 @@
     flowVariable: false,
   });
 
-  /*const [registerModal, { changeLoading, closeModal }] = useModalInner(async (data) => {
+  async function initData(params) {
     // 从缓存中获取当前编辑的步骤
-    const currentStep = processSettingStore.getDesignerCurrentStepValue(data.modelId);
+    const currentStep = getDesignerCurrentStepValue(params.modelId);
     currentStepValue.value = currentStep;
     saveLoading.value = false;
-    maxStepValue.value = data.formType === 'bizNoForm' ? 2 : 3;
-    modelKey.value = data.modelKey;
-    // formType: custom/biz/bizNoForm
-    formType.value = data.formType;
-    processModelId.value = data.modelId;
-    modelId.value = data.modelId;
-    categoryCode.value = data.categoryCode;
+    maxStepValue.value = params.formType === 'bizNoForm' ? 2 : 3;
+
+    modelKey.value = params.modelKey;
+    // formType: custom/biz
+    formType.value = params.formType;
+    processModelId.value = params.modelId;
+    modelId.value = params.modelId;
+    categoryCode.value = params.categoryCode;
 
     // 如果是新增
-    if (!data.modelId) {
-      stepsDisabled.value = { bpmnDesigner: true, settingInfo: false, flowVariable: true };
+    if (!params.modelId) {
+      stepsDisabled.value = { formDesigner: false, bpmnDesigner: true, settingInfo: true };
     } else {
-      stepsDisabled.value = { bpmnDesigner: false, settingInfo: false, flowVariable: false };
+      stepsDisabled.value = { formDesigner: false, bpmnDesigner: false, settingInfo: false };
     }
     refreshStatus();
     autoSaveStatus.value = -1;
@@ -335,39 +317,55 @@
       flowVariable: currentStep === 1,
       bpmnDesigner: currentStep === 2,
     };
-    if (data.modelId) {
-      getByModelId(data.modelId)
-        .then((res) => {
-          modelBaseInfo.value = res;
-          processModelName.value = res.name;
-        })
-        .catch(() => {
-          console.error('通过ModelId查询modelInfo失败！');
-        });
+    if (params.modelId) {
+      try {
+        const res = await getByModelId(params.modelId);
+        modelBaseInfo.value = res;
+        processModelName.value = res.name;
+      } catch (e) {
+        console.error('通过ModelId查询modelInfo失败！');
+      }
     }
     modelBaseInfo.value = {};
-  });*/
-
+  }
 
   const [BasicModal, modalApi] = useVbenModal({
-    draggable: true,
+    fullscreen: true,
+    fullscreenButton: false,
+    draggable: false,
+    closable: false,
+    footer: false,
     onCancel() {
       modalApi.close();
+    },
+    onClosed() {
+      dataStatusIsDraft.value = {
+        formDesigner: false,
+        bpmnDesigner: false,
+        settingInfo: false,
+        finallyStatus: false,
+      };
+      emit('success');
     },
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
+        initData(values);
         if (values) {
-          formApi.setValues(values);
+          // formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
     },
     onConfirm() {
       // await formApi.submitForm();
-      handleSubmit();
+      // handleSubmit();
     },
   });
+
+  function changeLoading(loading) {
+    modalApi.setState({loading: loading, confirmLoading: loading});
+  }
 
   function publish(modelKey) {
     changeLoading(true);
@@ -389,6 +387,7 @@
         saveLoading.value = false;
         changeLoading(false);
       });
+
   }
 
   function handleContinueEdit() {
@@ -410,7 +409,7 @@
     return bpmnDesignerFrameRef.value.getIssuesMap();
   };
 
-  function handleSave() {
+  async function handleSave() {
     if (currentStepValue.value === 0) {
       saveBaseInfo();
     }
@@ -420,24 +419,23 @@
     if (currentStepValue.value === 2) {
       const issues = getIssuesMap();
       const errorLen = Object.keys(issues).length;
-      getBpmnModelXml().then((res) => {
-        if (errorLen > 0) {
-          createConfirm({
-            iconType: 'warning',
-            title: '温馨提示',
-            content: `目前流程图存在 ${errorLen} 个错误, 确定要保存吗？`,
-            onOk: () => {
-              saveBpmnModelInfo(res);
-            },
-            onCancel: () => {
-              changeLoading(false);
-              saveLoading.value = false;
-            },
-          });
-        } else {
-          saveBpmnModelInfo(res);
-        }
-      });
+      const {xml} = await getBpmnModelXml();
+      if (errorLen > 0) {
+        Modal.confirm({
+          iconType: 'warning',
+          title: '温馨提示',
+          content: `目前流程图存在 ${errorLen} 个错误, 确定要保存吗？`,
+          onOk: () => {
+            saveBpmnModelInfo(xml);
+          },
+          onCancel: () => {
+            changeLoading(false);
+            saveLoading.value = false;
+          },
+        });
+      } else {
+        await saveBpmnModelInfo(xml);
+      }
     }
     refreshStatus();
   }
@@ -551,46 +549,45 @@
       });
   };
 
-  const saveBpmnModelInfo = (res) => {
-    const { xml } = res;
-    const data = {
+  async function saveBpmnModelInfo (xml) {
+    const params = {
       modelId: unref(processModelId),
       // categoryCode: unref(categoryCode),
       modelXml: xml,
     };
     saveLoading.value = true;
     changeLoading(true);
-    validateBpmnModel(data)
-      .then((res) => {
-        if (res.success) {
-          if (res.data) {
-            // 如果验证成功直接保存
-            saveBpmnModelInfoBase(data);
-          } else {
-            createConfirm({
-              iconType: 'warning',
-              title: '温馨提示',
-              content: `${res.msg}`,
-              onOk: () => {
-                saveBpmnModelInfoBase(data);
-              },
-              onCancel: () => {
-                changeLoading(false);
-                saveLoading.value = false;
-              },
-            });
-          }
+    try {
+      const {success, data, msg} = await validateBpmnModel(params);
+      if (success) {
+        if (data) {
+          // 如果验证成功直接保存
+          await saveBpmnModelInfoBase(params);
         } else {
-          message.error(res.msg);
-          changeLoading(false);
-          saveLoading.value = false;
+          Modal.confirm({
+            iconType: 'warning',
+            title: '温馨提示',
+            content: `${msg}`,
+            onOk: () => {
+              saveBpmnModelInfoBase(params);
+            },
+            onCancel: () => {
+              changeLoading(false);
+              saveLoading.value = false;
+            },
+          });
         }
-      })
-      .catch((e) => {
-        message.error('调用验证Bpmn的XML时出现异常！' + e);
+      } else {
+        message.error(msg);
+        changeLoading(false);
         saveLoading.value = false;
-      });
-  };
+      }
+    } catch (e) {
+      message.error('调用验证Bpmn的XML时出现异常！' + e);
+      saveLoading.value = false;
+    } finally {
+    }
+  }
 
   if (modelId.value) {
     // 修改可用状态
@@ -619,18 +616,21 @@
     if (unref(processModelId)) {
       const stepSettingObj = Object.assign({});
       stepSettingObj[`modelId_${unref(processModelId)}`] = current;
-      processSettingStore.setDesignerStepObj(stepSettingObj);
+      // processSettingStore.setDesignerStepObj(stepSettingObj);
+      setDesignerStepObj(stepSettingObj);
     }
   }
 
   function handleClose() {
-    closeModal();
-    dataStatusIsDraft.value = {
-      bpmnDesigner: false,
-      settingInfo: false,
-      finallyStatus: false,
-    };
-    emit('success');
+    modalApi.close();
+
+    // closeModal();
+    // dataStatusIsDraft.value = {
+    //   bpmnDesigner: false,
+    //   settingInfo: false,
+    //   finallyStatus: false,
+    // };
+    // emit('success');
   }
 
   // 加载三个步骤的状态
@@ -661,7 +661,7 @@
     );
   }
 
-  const handleNext = () => {
+  async function handleNext () {
     if (unref(designerStatus).finallyStatus === 3) {
       unref(currentStepValue) <= unref(maxStepValue) && currentStepValue.value++;
       handleStepChange(unref(currentStepValue));
@@ -682,25 +682,22 @@
       return;
     }
     if (unref(currentStepValue) === 2) {
-      getBpmnModelXml().then((res) => {
-        saveBpmnModelInfo(res);
-        setTimeout(() => {
-          unref(currentStepValue) <= unref(maxStepValue) && currentStepValue.value++;
-          handleStepChange(unref(currentStepValue));
-        }, 300);
-      });
+      const {xml} = await getBpmnModelXml();
+      await saveBpmnModelInfo(xml);
+      unref(currentStepValue) <= unref(maxStepValue) && currentStepValue.value++;
+      handleStepChange(unref(currentStepValue));
       return;
     }
-
     unref(currentStepValue) <= unref(maxStepValue) && currentStepValue.value++;
     handleStepChange(unref(currentStepValue));
-  };
+  }
+
   const handlePrev = () => {
     // 如果已发布后 - 返回上一步则跳转到发布前的那个步骤
     if (unref(currentStepValue) === unref(maxStepValue) + 1) {
       currentStepValue.value = unref(publishLastStepValue);
     } else {
-      currentStepValue.value--;
+      currentStepValue.value --;
     }
     handleStepChange(unref(currentStepValue));
   };
@@ -713,12 +710,11 @@
     }
   }
 
-  function doCopyContent(content) {
-    copyText(content);
+  function doCopyContent(content: string) {
+    copy(content);
+    message.success('已拷贝到剪切板！');
   }
-  defineExpose({
-    handleSave,
-  });
+  defineExpose(modalApi);
 </script>
 <style lang="scss">
   .form-designer {
