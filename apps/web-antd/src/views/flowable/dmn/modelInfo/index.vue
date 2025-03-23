@@ -235,6 +235,7 @@ const gridOptions: VxeGridProps = {
     ajax: {
       query: async ({page}, formValues) => {
         currentModelInfo.value = {};
+        formValues.categoryCode = currentCategory.value?.code
         return await getDmnPagerModel({
           query: {
             pageNum: page.currentPage,
@@ -306,34 +307,23 @@ function handleCreate({key}) {
 
 async function handleViewXml(record: Recordable<any>, e) {
   e.stopPropagation();
-
   const res = await getByModelId({modelId: record.modelId});
-
   codePreviewModalRef.value.setData({code: res.modelXml, type: 'xml'});
   codePreviewModalRef.value.open();
   codePreviewModalRef.value.setState({
     title: `查看【${record.name}】的XML`,
   });
-
-  /*getByModelId({modelId: record.modelId}).then((res) => {
-    openCodePreviewModal(true, {
-      record: {code: res.modelXml, type: 'xml'},
-      isUpdate: false,
-    });
-    setCodePreviewModalProps({
-      width: 900,
-      height: 400,
-      minHeight: 200,
-      title: `查看【${record.name}】的XML`,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });
-  });*/
 }
 
 function handleSimulate(record: Recordable, e) {
   e.stopPropagation();
+  dmnSimulatorModalRef.value.setData({
 
+  });
+  dmnSimulatorModalRef.value.open();
+  dmnSimulatorModalRef.value.setState({
+    title: `模拟决策【${record.name}】`,
+  });
   openDmnSimulatorModal(true, {
     record,
     isUpdate: false,

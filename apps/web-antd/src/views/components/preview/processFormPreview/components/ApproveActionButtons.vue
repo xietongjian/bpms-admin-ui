@@ -170,14 +170,14 @@ async function doApprove() {
     return;
   }
   const {approveMsg, signImg, attachmentList} = await formApi.getValues();
-  const commentAttachmentList = attachmentList.filter(item => item.status === "done" && !!item.response?.data).map(item => {
+  const commentAttachmentList = attachmentList?.filter(item => item.status === "done" && !!item.response?.data).map(item => {
     return {
       fileName: item.name,
       fileSize: item.size,
       filePath: item.response.data,
       fileType: item.name.split('.').pop().toUpperCase()
     }
-  });
+  }) || [];
 
   const approveParams = {
     taskId: taskId,
@@ -229,6 +229,7 @@ async function doApprove() {
         message.error(msg);
       }
       approveActionLoading.value = false;
+      return Promise.resolve();
     };
     // 如果没有自定义审批配置则直接进行审批操作
 
@@ -372,8 +373,9 @@ async function doApproveSelectPersonal(actionType, multiple) {
 }
 
 function closeFormModal() {
-  setFieldsValue({approveMsg: ''});
+  // setFieldsValue({approveMsg: ''});
   emit('success');
+  approveActionLoading.value = false;
 }
 
 function resetApproveMsg() {

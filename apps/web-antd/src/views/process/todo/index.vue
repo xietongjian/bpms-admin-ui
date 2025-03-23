@@ -26,7 +26,7 @@
       </template>
     </BasicTable>
     <BpmnPreviewModal ref="bpmnPreviewModalRef"/>
-    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef"/>
+    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" @reload="handleReload"/>
   </Page>
 </template>
 <script lang="ts" setup>
@@ -104,5 +104,9 @@ function handleViewForm(record: Recordable<any>) {
 function handleBpmnPreview(modelKey, procInstId) {
   bpmnPreviewModalRef.value.setData({modelKey, procInstId});
   bpmnPreviewModalRef.value.open();
+}
+
+function handleReload() {
+  tableApi.reload();
 }
 </script>

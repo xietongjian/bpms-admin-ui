@@ -104,6 +104,7 @@ const formSchema = computed((): VbenFormSchema[] => {
       rules: z.string().refine((value) => value, {
         message: $t('authentication.verifyRequiredTip'),
       }),
+      controlClass: 'flex-1',
       componentProps: {
         placeholder: '请输入验证码',
       },
@@ -111,7 +112,7 @@ const formSchema = computed((): VbenFormSchema[] => {
         return h('img', {
           onClick: reloadVerifyCode,
           ref: verifyCodeImgRef,
-          class: 'w-[140px] h-[40px] text-red-600 cursor-pointer', src: '', alt: ''
+          class: 'w-[140px] h-[40px] text-red-600 cursor-pointer', src: '', title: '点击刷新', alt: '验证码'
         })
       },
     },

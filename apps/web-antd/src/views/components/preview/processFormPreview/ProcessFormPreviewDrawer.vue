@@ -704,7 +704,7 @@
   }
 
   function handleCloseModal() {
-    closeModal();
+    drawerApi.close();
     emit('reload');
   }
 
