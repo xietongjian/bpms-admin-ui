@@ -112,6 +112,15 @@ export const approveActionFormSchema: FormSchema[] = [
     }
   },
   {
+    fieldName: 'actionType',
+    label: 'actionType',
+    component: 'Input',
+    dependencies: {
+      show: false,
+      triggerFields: ['actionType']
+    }
+  },
+  {
     fieldName: 'procInstId',
     label: 'procInstId',
     component: 'Input',

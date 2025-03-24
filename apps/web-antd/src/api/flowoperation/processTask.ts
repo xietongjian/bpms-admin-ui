@@ -174,23 +174,23 @@ export function getBackToStepNodes(params: any) {
 }
 // 委派
 export function delegateTask(params: any) {
-  return requestClient.post(Api.DelegateTask, params, { isReturnNativeResponse: true });
+  return requestClient.post(Api.DelegateTask, params, { responseReturn: 'body' });
 }
 // 转办
 export function turnTask(params: any) {
-  return requestClient.post(Api.TurnTask, params, { isReturnNativeResponse: true });
+  return requestClient.post(Api.TurnTask, params, { responseReturn: 'body' });
 }
 // 前加签
 export function afterAddSign(params: any) {
-  return requestClient.post(Api.AfterAddSign, params, { isReturnNativeResponse: true });
+  return requestClient.post(Api.AfterAddSign, params, { responseReturn: 'body' });
 }
 // 后加签
 export function beforeAddSign(params: any) {
-  return requestClient.post(Api.BeforeAddSign, params, { isReturnNativeResponse: true });
+  return requestClient.post(Api.BeforeAddSign, params, { responseReturn: 'body' });
 }
 // 转阅
 export function reviewTask(params: any) {
-  return requestClient.post(Api.ReviewTask, params, { isReturnNativeResponse: true });
+  return requestClient.post(Api.ReviewTask, params, { responseReturn: 'body' });
 }
 
 // 审批

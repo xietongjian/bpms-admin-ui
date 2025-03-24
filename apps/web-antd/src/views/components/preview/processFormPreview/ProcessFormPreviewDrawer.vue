@@ -130,7 +130,7 @@
     </div>
 
     <ApproveSelectorPersonalModal
-      @register="registerApproveSelectorPersonalModal"
+      ref="approveSelectorPersonalModalRef"
       @success="loadCommentList"
     />
     <template #footer v-if="procInstInfo?.showOperation && !isFullScreen">
@@ -211,6 +211,7 @@
   const TabPane = Tabs.TabPane;
   const rightApproveActionButtonsRef = ref();
   const footerApproveActionButtonsRef = ref();
+  const approveSelectorPersonalModalRef = ref();
   const activeViewKey = ref('viewForm');
   const historyList = ref([]);
   const approvalHistoryLoading = ref(false);
@@ -471,21 +472,22 @@
   }
 
   function handleTurnRead(){
+    debugger
     const actionType = 'reviewTask';
     const multiple = true;
     const { procInstId, bizId, taskId, modelKey } = unref(params);
-    openApproveSelectorPersonalSelector(true, {
-      selectorProps: {
-        multiple,
-        actionType,
-        taskId,
-        procInstId,
-        message: ''
-      }
+
+    approveSelectorPersonalModalRef.value.setData({
+      multiple,
+      actionType,
+      taskId,
+      procInstId,
+      message: ''
     });
-    setApproveSelectorPersonalModalProps({
-      width: 800,
+    approveSelectorPersonalModalRef.value.setState({
+      title: '转阅'
     });
+    approveSelectorPersonalModalRef.value.open();
   }
 
   async function loadCurrTaskApplyersByBusinessKey() {
