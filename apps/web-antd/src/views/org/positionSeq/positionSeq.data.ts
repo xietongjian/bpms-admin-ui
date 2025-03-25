@@ -25,13 +25,13 @@ export const columns: VxeGridProps['columns'] = [
     title: '状态',
     field: 'status',
     width: 80,
-    customRender: ({ record }) => {
+    /*customRender: ({ record }) => {
       const status = record.status;
       const enable = ~~status === 1;
       const color = enable ? 'green' : 'red';
       const text = enable ? '启用' : '停用';
       return h(Tag, { color: color }, () => text);
-    },
+    },*/
   },
   {
     title: '排序编号',
@@ -44,6 +44,13 @@ export const columns: VxeGridProps['columns'] = [
     field: 'note',
     align: 'left',
   },
+  {
+    title: '操作',
+    width: 120,
+    align: 'center',
+    slots: { default: 'action' },
+    fixed: 'right',
+  }
 ];
 
 export const searchFormSchema: FormSchema[] = [
@@ -56,12 +63,6 @@ export const searchFormSchema: FormSchema[] = [
       allowClear: true,
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -80,7 +81,6 @@ export const formSchema: FormSchema[] = [
     label: '名称',
     // required: true,
     component: 'Input',
-    show: true,
     /*rules: [
       {
         required: true,
@@ -92,14 +92,12 @@ export const formSchema: FormSchema[] = [
         message: '字符长度不能大于80！',
       },
     ],*/
-    colProps: {
-      span: 24,
-    },
   },
   {
     fieldName: 'code',
     label: '编码',
-    required: true,
+    // required: true,
+    rules: 'required',
     component: 'Input',
   },
   {
@@ -125,7 +123,6 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'status',
     label: '状态',
-    required: false,
     component: 'Switch',
     defaultValue: 1,
     componentProps: {

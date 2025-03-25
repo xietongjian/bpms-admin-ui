@@ -234,7 +234,6 @@ export const processVersionSelectionFormSchema: FormSchema[] = [
   },
   {
     fieldName: 'params',
-    required: false,
     label: '参数',
     slot: 'paramsList',
     colProps: { span: 24 },

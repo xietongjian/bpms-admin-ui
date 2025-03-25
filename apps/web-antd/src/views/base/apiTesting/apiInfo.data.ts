@@ -174,7 +174,6 @@ export const apiTestingFormSchema: FormSchema[] = [
   {
     fieldName: 'image',
     label: '图标',
-    required: false,
     component: 'IconPicker',
     colProps,
   },
@@ -192,7 +191,6 @@ export const apiTestingFormSchema: FormSchema[] = [
   {
     fieldName: 'status',
     label: '状态',
-    required: false,
     component: 'Switch',
     defaultValue: 1,
     componentProps: {

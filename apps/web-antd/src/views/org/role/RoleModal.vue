@@ -8,6 +8,7 @@
   import { getCompanies } from '#/api/org/company';
   import { FormValidPatternEnum } from '#/enums/commonEnum';
   import {useVbenForm} from "#/adapter/form";
+  import { message } from 'ant-design-vue';
 
   const emit = defineEmits(['success'])
   const isUpdate = ref(true);
@@ -20,17 +21,6 @@
     showDefaultActions: false,
   });
 
-/*
-  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
-    labelWidth: 100,
-    schemas: roleFormSchema,
-    showActionButtonGroup: false,
-    actionColOptions: {
-      span: 23,
-    },
-  });
-*/
-
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
     onCancel() {
@@ -40,7 +30,7 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          baseFormApi.setValues(values);
+          formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -52,17 +42,6 @@
   });
 
 
-  const [BaseForm, baseFormApi] = useVbenForm({
-    commonConfig: {
-      componentProps: {
-        // class: 'w-full',
-      },
-    },
-    showDefaultActions: false,
-    layout: 'horizontal',
-    schema: roleFormSchema,
-    wrapperClass: 'grid-cols-1',
-  });
 
   const getBaseDynamicRules = (params: any) => {
     return [
@@ -91,7 +70,7 @@
           }
         },
       },
-    ] as Rule[];
+    ] as any[];
   };
 
   /*const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
@@ -138,22 +117,33 @@
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
+      modalApi.setState({loading: true, confirmLoading: true});
+
+      const {valid} = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
       if (values.id) {
         values.companyId = null;
       }
-      await saveOrUpdate(values);
-      closeModal();
+      const {success, msg} = await saveOrUpdate(values);
+      if(success){
+        message.success(msg);
+      }else {
+        message.error(msg);
+      }
       emit('success');
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
+
+  defineExpose(modalApi)
 </script>
 
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal v-bind="$attrs" :title="getTitle" @ok="handleSubmit">
+    <BasicForm />
   </BasicModal>
 </template>

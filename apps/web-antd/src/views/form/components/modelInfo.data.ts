@@ -262,7 +262,6 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
   /*{
     fieldName: 'modelIcon',
     label: '图标',
-    required: false,
     component: 'ImageUpload',
     show: true,
     componentProps: {

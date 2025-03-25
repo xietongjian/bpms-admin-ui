@@ -5,7 +5,7 @@ import type {VbenFormProps} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {Recordable} from '@vben/types';
 import {TableAction} from '#/components/table-action';
-import {Button, Image, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
+import {Button, message} from 'ant-design-vue';
 
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 // import { useModal } from '@/components/Modal';
@@ -16,6 +16,8 @@ import {getPositionSeqs, deleteByIds} from '#/api/org/positionSeq';
 import {Page} from "@vben/common-ui";
 
 const PerPrefix = 'PositionSeq:';
+
+const positionSeqModalRef = ref();
 // const [registerModal, { openModal, setModalProps }] = useModal();
 /*const [registerTable, { reload }] = useTable({
   title: '列表',
@@ -86,45 +88,45 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 
 function handleCreate() {
-  openModal(true, {
-    isUpdate: false,
-  });
-  setModalProps({
+  positionSeqModalRef.value.setData({});
+  positionSeqModalRef.value.setState({
     title: '新增岗位序列',
   });
+  positionSeqModalRef.value.open();
 }
 
-function handleEdit(record: Recordable, e) {
+function handleEdit(record: Recordable<any>, e) {
   e.stopPropagation();
-  openModal(true, {
-    record,
-    isUpdate: true,
-  });
-  setModalProps({
+  positionSeqModalRef.value.setData(record);
+  positionSeqModalRef.value.setState({
     title: '修改岗位序列',
   });
+  positionSeqModalRef.value.open();
 }
 
-function handleCreateChild(record: Recordable, e) {
+function handleCreateChild(record: Recordable<any>, e) {
   e.stopPropagation();
-  setModalProps({
+  record = {pid: record.id, status: 1};
+  positionSeqModalRef.value.setData(record);
+  positionSeqModalRef.value.setState({
     title: '新增【' + record.name + '】的子序列',
   });
-  record = {pid: record.id, status: 1};
-  openModal(true, {
-    record,
-    isUpdate: true,
-  });
+  positionSeqModalRef.value.open();
 }
 
-function handleDelete(record: Recordable<any>) {
+async function handleDelete(record: Recordable<any>) {
   if (record.children && record.children.length > 0) {
-    createMessage.warning('有子节点，不能删除！');
+    message.warning('有子节点，不能删除！');
     return;
   }
-  deleteByIds([record.id]).then((res) => {
+  const {success, msg} = await deleteByIds([record.id]);
+  if(success){
+    message.success(msg);
     tableApi.reload();
-  });
+  } else {
+    message.error(msg);
+  }
+  return Promise.resolve();
 }
 
 function doSearch() {

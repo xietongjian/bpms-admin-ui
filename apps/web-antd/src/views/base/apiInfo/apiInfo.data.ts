@@ -236,14 +236,12 @@ export const apiInfoFormSchema: FormSchema[] = [
   {
     fieldName: 'pathVariables',
     label: '路径参数',
-    required: false,
     slot: 'pathVariablesSlot',
     colProps,
   },
   {
     fieldName: 'queryVariables',
     label: '查询参数',
-    required: false,
     slot: 'queryVariablesSlot',
     component: 'Input',
     colProps,

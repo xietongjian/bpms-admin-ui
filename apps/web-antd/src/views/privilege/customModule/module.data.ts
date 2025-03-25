@@ -115,20 +115,29 @@ export const formSchema: FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'menuType',
     label: 'menuType',
     component: 'Input',
     defaultValue: 2,
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['menuType']
+    }
   },
   {
     fieldName: 'pid',
     label: 'pid',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['pid']
+    }
   },
   {
     fieldName: 'image',
@@ -186,7 +195,10 @@ export const formSchema: FormSchema[] = [
     fieldName: 'url',
     label: 'URL',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['url']
+    },
     dynamicDisabled: ({values})=> !!values.id,
     colProps,
   },
@@ -194,7 +206,10 @@ export const formSchema: FormSchema[] = [
     fieldName: 'component',
     label: '组件地址',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['component']
+    },
     dynamicDisabled: ({values})=> !!values.id,
     colProps,
   },
@@ -264,7 +279,10 @@ export const pValueFormSchema: FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'pvs',

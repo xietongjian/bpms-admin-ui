@@ -140,7 +140,8 @@ export const modelInfoFormSchema: FormSchema[] = [
     dependencies: {
       show: false,
       triggerFields: ['categoryCode']
-    }  },
+    }
+  },
   {
     fieldName: 'name',
     label: '名称',

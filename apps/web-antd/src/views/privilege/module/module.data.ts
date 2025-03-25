@@ -220,7 +220,6 @@ export const formSchema: FormSchema[] = [
     component: 'Input',
     /*rules: [
       {
-        required: false,
         whitespace: true,
         message: 'URL不能为空！',
       },
@@ -250,7 +249,6 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'status',
     label: '状态',
-    required: false,
     component: 'Switch',
     defaultValue: 1,
     componentProps: {
@@ -264,7 +262,6 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'showStatus',
     label: '是否显示',
-    required: false,
     component: 'Switch',
     defaultValue: 1,
     componentProps: {
@@ -281,14 +278,15 @@ export const pValueFormSchema: any[] = [
   {
     fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'pvs',
     label: ' ',
-    required: false,
     component: 'CheckboxGroup',
     labelWidth: 10,
     componentProps: {},

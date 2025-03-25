@@ -48,6 +48,13 @@ export const columns: VxeGridProps['columns'] = [
     width: 100,
     align: 'left',
   },
+  {
+    title: '操作',
+    width: 120,
+    align: 'center',
+    slots: { default: 'action' },
+    fixed: 'right',
+  }
 ];
 
 export const searchFormSchema: FormSchema[] = [
@@ -82,7 +89,7 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'name',
     label: '岗位名称',
-    required: true,
+    // required: true,
     component: 'Input',
     show: true,
    /* rules: [
@@ -103,7 +110,7 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'code',
     label: '编码',
-    required: true,
+    // required: true,
     component: 'Input',
     show: true,
     colProps: {
@@ -132,7 +139,6 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'startDate',
     label: '成立日期',
-    required: false,
     component: 'DatePicker',
     show: true,
     componentProps: {
@@ -146,7 +152,6 @@ export const formSchema: FormSchema[] = [
     fieldName: 'orderNo',
     label: '排序编号',
     help: '数值越小越靠前！',
-    required: false,
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
@@ -158,7 +163,6 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'status',
     label: '状态',
-    required: false,
     component: 'Switch',
     defaultValue: 1,
     componentProps: {

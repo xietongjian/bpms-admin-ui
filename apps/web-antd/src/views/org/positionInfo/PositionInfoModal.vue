@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, computed, unref, defineExpose } from 'vue';
+  import { ref, computed, unref, defineExpose, defineEmits } from 'vue';
 
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
@@ -137,16 +137,6 @@
       modalApi.setState({loading: false, confirmLoading: false});
     }
   }
-
- /* export default defineComponent({
-    name: 'PositionInfoModal',
-    components: { BasicModal, BasicForm },
-    emits: ['success', 'register'],
-    setup(_, { emit }) {
-
-      return { registerModal, registerForm, getTitle, handleSubmit };
-    },
-  });*/
 
   defineExpose(modalApi)
 </script>

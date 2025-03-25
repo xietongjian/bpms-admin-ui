@@ -1,12 +1,15 @@
 
 <script lang="ts" setup>
-  import { ref, computed, unref } from 'vue';
+import {ref, computed, unref, defineEmits, defineExpose} from 'vue';
   import { formSchema } from './positionSeq.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/org/positionSeq';
   import { message} from 'ant-design-vue';
 
   import {useVbenForm} from "#/adapter/form";
-  const isUpdate = ref(true);
+  import {useVbenModal} from '@vben/common-ui';
+
+  const emit = defineEmits(['success'])
+
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
       labelWidth: 100,
@@ -14,6 +17,7 @@
     schema: formSchema,
     showDefaultActions: false,
   });
+
  /* const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
     schemas: formSchema,
@@ -113,13 +117,15 @@
     },
   });
 
-
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
-
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
+      modalApi.setState({loading: true, confirmLoading: true});
+
+      const {valid} = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
       const {success, msg} = await saveOrUpdate(values);
       if(success){
         message.success(msg);
@@ -130,9 +136,11 @@
       }
 
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
+
+  defineExpose(modalApi)
 
 </script>
 <template>

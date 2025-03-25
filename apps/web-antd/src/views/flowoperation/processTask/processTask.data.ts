@@ -237,7 +237,6 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'image',
     label: '图标',
-    required: false,
     component: 'IconPicker',
   },
   {

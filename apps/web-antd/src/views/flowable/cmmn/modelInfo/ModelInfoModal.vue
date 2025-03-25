@@ -1,34 +1,45 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal v-bind="$attrs" >
+    <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, Rule, useForm } from '@/components/Form/index';
+  import { ref, computed, unref, defineExpose, defineEmits } from 'vue';
+  // import { BasicModal, useModalInner } from '@/components/Modal';
+  // import { BasicForm, Rule, useForm } from '@/components/Form/index';
+  import {useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from '#/adapter/form';
+  import {message} from 'ant-design-vue';
   import { modelInfoFormSchema } from './modelInfo.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/flowable/bpmn/modelInfo';
   import { getAll } from '#/api/base/app';
-  import { useGo } from '@/hooks/web/usePage';
-  import { CheckExistParams } from '#/api/model/baseModel';
-  import { FormValidPatternEnum } from '@/enums/constantEnum';
+  import {formSchema} from "#/views/bpm/businessFlow/businessFlowApply.data";
+  // import { useGo } from '@/hooks/web/usePage';
+  // import { CheckExistParams } from '#/api/model/baseModel';
+  // import { FormValidPatternEnum } from '@/enums/constantEnum';
 
   const emit = defineEmits(['success', 'register']);
 
-  const isUpdate = ref(true);
-  const go = useGo();
+  // const go = useGo();
 
-  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
+/*  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
     labelWidth: 100,
     schemas: modelInfoFormSchema,
     showActionButtonGroup: false,
     actionColOptions: {
       span: 23,
     },
+  });*/
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      labelWidth: 100,
+    },
+    schema: modelInfoFormSchema,
+    showDefaultActions: false,
   });
 
-  const getBaseDynamicRules = (params: CheckExistParams) => {
+  const getBaseDynamicRules = (params: any) => {
     return [
       {
         trigger: 'blur',
@@ -58,23 +69,29 @@
     ] as Rule[];
   };
 
-  const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
-    async (data) => {
-      resetFields();
-      setModalProps({ confirmLoading: false });
-      isUpdate.value = !!data?.isUpdate;
-      changeLoading(true);
-      let appList = null;
 
+  const [BasicModal, modalApi] = useVbenModal({
+    fullscreenButton: false,
+    onCancel() {
+      modalApi.close();
+    },
+    onConfirm() {
+      // await baseFormApi.submitForm();
+      handleSubmit();
+    },
+    onOpenChange: async (isOpen) => {
+      if (!isOpen) {
+        return null;
+      }
+      modalApi.setState({loading: true, confirmLoading: true});
+      const formData = modalApi.getData();
+      let appList = null;
       try {
         appList = await getAll();
       } finally {
-        changeLoading(false);
       }
 
-      let formData = data.record;
-
-      await updateSchema([
+      /*await formApi.updateSchema([
         {
           field: 'appSn',
           componentProps: { options: appList, labelField: 'id' },
@@ -106,31 +123,34 @@
             ];
           },
         },
-      ]);
+      ]);*/
 
-      if (unref(isUpdate)) {
-        setFieldsValue({
-          ...data.record,
-        });
-      }
+      formApi.setValues(formData);
+
+      modalApi.setState({loading: false, confirmLoading: false});
     },
-  );
-
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '编辑'));
+  });
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
-      const result = await saveOrUpdate(values);
+      modalApi.setState({loading: true, confirmLoading: true});
+      const {valid} = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
+      const {success, msg} = await saveOrUpdate(values);
+      if(success){
+        message.success(msg);
+        modalApi.close();
+        emit('success');
+      }else {
+        message.error(msg);
+      }
       // go("/flowable/bpmn/designer?modelId=" + result.modelId);
-      go({ name: 'BpmnDesigner', query: { modelId: result.modelId } });
-
-      closeModal();
-      emit('success');
+      // go({ name: 'BpmnDesigner', query: { modelId: result.modelId } });
     } finally {
-      changeLoading(false);
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
 </script>

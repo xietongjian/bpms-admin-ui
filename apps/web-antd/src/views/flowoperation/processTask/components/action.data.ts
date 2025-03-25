@@ -67,7 +67,6 @@ export const approveActionFormSchema: FormSchema[] = [
   {
     fieldName: 'procInstId',
     label: 'procInstId',
-    required: false,
     component: 'Input',
     show: false,
   },
@@ -113,14 +112,12 @@ export const fetchBackMessageFormSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'id',
-    required: false,
     component: 'Input',
     show: false,
   },
   {
     fieldName: 'taskId',
     label: 'taskId',
-    required: false,
     component: 'Input',
     show: false,
   },
@@ -147,21 +144,18 @@ export const approveBackToStepFormSchema: FormSchema[] = [
   {
     fieldName: 'actionType',
     label: 'actionType',
-    required: false,
     component: 'Input',
     show: false,
   },
   {
     fieldName: 'taskId',
     label: 'taskId',
-    required: false,
     component: 'Input',
     show: false,
   },
   {
     fieldName: 'procInstId',
     label: 'procInstId',
-    required: false,
     component: 'Input',
     show: false,
   },

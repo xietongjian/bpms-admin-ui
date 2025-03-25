@@ -1,8 +1,8 @@
 <script lang="ts" setup>
   import { defineEmits, ref, defineExpose } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
-  import {message} from 'ant-design-vue';
   import {useVbenForm} from '#/adapter/form';
+  import {message} from 'ant-design-vue';
 
   import { cloneDeep } from '@vben/utils';
 

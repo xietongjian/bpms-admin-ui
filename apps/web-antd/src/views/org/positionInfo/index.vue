@@ -125,7 +125,7 @@ function handleSuccess() {
 function handleSelect(node: any) {
   currentTreeNode.value = node;
   let searchInfo = {positionSeqId: node ? node.id : ''};
-  setProps({searchInfo: searchInfo});
+  // setProps({searchInfo: searchInfo});
   tableApi.reload({searchInfo});
 }
 

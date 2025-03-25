@@ -56,13 +56,19 @@ export const modelInfoFormSchema: FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'categoryCode',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['categoryCode']
+    }
   },
   {
     fieldName: 'name',
