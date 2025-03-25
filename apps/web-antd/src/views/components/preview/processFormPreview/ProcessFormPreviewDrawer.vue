@@ -12,7 +12,7 @@
     </template>
     <div class="h-full w-full flex flex-row">
       <div ref="allInfoId" class="h-full flex-1">
-        <Tabs v-model:activeKey="activeViewKey" size="small" class="h-full" tabBarStyle="">
+        <Tabs v-model:activeKey="activeViewKey" size="small" class="h-full">
           <TabPane key="viewForm" tab="查看表单">
             <ProcessStatus
                 class="text-lg absolute right-0 top-0"
@@ -32,6 +32,7 @@
                       :procInstId="procInstInfo?.procInstId"
                       :bizId="procInstInfo?.businessKey"
                       :taskId="procInstInfo?.taskId"
+                      :print-read="printRead"
                       :modelKey="procInstInfo?.modelKey" />
                 </CollapsePanel>
               </Collapse>
@@ -251,7 +252,6 @@
 
   const [BasicDrawer, drawerApi] = useVbenDrawer({
     class: 'w-[1000px]',
-    draggable: true,
     footer: false,
     footerClass: 'justify-start p-0',
     showCancelButton: false,

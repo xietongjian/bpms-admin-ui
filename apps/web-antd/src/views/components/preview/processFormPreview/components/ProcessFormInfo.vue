@@ -18,8 +18,6 @@
 </template>
 <script lang="ts" setup>
 import {ref, defineProps, defineEmits, onMounted, defineExpose, watch, unref, nextTick} from 'vue';
-import {Collapse, CollapsePanel, Descriptions, DescriptionsItem} from 'ant-design-vue';
-import {getStartHeadInfoVoByProcessInstanceId} from "#/api/flowoperation/processInst";
 import { GenerateForm } from '/public/static/form-making';
 import {getCustomFormInfoVoByModelKeyAndBusinessKey} from "#/api/flowoperation/processTask";
 
@@ -40,6 +38,14 @@ const props = defineProps({
   modelKey: {
     type: String,
     default: ''
+  },
+  printRead: {
+    type: Boolean,
+    default: false
+  },
+  showOperation: {
+    type: Boolean,
+    default: false
   }
 });
 const loading = ref(false);

@@ -225,15 +225,7 @@ export function getApplyedTasksPagerModel(params: any) {
 
 // 分页查询流程模板
 export function getPagerModelModelInfo(params: any) {
-  const query = params&&{pageNum: params.pageNum, pageSize: params.pageSize};
-  let entity = params||{};
-
-  if(entity){
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = {query, entity} as any;
-  return requestClient.post<any>(Api.GetPagerModelModelInfo, queryParam );
+  return requestClient.post<any>(Api.GetPagerModelModelInfo, params );
 }
 
 export function getCustomFormInfoVoByModelKeyAndBusinessKey(params) {
@@ -255,16 +247,10 @@ export function checkRevokeProcess(params: any) {
 
 // 我的草稿
 export function getDraftPageList(params: any) {
-  const query = params&&{pageNum: params.pageNum, pageSize: params.pageSize};
-  let entity = params||{};
-  if(entity){
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = {query, entity} as any;
-  return requestClient.post<any>(Api.GetDraftPageList, params).then(res=>{
-    if(res.rows && res.rows.length>0){
-      res.rows.forEach(item=>{
+  return requestClient.post<any>(Api.GetDraftPageList, params).then(res => {
+    if (res.rows && res.rows.length > 0) {
+      debugger;
+      res.rows.forEach(item => {
         item.modelKey = item.processDefinitionKey;
       });
       res.data = res.rows;
@@ -280,7 +266,7 @@ export function getMyCommonlyList() {
 
 // 根据ID删除草稿
 export function delFormDraftById(params: any) {
-  return requestClient.post(Api.DelFormDraftById + '/' + params.id,{}, {isReturnNativeResponse: true});
+  return requestClient.post(Api.DelFormDraftById + '/' + params.id,{}, {responseReturn: 'body'});
 }
 
 // 检测已办任务是否可以取回审批记录

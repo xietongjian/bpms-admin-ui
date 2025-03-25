@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { nextTick, ref, unref } from 'vue';
+import { nextTick, ref, unref, shallowRef } from 'vue';
 
 import { Page, ColPage } from '@vben/common-ui';
+import type {Recordable} from '@vben/types';
 
 import {
   DeleteOutlined,
@@ -22,11 +23,13 @@ import {
   Tooltip,
   Tree,
   TypographyLink,
+  message
 } from 'ant-design-vue';
-import {BpmnPreviewModal} from '#/views/components/preview';
+import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
 
 import { getFlowCategories } from '#/api/base/category';
 import {
+  delFormDraftById,
   getDraftPageList,
   getMyCommonlyList,
   getPagerModelModelInfo,
@@ -49,8 +52,8 @@ const basicTreeRef = ref<any>(null);
 const currentCategory = ref<any>({});
 const InputSearch = Input.Search;
 
-const bpmnPreviewModalRef = ref();
-
+const bpmnPreviewModalRef = ref(),
+    processFormPreviewDrawerRef = shallowRef();
 
 // const [AppModal, modalApi] = useVbenModal({
 //   connectedComponent: null,//AppInputModal,
@@ -74,7 +77,7 @@ const pagination = {
   current: 1,
 };
 
-function fetchModelByPage() {
+async function fetchModelByPage() {
   showModel.value = true;
   dataList.value = [];
   modelList.value = [];
@@ -83,52 +86,73 @@ function fetchModelByPage() {
       showModel.value = false;
       // 查询草稿数据
       dataListLoading.value = true;
-      getDraftPageList({
-        categoryCode: unref(currentCategory).code,
-        ...unref(pager),
-        keyword: unref(searchTxt),
-      })
-        .then((res) => {
-          const { rows, total } = res;
-          dataList.value = rows;
-          pagination.total = total;
-          pager.value.total = total;
-        })
-        .finally(() => {
-          dataListLoading.value = false;
-        });
+      try {
+        const params = {
+          entity: {
+            keyword: unref(searchTxt)
+          },
+          query: {
+            ...unref(pager)
+          }
+        };
+        const res = await getDraftPageList(params);
+        const {rows, total} = res;
+        dataList.value = rows;
+        pagination.total = total;
+        pager.value.total = total;
+      } catch (e) {
+        console.error(e);
+      } finally {
+        dataListLoading.value = false;
+      }
+
     } else if (unref(currentCategory).code === 'myCommonlyList') {
       showModel.value = false;
       // 查询我的常用流程
       dataListLoading.value = true;
-      getMyCommonlyList()
-        .then((res) => {
-          dataList.value = res;
-          pagination.total = res.length;
-          pager.value.total = res.length;
-        })
-        .finally(() => {
-          dataListLoading.value = false;
-        });
+      try {
+        const params = {
+          entity: {
+            keyword: unref(searchTxt)
+          },
+          query: {
+            ...unref(pager)
+          }
+        };
+        const res = await getMyCommonlyList(params);
+        dataList.value = res;
+        pagination.total = res.length;
+        pager.value.total = res.length;
+      } catch (e) {
+        console.error(e);
+      } finally {
+        dataListLoading.value = false;
+      }
     } else {
       showModel.value = true;
       // 查询模板数据
       dataListLoading.value = true;
-      getPagerModelModelInfo({
-        categoryCode: unref(currentCategory).code,
-        ...unref(pager),
-        keyword: unref(searchTxt),
-      })
-        .then((res) => {
-          const { rows, total } = res;
-          const result = groupBy(rows, 'categoryCode');
-          modelList.value = result;
-          pagination.total = total;
-          pager.value.total = total;
-        })
-        .finally(() => {
-          dataListLoading.value = false;
-        });
+      try {
+        const params = {
+          entity: {
+            categoryCode: unref(currentCategory).code,
+            keyword: unref(searchTxt),
+          },
+          query: {
+            ...unref(pager)
+          }
+        }
+        const res = await getPagerModelModelInfo(params);
+        const { rows, total } = res;
+        const result = groupBy(rows, 'categoryCode');
+        modelList.value = result;
+        pagination.total = total;
+        pager.value.total = total;
+      } catch (e) {
+        console.error(e);
+      } finally {
+        dataListLoading.value = false;
+      }
     }
   } else {
     pagination.total = 0;
@@ -206,6 +230,29 @@ function handleSelect(keys: string, e) {
 function handleBpmnPreview(modelKey, procInstId) {
   bpmnPreviewModalRef.value.setData({modelKey, procInstId});
   bpmnPreviewModalRef.value.open();
+}
+
+function handleLaunch(record: Recordable<any>) {
+  processFormPreviewDrawerRef.value.setData({
+    ...record,
+    procInstId: record.processInstanceId,
+    modelKey: record.processDefinitionKey,
+    showOperation: true,
+  });
+  processFormPreviewDrawerRef.value.open();
+  processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.formName}】的表单`});
+}
+
+async function handleDelFormDraftById(id) {
+  const {success, msg} = await delFormDraftById({ id });
+  if(success){
+    if (success) {
+      message.success(msg);
+      fetchModelByPage();
+    } else {
+      message.error(msg);
+    }
+  }
 }
 </script>
 
@@ -330,7 +377,7 @@ function handleBpmnPreview(modelKey, procInstId) {
                       type="link"
                       @confirm="handleDelFormDraftById(item.id)"
                     >
-                      <DeleteOutlined style="color: red" />
+                      <DeleteOutlined class="text-red-800" />
                     </Popconfirm>
 
                     <Avatar :src="item.modelIcon" class="model-icon">
@@ -341,10 +388,8 @@ function handleBpmnPreview(modelKey, procInstId) {
 
                     <Tooltip placement="top" title="流程图预览">
                       <PartitionOutlined
-                        class="flow-diagram-icon"
-                        @click="
-                              showFlowDiagram(item.name, item.modelKey, '')
-                            "
+                        class="flow-diagram-icon cursor-pointer"
+                        @click="handleBpmnPreview(item.modelKey)"
                       />
                     </Tooltip>
                     <TypographyLink @click="handleLaunch(item)">
@@ -358,6 +403,7 @@ function handleBpmnPreview(modelKey, procInstId) {
         </List>
       </div>
       <BpmnPreviewModal ref="bpmnPreviewModalRef" />
+      <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" @reload="handleReload"/>
     </div>
   </ColPage>
 </template>
