@@ -280,12 +280,12 @@
   }
 </script>
 
-<style lang="less">
-  @import '@/assets/logicflow/style.css';
-  @import '@/assets/hilight-js/index.css';
-  @import '@/assets/bpmn/viewer/lib/style.css';
+<style lang="scss">
+  @import '#/assets/logicflow/style.css';
+  @import '#/assets/hilight-js/index.css';
+  @import '#/assets/bpmn/viewer/lib/style.css';
 </style>
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .content-container {
     height: 100%;
     width: 100%;

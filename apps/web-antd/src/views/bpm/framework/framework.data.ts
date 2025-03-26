@@ -6,9 +6,6 @@ import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
 import { RemarkDefaultEnum } from '#/enums/commonEnum';
 
-const colProps = {
-  span: 24,
-};
 export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
@@ -76,26 +73,35 @@ export const flowFrameworkFormSchema: FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'pid',
     label: '父id',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'diagramsInfoId',
     label: 'diagramsInfoId',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
     component: 'Input',
     required: true,
-    rules: [
+    /*rules: [
       {
         whitespace: true,
         required: true,
@@ -106,15 +112,14 @@ export const flowFrameworkFormSchema: FormSchema[] = [
         type: 'string',
         message: '字符长度不能大于64！',
       },
-    ],
-    colProps,
+    ],*/
   },
   {
     fieldName: 'code',
     label: '编号',
     component: 'Input',
     required: true,
-    rules: [
+    /*rules: [
       {
         whitespace: true,
         required: true,
@@ -125,8 +130,7 @@ export const flowFrameworkFormSchema: FormSchema[] = [
         type: 'string',
         message: '编号长度不能大于40！',
       },
-    ],
-    colProps,
+    ],*/
   },
   {
     fieldName: 'orderNo',
@@ -145,7 +149,6 @@ export const flowFrameworkFormSchema: FormSchema[] = [
     //     message: '序号不能为空！',
     //   },
     // ],
-    colProps,
   },
   {
     label: '流程层级',
@@ -157,7 +160,6 @@ export const flowFrameworkFormSchema: FormSchema[] = [
       api: getAllLevels,
     },
     required: true,
-    colProps,
   },
   {
     label: '流程描述',
@@ -169,7 +171,6 @@ export const flowFrameworkFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     label: '流程目的',
@@ -181,7 +182,6 @@ export const flowFrameworkFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     label: '责任人',
@@ -190,7 +190,6 @@ export const flowFrameworkFormSchema: FormSchema[] = [
     componentProps: {
       multiple: false,
     },
-    colProps,
   },
   {
     label: '责任部门',
@@ -201,7 +200,6 @@ export const flowFrameworkFormSchema: FormSchema[] = [
       selectType: '2',
       placeholder: '请选择流程归属部门',
     },
-    colProps,
   },
   {
     label: '包含下一层流程',
@@ -213,7 +211,6 @@ export const flowFrameworkFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     label: '流程输入信息',
@@ -225,7 +222,6 @@ export const flowFrameworkFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     label: '流程输出信息',
@@ -237,7 +233,6 @@ export const flowFrameworkFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     label: '流程起始',
@@ -249,7 +244,6 @@ export const flowFrameworkFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     label: '流程终止',
@@ -261,7 +255,6 @@ export const flowFrameworkFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     label: '流程的KPI',
@@ -273,7 +266,6 @@ export const flowFrameworkFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
 ];
 
@@ -282,20 +274,26 @@ export const formSchemaBusiness: FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'frameworkId',
     label: '架构id',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
     component: 'Input',
     required: true,
-    rules: [
+    /*rules: [
       {
         whitespace: true,
         required: true,
@@ -306,20 +304,17 @@ export const formSchemaBusiness: FormSchema[] = [
         type: 'string',
         message: '字符长度不能大于64！',
       },
-    ],
-    colProps,
+    ],*/
   },
   {
     fieldName: 'startActivity',
     label: '开始活动',
     component: 'Input',
-    colProps,
   },
   {
     label: '结束活动',
     fieldName: 'endActivity',
     component: 'Input',
-    colProps,
   },
   {
     label: '流程输入信息',
@@ -331,7 +326,6 @@ export const formSchemaBusiness: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     label: '流程输出信息',
@@ -343,23 +337,20 @@ export const formSchemaBusiness: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     label: '预估角色数',
     fieldName: 'roles',
     component: 'Input',
-    colProps,
   },
   {
     label: '预估活动数',
     fieldName: 'activities',
     component: 'Input',
-    colProps,
   },
 ];
 
-export const detailSchema: DescItem[] = [
+export const detailSchema: any[] = [
   {
     fieldName: 'name',
     label: '流程负责人',
@@ -422,7 +413,7 @@ export const detailSchema: DescItem[] = [
   },
 ];
 
-export const detailViewSchema: DescItem[] = [
+export const detailViewSchema: any[] = [
   {
     fieldName: 'name',
     label: '名称',
@@ -484,7 +475,7 @@ export const detailViewSchema: DescItem[] = [
   },
 ];
 
-export const detailSystemViewSchema: DescItem[] = [
+export const detailSystemViewSchema: any[] = [
   {
     fieldName: 'name',
     label: '名称',
@@ -507,13 +498,19 @@ export const flowSystemFormSchema: FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'diagramsInfoId',
     label: 'diagramsInfoId',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'name',
@@ -521,7 +518,7 @@ export const flowSystemFormSchema: FormSchema[] = [
     component: 'Input',
     required: true,
     labelWidth: 60,
-    rules: [
+    /*rules: [
       {
         whitespace: true,
         required: true,
@@ -532,8 +529,7 @@ export const flowSystemFormSchema: FormSchema[] = [
         type: 'string',
         message: '字符长度不能大于40！',
       },
-    ],
-    colProps,
+    ],*/
   },
   {
     fieldName: 'orderNo',
@@ -546,31 +542,29 @@ export const flowSystemFormSchema: FormSchema[] = [
     },
     required: true,
     labelWidth: 60,
-    rules: [
+    /*rules: [
       {
         required: true,
         message: '序号不能为空！',
       },
-    ],
-    colProps,
+    ],*/
   },
   {
     label: '备注',
     fieldName: 'descr',
     component: 'InputTextArea',
     labelWidth: 60,
-    rules: [
+    /*rules: [
       {
         max: 1024,
         message: '字符长度不能大于1024！',
       },
-    ],
+    ],*/
     componentProps: {
       autoSize: {
         minRows: 3,
         maxRows: 20,
       },
     },
-    colProps,
   },
 ];

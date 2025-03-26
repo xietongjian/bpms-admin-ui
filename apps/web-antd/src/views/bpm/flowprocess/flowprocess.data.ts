@@ -36,20 +36,26 @@ export const formSchema: FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'pid',
     label: '父id',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
     component: 'Input',
     required: true,
-    rules: [
+    /*rules: [
       {
         whitespace: true,
         required: true,
@@ -60,25 +66,23 @@ export const formSchema: FormSchema[] = [
         type: 'string',
         message: '字符长度不能大于40！',
       },
-    ],
-    colProps,
+    ],*/
   },
   {
     label: '备注',
     fieldName: 'descr',
     component: 'InputTextArea',
-    rules: [
+    /*rules: [
       {
         max: 256,
         message: '字符长度不能大于256！',
       },
-    ],
+    ],*/
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS + 1,
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
 ];

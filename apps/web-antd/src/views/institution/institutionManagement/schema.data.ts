@@ -55,6 +55,8 @@ export const InstitutionColumns: VxeGridProps['columns'] = [
     align: 'left',
     title: '操作',
     field: 'action',
+    slots: {default: 'action'},
+    fixed: 'right'
   }
 ];
 
@@ -86,26 +88,27 @@ export const InstitutionModalForm: FormSchema[] = [
   {
     fieldName: 'id',
     label: 'ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'categoryId',
     label: 'categoryId',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
     component: 'Input',
     required: true,
-    colProps: {
-      span: 24,
-    },
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -115,7 +118,7 @@ export const InstitutionModalForm: FormSchema[] = [
         max: 20,
         message: '字符长度不能大于20！',
       },
-    ],
+    ],*/
   },
   {
     fieldName: 'level',
@@ -127,15 +130,11 @@ export const InstitutionModalForm: FormSchema[] = [
       min: LevelNoDefaultEnum.MIN,
       max: LevelNoDefaultEnum.MAX,
     },
-    colProps: {
-      span: 24,
-    },
   },
   {
     fieldName: 'orderNo',
     label: '排序号',
     helpMessage: '数值越小越靠前！',
-    required: false,
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
@@ -147,19 +146,13 @@ export const InstitutionModalForm: FormSchema[] = [
     fieldName: 'filePath',
     slot: 'UploadFile',
     label: '制度文件',
-    colProps: {
-      span: 24,
-    },
-    rules: [{ required: true, trigger: 'change', message: '请选择上传文件' }],
+    // rules: [{ required: true, trigger: 'change', message: '请选择上传文件' }],
   },
   {
     fieldName: 'privilegeRange',
     component: 'RadioGroup',
     label: '权限范围',
     required: true,
-    colProps: {
-      span: 24,
-    },
     componentProps: {
       options: [
         {
@@ -187,9 +180,6 @@ export const InstitutionModalForm: FormSchema[] = [
     //   treeNodeFilterProp: 'name',
     //   getPopupContainer: () => document.body,
     // },
-    colProps: {
-      span: 24,
-    },
     required: true,
   },
   {
@@ -197,9 +187,6 @@ export const InstitutionModalForm: FormSchema[] = [
     fieldName: 'positionRangeData',
     label: '岗位',
     component: 'PositionSelector',
-    colProps: {
-      span: 24,
-    },
     componentProps: {
       title: '选择岗位',
       multiple: true,

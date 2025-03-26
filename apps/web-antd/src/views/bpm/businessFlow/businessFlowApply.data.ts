@@ -5,9 +5,6 @@ import { h } from 'vue';
 // import { DescItem } from '@/components/Description';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
 
-const colProps = {
-  span: 24,
-};
 export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
@@ -129,12 +126,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 14, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -168,7 +159,6 @@ export const formSchema: FormSchema[] = [
         message: '字符长度不能大于64！',
       },
     ],
-    colProps,
   },
   {
     fieldName: 'code',
@@ -187,7 +177,6 @@ export const formSchema: FormSchema[] = [
         message: '编号长度不能大于64！',
       },
     ],
-    colProps,
   },
   {
     label: '流程层级',
@@ -201,7 +190,6 @@ export const formSchema: FormSchema[] = [
         message: '流程层级不能为空！',
       },
     ],
-    colProps,
   },
   {
     label: '流程描述',
@@ -213,13 +201,11 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     label: '流程目的',
     fieldName: 'objective',
     component: 'InputTextArea',
-    colProps,
   },
   {
     label: '责任人',
@@ -228,14 +214,15 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       multiple: false,
     },
-    colProps,
   },
   {
     fieldName: 'personalCode',
     label: '责任人',
     component: 'Input',
-    show: false,
-    colProps,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     label: '责任部门',
@@ -246,20 +233,20 @@ export const formSchema: FormSchema[] = [
       selectType: '2',
       placeholder: '请选择流程归属部门',
     },
-    colProps,
   },
   {
     label: '责任部门',
     fieldName: 'deptId',
     component: 'Input',
-    show: false,
-    colProps,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     label: '包含下一层流程',
     fieldName: 'nextProcess',
     component: 'InputTextArea',
-    colProps,
   },
   {
     label: '流程输入信息',
@@ -271,7 +258,6 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     label: '流程输出信息',
@@ -283,7 +269,6 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     label: '流程起始',
@@ -295,7 +280,6 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     label: '流程终止',
@@ -307,7 +291,6 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
   {
     label: '流程的KPI',
@@ -319,7 +302,6 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    colProps,
   },
 ];
 
@@ -329,7 +311,10 @@ export const authSettingFormSchema: FormSchema[] = [
     label: 'ID',
     required: true,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'authType',
@@ -344,7 +329,6 @@ export const authSettingFormSchema: FormSchema[] = [
         ],
       };
     },
-    colProps,
   },
   {
     label: '岗位',
@@ -361,7 +345,6 @@ export const authSettingFormSchema: FormSchema[] = [
     show: ({ values }) => {
       return values.authType === '0';
     },
-    colProps,
   },
   {
     label: '角色',
@@ -378,7 +361,6 @@ export const authSettingFormSchema: FormSchema[] = [
     show: ({ values }) => {
       return values.authType === '0';
     },
-    colProps,
   },
 
   {
@@ -395,7 +377,6 @@ export const authSettingFormSchema: FormSchema[] = [
     show: ({ values }) => {
       return values.authType === '0';
     },
-    colProps,
   },
 ];
 
@@ -404,19 +385,28 @@ export const businessFlowApplyFormSchema: FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'businessFlowId',
     label: 'businessFlowId',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'diagramsInfoId',
     label: 'businessFlowId',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'name',
@@ -435,28 +425,34 @@ export const businessFlowApplyFormSchema: FormSchema[] = [
         message: '字符长度不能大于64！',
       },
     ],
-    colProps: { span: 24 },
   },
   {
     fieldName: 'businessFlowId',
     label: '主表ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'frameworkId',
     label: '所属架构',
     component: 'Input',
     required: true,
-    show: false,
-    colProps,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   {
     fieldName: 'diagramsInfoId',
     label: '流程图设计器表ID',
     component: 'Input',
-    show: false,
-    colProps,
+    dependencies: {
+      show: () => false,
+      triggerFields: [""]
+    }
   },
   // {
   //   fieldName: 'modelKey',
@@ -482,25 +478,21 @@ export const businessFlowApplyFormSchema: FormSchema[] = [
       title: '选择流程拥有者',
       selectedList: [],
     },
-    colProps: { span: 24 },
   },
   {
     fieldName: 'startActivity',
     label: '开始活动',
     component: 'Input',
-    colProps: { span: 24 },
   },
   {
     label: '结束活动',
     fieldName: 'endActivity',
     component: 'Input',
-    colProps: { span: 24 },
   },
   {
     label: '流程输入信息',
     fieldName: 'inputInfo',
     component: 'InputTextArea',
-    colProps: { span: 24 },
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS + 1,
@@ -511,8 +503,7 @@ export const businessFlowApplyFormSchema: FormSchema[] = [
   {
     label: '流程输出信息',
     fieldName: 'outputInfo',
-    component: 'InputTextArea',
-    colProps: { span: 24 },
+    component: 'TextArea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS + 1,
@@ -540,7 +531,6 @@ export const businessFlowApplyFormSchema: FormSchema[] = [
       min: OrderNoDefaultEnum.MIN,
       max: OrderNoDefaultEnum.MAX,
     },
-    colProps: { span: 24 },
   },
   {
     label: '预估活动数',
@@ -550,11 +540,10 @@ export const businessFlowApplyFormSchema: FormSchema[] = [
       min: OrderNoDefaultEnum.MIN,
       max: OrderNoDefaultEnum.MAX,
     },
-    colProps: { span: 24 },
   },
 ];
 // 业务流程详情字段
-export const detailSchema: DescItem[] = [
+export const detailSchema: any[] = [
   {
     fieldName: 'name',
     label: '名称',
@@ -610,7 +599,7 @@ export const detailSchema: DescItem[] = [
 ];
 
 // 绑定完整流程详情字段
-export const flowDetailSchema: DescItem[] = [
+export const flowDetailSchema: any[] = [
   {
     fieldName: 'name',
     label: '名称',
