@@ -4,8 +4,8 @@
   </Card>
 </template>
 <script lang="ts" setup>
-import type { PropType } from 'vue';
-import { Ref, ref, watch } from 'vue';
+import type { PropType, Ref } from 'vue';
+import { ref, watch } from 'vue';
 
   import { Card } from 'ant-design-vue';
 import { EchartsUI, useEcharts } from '@vben/plugins/echarts';

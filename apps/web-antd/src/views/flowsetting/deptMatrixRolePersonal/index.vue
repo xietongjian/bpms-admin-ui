@@ -63,7 +63,7 @@
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
   import PersonalSelectorModal from '#/components/selector/personal-selector/PersonalSelectorModal.vue';
 
-  // import PersonalSelectorModal from '@/components/Selector/src/PersonalSelectorModal.vue';
+  // import PersonalSelectorModal from '@/components/Selector/src/FlowModelSelectorModal.vue';
   import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';
   import { getMatrixRoleList } from '#/api/org/role';
   import {

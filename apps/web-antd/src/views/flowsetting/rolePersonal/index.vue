@@ -69,7 +69,7 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
 import PersonalSelectorModal from '#/components/selector/personal-selector/PersonalSelectorModal.vue';
 
   // import { BasicTable, useTable, TableAction } from '@/components/Table';
-  // import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
+  // import PersonalSelectorModal from '#/components/Selector/src/FlowModelSelectorModal.vue';
 import { TableAction } from '#/components/table-action';
 
 import {ColPage} from '@vben/common-ui';

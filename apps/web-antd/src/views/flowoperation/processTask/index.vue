@@ -79,7 +79,7 @@
     updateAssignee,
   } from '#/api/flowoperation/processTask';
   import {BpmnPreviewModal, ProcessFormPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
-  // import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
+  // import PersonalSelectorModal from '#/components/Selector/src/FlowModelSelectorModal.vue';
   import FlowPropertiesModal from '../processInst/FlowPropertiesModal.vue';
   import { columns, searchFormSchema } from './processTask.data';
   import ApproveHistoryModal from '../processInst/ApproveHistoryModal.vue';

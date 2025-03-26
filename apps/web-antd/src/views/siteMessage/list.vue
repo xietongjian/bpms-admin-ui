@@ -27,7 +27,7 @@
   </Page>
 </template>
 <script lang="ts" setup>
-import {onMounted, ref, shallowRef} from 'vue';
+import {ref, shallowRef} from 'vue';
 
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
@@ -35,7 +35,7 @@ import type {Recordable} from '@vben/types';
 
 import {Page} from '@vben/common-ui';
 
-import {Badge, Breadcrumb, Tooltip, TypographyLink, TypographyText} from 'ant-design-vue';
+import {Badge, Tooltip, TypographyLink, TypographyText} from 'ant-design-vue';
 import {messageTableSchema, searchFormSchema} from "./data";
 import {pagerModelOnSiteMessage, updateOnSiteMessageStatus} from "#/api/process/siteMessage";
 import {EmpInfo} from '#/views/components/EmpInfo';

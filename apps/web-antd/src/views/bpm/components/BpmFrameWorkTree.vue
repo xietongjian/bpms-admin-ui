@@ -39,15 +39,11 @@
 </template>
 
 <script setup lang="ts">
-  /**
-   * @desc BpmFrameWorkTree
-   * @author DragonTeam <https://www.bpmport.com>
-   * @since 2024/8/28 22:27
-   */
   import { computed, defineEmits, onMounted, ref, h } from 'vue';
+  import type {PropType} from 'vue';
   import { Empty, Spin } from 'ant-design-vue';
-  import { createTheme, NConfigProvider, NTree, treeDark } from 'naive-ui';
-  import TreeHeader from '@/components/Tree/src/components/TreeHeader.vue';
+  // import { createTheme, NConfigProvider, NTree, treeDark } from 'naive-ui';
+  // import TreeHeader from '@/components/Tree/src/components/TreeHeader.vue';
   import { findNode, getAllParentKeys } from '#/utils/helper/treeHelper';
   import {
     getChildrenBpmnFlow,
@@ -56,11 +52,11 @@
   } from '#/api/bpm/businessflow';
   import { ApartmentOutlined, NodeExpandOutlined, RetweetOutlined } from '@ant-design/icons-vue';
   import { isArray } from '#/utils/is';
-  import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
+  import { usePreferences } from '@vben/preferences';
 
   defineOptions({ name: 'BpmFrameWorkTree' });
 
-  const { isDark } = useDarkModeTheme();
+  const { isDark } = usePreferences();
 
   const prop = defineProps({
     draggable: {
@@ -86,7 +82,8 @@
   }>();
 
   const treeTheme = computed(() => {
-    return isDark.value ? createTheme([treeDark]) : undefined;
+    // return isDark.value ? createTheme([treeDark]) : undefined;
+    return undefined;
   });
 
   const treeData = ref<any[]>([]);

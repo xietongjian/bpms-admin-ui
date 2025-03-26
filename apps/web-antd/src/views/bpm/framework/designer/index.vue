@@ -51,7 +51,7 @@
   import {Page} from '@vben/common-ui';
   import { Space, Tabs, Tooltip, Steps, Modal, Collapse, Popconfirm, message } from 'ant-design-vue';
   import { getById, saveOrUpdate, getAllParentsById } from '#/api/bpm/framework';
-  import { BasicForm, Rule, useForm } from '@/components/Form';
+  // import { BasicForm, Rule, useForm } from '@/components/Form';
   import { flowFrameworkFormSchema, flowSystemFormSchema } from '../framework.data';
 
   import { useRouter } from 'vue-router';

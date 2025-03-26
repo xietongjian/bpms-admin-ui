@@ -3,7 +3,7 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { Tag } from 'ant-design-vue';
 import { h } from 'vue';
 // import { DescItem } from '@/components/Description';
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/constantEnum';
+import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
 
 const colProps = {
   span: 24,

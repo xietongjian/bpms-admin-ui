@@ -1,10 +1,10 @@
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { getAllLevels } from '#/api/bpm/flowprocess';
-import { DescItem } from '@/components/Description';
+// import { DescItem } from '@/components/Description';
 import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
-import { RemarkDefaultEnum } from '@/enums/constantEnum';
+import { RemarkDefaultEnum } from '#/enums/commonEnum';
 
 const colProps = {
   span: 24,

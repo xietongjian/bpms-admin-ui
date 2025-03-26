@@ -84,8 +84,8 @@
   import { detailSchema } from './framework.data';
   import { Space, Button, Tooltip, message, Descriptions } from 'ant-design-vue';
   // import { useGo } from '@/hooks/web/usePage';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import svgPanZoom from 'svg-pan-zoom';
+  // import { useMessage } from '@/hooks/web/useMessage';
+  // import svgPanZoom from 'svg-pan-zoom';
   // import { useTabs } from '@/hooks/web/useTabs';
   import { getById } from '#/api/bpm/framework';
   import {useRouter} from 'vue-router';
@@ -101,13 +101,13 @@
   const businessFlowApply = ref({});
   const panZoomTrigger = ref({});
   const showBaseInfoVisible = ref(false);
-  const { setTitle, closeCurrent } = useTabs();
+  // const { setTitle, closeCurrent } = useTabs();
 
   onMounted(() => {
     getById({ id }).then((res) => {
       businessFlowApply.value = res;
-      loadShowHeader(res.frameworkId);
-      loadSvgXml(res.diagramsInfoXml);
+      loadShowHeader(res?.frameworkId);
+      loadSvgXml(res?.diagramsInfoXml);
     });
   });
 
@@ -121,11 +121,15 @@
     document.getElementById('svgContainer').innerHTML = svgXml; //res为从服务器获取的xml字符串
     const svgObj = document.getElementById('svgContainer').querySelector('svg');
 
-    svgObj.setAttribute('id', 'svg-trigger');
-    svgObj.setAttribute('width', '100%');
-    svgObj.setAttribute('height', '100%');
+    svgObj?.setAttribute('id', 'svg-trigger');
+    svgObj?.setAttribute('width', '100%');
+    svgObj?.setAttribute('height', '100%');
 
-    panZoomTrigger.value = svgPanZoom('#svg-trigger');
+    try {
+      panZoomTrigger.value = svgPanZoom('#svg-trigger');
+    } catch (e) {
+      console.error(e);
+    }
     /*
     // 用法示例
     svgPanZoom('#svg-triger', {
@@ -152,23 +156,23 @@
   }
   function handleSvgZoomIn() {
     try {
-      panZoomTrigger.value.zoomIn();
+      panZoomTrigger.value?.zoomIn();
     } catch (e) {
       message.error('图形加载失败！无法操作！');
     }
   }
   function handleSvgZoomReset() {
     try {
-      panZoomTrigger.value.resetZoom();
-      panZoomTrigger.value.fit();
-      panZoomTrigger.value.center();
+      panZoomTrigger.value?.resetZoom();
+      panZoomTrigger.value?.fit();
+      panZoomTrigger.value?.center();
     } catch (e) {
       message.error('图形加载失败！无法操作！');
     }
   }
   function handleSvgZoomOut() {
     try {
-      panZoomTrigger.value.zoomOut();
+      panZoomTrigger.value?.zoomOut();
     } catch (e) {
       message.error('图形加载失败！无法操作！');
     }

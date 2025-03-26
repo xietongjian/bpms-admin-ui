@@ -90,16 +90,20 @@
       </div>
     </div>
 
-    <ModelInfoSelectorModal ref="modelInfoSelectorModalRef" @register="registerModelInfoSelectorModal" @change="handleChange" />
+    <FlowModelSelectorModal ref="modelInfoSelectorModalRef" @register="registerModelInfoSelectorModal" @change="handleChange" />
   </Page>
 </template>
 <script lang="ts" setup>
-  import { ComponentInstance, computed, createVNode, nextTick, ref, shallowRef } from 'vue';
+  import { computed, createVNode, nextTick, ref, shallowRef } from 'vue';
+
+  import type {ComponentInstance} from 'vue';
   import type {Recordable} from '@vben/types';
 
   import {Page} from '@vben/common-ui';
   // import { useModal } from '@/components/Modal';
-  import ModelInfoSelectorModal from '#/components/Selector/src/ModelInfoSelectorModal.vue';
+  // import ModelInfoSelectorModal from '#/components/Selector/src/ModelInfoSelectorModal.vue';
+  import FlowModelSelectorModal from '#/components/selector/flow-model-selector/FlowModelSelectorModal.vue';
+
   import { message, Empty, Modal, Spin, Tooltip } from 'ant-design-vue';
   import {
     DeleteOutlined,

@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ComponentInstance, onMounted, ref, shallowRef, unref } from 'vue';
+  import { onMounted, ref, shallowRef, unref } from 'vue';
   import {Page} from '@vben/common-ui';
   import { useRoute } from 'vue-router';
   import { getBusinessFlowById } from '#/api/bpm/businessFlowApply';
@@ -250,7 +250,7 @@
   }
   .step-form-content {
     padding: 24px;
-    background-color: @component-background;
+    //background-color: @component-background;
   }
 
   .base-info-box-collapse {

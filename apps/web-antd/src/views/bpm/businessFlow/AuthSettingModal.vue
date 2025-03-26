@@ -4,14 +4,12 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { defineComponent, ref, computed, defineExpose, defineEmits, unref } from 'vue';
-  import {useVbenModal} from '@vben/common-ui';
+  import { defineExpose, defineEmits, unref } from 'vue';
   import {useVbenForm} from '#/adapter/form';
   import { authSettingFormSchema } from './businessFlowApply.data';
   import { saveOrUpdate, getFlowAuthorizeByBusinessFlowId } from '#/api/bpm/flowAuthorize';
   import {message, Modal} from 'ant-design-vue';
   import {useVbenModal} from '@vben/common-ui';
-  import {formSchema} from "#/views/org/company/company.data";
 
   const emit = defineEmits(['success']);
   // const { createMessage, createConfirm } = useMessage();

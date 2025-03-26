@@ -30,11 +30,11 @@ export const multiUploadFrameWork = async (id: string, data: any) => {
 };
 
 // 拖拽移动架构
-export const moveFramework = (params: { id: string; pid: string }) =>
-    const url = `${Api.MoveFramework}/${params.id}/${params.pid}`;
-  requestClient.post<boolean>(url, {},
-    { successMessageMode: 'message' },
-  );
+export const moveFramework = (params: { id: string; pid: string }) => {
+  const url = `${Api.MoveFramework}/${params.id}/${params.pid}`;
+  return requestClient.post<boolean>(url, {},
+      {successMessageMode: 'message'});
+}
 
 export const getFrameworkList = (params: any) => {
   const result = requestClient.post<any>(Api.GetFrameworkList, params);

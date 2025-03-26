@@ -182,7 +182,7 @@
   import { ManOutlined, ImportOutlined, WomanOutlined, UserOutlined } from '@ant-design/icons-vue';
 
   import PersonalModal from './PersonalModal.vue';
-  // import PersonalSelectorModal from '#/components/Selector/src/PersonalSelectorModal.vue';
+  // import PersonalSelectorModal from '#/components/Selector/src/FlowModelSelectorModal.vue';
   import {
     Tag,
     Popover,
