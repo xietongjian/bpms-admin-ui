@@ -1,24 +1,20 @@
 <template>
   <BasicModal
     v-bind="$attrs"
-    @register="registerBusinessModal"
     :title="getTitle"
     @ok="handleSubmit"
   >
-    <BasicForm @register="registerForm" />
+    <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { defineComponent, defineEmits, ref, computed, unref } from 'vue';
-  // import { BasicModal, useModalInner } from '@/components/Modal';
-  // import { BasicForm, Rule, useForm } from '@/components/Form';
+  import {defineEmits, defineExpose, ref, computed, unref } from 'vue';
   import {useVbenForm} from "#/adapter/form";
   import {useVbenModal} from '@vben/common-ui';
-  import {Button, message} from 'ant-design-vue';
+  import {message} from 'ant-design-vue';
 
   import { formSchemaBusiness } from './framework.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/bpm/businessflow';
-  import {formSchema} from "#/views/org/jobGradeType/jobGradeType.data";
 
   const emit = defineEmits(['success'])
 
@@ -134,8 +130,8 @@
       const {success, msg} = await saveOrUpdate(values);
       if(success){
         emit('success');
-        modalApi.close();
         message.success(msg);
+        modalApi.close();
       } else {
         message.error(msg);
       }
@@ -151,4 +147,6 @@
       return { registerBusinessModal, registerForm, getTitle, handleSubmit };
     },
   });*/
+
+  defineExpose(modalApi)
 </script>

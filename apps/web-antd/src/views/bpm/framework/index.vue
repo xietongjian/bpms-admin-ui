@@ -12,16 +12,16 @@
       <template #header>
         <Authority :value="'ProcessFramework:' + PerEnum.ADD">
           <Tooltip title="新增公司架构">
-            <a-button type="primary" size="small" @click="handleCreateSystem">
+            <Button type="primary" size="small" @click="handleCreateSystem">
               <PlusOutlined />
-            </a-button>
+            </Button>
           </Tooltip>
         </Authority>
         <Authority :value="'ProcessFramework:' + PerEnum.ADD">
           <Tooltip title="下载架构导入模板">
-            <a-button class="ml-2" type="primary" size="small" @click="handleDownloadTemplate">
+            <Button class="ml-2" type="primary" size="small" @click="handleDownloadTemplate">
               <DownloadOutlined />
-            </a-button>
+            </Button>
           </Tooltip>
         </Authority>
       </template>
@@ -116,18 +116,24 @@
     </div>
 
     <FrameworkDesignerModal
-      @register="registerFrameworkDesignerModal"
-      @success="handleFrameworkDesignerModalSuccess"
+        ref="frameworkDesignerModalRef"
+        @success="handleFrameworkDesignerModalSuccess"
     />
 
-    <FrameworkUploadModal @register="registerFrameworkUploadModal" @success="reloadFrameworkTree" />
+    <FrameworkUploadModal
+        ref="frameworkUploadModalRef"
+        @success="reloadFrameworkTree"
+    />
   </Page>
 </template>
 
 <script lang="ts" setup>
-  import { Authority } from '@/components/Authority';
-  import { ComponentInstance, createVNode, nextTick, ref, shallowRef, unref } from 'vue';
-  import { Button, Dropdown, Empty, Menu, MenuItem, Modal, Spin, Tooltip } from 'ant-design-vue';
+  // import { Authority } from '@/components/Authority';
+  import { createVNode, nextTick, ref, shallowRef, unref } from 'vue';
+  import { Button, Dropdown, Empty, Menu, message, MenuItem, Modal, Spin, Tooltip } from 'ant-design-vue';
+  import type { Recordable } from '@vben/types';
+  import type {ComponentInstance} from 'vue';
+
   import {
     DeleteOutlined,
     DownloadOutlined,
@@ -146,24 +152,27 @@
   } from '#/api/bpm/framework';
   import {Page} from '@vben/common-ui';
 
-  import { Description } from '@/components/Description';
+  // import { Description } from '@/components/Description';
   import { detailSystemViewSchema, detailViewSchema } from './framework.data';
-  import { ResultEnum } from '@/enums/httpEnum';
-  import { PerEnum } from '@/enums/perEnum';
-  import { useMessage } from '@/hooks/web/useMessage';
-  import { usePermission } from '@/hooks/web/usePermission';
-  import { useModal } from '@/components/Modal';
+  // import { ResultEnum } from '@/enums/httpEnum';
+  import { PerEnum } from '#/enums/perEnum';
+  // import { useMessage } from '@/hooks/web/useMessage';
+  // import { usePermission } from '@/hooks/web/usePermission';
+  // import { useModal } from '@/components/Modal';
   import { downloadByUrl } from '#/utils/file/download';
-  import FrameworkDesignerModal from '@/views/bpm/framework/FrameworkDesignerModal.vue';
-  import { IntegralDesigner } from '@/assets/logicflow/lf-designer';
-  import BpmFrameWorkTree from '@/views/bpm/components/BpmFrameWorkTree.vue';
-  import FrameworkUploadModal from '@/views/bpm/framework/FrameworkUploadModal.vue';
-  import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
+  import FrameworkDesignerModal from '#/views/bpm/framework/FrameworkDesignerModal.vue';
+  import { IntegralDesigner } from '#/assets/logicflow/lf-designer';
+  import BpmFrameWorkTree from '#/views/bpm/components/BpmFrameWorkTree.vue';
+  import FrameworkUploadModal from '#/views/bpm/framework/FrameworkUploadModal.vue';
+  // import { useDarkModeTheme } from '#/hooks/setting/useDarkModeTheme';
+  import { usePreferences } from '@vben/preferences';
+  import {useAccess} from "@vben/access";
 
-  const { isDark } = useDarkModeTheme();
+  const { isDark } = usePreferences();
 
-  const { hasPermission } = usePermission();
-  const { createMessage } = useMessage();
+  const PerPrefix = 'ProcessFramework:';
+  const {hasAccessByCodes}  = useAccess();
+  // const { createMessage } = useMessage();
   const frameworkInfo = ref<Record<string, any>>({});
   const treeLoading = ref<boolean>(false);
   const collapseBaseInfo = ref(false);
@@ -174,11 +183,11 @@
   const basicTreeRef = shallowRef<ComponentInstance<typeof BpmFrameWorkTree>>();
   const framePageRef = shallowRef<ComponentInstance<typeof IntegralDesigner>>();
 
-  const [
-    registerFrameworkDesignerModal,
-    { openModal: openFrameworkDesignerModal, setModalProps: setFrameworkDesignerModalProps },
-  ] = useModal();
-  const [registerFrameworkUploadModal, { openModal: openFrameworkUploadModal }] = useModal();
+  // const [
+  //   registerFrameworkDesignerModal,
+  //   { openModal: openFrameworkDesignerModal, setModalProps: setFrameworkDesignerModalProps },
+  // ] = useModal();
+  // const [registerFrameworkUploadModal, { openModal: openFrameworkUploadModal }] = useModal();
 
   async function handleFrameworkDesignerModalSuccess(data) {
     if (data.id) {
@@ -221,14 +230,14 @@
 
   function validatePermission(node) {
     return (
-      (hasPermission('ProcessFramework:' + PerEnum.ADD, false) && node.extra?.type === '1') ||
-      hasPermission('ProcessFramework:' + PerEnum.UPDATE, false) ||
-      hasPermission('ProcessFramework:' + PerEnum.DELETE, false)
+      (hasAccessByCodes([PerPrefix + PerEnum.ADD]) && node.extra?.type === '1') ||
+      hasAccessByCodes([PerPrefix + PerEnum.UPDATE]) ||
+      hasAccessByCodes([PerPrefix + PerEnum.DELETE])
     );
   }
 
   function handleEditFramework(record: Recordable) {
-    if (!hasPermission('ProcessFramework:' + PerEnum.UPDATE, false)) {
+    if (!hasAccessByCodes(PerPrefix + PerEnum.UPDATE)) {
       message.warn('无操作权限，请联系管理员！');
       return;
     }
@@ -242,7 +251,7 @@
   }
 
   function handleCreateChild(record: Recordable) {
-    if (!hasPermission('ProcessFramework:' + PerEnum.ADD, false)) {
+    if (!hasAccessByCodes(PerPrefix + PerEnum.ADD, false)) {
       message.warn('无操作权限，请联系管理员！');
       return;
     }
@@ -251,7 +260,7 @@
   }
 
   function handleDeleteFramework(record: Recordable) {
-    if (!hasPermission('ProcessFramework:' + PerEnum.DELETE, false)) {
+    if (!hasAccessByCodes(PerPrefix + PerEnum.DELETE, false)) {
       message.warn('无操作权限，请联系管理员！');
       return;
     }
@@ -263,13 +272,13 @@
       content: `确定要删除【${record.name}】流程吗？`,
       onOk: async () => {
         try {
-          const { data } = await deleteByIds([record.id]);
-          if (data.code === ResultEnum.SUCCESS) {
-            message.success(data.msg);
+          const { success, msg, data } = await deleteByIds([record.id]);
+          if (success) {
+            message.success(msg);
             // await basicTreeRef.value.fetch();
             await basicTreeRef.value?.handleDelete(record);
           } else {
-            message.error(data.msg);
+            message.error(msg);
           }
         } catch (e) {
           console.error(e);
@@ -462,7 +471,7 @@
 
   .step-form-content {
     padding: 24px;
-    background-color: @component-background;
+    //background-color: @component-background;
   }
 
   .step-form-form {

@@ -17,6 +17,7 @@ enum Api {
   SyncAllPersonal = '/flow/sync/personal/syncAllPersonal',
   DownSystemDataImportTemplate = '/flow/base/systemDataImport/downSystemDataImportTemplate',
   ImportPersonalExcelByData = '/flow/org/personal/importPersonalExcelByData',
+  GetCurrUserSignatureImg = '/flow/org/personal/getCurrUserSignatureImg',
 }
 
 export const getPersonalPageList = (params: any) => {
@@ -64,6 +65,8 @@ export const checkEntityExist = (params?: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params );
 
 export const getByCodes = (params: Array<string>) => requestClient.post(Api.GetByCodes, params );
+
+export const getCurrUserSignatureImg = () => requestClient.get(Api.GetCurrUserSignatureImg);
 
 export const syncPersonalById = (params: any) =>
   requestClient.post(Api.SyncPersonalById + '/' + params.id,{}, { isReturnNativeResponse: true });

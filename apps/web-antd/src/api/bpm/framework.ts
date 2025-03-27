@@ -26,7 +26,9 @@ export const downloadFrameWorkTemplate = async () => {
 
 // 批量导入架构
 export const multiUploadFrameWork = async (id: string, data: any) => {
-  return requestClient.uploadFile<any>(Api.MultiUploadFrameWork + '/' + id, data);
+  return requestClient.post<any>(Api.MultiUploadFrameWork + '/' + id, data, {
+    responseReturn: 'body'
+  });
 };
 
 // 拖拽移动架构

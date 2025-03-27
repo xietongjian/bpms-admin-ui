@@ -4,33 +4,8 @@
       <template #toolbar>
         <a-button type="primary" @click="handleCreate"> 新增 </a-button>
       </template>
-      <template #action="{ record }">
-        <TableAction
-          :actions="[
-            {
-              tooltip: '添加子体系',
-              icon: 'ant-design:plus-outlined',
-              onClick: handleCreateChild.bind(null, record),
-            },
-            {
-              tooltip: '修改',
-              icon: 'clarity:note-edit-line',
-              onClick: handleEdit.bind(null, record),
-            },
-            {
-              tooltip: '删除',
-              icon: 'ant-design:delete-outlined',
-              color: 'error',
-              onClick: (e) => {
-                e.stopPropagation();
-              },
-              popConfirm: {
-                title: '是否确认删除',
-                confirm: handleDelete.bind(null, record),
-              },
-            },
-          ]"
-        />
+      <template #action="{ row }">
+        <TableAction :actions="createActions(row)"/>
       </template>
     </BasicTable>
     <FlowProcessModal @register="registerModal" @success="handleSuccess" />
@@ -38,7 +13,8 @@
 </template>
 <script lang="ts" setup>
   import { nextTick } from 'vue';
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
+  import type { Recordable } from '@vben/types';
+  // import { BasicTable, useTable, TableAction } from '@/components/Table';
   import { getFlowProcess, deleteByIds } from '#/api/bpm/flowprocess';
   import {Page} from '@vben/common-ui';
   import { columns } from './flowprocess.data';
@@ -94,6 +70,36 @@
       record,
       isUpdate: true,
     });
+  }
+
+  function createActions(record) {
+    return [
+      {
+        tooltip: '添加子体系',
+        icon: 'ant-design:plus-outlined',
+        onClick: handleCreateChild.bind(null, record),
+      },
+      {
+        tooltip: '修改',
+        icon: 'clarity:note-edit-line',
+        onClick: handleEdit.bind(null, record),
+      },
+      {
+        tooltip: '删除',
+        icon: 'ant-design:delete-outlined',
+        danger: true,
+        onClick: (e) => {
+          e.stopPropagation();
+        },
+        popConfirm: {
+          title: '是否确认删除',
+          confirm: handleDelete.bind(null, record),
+          okButtonProps: {
+            danger: true
+          }
+        },
+      },
+    ];
   }
 
   function handleCreateChild(record: Recordable, e) {

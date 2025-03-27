@@ -86,8 +86,12 @@
 </template>
 
 <script lang="ts" setup>
-  import { ComponentInstance, defineEmits, nextTick, ref, shallowRef, unref } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
+  import { defineEmits, nextTick, ref, shallowRef, unref } from 'vue';
+  import type {ComponentInstance} from 'vue';
+  // import { BasicModal, useModalInner } from '@/components/Modal';
+  import {ColPage, useVbenModal} from '@vben/common-ui';
+  import { usePreferences } from '@vben/preferences';
+
   import { flowFrameworkFormSchema, flowSystemFormSchema } from './framework.data';
   import { Badge, Button, Col, Row, Space, Steps, Tooltip, TypographyText } from 'ant-design-vue';
   // import { useMessage } from '@/hooks/web/useMessage';
@@ -98,7 +102,7 @@
   // import { copyText } from '#/utils/copyTextToClipboard';
   // import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
 
-  const { isDark } = useDarkModeTheme();
+  const { isDark } = usePreferences();
   const Step = Steps.Step;
   const currentStepValue = ref<number>(0);
 
@@ -106,7 +110,6 @@
 
   const minimap = ref(getLfLocalStorage('minimap'));
   const collapseBaseInfo = ref(false);
-  const { createMessage } = useMessage();
   const isUpdate = ref(false);
   const saveBtnLoading = ref(false);
   const mainId = ref('');

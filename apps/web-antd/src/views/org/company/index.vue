@@ -30,7 +30,7 @@ const formOptions: VbenFormProps = {
   schema: searchFormSchema,
 };
 
-const gridOptions: VxeGridProps<any> = {
+const gridOptions: VxeGridProps = {
   checkboxConfig: {
     highlight: true,
     labelField: 'name',
@@ -56,7 +56,7 @@ const gridOptions: VxeGridProps<any> = {
   stripe: true,
   proxyConfig: {
     ajax: {
-      query: async ({page}, formValues) => {
+      query: async ({}, formValues) => {
         return await getCompaniesListData({
           entity: formValues || {},
         });
