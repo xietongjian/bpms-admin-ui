@@ -20,7 +20,7 @@
     >
       <template #actions="{ node }">
         <Tooltip
-          v-if="node.extra?.type === '2' && hasPermission('BusinessFlow:' + PerEnum.ADD)"
+          v-if="node.extra?.type === '2' && hasAccessByCodes([PerPrefix + PerEnum.ADD])"
           title="流程建模"
           placement="bottom"
         >
@@ -31,7 +31,7 @@
           />
         </Tooltip>
         <Tooltip
-          v-if="node.extra?.type === '3' && hasPermission('BusinessFlow:' + PerEnum.UPDATE)"
+          v-if="node.extra?.type === '3' && hasAccessByCodes([PerPrefix + PerEnum.UPDATE])"
           title="修改"
           placement="bottom"
         >
@@ -133,7 +133,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { ComponentInstance, createVNode, nextTick, ref, shallowRef } from 'vue';
+  import { createVNode, nextTick, ref, shallowRef } from 'vue';
+  import type { ComponentInstance } from 'vue';
   import BusinessFlowApplyFormModal from './BusinessFlowApplyFormModal.vue';
   import AuthSettingModal from './AuthSettingModal.vue';
   import { deleteBusinessFlowById, moveBusinessFlowToFrame } from '#/api/bpm/businessflow';
@@ -181,8 +182,8 @@
   const framePageRef = shallowRef<ComponentInstance<typeof IntegralDesigner>>();
   const viewerRef = shallowRef<ComponentInstance<typeof BpmnViewer>>();
 
-  const selectedNode = ref<Recordable>({});
-  const currentCategory = ref<Recordable>({});
+  const selectedNode = ref<Recordable<any>>({});
+  const currentCategory = ref<Recordable<any>>({});
   const infoCollapsed = ref(true);
   const frameworkInfo = ref<Record<string, any>>({});
   const businessInfo = ref<Record<string, any>>({});
@@ -240,12 +241,17 @@
 
   function handleCreate(node) {
     currentCategory.value = node;
-    openBusinessFlowApplyFormModal(true, { frameworkId: node.id });
-    setModalBaseProps();
+    businessFlowApplyFormModalRef.value.setData({
+      frameworkId: node.id
+    });
+    businessFlowApplyFormModalRef.value.setState({});
+    businessFlowApplyFormModalRef.value.open();
+    // openBusinessFlowApplyFormModal(true, { frameworkId: node.id });
+    // setModalBaseProps();
   }
 
   function setModalBaseProps() {
-    setBusinessFlowApplyFormModalProps({
+    /*setBusinessFlowApplyFormModalProps({
       title: `创建`,
       bodyStyle: { padding: '0px', margin: '0px' },
       defaultFullscreen: true,
@@ -257,17 +263,23 @@
       canFullscreen: false,
       closable: false,
       destroyOnClose: true,
-    });
+    });*/
   }
 
-  function handleAuthSetting(record: Recordable) {
-    openAuthSettingModal(true, {
-      record: record,
-    });
-    setAuthSettingModalProps({
+  function handleAuthSetting(record: Recordable<any>) {
+    businessFlowApplyFormModalRef.value.setData(record);
+    businessFlowApplyFormModalRef.value.setState({
       title: '设置【' + record.name + '】的查阅权限',
-      width: 800,
     });
+    businessFlowApplyFormModalRef.value.open();
+
+    // openAuthSettingModal(true, {
+    //   record: record,
+    // });
+    // setAuthSettingModalProps({
+    //   title: '设置【' + record.name + '】的查阅权限',
+    //   width: 800,
+    // });
   }
 
   // 拖拽验证

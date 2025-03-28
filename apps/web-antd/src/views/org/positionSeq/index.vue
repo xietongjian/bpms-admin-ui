@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {PerEnum} from '#/enums/perEnum';
-
+import {ref} from 'vue';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {Recordable} from '@vben/types';
@@ -85,7 +85,6 @@ const gridOptions: VxeGridProps<any> = {
 };
 
 const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
-
 
 function handleCreate() {
   positionSeqModalRef.value.setData({});

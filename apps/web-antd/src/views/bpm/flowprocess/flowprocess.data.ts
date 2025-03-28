@@ -1,10 +1,7 @@
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import { RemarkDefaultEnum } from '@/enums/constantEnum';
+import { RemarkDefaultEnum } from '#/enums/commonEnum';
 
-const colProps = {
-  span: 24,
-};
 export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',

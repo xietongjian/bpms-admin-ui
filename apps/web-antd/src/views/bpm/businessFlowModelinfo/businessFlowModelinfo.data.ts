@@ -2,12 +2,9 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { Tag } from 'ant-design-vue';
 import { h } from 'vue';
-import { DescItem } from '@/components/Description/index';
-import { RemarkDefaultEnum } from '@/enums/constantEnum';
+// import { DescItem } from '@/components/Description/index';
+import { RemarkDefaultEnum } from '#/enums/commonEnum';
 
-const colProps = {
-  span: 24,
-};
 export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
@@ -551,7 +548,7 @@ export const businessFlowApplyFormSchema: FormSchema[] = [
   },
 ];
 
-export const detailSchema: DescItem[] = [
+export const detailSchema: any[] = [
   {
     fieldName: 'ownerName',
     label: '流程负责人',

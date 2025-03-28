@@ -17,7 +17,7 @@
 </template>
 <script lang="ts" setup>
   import type { CSSProperties } from 'vue';
-  import { defineComponent, ref, unref, defineProps, onMounted, nextTick, computed } from 'vue';
+  import { ref, unref, defineProps, onMounted, nextTick, computed } from 'vue';
   import { Spin } from 'ant-design-vue';
 
   import { getViewportOffset } from '#/utils/domUtils';

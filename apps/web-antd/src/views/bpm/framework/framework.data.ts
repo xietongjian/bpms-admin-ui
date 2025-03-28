@@ -59,12 +59,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 14, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
