@@ -30,7 +30,7 @@
   </Page>
 </template>
 <script lang="ts" setup>
-import {ref, shallowRef} from 'vue';
+import {ref, shallowRef, watch} from 'vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
@@ -45,6 +45,7 @@ import {EmpInfo} from '#/views/components/EmpInfo';
 import {ProcessStatus} from '#/views/components/common';
 import {timeDurationFormatter} from '#/utils';
 import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
+import { useWindowFocus } from '@vueuse/core'
 
 const bpmnPreviewModalRef = ref(),
   processFormPreviewDrawerRef = shallowRef();
@@ -109,4 +110,11 @@ function handleBpmnPreview(modelKey, procInstId) {
 function handleReload() {
   tableApi.reload();
 }
+
+// const focused = useWindowFocus()
+//
+// watch(focused, (isFocused) => {
+//   if (isFocused)
+//     handleReload()
+// })
 </script>

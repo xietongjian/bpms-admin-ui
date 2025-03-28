@@ -8,7 +8,7 @@
           </TypographyLink>
         </Tooltip>
         <TypographyLink @click="handleViewForm(row)">
-          {{row.name}}
+          {{row.formName}}
         </TypographyLink>
       </template>
       <template #processStatus="{row}">
@@ -25,30 +25,24 @@
       </template>
     </BasicTable>
     <BpmnPreviewModal ref="bpmnPreviewModalRef" />
-<!--    <ProcessFormModal
-      @register="registerProcessFormModal"
-      @visible-change="handleProcessFormVisibleChange"
-    />-->
-    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
 
+    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
   </Page>
 </template>
 <script lang="ts" setup>
 
-import {ref} from 'vue';
+import {ref, watch} from 'vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
 
 import {Page} from '@vben/common-ui';
-  // import { BasicTable, useTable } from '@/components/Table';
   import {TypographyLink, Tooltip} from 'ant-design-vue';
   import {PartitionOutlined} from '@ant-design/icons-vue';
 import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
   import { haveDownTableColumns, searchFormSchema } from './data';
   import {getApplyedTasksPagerModel} from "#/api/process/process";
-  // import { useModal } from '@/components/Modal';
   import {EmpInfo} from '#/views/components/EmpInfo';
 import {ProcessStatus} from "#/views/components/common";
   import {timeDurationFormatter} from "#/utils";
@@ -95,7 +89,6 @@ import {ProcessStatus} from "#/views/components/common";
 
 const bpmnPreviewModalRef = ref(),
     processFormPreviewDrawerRef = ref();
-
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,

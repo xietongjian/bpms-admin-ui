@@ -33,7 +33,9 @@
                       :bizId="procInstInfo?.businessKey"
                       :taskId="procInstInfo?.taskId"
                       :print-read="printRead"
-                      :modelKey="procInstInfo?.modelKey" />
+                      :modelKey="procInstInfo?.modelKey"
+                      :show-operation="showOperation"
+                  />
                 </CollapsePanel>
               </Collapse>
 
@@ -162,7 +164,6 @@
     Collapse,
     message,
     Tabs,
-    Textarea,
     Popconfirm,
     CollapsePanel
   } from 'ant-design-vue';

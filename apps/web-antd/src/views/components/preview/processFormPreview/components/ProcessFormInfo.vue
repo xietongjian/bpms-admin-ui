@@ -21,6 +21,25 @@ import {ref, defineProps, defineEmits, onMounted, defineExpose, watch, unref, ne
 import { GenerateForm } from '/public/static/form-making';
 import {getCustomFormInfoVoByModelKeyAndBusinessKey} from "#/api/flowoperation/processTask";
 
+enum FormItemOperateType {
+  /**
+   * 隐藏
+   */
+  HIDE = 0,
+  /**
+   * 仅可见
+   */
+  SHOW = 1,
+  /**
+   * 可编辑
+   */
+  EDIT = 2,
+  /**
+   * 必填
+   */
+  REQUIRED = 3
+}
+
 const emit = defineEmits(['success']);
 const props = defineProps({
   procInstId: {
@@ -55,7 +74,8 @@ const jsonData = ref({});
 const generateFormRef = ref();
 const showErrorMsg = ref(false);
 const errorMsg = ref();
-
+const editFormFields = ref([]);
+const requiredFormFields = ref([]);
 /*
 watch(() => props.procInstId, (newVal, oldValue) => {
   getStartHeadInfoVo();
@@ -81,11 +101,11 @@ async function loadCustomFormAndData() {
     if (success) {
       const {formDatas, formInfo, itemList, activityFormItems} = data;
       jsonData.value = JSON.parse(formInfo.formJson);
-      nextTick(() => {
-        generateFormRef.value.refresh();
-        generateFormRef.value.setData(formDatas);
-        setFormPermission(activityFormItems, itemList);
-      });
+      await nextTick();
+      debugger;
+      generateFormRef.value.refresh();
+      generateFormRef.value.setData(formDatas);
+      setFormPermission(activityFormItems, itemList);
     } else {
       showErrorMsg.value = true;
       errorMsg.value = msg;
@@ -98,32 +118,29 @@ async function loadCustomFormAndData() {
 }
 
 function setFormPermission(activityFormItems, itemList) {
-  // if(path.indexOf('/process/approve') !== -1){
-  //   // 如果是审批页，获取当前节点可编辑的项
-  // }
   if (activityFormItems && activityFormItems.length > 0) {
-    // if (path.indexOf('/process/launch') !== -1 || path.indexOf('/process/approve') !== -1) {
-    //   formIsEdit.value = true;
-    // }
     // operateType HIDE(0, "隐藏"), SHOW(1, "仅可见"), EDIT(2, "可编辑");
-    const hideItems = activityFormItems.filter((item) => item.operateType === 0);
-    const editItems = activityFormItems.filter(
-        (item) => item.operateType === 2 || item.operateType === 3,
+    const hideItems = activityFormItems.filter(
+        (item) => item.operateType === FormItemOperateType.HIDE
     );
-    const requiredItems = activityFormItems.filter((item) => item.operateType === 3);
+    const editItems = activityFormItems.filter(
+        (item) => [FormItemOperateType.EDIT, FormItemOperateType.REQUIRED].includes(item.operateType)
+    );
+
+    // 如果是发起页面不作操作
+    // 表单字段以makModel作为字段名，所以要将fieldName转换成makModel
+    const fieldNameMakModelMap = {} as any;
+    const allItems = itemList.map((item) => {
+      fieldNameMakModelMap[item.fieldName] = item.makModel;
+      return item.makModel;
+    });
+    const requiredItems = activityFormItems.filter((item) => item.operateType === FormItemOperateType.REQUIRED);
     if (hideItems) {
-      const hideFields = hideItems.map((item) => item.fieldName);
+      const hideFields = hideItems.map((item) => fieldNameMakModelMap[item.fieldName]);
       nextTick(() => {
         generateFormRef.value.hide(hideFields);
       });
     }
-
-    // if (path.indexOf('/process/approve') !== -1) {
-    //   // 如果是审批页，获取当前节点可编辑的项
-    // }
-
-    // 如果是发起页面不作操作
-    const allItems = itemList.map((item) => item.makModel);
 
     // 如果是审批页，获取当前节点可编辑的项
     // 先把所有的字段设置成不可编辑
@@ -131,12 +148,12 @@ function setFormPermission(activityFormItems, itemList) {
     generateFormRef.value.disabled(allItems, true);
 
     if ((editItems && editItems.length > 0) || (requiredItems && requiredItems.length > 0)) {
-      const editFields = editItems.map((item) => item.fieldName);
-      const requiredFields = requiredItems.map((item) => item.fieldName);
-      const requiredFieldLabels = requiredItems.map((item) => item.labelName);
+      const editFields = editItems.map((item: any) => fieldNameMakModelMap[item.fieldName]);
+      const requiredFields = requiredItems.map((item: any) => fieldNameMakModelMap[item.fieldName]);
+      const requiredFieldLabels = requiredItems.map((item: any) => item.labelName);
       debugger;
       // 如果审批页面则不设置可编辑状态
-      if (showOperation.value) {
+      if (props.showOperation) {
         // 如果是审批页，获取当前节点可编辑的项
         editFormFields.value = [...editFields, ...requiredFields];
 
