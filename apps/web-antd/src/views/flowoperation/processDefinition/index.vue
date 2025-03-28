@@ -50,11 +50,10 @@ import {ColPage, Page} from '@vben/common-ui';
 
 import {TableAction} from '#/components/table-action';
 
-import {getModelInfoPageList, stopBpmn} from '#/api/flowable/bpmn/modelInfo';
+import {getBpmnByModelKey, getModelInfoPageList, stopBpmn} from '#/api/flowable/bpmn/modelInfo';
 import FlowCategoryTree from '#/views/components/leftTree/FlowCategoryTree.vue';
 
 import {BpmnPreviewModal} from '#/views/components/preview';
-import {getAll} from '#/api/base/app';
 import {
   findHisProcessDefinitionPagerModel,
   suspendProcessDefinition,
@@ -65,7 +64,6 @@ import {columns, hisDefinitionColumns, searchFormSchema} from './processDefiniti
 import CodePreviewModal from '#/views/components/preview/codePreview/index.vue';
 // import { useLoading } from '@/components/Loading';
 import {message, Button} from 'ant-design-vue'
-import {getCustomPagerModel} from "#/api/form/customForm";
 
 /*  const [
     registerBpmnPreviewModal,
@@ -212,7 +210,7 @@ function createSubActions(record: Recordable<any>, itemRecord: Recordable<any>) 
       onClick: handlePreviewXml.bind(null, itemRecord),
     },
     {
-      auth: 'ProcessDefinition:' + PerEnum.UPDATE,
+      auth: PerPrefix + PerEnum.UPDATE,
       icon: 'ant-design:pause-circle-outlined',
       danger: true,
       tooltip: '挂起',
@@ -224,7 +222,7 @@ function createSubActions(record: Recordable<any>, itemRecord: Recordable<any>) 
       },
     },
     {
-      auth: 'ProcessDefinition:' + PerEnum.UPDATE,
+      auth: PerPrefix + PerEnum.UPDATE,
       icon: 'ant-design:play-circle-outlined',
       color: 'success',
       tooltip: '激活',
@@ -315,7 +313,11 @@ function handlePreview(record: Recordable<any>, e) {
 }
 
 function handleDefPreview(record: Recordable<any>) {
-  openBpmnPreviewModal(true, {
+  bpmnPreviewModalRef.value.setData({
+    modelKey: record.key,
+  });
+  bpmnPreviewModalRef.value.open();
+  /*openBpmnPreviewModal(true, {
     modelKey: record.key,
   });
   setBpmnPreviewProps({
@@ -324,30 +326,17 @@ function handleDefPreview(record: Recordable<any>) {
     useWrapper: false,
     showOkBtn: false,
     cancelText: '关闭',
-  });
+  });*/
 }
 
-function handlePreviewXml(record: Recordable<any>, e) {
+async function handlePreviewXml(record: Recordable<any>, e) {
   e.stopPropagation();
-  openFullLoading();
-  loadXmlByProcessDefinitionId({processDefinitionId: record.id})
-      .then((res) => {
-        openCodePreviewModal(true, {
-          record: {code: res, type: 'xml'},
-          isUpdate: false,
-        });
-        setCodePreviewModalProps({
-          width: 900,
-          height: 400,
-          minHeight: 200,
-          title: `查看【${record.name}】的XML`,
-          showOkBtn: false,
-          cancelText: '关闭',
-        });
-      })
-      .finally(() => {
-        closeFullLoading();
-      });
+  const modelXml = await loadXmlByProcessDefinitionId({processDefinitionId: record.id});
+  codePreviewModalRef.value.setData({code: modelXml});
+  codePreviewModalRef.value.open();
+  codePreviewModalRef.value.setState({
+    title: `查看【${record.name}】的XML`,
+  });
 }
 
 function handleSuspend(record: Recordable<any>, itemRecord: Recordable<any>) {

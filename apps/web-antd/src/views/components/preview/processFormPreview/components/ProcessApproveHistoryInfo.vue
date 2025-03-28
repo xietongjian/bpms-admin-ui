@@ -4,13 +4,12 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {ref, defineProps, defineEmits, onMounted, defineExpose, watch, unref, nextTick} from 'vue';
-import {Collapse, CollapsePanel, Descriptions, DescriptionsItem} from 'ant-design-vue';
+import {ref, onMounted} from 'vue';
 
 import ApproveHistoryList from '#/views/components/process/ApproveHistoryList.vue';
 import { getCommentInfosByProcessInstanceId } from '#/api/flowable/bpmn/modelInfo';
 
-const emit = defineEmits(['success']);
+// const emit = defineEmits(['success']);
 const props = defineProps({
   procInstId: {
     type: String,
@@ -33,33 +32,20 @@ const props = defineProps({
 const historyList = ref([]);
 
 const loading = ref(false);
-const activeKey = ref(1);
-const baseFormInfo = ref({});
-const jsonData = ref({});
-const generateFormRef = ref();
-const showErrorMsg = ref(false);
-const errorMsg = ref();
-
-/*
-watch(() => props.procInstId, (newVal, oldValue) => {
-  getStartHeadInfoVo();
-});
-*/
 
 onMounted(() => {
   loadCommentList();
 });
-function loadCommentList() {
-  loading.value = true;
-  getCommentInfosByProcessInstanceId({procInstId: props.procInstId})
-      .then((res) => {
-        historyList.value = res;
-      })
-      .finally(() => {
-        loading.value = false;
-      });
-
+async function loadCommentList() {
+  try {
+    loading.value = true;
+    const res = await getCommentInfosByProcessInstanceId({procInstId: props.procInstId});
+    historyList.value = res;
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
 }
 
-defineExpose({});
 </script>
