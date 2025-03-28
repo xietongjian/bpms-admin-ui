@@ -15,13 +15,15 @@
   import { processNodeSelectionFormSchema } from '#/views/flowoperation/processInst/processInst.data';
   import { is } from 'bpmn-js/lib/util/ModelUtil';
   import {useVbenForm} from "#/adapter/form";
+  import { usePreferences } from '@vben/preferences';
+
 
   defineOptions({ name: 'ProcessNodeSelectionModal' });
 
   const emit = defineEmits(['success', 'register']);
 
-  // const { isDark } = useDarkModeTheme();
-  // const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
+  const { isDark } = usePreferences();
+  const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
 
   const multiple = ref(false);
   const navigatedViewer = shallowRef<NavigatedViewer>();
@@ -51,11 +53,13 @@
       if (selectedActivityIds.value.includes(element.id)) {
         selection.deselect(element);
         selectedActivityIds.value = [];
-        setFieldsValue({ activityIds: undefined });
+        // setFieldsValue({ activityIds: undefined });
+        formApi.setValues({ activityIds: undefined });
       } else {
         selection.select([element]);
         selectedActivityIds.value = [element.id];
-        setFieldsValue({ activityIds: element.id });
+        // setFieldsValue({ activityIds: element.id });
+        formApi.setValues({ activityIds: element.id })
       }
       return;
     }
@@ -66,7 +70,8 @@
       selection.select([...selectedElements, element]);
     }
     selectedActivityIds.value = selection.get().map((i) => i.id);
-    setFieldsValue({ activityIds: selectedActivityIds.value });
+    // setFieldsValue();
+    formApi.setValues({ activityIds: selectedActivityIds.value })
   }
 
   function handleChangeSelect(ids) {
@@ -204,18 +209,22 @@
         return message.warn('只能选择一个元素节点');
       }
 
-      setModalProps({ confirmLoading: true });
+      modalApi.setState({loading: true, confirmLoading: true});
 
-      const formValues = await validate();
+      const {valid} = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const formValues = await formApi.getValues();
 
       delete formValues['activityIds'];
 
       await submitMethod(multiple.value ? selectedElements : selectedElements[0], formValues);
 
-      closeModal();
+      modalApi.close();
       emit('success');
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
   defineExpose(modalApi)
@@ -225,7 +234,6 @@
   <BasicModal
     v-bind="$attrs"
     wrapClassName="bpmn-viewer-node-select-container "
-    @register="registerModal"
     @ok="handleSubmit"
   >
     <Row class="bpmn-container-fill">
@@ -239,7 +247,7 @@
         />
       </Col>
       <Col :span="8">
-        <BasicForm @register="registerForm" />
+        <BasicForm />
       </Col>
     </Row>
   </BasicModal>

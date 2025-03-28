@@ -8,8 +8,7 @@ import {useVbenForm} from '#/adapter/form';
     changeProcessInstanceVersion,
     getProcessInstanceVersions,
   } from '#/api/flowoperation/processInst';
-  import { Input, message, Button, Empty, FormItemRest } from 'ant-design-vue';
-import {formSchema} from "#/views/org/jobGrade/jobGrade.data";
+  import { Input, message, Button, Popconfirm, Empty, FormItemRest } from 'ant-design-vue';
   // import { PopConfirmButton } from '@/components/Button';
 
   defineOptions({ name: 'ProcessVersionSelectionModal' });
@@ -98,15 +97,18 @@ const [BasicModal, modalApi] = useVbenModal({
     updateFormField();
   }
   function updateFormField() {
-    setFieldsValue({ params: paramsList.value });
+    // setFieldsValue({ params: paramsList.value });
+    formApi.setValues({ params: paramsList.value })
   }
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
-
-      console.log(values);
+      modalApi.setState({loading: true, confirmLoading: true});
+      const {valid} = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
 
       const version = values['version'];
       const params = paramsList.value.reduce((obj, cur) => {
@@ -115,20 +117,21 @@ const [BasicModal, modalApi] = useVbenModal({
       }, {});
 
       await changeProcessInstanceVersion(processInstanceId.value, version, params);
-      closeModal();
+      modalApi.close();
       emit('success');
     } catch (e) {
-      setModalProps({ confirmLoading: false });
+      console.error(e);
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
+
     }
   }
   defineExpose(modalApi)
 </script>
 
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" @ok="handleSubmit">
-    <BasicForm @register="registerForm">
+  <BasicModal v-bind="$attrs" @ok="handleSubmit">
+    <BasicForm >
       <template #paramsList>
         <FormItemRest>
           <div class="params-grid-table" style="--column-num: 3">
@@ -143,13 +146,13 @@ const [BasicModal, modalApi] = useVbenModal({
                 <Input v-model:value="p.value" @input="updateFormField" />
               </div>
               <div class="params-grid-item">
-                <PopConfirmButton
+                <Popconfirm
                   type="text"
                   title="确定要删除这个参数吗？"
                   @confirm="handleRemoveParam(idx)"
                 >
                   移除
-                </PopConfirmButton>
+                </Popconfirm>
               </div>
             </template>
 

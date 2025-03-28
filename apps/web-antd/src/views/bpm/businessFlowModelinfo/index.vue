@@ -90,7 +90,7 @@
       </div>
     </div>
 
-    <FlowModelSelectorModal ref="modelInfoSelectorModalRef" @register="registerModelInfoSelectorModal" @change="handleChange" />
+    <FlowModelSelectorModal ref="modelInfoSelectorModalRef" @change="handleChange" />
   </Page>
 </template>
 <script lang="ts" setup>
@@ -135,15 +135,16 @@
   // const { hasPermission } = usePermission();
   const {hasAccessByCodes}  = useAccess();
 
+  const modelInfoSelectorModalRef = ref();
   const pageLoading = ref(false);
   const frameWorkTree = shallowRef<ComponentInstance<typeof BpmFrameWorkTree>>();
   const framePageRef = shallowRef<ComponentInstance<typeof IntegralDesigner>>();
   const viewerRef = shallowRef<ComponentInstance<typeof BpmnViewer>>();
 
   const businessFlowId = ref('');
-  const selectedBindTarget = ref<Recordable>({});
+  const selectedBindTarget = ref<Recordable<any>>({});
 
-  const selectedNode = ref<Recordable>({});
+  const selectedNode = ref<Recordable<any>>({});
   const showXml = ref(false);
   const previewLoading = ref(false);
   const infoCollapsed = ref(true);
@@ -160,16 +161,16 @@
     return [];
   });
 
-  const [
+/*  const [
     registerModelInfoSelectorModal,
     { openModal: openModelInfoSelectorModal, setModalProps: setModelInfoSelectorModalProps },
-  ] = useModal();
+  ] = useModal();*/
 
   // 关联弹窗处理
-  function handleModelInfoSelector(record: Recordable) {
+  function handleModelInfoSelector(record: Recordable<any>) {
     businessFlowId.value = record.id;
     selectedBindTarget.value = record;
-    openModelInfoSelectorModal(true, {
+    modelInfoSelectorModalRef.value.setData({
       record: record,
       multiple: true,
       selectorProps: {
@@ -177,11 +178,10 @@
         multiple: true,
       },
     });
-    setModelInfoSelectorModalProps({
+    modelInfoSelectorModalRef.value.setState({
       title: '关联流程',
-      width: 850,
-      height: 450,
     });
+    modelInfoSelectorModalRef.value.open();
   }
   // 流程关联
   async function handleChange(items: any[]) {
@@ -205,7 +205,7 @@
     }
   }
   // 移除关联
-  function handleDelete(node: Recordable) {
+  function handleDelete(node: Recordable<any>) {
     Modal.confirm({
       icon: createVNode(ExclamationCircleOutlined),
       okText: '确定',
@@ -230,7 +230,7 @@
   }
 
   // 详情
-  async function handleDetails(node: Recordable) {
+  async function handleDetails(node: Recordable<any>) {
     try {
       if (selectedNode.value.id === node.id) {
         return;

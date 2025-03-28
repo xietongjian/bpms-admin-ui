@@ -43,8 +43,8 @@
         <TableAction :actions="createActions(row)"/>
       </template>
     </BasicTable>
-    <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal"/>
-    <ProcessFormModal ref="processFormModalRef" @register="registerProcessFormModal"/>
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" />
+    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
   </ColPage>
 </template>
 <script lang="ts" setup>
@@ -66,11 +66,11 @@ import {
   getPagerModelCustomData,
 } from '#/api/report/formCount';
 import {forEach} from '#/utils/helper/treeHelper';
-import {BpmnPreviewModal} from '#/views/components/preview';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {Button, Image, Tag, message, Tree} from 'ant-design-vue';
 
-import ProcessFormModal from '../../flowoperation/processTask/ProcessFormModal.vue';
+import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
+
 // import {downloadBlob} from "#/utils/file/download";
 
 
@@ -85,7 +85,8 @@ import ProcessFormModal from '../../flowoperation/processTask/ProcessFormModal.v
     registerBpmnPreviewModal,
     { openModal: openBpmnPreviewModal, setModalProps: setBpmnPreviewProps },
   ] = useModal();*/
-const bpmnPreviewModalRef = ref();
+const bpmnPreviewModalRef = ref(),
+    processFormPreviewDrawerRef = ref();
 const treeData = ref<any[]>([]);
 const treeLoading = ref<boolean>(false);
 const basicTreeRef = ref<any>(null);
@@ -181,12 +182,12 @@ function createActions(row: Recordable<any>) {
       label: '',
       tooltip: '查看表单',
       icon: 'ant-design:pic-right-outlined',
-      onClick: handleViewForm.bind(null, record),
+      onClick: handleViewForm.bind(null, row),
     },
     {
       icon: 'ant-design:partition-outlined',
       tooltip: '流程图预览',
-      onClick: handlePreview.bind(null, record),
+      onClick: handlePreview.bind(null, row),
     },
   ];
 }
@@ -266,17 +267,11 @@ function handleViewForm(record: Recordable<any>) {
   record.businessKey = record.code;
   record.processDefinitionKey = record.model_key;
 
-  openProcessFormModal(true, {
-    record,
-  });
-  setProcessFormModalProps({
-    width: 1000,
+  processFormPreviewDrawerRef.value.setData(record);
+  processFormPreviewDrawerRef.value.setState({
     title: `查看流程【${record.title}】的表单`,
-    showOkBtn: false,
-    centered: true,
-    cancelText: '关闭',
-    maskClosable: true,
   });
+  processFormPreviewDrawerRef.value.open();
 }
 
 function handlePreview(record: Recordable<any>) {

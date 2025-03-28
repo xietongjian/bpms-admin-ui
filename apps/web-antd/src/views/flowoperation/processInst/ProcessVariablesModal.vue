@@ -86,7 +86,7 @@
 </script>
 
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" @ok="handleSubmit">
-    <JsonVariablesEditor ref="variablesEditor" v-model:value="presetVariables" />
+  <BasicModal v-bind="$attrs" @ok="handleSubmit">
+<!--    <JsonVariablesEditor ref="variablesEditor" v-model:value="presetVariables" />-->
   </BasicModal>
 </template>

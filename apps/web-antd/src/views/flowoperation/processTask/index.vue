@@ -50,18 +50,16 @@
       </template>
 
     </BasicTable>
-    <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" @success="handleSuccess" />
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" @success="handleSuccess" />
     <PersonalSelectorModal ref="personalSelectorModalRef"
-      @register="registerPersonalModal"
       @change="handleSettingPersonalSuccess"
     />
     <FlowPropertiesModal ref="flowPropertiesModalRef" />
-    <ApproveHistoryModal ref="approveHistoryModalRef" @register="registerApproveHistoryModal" />
+    <ApproveHistoryModal ref="approveHistoryModalRef" />
 <!--    <ProcessFormModal ref="processFormModalRef"
       @register="registerProcessFormModal"
       @reload="handleProcessFormVisibleChange"
     />-->
-    <ProcessFormPreviewModal ref="processFormPreviewModalRef" />
     <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
   </Page>
 </template>
@@ -78,12 +76,13 @@
     stopProcess,
     updateAssignee,
   } from '#/api/flowoperation/processTask';
-  import {BpmnPreviewModal, ProcessFormPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
+  import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
+  import PersonalSelectorModal from '#/components/selector/personal-selector/PersonalSelectorModal.vue';
+
   // import PersonalSelectorModal from '#/components/Selector/src/FlowModelSelectorModal.vue';
   import FlowPropertiesModal from '../processInst/FlowPropertiesModal.vue';
   import { columns, searchFormSchema } from './processTask.data';
   import ApproveHistoryModal from '../processInst/ApproveHistoryModal.vue';
-  // import ProcessFormModal from './ProcessFormModal.vue';
   import {
     CopyOutlined,
     PartitionOutlined,
@@ -105,9 +104,7 @@
     personalSelectorModalRef = ref(),
     flowPropertiesModalRef = ref(),
     approveHistoryModalRef = ref(),
-    processFormPreviewModalRef = ref(),
-    processFormPreviewDrawerRef = ref(),
-    processFormModalRef = ref();
+    processFormPreviewDrawerRef = ref();
 
   // 人员选择弹窗
   /*const [
@@ -316,7 +313,12 @@
   }
   function handleChangeAssignee(record: Recordable<any>) {
     currentTask.value = record;
-    openPersonalSelector(true, {
+
+    personalSelectorModalRef.value.setState({
+      title: `变更任务【${record.formName} - ${record.name || '未知节点名'}】的当前审批人`,
+    });
+    personalSelectorModalRef.value.open();
+    /*openPersonalSelector(true, {
       selectorProps: {
         multiple: false,
         selectedList: [],
@@ -329,7 +331,7 @@
       width: 850,
       showOkBtn: true,
       showCancelBtn: true,
-    });
+    });*/
   }
 
   function createActions (row: Recordable<any>) {

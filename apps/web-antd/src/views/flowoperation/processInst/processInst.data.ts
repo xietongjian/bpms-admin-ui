@@ -1,7 +1,6 @@
 
 import { getProcessStatusEnums } from '#/api/flowoperation/processInst';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {getAll} from "#/api/base/app";
@@ -21,7 +20,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '流程标题',
     field: 'formName',
     align: 'left',
-    width: 300,
+    minWidth: 300,
     resizable: true,
     slots: {default: 'formName'}
   },
@@ -70,7 +69,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'startTime',
     width: 180,
     align: 'left',
-    sorter: true,
+    sortable: true,
   },
   {
     field: 'action',
@@ -224,20 +223,18 @@ export const processVersionSelectionFormSchema: FormSchema[] = [
   {
     fieldName: 'version',
     label: '版本',
-    required: true,
     component: 'Select',
     componentProps: {
       placeholder: '请选择流程版本',
       options: [],
     },
-    colProps: { span: 24 },
+    rules: 'selectRequired'
   },
   {
     fieldName: 'params',
     label: '参数',
     slot: 'paramsList',
-    colProps: { span: 24 },
-    rules: [
+    /*rules: [
       {
         trigger: 'change',
         validator: async (_, value = []) => {
@@ -254,6 +251,6 @@ export const processVersionSelectionFormSchema: FormSchema[] = [
           return Promise.resolve();
         },
       },
-    ],
+    ],*/
   },
 ];

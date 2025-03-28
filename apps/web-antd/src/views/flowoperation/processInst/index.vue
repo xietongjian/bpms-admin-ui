@@ -55,13 +55,11 @@
     <ApproveHistoryModal ref="approveHistoryModalRef" />
     <FlowPropertiesModal ref="flowPropertiesModalRef" />
     <BpmnPreviewModal ref="bpmnPreviewModalRef" />
-    <ProcessFormModal ref="processFormModalRef" />
+<!--    <ProcessFormModal ref="processFormModalRef" />-->
     <ProcessNodeSelectionModal ref="processNodeSelectionModalRef"
       @success="handleReload"
     />
-    <ProcessVersionSelectionModal ref="processVersionSelectionModalRef"
-      @success="handleReload"
-    />
+    <ProcessVersionSelectionModal ref="processVersionSelectionModalRef" @success="handleReload" />
     <ProcessVariablesModal ref="processVariablesModalRef" @success="handleReload" />
     <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
   </Page>
@@ -85,7 +83,7 @@
   } from '#/api/flowoperation/processInst';
   import ProcessNodeSelectionModal from '#/views/flowoperation/processTask/components/ProcessNodeSelectionModal.vue';
   import ProcessVersionSelectionModal from '#/views/flowoperation/processInst/ProcessVersionSelectionModal.vue';
-  import {BpmnPreviewModal, ProcessFormPreviewDrawer, ProcessFormPreviewModal} from '#/views/components/preview';
+  import {BpmnPreviewModal, ProcessFormPreviewDrawer } from '#/views/components/preview';
   import { useClipboard } from '@vueuse/core';
 
   import { columns, searchFormSchema } from './processInst.data';
@@ -99,21 +97,20 @@
     PartitionOutlined,
     PauseCircleFilled,
   } from '@ant-design/icons-vue';
-  import ProcessFormModal from '../processTask/ProcessFormModal.vue';
-  import {Modal, TypographyLink, Tooltip, Segmented, Badge, message, Button, RadioButton, RadioGroup} from 'ant-design-vue';
+  import {Modal, TypographyLink, Tooltip, Badge, message, Button, RadioButton, RadioGroup} from 'ant-design-vue';
   import { backToStep, restartProcessInstance, stopProcess } from '#/api/flowoperation/processTask';
   import ProcessVariablesModal from '#/views/flowoperation/processInst/ProcessVariablesModal.vue';
 
   const approveHistoryModalRef = ref(),
       flowPropertiesModalRef = ref(),
       bpmnPreviewModalRef = ref(),
-      processFormModalRef = ref(),
+      // processFormModalRef = ref(),
       processNodeSelectionModalRef = ref(),
       processVersionSelectionModalRef = ref(),
     processFormPreviewDrawerRef = ref(),
       processVariablesModalRef = ref();
 
-  const { copy, } = useClipboard({ legacy: true });
+  const { copy } = useClipboard({ legacy: true });
 
   defineOptions({ name: 'ProcessInst' });
   const PerPrefix = 'ProcessInst:';
@@ -235,14 +232,16 @@
       },
     },
   };
+/*
 
   const gridEvents: VxeGridListeners = {
     radioChange: ({row}) => {
       // clickRow(row);
     }
   };
+*/
 
-  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
   nextTick(() => {
     // const { updateSchema } = tableApi.formApi;
@@ -494,7 +493,7 @@
     ];
   }
   function getTableDownActions(record: Recordable<any>) {
-    const actions = [
+    let actions = [
       {
         auth: ['ProcessInst:' + PerEnum.UPDATE],
         icon: 'ant-design:stop-twotone',
@@ -517,39 +516,42 @@
     ];
 
     if (procInstDataType.value === 'running') {
-      actions.push({
-        auth: [PerPrefix + PerEnum.UPDATE],
-        icon: 'clarity:fast-forward-line',
-        label: '执行',
-        danger: true,
-        onClick: () => execute(record),
-      });
-      actions.push({
-        auth: [PerPrefix + PerEnum.UPDATE],
-        icon: 'ant-design:rollback-outlined',
-        label: '干预',
-        danger: true,
-        onClick: () => handleIntervention(record),
-      });
-      actions.push({
-        auth: [PerPrefix + PerEnum.UPDATE],
-        icon: 'ant-design:branches-outlined',
-        label: '切换版本',
-        danger: true,
-        onClick: () => handleChangeVersion(record),
-      });
-      actions.push({
-        auth: [PerPrefix + PerEnum.UPDATE],
-        icon: 'clarity:code-outline-badged',
-        label: '变量补偿',
-        danger: true,
-        onClick: () => handleChangeVariable(record),
-      });
+      const runningActions = [
+        {
+          auth: [PerPrefix + PerEnum.UPDATE],
+          icon: 'clarity:fast-forward-line',
+          label: '执行',
+          danger: true,
+          onClick: () => execute(record),
+        },
+        {
+          auth: [PerPrefix + PerEnum.UPDATE],
+          icon: 'ant-design:rollback-outlined',
+          label: '干预',
+          danger: true,
+          onClick: () => handleIntervention(record),
+        },
+        {
+          auth: [PerPrefix + PerEnum.UPDATE],
+          icon: 'ant-design:branches-outlined',
+          label: '切换版本',
+          danger: true,
+          onClick: () => handleChangeVersion(record),
+        },
+        {
+          auth: [PerPrefix + PerEnum.UPDATE],
+          icon: 'clarity:code-outline-badged',
+          label: '变量补偿',
+          danger: true,
+          onClick: () => handleChangeVariable(record),
+        }
+      ];
+      actions = actions.concat(runningActions);
     }
 
     if (record.endTime) {
       actions.push({
-        auth: ['ProcessInst:' + PerEnum.UPDATE],
+        auth: [PerPrefix + PerEnum.UPDATE],
         icon: 'ant-design:medicine-box-outlined',
         tooltip: '复活',
         label: '复活',

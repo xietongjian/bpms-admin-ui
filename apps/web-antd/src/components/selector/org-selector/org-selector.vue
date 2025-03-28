@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, unref, useAttrs, onMounted, computed, watchEffect } from 'vue';
+import { ref, watch, unref, defineProps,useAttrs, onMounted, computed, watchEffect } from 'vue';
 import { SearchOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
 import OrgSelectorModal from './org-selector-modal.vue';
 import { ApiComponent } from '@vben/common-ui';
@@ -13,47 +13,32 @@ import {
 } from 'ant-design-vue';
 
 import {getCompanyTreeData} from "#/api/org/company";
-import {getOrgTree} from "#/api/org/dept";
+import {getOrgListData, getOrgTree} from "#/api/org/dept";
 import {forEach} from "#/utils/helper/treeHelper";
 import {objectOmit} from "@vueuse/core";
 
 interface Props {
-  multiple: {
-    type: boolean,
-    default: false,
-  },
-  type: {
-    type: 'org' | 'company' | 'dept',
-    default: 'org',
-  },
+  multiple?: boolean;
+  type?: 'org' | 'company' | 'dept';
   /**
    * 是否弹窗选择数据
    */
-  selectOnModal: {
-    type: boolean,
-    default: false
-  },
-  placeholder: {
-    type: string,
-    default: '请选择'
-  },
+  selectOnModal?: boolean,
+  placeholder?: string,
   // 仅在multipart=false单选时有效
-  closeOnSelect: {
-    type: boolean,
-    default: true;
-  },
-  modelValue: {
-    type: object | object[],
-    default: undefined,
-  }
+  closeOnSelect?: boolean,
+  modelValue?: Array<any>,
+  selectType?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  placeholder: '',
   multiple: false,
   type: 'org',
   closeOnSelect: true,
-  modelValue: [],
+  modelValue: () => [],
   selectOnModal: false,
+  selectType: '',
 });
 
 const selectorDataList = ref([]);
@@ -137,7 +122,7 @@ async function initData() {
           });
         }
 
-        treeData.value = res as unknown as TreeItem[];
+        treeData.value = res as unknown as any[];
 
         // if (unref(props.multiple)) {
         //   setTimeout(() => {
@@ -178,11 +163,11 @@ const api = computed(() => {
     case 'company':
       return getCompanyTreeData;
     case 'dept':
-      return getOrgTree;
+      return getOrgListData;
     case 'org':
-      return getOrgTree;
+      return getOrgListData;
     default:
-      return getOrgTree;
+      return getOrgListData;
   }
 })
 
@@ -197,7 +182,7 @@ const api = computed(() => {
         :placeholder="placeholder"
         class="w-full"
         :open="false"
-        :mode="props.multipart? 'multiple': 'tags'"
+        :mode="props.multiple? 'multiple': 'tags'"
         :allowClear="true"
         :labelInValue="true"
         maxTagPlaceholder=""
@@ -218,7 +203,7 @@ const api = computed(() => {
 
       <OrgSelectorModal ref="orgSelectorModalRef" @change="handleChange"/>
     </template>
-    <template  v-else>
+    <template v-else>
       <ApiComponent
           labelField="name"
           valueField="code"

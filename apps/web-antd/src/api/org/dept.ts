@@ -36,6 +36,7 @@ export const getOrgListData = async () => {
   result.forEach((item: any) => {
     item.title = item.name;
     item.key = item.id;
+    item.value = item.id;
   });
   return result;
 }
@@ -52,6 +53,7 @@ export const getOrgTree = async () => {
       item.icon = 'ant-design:cluster-outlined';
     }
   });
+  debugger;
   const treeData = listToTree(result, { id: 'id', children: 'children', pid: 'pid' });
   forEach(
     treeData,
@@ -62,6 +64,7 @@ export const getOrgTree = async () => {
     },
     { id: 'id', children: 'children', pid: 'pid' },
   );
+  debugger;
   return treeData;
 };
 

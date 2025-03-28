@@ -19,7 +19,7 @@
       </template>
     </BasicTable>
     <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" />
-    <ProcessFormModal ref="processFormModalRef" @register="registerProcessFormModal" />
+    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" @register="registerProcessFormModal" />
     <LaunchModal ref="launchModalRef" @register="registerLaunchModal" @success="handleSuccess" />
 
   </Page>
@@ -47,8 +47,7 @@
     exportExcelByCode,
   } from '#/api/report/formCount';
   import { forEach } from '#/utils/helper/treeHelper';
-  import {BpmnPreviewModal} from '#/views/components/preview';
-  import ProcessFormModal from '../../flowoperation/processTask/ProcessFormModal.vue';
+  import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
   import {downloadBlob} from "#/utils/file/download";
   import LaunchModal from '#/views/process/actions/LaunchModal.vue';
   import {columns} from "#/views/form/custom/modelInfo/modelInfo.data";
@@ -57,6 +56,8 @@
 
   const { currentRoute } = useRouter();
 
+  const bpmnPreviewModalRef = ref(),
+      processFormPreviewDrawerRef = ref();
 /*
   const [openFullLoading, closeFullLoading] = useLoading({
     tip: '下载中...',
@@ -293,31 +294,19 @@
     record.businessKey = record.code;
     record.processDefinitionKey = record.model_key;
 
-    openProcessFormModal(true, {
-      record,
+    processFormPreviewDrawerRef.value.setData(record);
+    processFormPreviewDrawerRef.value.setState({
+      title: `查看流程【${record.title}】的表单`
     });
-    setProcessFormModalProps({
-      width: 1000,
-      title: `查看流程【${record.title}】的表单`,
-      showOkBtn: false,
-      centered: true,
-      cancelText: '关闭',
-      maskClosable: true,
-    });
+    processFormPreviewDrawerRef.value.open();
   }
 
   function handlePreview(record: Recordable<any>) {
-    openBpmnPreviewModal(true, {
+    bpmnPreviewModalRef.value.setData({
       modelKey: record.model_key,
       procInstId: record.proc_inst_id,
     });
-    setBpmnPreviewProps({
-      title: `预览-${record.title}`,
-      centered: true,
-      useWrapper: false,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });
+    bpmnPreviewModalRef.value.open();
   }
 
   async function handleExport() {
