@@ -312,7 +312,7 @@
   }
 
   // 详情
-  async function handleDetail(node: Recordable) {
+  async function handleDetail(node: Recordable<any>) {
     try {
       if (selectedNode.value.id === node.id) {
         return;
@@ -377,11 +377,11 @@
     });
   }
   // 编辑流程
-  function handleEditFlow(record: Recordable) {
+  function handleEditFlow(record: Recordable<any>) {
     router.push({ name: 'BusinessFlowForm', query: { dataType: 'flow', id: record.id } });
   }
   // 删除流程
-  function handleDeleteFlow(record: Recordable) {
+  function handleDeleteFlow(record: Recordable<any>) {
     Modal.confirm({
       ...commonModalProps,
       content: `确定要删除【${record.name}】流程吗？`,
