@@ -4,16 +4,16 @@
  */
 
 import type { Component } from 'vue';
-import type { CustomComponentType } from '#/components/form/types';
 
 import type { BaseFormComponentType } from '@vben/common-ui';
 import type { Recordable } from '@vben/types';
+
+import type { CustomComponentType } from '#/components/form/types';
 
 import { defineComponent, getCurrentInstance, h, ref } from 'vue';
 
 import { ApiComponent, globalShareState, IconPicker } from '@vben/common-ui';
 import { $t } from '@vben/locales';
-import { OrgSelector, PersonalSelector } from '#/components/selector';
 
 import {
   AutoComplete,
@@ -40,9 +40,12 @@ import {
   Upload,
 } from 'ant-design-vue';
 
+import { OrgSelector, PersonalSelector } from '#/components/selector';
+
 const withDefaultPlaceholder = <T extends Component>(
   component: T,
   type: 'input' | 'select',
+  componentProps: Recordable<any> = {},
 ) => {
   return defineComponent({
     inheritAttrs: false,
@@ -65,7 +68,11 @@ const withDefaultPlaceholder = <T extends Component>(
         }
       });
       return () =>
-        h(component, { ...props, ...attrs, placeholder, ref: innerRef }, slots);
+        h(
+          component,
+          { ...componentProps, placeholder, ...props, ...attrs, ref: innerRef },
+          slots,
+        );
     },
   });
 };
@@ -105,38 +112,20 @@ async function initComponentAdapter() {
     // 如果你的组件体积比较大，可以使用异步加载
     // Button: () =>
     // import('xxx').then((res) => res.Button),
-    ApiSelect: (props, { attrs, slots }) => {
-      return h(
-        ApiComponent,
-        {
-          placeholder: $t('ui.placeholder.select'),
-          ...props,
-          ...attrs,
-          component: Select,
-          loadingSlot: 'suffixIcon',
-          visibleEvent: 'onDropdownVisibleChange',
-          modelPropName: 'value',
-        },
-        slots,
-      );
-    },
-    ApiTreeSelect: (props, { attrs, slots }) => {
-      return h(
-        ApiComponent,
-        {
-          placeholder: $t('ui.placeholder.select'),
-          ...props,
-          ...attrs,
-          component: TreeSelect,
-          fieldNames: { label: 'label', value: 'value', children: 'children' },
-          loadingSlot: 'suffixIcon',
-          modelPropName: 'value',
-          optionsPropName: 'treeData',
-          visibleEvent: 'onVisibleChange',
-        },
-        slots,
-      );
-    },
+    ApiSelect: withDefaultPlaceholder(ApiComponent, 'select', {
+      component: Select,
+      loadingSlot: 'suffixIcon',
+      visibleEvent: 'onDropdownVisibleChange',
+      modelPropName: 'value',
+    }),
+    ApiTreeSelect: withDefaultPlaceholder(ApiComponent, 'select', {
+      component: TreeSelect,
+      fieldNames: { label: 'label', value: 'value', children: 'children' },
+      loadingSlot: 'suffixIcon',
+      modelPropName: 'value',
+      optionsPropName: 'treeData',
+      visibleEvent: 'onVisibleChange',
+    }),
     AutoComplete,
     Checkbox,
     CheckboxGroup,
@@ -146,19 +135,11 @@ async function initComponentAdapter() {
       return h(Button, { ...props, attrs, type: 'default' }, slots);
     },
     Divider,
-    IconPicker: (props, { attrs, slots }) => {
-      return h(
-        IconPicker,
-        {
-          iconSlot: 'addonAfter',
-          inputComponent: Input,
-          modelValueProp: 'value',
-          ...props,
-          ...attrs,
-        },
-        slots,
-      );
-    },
+    IconPicker: withDefaultPlaceholder(IconPicker, 'select', {
+      iconSlot: 'addonAfter',
+      inputComponent: Input,
+      modelValueProp: 'value',
+    }),
     OrgSelector: (props, { attrs, slots }) => {
       return h(
         OrgSelector,
