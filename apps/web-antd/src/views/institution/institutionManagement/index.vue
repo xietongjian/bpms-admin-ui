@@ -9,11 +9,8 @@ import type {Recordable} from '@vben/types';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import InstitutionCategoryTree from '../components/institutionCategoryTree.vue';
 import InstitutionModal from '#/views/institution/institutionManagement/InstitutionModal.vue';
-// import { BasicTable, TableAction, useTable } from '@/components/Table';
 import {deleteInstitutionById, getInstitutionTableData} from '#/api/institution/institution';
 import {InstitutionColumns, InstitutionSearchForm} from './schema.data';
-// import { Authority } from '@/components/Authority';
-// import { useModal } from '@/components/Modal';
 import {Space, Tag, Button, message} from 'ant-design-vue';
 import {PerEnum} from "#/enums/perEnum";
 import {getGroupListByPage} from "#/api/privilege/group";
@@ -22,7 +19,7 @@ import {TableAction} from '#/components/table-action';
 defineOptions({name: 'InstitutionManagement'});
 const PerPrefix = "InstitutionManagement:";
 
-const currentNode = ref<Recordable>({});
+const currentNode = ref<Recordable<any>>({});
 const institutionModalRef = ref();
 
 const formOptions: VbenFormProps = {
@@ -91,7 +88,7 @@ function handleCreate() {
   });*/
 }
 
-function handleEdit(record: Recordable) {
+function handleEdit(record: Recordable<any>) {
   institutionModalRef.value.setData(record);
   institutionModalRef.value.setState({
     title: `修改制度`,
@@ -106,7 +103,7 @@ function handleEdit(record: Recordable) {
   });*/
 }
 
-function handleDelete(institution: Recordable) {
+function handleDelete(institution: Recordable<any>) {
   deleteInstitutionById(institution.id).then(() => tableApi.reload());
 }
 

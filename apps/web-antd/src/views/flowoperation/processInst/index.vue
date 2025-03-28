@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height>
-    <BasicTable class="proc-inst-table" @register="registerTable">
+    <BasicTable class="proc-inst-table">
       <template #toolbar-actions>
         <RadioGroup v-model:value="procInstDataType" button-style="solid" @change="handleChangeProcInstType">
           <RadioButton value="running">
@@ -52,19 +52,17 @@
       </template>
     </BasicTable>
 
-    <ApproveHistoryModal ref="approveHistoryModalRef"  @register="registerApproveHistoryModal" />
-    <FlowPropertiesModal ref="flowPropertiesModalRef"  @register="registerFlowPropertiesModal" />
-    <BpmnPreviewModal ref="bpmnPreviewModalRef"  @register="registerBpmnPreviewModal" />
-    <ProcessFormModal ref="processFormModalRef"  @register="registerProcessFormModal" />
+    <ApproveHistoryModal ref="approveHistoryModalRef" />
+    <FlowPropertiesModal ref="flowPropertiesModalRef" />
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" />
+    <ProcessFormModal ref="processFormModalRef" />
     <ProcessNodeSelectionModal ref="processNodeSelectionModalRef"
-      @register="registerProcessNodeSelectionModal"
       @success="handleReload"
     />
     <ProcessVersionSelectionModal ref="processVersionSelectionModalRef"
-      @register="registerProcessVersionSelectionModal"
       @success="handleReload"
     />
-    <ProcessVariablesModal ref="processVariablesModalRef"  @register="registerProcessVariableModal" @success="handleReload" />
+    <ProcessVariablesModal ref="processVariablesModalRef" @success="handleReload" />
     <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
   </Page>
 </template>
@@ -87,7 +85,6 @@
   } from '#/api/flowoperation/processInst';
   import ProcessNodeSelectionModal from '#/views/flowoperation/processTask/components/ProcessNodeSelectionModal.vue';
   import ProcessVersionSelectionModal from '#/views/flowoperation/processInst/ProcessVersionSelectionModal.vue';
-  import { getAll } from '#/api/base/app';
   import {BpmnPreviewModal, ProcessFormPreviewDrawer, ProcessFormPreviewModal} from '#/views/components/preview';
   import { useClipboard } from '@vueuse/core';
 
@@ -116,9 +113,10 @@
     processFormPreviewDrawerRef = ref(),
       processVariablesModalRef = ref();
 
-  const { isSupported, copy, copied } = useClipboard({ legacy: true });
+  const { copy, } = useClipboard({ legacy: true });
 
   defineOptions({ name: 'ProcessInst' });
+  const PerPrefix = 'ProcessInst:';
 
   const procInstDataType = ref('running');
 
@@ -403,46 +401,52 @@
 
   // 干预
   function handleIntervention(record: Recordable<any>) {
-    openProcessNodeSelectionModal(true, {
+    processNodeSelectionModalRef.value.setData({
       title: '流程干预',
       helpMessage: '请选择绿色的已流转过节点，双击元素取消选中',
       multi: false,
       record,
       formSchema: [
         {
-          field: 'message',
+          fieldName: 'message',
           required: true,
           ifShow: true,
         },
       ],
       request: (activityId, form) =>
-        backToStep({
-          distFlowElementId: activityId,
-          processInstanceId: record.processInstanceId,
-          ...form,
-        }),
+          backToStep({
+            distFlowElementId: activityId,
+            processInstanceId: record.processInstanceId,
+            ...form,
+          }),
     });
+    processNodeSelectionModalRef.value.setState({});
+    processNodeSelectionModalRef.value.open();
   }
 
   // 复活
   function handleRevival(record: Recordable<any>) {
-    openProcessNodeSelectionModal(true, {
+    processNodeSelectionModalRef.value.setData({
       title: '流程复活',
       helpMessage: '请选择复活到哪个任务节点，双击元素取消选中',
       multi: true,
       record,
       request: (activityIds) => restartProcessInstance(record.processInstanceId, activityIds),
     });
+    processNodeSelectionModalRef.value.open();
   }
 
   // 版本切换
   function handleChangeVersion(record: Recordable<any>) {
-    openProcessVersionSelectionModal(true, { record });
+    processVersionSelectionModalRef.value.setData(record);
+    processVersionSelectionModalRef.value.open();
   }
 
   // 变量补偿
   function handleChangeVariable(record: Recordable<any>) {
-    openProcessVariableModal(true, { record });
+    // openProcessVariableModal(true, { record });
+    processVariablesModalRef.value.setData(record);
+    processVariablesModalRef.value.open();
   }
 
   async function doCopyContent(content) {
@@ -514,28 +518,28 @@
 
     if (procInstDataType.value === 'running') {
       actions.push({
-        auth: ['ProcessInst:' + PerEnum.UPDATE],
+        auth: [PerPrefix + PerEnum.UPDATE],
         icon: 'clarity:fast-forward-line',
         label: '执行',
         danger: true,
         onClick: () => execute(record),
       });
       actions.push({
-        auth: ['ProcessInst:' + PerEnum.UPDATE],
+        auth: [PerPrefix + PerEnum.UPDATE],
         icon: 'ant-design:rollback-outlined',
         label: '干预',
         danger: true,
         onClick: () => handleIntervention(record),
       });
       actions.push({
-        auth: ['ProcessInst:' + PerEnum.UPDATE],
+        auth: [PerPrefix + PerEnum.UPDATE],
         icon: 'ant-design:branches-outlined',
         label: '切换版本',
         danger: true,
         onClick: () => handleChangeVersion(record),
       });
       actions.push({
-        auth: ['ProcessInst:' + PerEnum.UPDATE],
+        auth: [PerPrefix + PerEnum.UPDATE],
         icon: 'clarity:code-outline-badged',
         label: '变量补偿',
         danger: true,

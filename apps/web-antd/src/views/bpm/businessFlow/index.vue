@@ -140,9 +140,6 @@
   import { deleteBusinessFlowById, moveBusinessFlowToFrame } from '#/api/bpm/businessflow';
   import { getBusinessFlowById, publishProcess } from '#/api/bpm/businessFlowApply';
   import {Page} from '@vben/common-ui';
-  // import { useModal } from '@/components/Modal';
-  // import { useGo } from '@/hooks/web/usePage';
-  // import { ResultEnum } from '@/enums/httpEnum';
   import { BpmnViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer';
   import { IntegralDesigner } from '#/assets/logicflow/lf-designer';
   import { getById } from '#/api/bpm/framework';
@@ -160,10 +157,7 @@
   } from '@ant-design/icons-vue';
   import { detailSchema } from '#/views/bpm/businessFlow/businessFlowApply.data';
   import BpmFrameWorkTree from '#/views/bpm/components/BpmFrameWorkTree.vue';
-  // import { PerEnum } from '@/enums/perEnum';
   // import Icon from '@/components/Icon/Icon.vue';
-  // import { usePermission } from '@/hooks/web/usePermission';
-  // import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
   import { usePreferences } from '@vben/preferences';
   import {useAccess} from "@vben/access";
   import type {Recordable} from '@vben/types';
@@ -173,8 +167,6 @@
 
   const { isDark } = usePreferences();
   // const go = useGo();
-  // const { createMessage } = useMessage();
-  // const { hasPermission } = usePermission();
   const {hasAccessByCodes}  = useAccess();
   const router = useRouter();
 
