@@ -135,12 +135,11 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    /*rules: [
-      {
-        max: 1500,
-        message: '字符长度不能大于1500！',
-      },
-    ],*/
+    rules: z
+        .string()
+        .max(1500, "字符长度不能大于1500！")
+        .nullish()
+        .optional(),
   },
   {
     fieldName: 'returnUrl',

@@ -5,6 +5,7 @@ import { getAllLevels } from '#/api/bpm/flowprocess';
 import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
 import { RemarkDefaultEnum } from '#/enums/commonEnum';
+import {z} from "@vben/common-ui";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -158,7 +159,7 @@ export const flowFrameworkFormSchema: FormSchema[] = [
   {
     label: '流程描述',
     fieldName: 'descr',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -169,7 +170,7 @@ export const flowFrameworkFormSchema: FormSchema[] = [
   {
     label: '流程目的',
     fieldName: 'objective',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -198,7 +199,7 @@ export const flowFrameworkFormSchema: FormSchema[] = [
   {
     label: '包含下一层流程',
     fieldName: 'nextProcess',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -209,7 +210,7 @@ export const flowFrameworkFormSchema: FormSchema[] = [
   {
     label: '流程输入信息',
     fieldName: 'inputInfo',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -220,7 +221,7 @@ export const flowFrameworkFormSchema: FormSchema[] = [
   {
     label: '流程输出信息',
     fieldName: 'outputInfo',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -231,7 +232,7 @@ export const flowFrameworkFormSchema: FormSchema[] = [
   {
     label: '流程起始',
     fieldName: 'processStart',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -242,7 +243,7 @@ export const flowFrameworkFormSchema: FormSchema[] = [
   {
     label: '流程终止',
     fieldName: 'processEnd',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -253,7 +254,7 @@ export const flowFrameworkFormSchema: FormSchema[] = [
   {
     label: '流程的KPI',
     fieldName: 'processKpi',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -313,7 +314,7 @@ export const formSchemaBusiness: FormSchema[] = [
   {
     label: '流程输入信息',
     fieldName: 'inputInfo',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -324,7 +325,7 @@ export const formSchemaBusiness: FormSchema[] = [
   {
     label: '流程输出信息',
     fieldName: 'outputInfo',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -546,19 +547,18 @@ export const flowSystemFormSchema: FormSchema[] = [
   {
     label: '备注',
     fieldName: 'descr',
-    component: 'InputTextArea',
+    component: 'Textarea',
     labelWidth: 60,
-    /*rules: [
-      {
-        max: 1024,
-        message: '字符长度不能大于1024！',
-      },
-    ],*/
     componentProps: {
       autoSize: {
         minRows: 3,
         maxRows: 20,
       },
     },
+    rules: z
+        .string()
+        .max(1024, "字符长度不能大于1024！")
+        .nullish()
+        .optional(),
   },
 ];

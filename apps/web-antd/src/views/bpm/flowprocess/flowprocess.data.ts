@@ -1,6 +1,7 @@
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { RemarkDefaultEnum } from '#/enums/commonEnum';
+import {z} from "@vben/common-ui";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -68,13 +69,12 @@ export const formSchema: FormSchema[] = [
   {
     label: '备注',
     fieldName: 'descr',
-    component: 'InputTextArea',
-    /*rules: [
-      {
-        max: 256,
-        message: '字符长度不能大于256！',
-      },
-    ],*/
+    component: 'Textarea',
+    rules: z
+        .string()
+        .max(256, "字符长度不能大于256！")
+        .nullish()
+        .optional(),
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS + 1,

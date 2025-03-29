@@ -103,10 +103,11 @@
               }
             },
             rules: z
-                .string()
-                .max(256, "字符长度不能大于256！")
-                .nullable()
-                .optional()
+                .string({
+                  required_error: '审批意见不能为空！'
+                })
+                .min(1, "审批意见不能为空！")
+                .max(4000, "字符长度不能大于4000！"),
             /*rules: [
               {
                 max: 256,

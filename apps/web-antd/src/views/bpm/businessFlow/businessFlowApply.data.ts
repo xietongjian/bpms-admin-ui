@@ -194,7 +194,7 @@ export const formSchema: FormSchema[] = [
   {
     label: '流程描述',
     fieldName: 'descr',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -205,7 +205,7 @@ export const formSchema: FormSchema[] = [
   {
     label: '流程目的',
     fieldName: 'objective',
-    component: 'InputTextArea',
+    component: 'Textarea',
   },
   {
     label: '责任人',
@@ -246,12 +246,12 @@ export const formSchema: FormSchema[] = [
   {
     label: '包含下一层流程',
     fieldName: 'nextProcess',
-    component: 'InputTextArea',
+    component: 'Textarea',
   },
   {
     label: '流程输入信息',
     fieldName: 'inputInfo',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -262,7 +262,7 @@ export const formSchema: FormSchema[] = [
   {
     label: '流程输出信息',
     fieldName: 'outputInfo',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -273,7 +273,7 @@ export const formSchema: FormSchema[] = [
   {
     label: '流程起始',
     fieldName: 'processStart',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -284,7 +284,7 @@ export const formSchema: FormSchema[] = [
   {
     label: '流程终止',
     fieldName: 'processEnd',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -295,7 +295,7 @@ export const formSchema: FormSchema[] = [
   {
     label: '流程的KPI',
     fieldName: 'processKpi',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -492,7 +492,7 @@ export const businessFlowApplyFormSchema: FormSchema[] = [
   {
     label: '流程输入信息',
     fieldName: 'inputInfo',
-    component: 'InputTextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS + 1,
@@ -503,7 +503,7 @@ export const businessFlowApplyFormSchema: FormSchema[] = [
   {
     label: '流程输出信息',
     fieldName: 'outputInfo',
-    component: 'TextArea',
+    component: 'Textarea',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS + 1,
@@ -514,7 +514,7 @@ export const businessFlowApplyFormSchema: FormSchema[] = [
   /*{
     label: '授权范围',
     fieldName: 'authRange',
-    component: 'InputTextArea',
+    component: 'Textarea',
     colProps: {span: 18, lg:{span: 18, offset:0}, sm:{span: 24, offset: 0}, xs:{span: 24, offset: 0}},
     componentProps: {
       autoSize: {

@@ -1,14 +1,11 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 
 import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
-import Icon from '@/components/Icon/Icon.vue';
+// import Icon from '@/components/Icon/Icon.vue';
 import { OrderNoDefaultEnum } from '#/enums/commonEnum';
-import {VxeGridProps} from "@vben/plugins/src/vxe-table";
+import type {VxeGridProps} from '#/adapter/vxe-table';
 
-const colProps = {
-  span: 24,
-};
 export const columns: VxeGridProps['columns'] = [
   {
     title: '标题',
@@ -101,12 +98,6 @@ export const searchFormSchema: FormSchema[] = [
       allowClear: true,
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -146,7 +137,6 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       // mode: 'svg'
     },
-    colProps,
   },
   {
     fieldName: 'name',
@@ -164,7 +154,6 @@ export const formSchema: FormSchema[] = [
         message: '字符长度不能大于32！',
       },
     ],
-    colProps,
   },
   {
     fieldName: 'moduleType',
@@ -177,7 +166,6 @@ export const formSchema: FormSchema[] = [
         {label: '菜单', value: 'menu'},
       ],
     },
-    colProps: {span: 24},
   },
   {
     fieldName: 'modelInfoSelector',
@@ -189,7 +177,6 @@ export const formSchema: FormSchema[] = [
     },
     // dynamicDisabled: ({values})=> !!values.id,
     show: ({values}) => values.moduleType === 'menu',
-    colProps,
   },
   {
     fieldName: 'url',
@@ -200,7 +187,6 @@ export const formSchema: FormSchema[] = [
       triggerFields: ['url']
     },
     dynamicDisabled: ({values})=> !!values.id,
-    colProps,
   },
   {
     fieldName: 'component',
@@ -211,7 +197,6 @@ export const formSchema: FormSchema[] = [
       triggerFields: ['component']
     },
     dynamicDisabled: ({values})=> !!values.id,
-    colProps,
   },
   {
     fieldName: 'redirect',
@@ -233,7 +218,6 @@ export const formSchema: FormSchema[] = [
         message: '字符长度不能大于128！',
       },
     ],
-    colProps,
   },
   {
     fieldName: 'orderNo',
@@ -257,7 +241,6 @@ export const formSchema: FormSchema[] = [
       checkedChildren: '启用',
       unCheckedChildren: '禁用',
     },
-    colProps,
   },
   {
     fieldName: 'showStatus',
@@ -270,7 +253,6 @@ export const formSchema: FormSchema[] = [
       checkedChildren: '显示',
       unCheckedChildren: '隐藏',
     },
-    colProps,
   },
 ];
 

@@ -259,11 +259,10 @@ export const formSchema: FormSchema[] = [
     label: '备注',
     fieldName: 'note',
     component: 'Textarea',
-    rules: [
-      {
-        max: 500,
-        message: '字符长度不能大于500！',
-      },
-    ],
+    rules: z
+        .string()
+        .max(500, "字符长度不能大于500！")
+        .nullish()
+        .optional(),
   },
 ];

@@ -206,7 +206,7 @@ export const processNodeSelectionFormSchema: FormSchema[] = [
     component: 'Textarea',
     rules: z
         .string()
-        .max(1024, "字符长度不能大于1024！")
+        .max(4000, "字符长度不能大于4000！")
         .nullable()
         .optional(),
     componentProps: {

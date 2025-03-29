@@ -90,10 +90,11 @@ export const approveActionFormSchema: FormSchema[] = [
     label: '审批意见',
     component: 'Textarea',
     rules: z
-        .string()
-        .max(256, "字符长度不能大于256！")
-        .nullish()
-        .optional(),
+        .string({
+          required_error: '审批意见不能为空！'
+        })
+        .min(1, "审批意见不能为空！")
+        .max(4000, "字符长度不能大于4000！"),
     componentProps: {
       autoSize: {
         minRows: 2,
@@ -127,10 +128,11 @@ export const fetchBackMessageFormSchema: FormSchema[] = [
     label: '审批意见',
     component: 'Textarea',
     rules: z
-        .string()
-        .max(256, "字符长度不能大于256！")
-        .nullish()
-        .optional(),
+        .string({
+          required_error: '审批意见不能为空！'
+        })
+        .min(1, "审批意见不能为空！")
+        .max(4000, "字符长度不能大于4000！"),
     componentProps: {
       autoSize: {
         minRows: 2,
@@ -173,13 +175,12 @@ export const approveBackToStepFormSchema: FormSchema[] = [
     fieldName: 'message',
     label: '驳回意见',
     component: 'Textarea',
-    // required: true,
     rules: z
         .string({
-          required_error: '驳回意见不能为空！'
+          required_error: '审批意见不能为空！'
         })
-        .min(1, "驳回意见不能为空！")
-        .max(500, "字符长度不能大于500！"),
+        .min(1, "审批意见不能为空！")
+        .max(4000, "字符长度不能大于4000！"),
     componentProps: {
       autoSize: {
         minRows: 2,

@@ -4,14 +4,12 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
+  import { defineEmits, defineExpose } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import {message} from 'ant-design-vue';
   import {useVbenForm} from '#/adapter/form';
   import { formSchema } from './authFlowInfo.data';
   import { saveOrUpdate } from '#/api/flowauth/authFlowInfo';
-  import { formatToDate } from '#/utils/dateUtil';
-
   const emit = defineEmits(['success', 'register']);
 
   /*const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] = useForm({
@@ -132,14 +130,14 @@
           values.authFlowKeys = JSON.stringify(authFlowKeys);
         }
       }
-      const result = await saveOrUpdate(values);
+      const {success, msg, data} = await saveOrUpdate(values);
 
-      if (result?.data?.success) {
-        message.success(result?.data?.msg);
+      if (success) {
+        message.success(msg);
         modalApi.close();
         emit('success');
       } else {
-        message.error(result?.data?.msg);
+        message.error(msg);
       }
     } finally {
       modalApi.setState({loading: true, confirmLoading: true});

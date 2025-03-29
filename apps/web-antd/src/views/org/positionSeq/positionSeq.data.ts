@@ -142,11 +142,10 @@ export const formSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    /*rules: [
-      {
-        max: 255,
-        message: '字符长度不能大于255！',
-      },
-    ],*/
+    rules: z
+        .string()
+        .max(255, "字符长度不能大于255！")
+        .nullish()
+        .optional(),
   },
 ];

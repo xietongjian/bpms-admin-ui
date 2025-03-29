@@ -1,8 +1,7 @@
-import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-
+import {z} from "@vben/common-ui";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -158,11 +157,10 @@ export const roleFormSchema: FormSchema[] = [
         maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
     },
-    /*rules: [
-      {
-        max: 1024,
-        message: '字符长度不能大于1024！',
-      },
-    ],*/
+    rules: z
+        .string()
+        .max(1024, "字符长度不能大于1024！")
+        .nullish()
+        .optional(),
   },
 ];
