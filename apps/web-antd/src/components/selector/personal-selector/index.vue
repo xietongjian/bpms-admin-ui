@@ -153,7 +153,6 @@
       // defaultSelectedOrgKeys: props.defaultSelectedOrgKeys,
       selectedList: selectorListRef.value,
     });
-    debugger;
     personalSelectorModalRef.value.setState({
       title: '选择人员'
     });
