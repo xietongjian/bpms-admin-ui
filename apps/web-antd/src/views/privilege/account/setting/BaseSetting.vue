@@ -47,6 +47,13 @@
     await nextTick();
     const data = await getUserInfoApi();
     await formApi.setValues(data);
+    formApi.setValues({
+      personalSelector: [{
+        code: '001', name: '张三', type: 'personal',
+      },{
+        code: '002', name: '李四', type: 'personal',
+      }]
+    });
   });
 
   // const avatar = computed(() => {
@@ -63,7 +70,11 @@
   }
 
   async function handleSubmit() {
-    const values = await (formApi.getValues());
+    const {valid} = await formApi.validate();
+    if(!valid){
+      return;
+    }
+    const values = await formApi.getValues();
     console.log(values);
     message.success(JSON.stringify(values));
   }

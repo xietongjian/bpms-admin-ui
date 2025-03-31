@@ -1,215 +1,151 @@
 <template>
-  <div>
-<!--    ={{currentSelect}}=-->
+  <div class="w-full">
     <Select
-      v-bind="$attrs"
-      :value="currentSelect"
-      style="width: 100%"
-      :open="false"
-      :mode="selectMode"
-      :allowClear="true"
-      :labelInValue="true"
-      maxTagPlaceholder=""
-      @change="changeSelectItem"
-      @click="openSelectorModal"
-      :showArrow="true"
+        v-bind="$attrs"
+        :value="modelValue"
+        :open="false"
+        :mode="selectMode"
+        :allowClear="true"
+        :placeholder="placeholder"
+        :labelInValue="true"
+        maxTagPlaceholder=""
+        @change="changeSelectItem"
+        @click="openSelectorModal"
+        :showArrow="true"
+        class="w-full [&_.ant-select-selection-overflow]:gap-1 "
     >
       <template #tagRender="{ value: val, label, closable, onClose, option }">
-        aaa
         <EmpInfo :no="val" :name="label">
-          <Tag
-            class="personal-multiple-tag"
-            color="processing"
-            :closable="closable"
-            style="font-size: 14px; line-height: 20px; margin-right: 3px"
-            @close="onClose"
+          <Tag class="personal-multiple-tag leading-6 text-sm me-0"
+              color="processing"
+              :closable="closable"
+              @close="onClose"
           >
             <template #icon>
-              <UserOutlined />
+              <UserOutlined/>
             </template>
             <template #closeIcon>
-              <CloseOutlined style="color: #ed6f6f" />
+              <CloseOutlined class="!cursor-pointer" style="color: #ed6f6f"/>
             </template>
             <span style="">{{ label }}</span>
           </Tag>
         </EmpInfo>
       </template>
       <template #clearIcon>
-        <CloseCircleOutlined @click="clearSelectedList" />
+        <CloseCircleOutlined @click="clearSelectedList"/>
       </template>
       <template #suffixIcon>
-        <SearchOutlined style="color: #666" />
-      </template>
-      <template #[item]="data" v-for="item in Object.keys($slots)">
-        <slot :name="item" v-bind="data"></slot>
+        <SearchOutlined style="color: #666"/>
       </template>
     </Select>
 
-    <PersonalSelectorModal ref="personalSelectorModalRef" @change="handleChange" />
+    <PersonalSelectorModal ref="personalSelectorModalRef" @change="handleChange"/>
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref, watch, unref, onMounted, defineProps, watchEffect, defineExpose } from 'vue';
-  import PersonalSelectorModal from './PersonalSelectorModal.vue';
-  // import Icon from '#/components/Icon/Icon.vue';
-  import { Tooltip, Select, Tag } from 'ant-design-vue';
-  import type {Recordable} from '@vben/types';
+import { defineEmits, defineProps, ref, watch, watchEffect} from 'vue';
+import PersonalSelectorModal from './PersonalSelectorModal.vue';
+import {Select, Tag} from 'ant-design-vue';
+import {CloseCircleOutlined, CloseOutlined, SearchOutlined, UserOutlined,} from '@ant-design/icons-vue';
+import {EmpInfo} from '#/views/components/EmpInfo';
 
-  import {
-    SearchOutlined,
-    CloseCircleOutlined,
-    UserOutlined,
-    CloseOutlined,
-  } from '@ant-design/icons-vue';
-  import { EmpInfo } from '#/views/components/EmpInfo';
-  const modelValue = defineModel({ default: [], type: Array });
-  const currentSelect = ref<any[]>([]);
+interface Props {
+  /**
+   * 是否多选
+   */
+  multiple?: boolean;
+  /**
+   * 选择数据类型
+   * personal 只选择人员
+   * mix 混合，可选择人员，也可选择组织
+   */
+  type?: 'personal' | 'mix';
+  /**
+   * 选中时关闭弹窗，只有单选，是否弹窗选择为true时才生效
+   */
+  closeOnSelect?: boolean;
+  /**
+   * 是否弹窗选择人员
+   */
+  selectOnModal?: boolean;
+  /**
+   * 弹窗标题
+   */
+  modalTitle?: string;
+  placeholder?: string;
+}
 
-  const emit = defineEmits<{
-      change: [string];
-  }>();
+// [ { "code": "001", "name": "张三", "type": "personal" }, { "code": "002", "name": "李四", "type": "personal" } ]
+const modelValue = defineModel({default: [], type: Array});
+const currentSelect = ref<any[]>();
 
-  const personalSelectorModalRef = ref();
-  const props = defineProps({
+const emit = defineEmits<{
+  change: [object];
+}>();
 
-  })
-  // const attrs = useAttrs();
-/*  const [
-    registerPersonalModal,
-    { openModal: openPersonalSelector, setModalProps: setPersonalModalProps },
-  ] = useModal();*/
-  const selectorListRef = ref<any[]>([]);
-  const selectorValue = ref<any[]>([]);
-  const selectMode = ref<string>('');
+const personalSelectorModalRef = ref();
+const props = withDefaults(defineProps<Props>(), {
+  multiple: false,
+  type: 'personal',
+  closeOnSelect: false,
+  selectOnModal: false,
+  modalTitle: '选择人员',
+  placeholder: '请选择人员'
+});
 
-  watchEffect(() => {
-    currentSelect.value = modelValue.value;
+
+const selectorListRef = ref<any[]>();
+const selectMode = ref<string>('tags');
+
+watch(
+    () => modelValue.value,
+    (v) => {
+      emit('change', v);
+    },
+);
+watchEffect(() => {
+  modelValue.value.forEach((item: any) => {
+    item['label'] = item.name;
+    item['value'] = item.code;
   });
+  currentSelect.value = modelValue.value;
+});
 
-  onMounted(() => {
-    // if (props.multiple) {
-    //   selectMode.value = 'multiple';
-    // } else {
-    //   selectMode.value = '';
-    // }
-  });
-  watch(
-      () => currentSelect.value,
-      (v) => {
-          emit('change', v);
-      },
-  );
-
-  watch(
-      () => props.value,
-      (value = []) => {
-        value &&
-        value.forEach((item) => {
-          item.label = item.name;
-          item.key = item.code;
-        });
-        selectorListRef.value = value;
-      },
-      { immediate: true },
-  );
-
-  function handleChange(items: any[]) {
-    items &&
-    items.forEach((item) => {
-      item.value = item.code;
-      item.label = item.name;
-      item.key = item.code;
-      item.title = item.name;
-    });
-    selectorListRef.value = items || [];
-    // emit('change', selectorListRef.value);
-    currentSelect.value = items;
-    modelValue.value = items;
-  }
-
-  function clearSelectedList(e) {
-    e.stopPropagation();
-    selectorListRef.value = [];
-    emit('change', selectorListRef.value);
-  }
-
-  function changeSelectItem(items: any[]) {
-    const result =
-        items &&
-        items.map((item) => {
-          return { code: item.key, name: item.label, ...item };
-        });
-    selectorListRef.value = result;
-    // emit('change', result);
-  }
-
-  // 选择弹窗
-  function openSelectorModal(record: Recordable) {
-    // if (unref(attrs).disabled) {
-    //   return;
-    // }
-    personalSelectorModalRef.value.setData({
-      ...props,
-      // defaultSelectedOrgKeys: props.defaultSelectedOrgKeys,
-      selectedList: selectorListRef.value,
-    });
-    personalSelectorModalRef.value.setState({
-      title: '选择人员'
-    });
-    personalSelectorModalRef.value.open();
-    // 加载已选择的数据
-    /*openPersonalSelector(true, {
-      selectorProps: {
-        ...props,
-        defaultSelectedOrgKeys: props.defaultSelectedOrgKeys,
-        selectedList: selectorListRef.value,
-      },
-    });
-    let title = props.title;
-    if (!title) {
-      title = `选择人员`;
+function handleChange(items: any[]) {
+  const result = items.map(item => {
+    return {
+      label: item.name,
+      value: item.code
     }
+  });
+  modelValue.value = result;
+  currentSelect.value = result;
+}
 
-    setPersonalModalProps({
-      title,
-      width: 850,
-      centered: true,
-      showOkBtn: true,
-      showCancelBtn: true,
-    });*/
-  }
+function clearSelectedList(e) {
+  e.stopPropagation();
+  selectorListRef.value = [];
+  emit('change', selectorListRef.value);
+}
 
-  /*export default defineComponent({
-    name: 'PersonalSelector',
-    components: {
-      SearchOutlined,
-      CloseCircleOutlined,
-      UserOutlined,
-      CloseOutlined,
-      PersonalSelectorModal,
-      Select,
-      Icon,
-      Tag,
-      EmpInfo,
-      Tooltip,
-    },
-    props: selectorContainerProps,
-    emits: ['change'],
+function changeSelectItem(items: any[]) {
+  const result =
+      items &&
+      items.map((item) => {
+        return {code: item.key, name: item.label, ...item};
+      });
+  selectorListRef.value = result;
+}
 
-    setup(props, { emit, attr }) {
-
-
-      return {
-        attrs,
-        registerPersonalModal,
-        openSelectorModal,
-        selectorValue,
-        handleChange,
-        changeSelectItem,
-        clearSelectedList,
-        selectorListRef,
-        selectMode,
-      };
-    },
-  });*/
+// 选择弹窗
+function openSelectorModal() {
+  personalSelectorModalRef.value.setData({
+    ...props,
+    selectedList: currentSelect.value,
+  });
+  personalSelectorModalRef.value.setState({
+    title: props.modalTitle
+  });
+  personalSelectorModalRef.value.open();
+}
 </script>

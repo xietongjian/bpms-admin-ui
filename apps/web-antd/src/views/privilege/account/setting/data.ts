@@ -88,14 +88,14 @@ export const baseSetSchemas: FormSchema[] = [
       closeOnSelect: false,
       selectOnModal: true,
       modelValue: [{
-        id: '1', value: '1', type: 'company',
+        id: '001', value: '1', type: 'company',
       },{
-        id: '2', value: '2', type: 'company',
+        id: '002', value: '2', type: 'company',
       }]
     }
   },
   {
-    fieldName: 'testOrgSelectorModal',
+    fieldName: 'personalSelector',
     component: 'PersonalSelector',
     label: '测试人员选择',
     componentProps: {
@@ -104,12 +104,8 @@ export const baseSetSchemas: FormSchema[] = [
       type: 'personal',
       closeOnSelect: false,
       selectOnModal: true,
-      modelValue: [{
-        id: '1', value: '1', type: 'company',
-      },{
-        id: '2', value: '2', type: 'company',
-      }]
-    }
+    },
+    rules: 'selectRequired'
   },
   {
     fieldName: 'iconSelector',

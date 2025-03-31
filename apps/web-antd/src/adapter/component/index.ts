@@ -150,7 +150,8 @@ async function initComponentAdapter() {
         slots,
       );
     },
-    PersonalSelector: (props, { attrs, slots }) => {
+    PersonalSelector: withDefaultPlaceholder(PersonalSelector, 'select', {}),
+    /*PersonalSelector: (props, { attrs, slots }) => {
       return h(
         PersonalSelector,
         {
@@ -159,7 +160,7 @@ async function initComponentAdapter() {
         },
         slots,
       );
-    },
+    },*/
     Input: withDefaultPlaceholder(Input, 'input'),
     InputNumber: withDefaultPlaceholder(InputNumber, 'input'),
     InputPassword: withDefaultPlaceholder(InputPassword, 'input'),

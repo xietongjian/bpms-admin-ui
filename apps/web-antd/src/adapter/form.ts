@@ -30,7 +30,7 @@ setupVbenForm<ComponentType>({
     },
     // 选择项目必填国际化适配
     selectRequired: (value, _params, ctx) => {
-      if (value === undefined || value === null) {
+      if (value === undefined || value === null || value.length <= 0) {
         return $t('ui.formRules.selectRequired', [ctx.label]);
       }
       return true;
