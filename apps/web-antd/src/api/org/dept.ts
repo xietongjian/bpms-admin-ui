@@ -53,7 +53,7 @@ export const getOrgTree = async () => {
       item.icon = 'ant-design:cluster-outlined';
     }
   });
-  debugger;
+  // debugger;
   const treeData = listToTree(result, { id: 'id', children: 'children', pid: 'pid' });
   forEach(
     treeData,
@@ -64,7 +64,7 @@ export const getOrgTree = async () => {
     },
     { id: 'id', children: 'children', pid: 'pid' },
   );
-  debugger;
+  // debugger;
   return treeData;
 };
 

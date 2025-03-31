@@ -49,9 +49,9 @@
     await formApi.setValues(data);
     formApi.setValues({
       personalSelector: [{
-        code: '001', name: '张三', type: 'personal',
+        value: '001', label: '张三', type: 'personal',
       },{
-        code: '002', name: '李四', type: 'personal',
+        value: '002', label: '李四', type: 'personal',
       }]
     });
   });

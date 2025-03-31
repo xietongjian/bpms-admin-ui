@@ -123,10 +123,8 @@ const selectedRowKeyList = ref([])
 //保存被选中的行的完整数据
 const selectedRowsList = ref([])
 
-
-
 const selectorContainerRef = ref();
-const tempHeight = ref(100);
+const tempHeight = ref(250);
 
 const compHeight = computed(() => tempHeight.value)
 
@@ -154,25 +152,29 @@ const [BasicModal, modalApi] = useVbenModal({
   },
   async onOpenChange(isOpen: boolean) {
     if (isOpen) {
-      const values = modalApi.getData<Record<string, any>>();
-      selectedRowsList.value = JSON.parse(JSON.stringify(values.selectedList));
-      selectedRowsList.value.forEach(item => {
-        item['code'] = item.value;
-        item['name'] = item.label;
-      });
-      selectedRowKeyList.value = selectedRowsList.value.map((item : any) => item.code).filter((item: any) => !!item)
-          ;
+      const {selectedList, multiple} = modalApi.getData<Record<string, any>>();
+      debugger;
+      if(selectedList){
+        selectedRowsList.value = JSON.parse(JSON.stringify(selectedList));
+        selectedRowsList.value.forEach(item => {
+          item['code'] = item.value;
+          item['name'] = item.label;
+        });
+        selectedRowKeyList.value = selectedRowsList.value.map((item : any) => item.code).filter((item: any) => !!item);
 
-      multiSelect.value = values.multiple;
+      } else {
+        selectedRowsList.value = [];
+        selectedRowKeyList.value = [];
+      }
+
+      multiSelect.value = multiple;
 
       console.log(selectedRowsList.value);
-      if (values) {
-        await fetchTreeData(values);
-        fetchPageList({keyword: ''});
-        // await initData(values);
-        // baseFormApi.setValues(values);
-        modalApi.setState({loading: false, confirmLoading: false});
-      }
+      await fetchTreeData();
+      fetchPageList({keyword: ''});
+      // await initData(values);
+      // baseFormApi.setValues(values);
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   },
   onConfirm() {

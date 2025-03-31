@@ -218,12 +218,18 @@ const gridEvents: VxeGridListeners = {
       return;
     }
 
-    const personals = row[column.field]
+    const personals = row[column.field.replace('customColumn_', '')]
 
     currentRole.value = column.params;
     currentRow.value = row;
+    debugger;
+    personalSelectorModalRef.value.setData({
+      multiple: true,
+      selectedList: personals&&personals.map(item => {
+        return {value: item.personalCode, label: item.personalName};
+      })
+    });
     personalSelectorModalRef.value.open();
-    personalSelectorModalRef.value.setData(personals);
   }
 };
 

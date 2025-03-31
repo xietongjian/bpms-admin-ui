@@ -9,7 +9,6 @@
         :placeholder="placeholder"
         :labelInValue="true"
         maxTagPlaceholder=""
-        @change="changeSelectItem"
         @click="openSelectorModal"
         :showArrow="true"
         class="w-full [&_.ant-select-selection-overflow]:gap-1 "
@@ -75,7 +74,13 @@ interface Props {
   placeholder?: string;
 }
 
-// [ { "code": "001", "name": "张三", "type": "personal" }, { "code": "002", "name": "李四", "type": "personal" } ]
+/**
+ * [{
+ *         value: '001', label: '张三', type: 'personal',
+ *       },{
+ *         value: '002', label: '李四', type: 'personal',
+ *       }]
+ */
 const modelValue = defineModel({default: [], type: Array});
 const currentSelect = ref<any[]>();
 
@@ -93,8 +98,6 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: '请选择人员'
 });
 
-
-const selectorListRef = ref<any[]>();
 const selectMode = ref<string>('tags');
 
 watch(
@@ -104,18 +107,16 @@ watch(
     },
 );
 watchEffect(() => {
-  modelValue.value.forEach((item: any) => {
-    item['label'] = item.name;
-    item['value'] = item.code;
-  });
   currentSelect.value = modelValue.value;
 });
 
 function handleChange(items: any[]) {
-  const result = items.map(item => {
+  const selectedItems = JSON.parse(JSON.stringify(items));
+  const result = selectedItems.map(item => {
     return {
       label: item.name,
-      value: item.code
+      value: item.code,
+      key: item.code,
     }
   });
   modelValue.value = result;
@@ -124,17 +125,7 @@ function handleChange(items: any[]) {
 
 function clearSelectedList(e) {
   e.stopPropagation();
-  selectorListRef.value = [];
-  emit('change', selectorListRef.value);
-}
-
-function changeSelectItem(items: any[]) {
-  const result =
-      items &&
-      items.map((item) => {
-        return {code: item.key, name: item.label, ...item};
-      });
-  selectorListRef.value = result;
+  emit('change', []);
 }
 
 // 选择弹窗
