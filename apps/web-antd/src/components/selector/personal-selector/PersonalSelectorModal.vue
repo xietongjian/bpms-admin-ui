@@ -1,27 +1,28 @@
 <template>
-  <BasicModal class="w-[1000px] BBBBBBBBBBBBBBBBBB" ref="selectorContainerRef">
-    <div class="border h-full xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" >
-      <div class="selected-items mb-2 min-h-8">
-          <template
+  <BasicModal class="w-[1000px]">
+<!--    <div ref="selectorContainerRef" class="relative border h-full xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" >
+    </div>-->
+    <div class="selected-items mb-2 min-h-8 p-2">
+      <template
           v-if="selectedRowsList && selectedRowsList.length > 0"
           v-for="(item, index) in selectedRowsList"
-          :key="item.code"
-        >
-          <Tag color="processing" closable @close="removeSelectedItem(item.code)">
-            {{ item.name }}
-          </Tag>
-        </template>
-        <template v-else>
-          <div class="ant-select-selection-placeholder">请选择人员</div>
-        </template>
-      </div>
-      <div class="flex-1 flex overflow-hidden h-full p-0">
-        <div class="w-[20%] flex flex-col h-full">
-          <div class="h-8">
-            组织
-          </div>
-          <div class="flex-1 overflow-y-auto">
-            <Tree
+          :key="index"
+      >
+        <Tag color="processing" closable @close="removeSelectedItem(item.code)">
+          {{ item.name }}
+        </Tag>
+      </template>
+      <template v-else>
+        <div class="ant-select-selection-placeholder">请选择人员</div>
+      </template>
+    </div>
+    <div ref="selectorContainerRef" class="flex-1 flex p-0 h-full">
+      <div class="w-[30%] flex flex-col border h-full">
+        <div class="h-8 border">
+          组织
+        </div>
+        <div class="flex-1 p-1">
+          <Tree
               class=""
               title="组织"
               toolbar
@@ -30,24 +31,24 @@
               :treeData="treeData"
               @select="handleSelect"
               ref="treeRef"
-            />
-          </div>
+          />
         </div>
-        <div class="w-[80%] h-full flex flex-col border">
-          <div class="h-10">
-            <Search
+      </div>
+      <div class="w-[70%] h-full flex flex-col border">
+        <div class="h-10">
+          <Search
               v-model:value="searchTxt"
               placeholder="请输入姓名/工号/手机/邮箱"
               style="width: 100%"
               @search="doSearchFilter"
               @press-enter="doSearchFilter"
               :allowClear="true"
-            />
-          </div>
+          />
+        </div>
 
-          <div ref="tableContainerRef" class="bg-card h-full border flex-1">
-            <div>aaa{{compHeight}}bbb</div>
-            <Table
+        <div ref="tableContainerRef" class="bg-card border flex-1">
+          {{height-170}}
+          <Table
               size="small"
               :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)"
               class="mt-2 ant-table-striped"
@@ -55,36 +56,34 @@
               :columns="columns"
               :dataSource="tableData"
               :pagination="pagination"
-              :scroll="{ y: compHeight }"
+              :scroll="{ y: 160 }"
               :loading="personalTableLoading"
               rowKey="code"
               :customRow="customRow"
-            />
-          </div>
+          />
         </div>
-
-
-        <!--          <div class="flex">
-                      <div class="left-tree bg-white w-1/4 xl:w-3/10 mr-2 overflow-hidden h-full">
-
-                      </div>
-
-                      <div class="w-3/4 xl:w-7/10 mb-0">
-                          &lt;!&ndash;        <Search
-                                      v-model:value="searchTxt"
-                                      placeholder="请输入姓名/工号/手机/邮箱"
-                                      style="width: 100%"
-                                      @search="doSearchFilter"
-                                      @press-enter="doSearchFilter"
-                                      :allowClear="true"
-                                  />&ndash;&gt;
-
-                          &lt;!&ndash;        &ndash;&gt;
-                      </div>
-                  </div>-->
       </div>
-    </div>
 
+
+      <!--          <div class="flex">
+                    <div class="left-tree bg-white w-1/4 xl:w-3/10 mr-2 overflow-hidden h-full">
+
+                    </div>
+
+                    <div class="w-3/4 xl:w-7/10 mb-0">
+                        &lt;!&ndash;        <Search
+                                    v-model:value="searchTxt"
+                                    placeholder="请输入姓名/工号/手机/邮箱"
+                                    style="width: 100%"
+                                    @search="doSearchFilter"
+                                    @press-enter="doSearchFilter"
+                                    :allowClear="true"
+                                />&ndash;&gt;
+
+                        &lt;!&ndash;        &ndash;&gt;
+                    </div>
+                </div>-->
+    </div>
   </BasicModal>
 </template>
 <script lang="ts" setup>
@@ -131,29 +130,29 @@ const compHeight = computed(() => tempHeight.value)
 onMounted(() => {
 
 });
-/*const modalHeight = ref();
-const eleId = document.getElementsByClassName('BBBBBBBBBBBBBBBBBB');
-debugger;
-const { width, height } = useElementSize(eleId[0])
+const modalHeight = ref();
+// const eleId = document.getElementsByClassName('BBBBBBBBBBBBBBBBBB');
+// debugger;
+const { width, height } = useElementSize(selectorContainerRef)
 console.log(height);
 modalHeight.value = height.value;
-watch(modalHeight, () => {
+/*watch(height, () => {
   debugger;
-
 })*/
+
+
 
 
 const [BasicModal, modalApi] = useVbenModal({
   title: '选择人员',
   draggable: true,
-  contentClass: 'flex flex-col',
+  contentClass: 'h-full flex flex-col min-h-[200px] wwwwwwwwwwwwwwwwwwwwwwwwwwww',
   onCancel() {
     modalApi.close();
   },
   async onOpenChange(isOpen: boolean) {
     if (isOpen) {
       const {selectedList, multiple} = modalApi.getData<Record<string, any>>();
-      debugger;
       if(selectedList){
         selectedRowsList.value = JSON.parse(JSON.stringify(selectedList));
         selectedRowsList.value.forEach(item => {
@@ -161,7 +160,6 @@ const [BasicModal, modalApi] = useVbenModal({
           item['name'] = item.label;
         });
         selectedRowKeyList.value = selectedRowsList.value.map((item : any) => item.code).filter((item: any) => !!item);
-
       } else {
         selectedRowsList.value = [];
         selectedRowKeyList.value = [];
@@ -169,7 +167,6 @@ const [BasicModal, modalApi] = useVbenModal({
 
       multiSelect.value = multiple;
 
-      console.log(selectedRowsList.value);
       await fetchTreeData();
       fetchPageList({keyword: ''});
       // await initData(values);
@@ -361,10 +358,12 @@ const removeSelectedItem = (code) => {
 };
 
 // 选择多选框选中行
-function onSelectChange(selectedKeys, selectedRecords) {
+function onSelectChange(selectedKeys: Array<object>, selectedRecords: Array<object>) {
   // debugger;
   selectedRowsList.value = selectedRecords;
+  selectedRowKeyList.value = selectedKeys;
   console.log(selectedKeys, '####====================');
+  return;
   // , ...state.selectedRowKeys
   // FIXME 这里有个问题：点击行的时候可以进行分页选择，当点击复选框后会把其他页选中的都清掉
   let selectedRowKeys = [...selectedKeys];

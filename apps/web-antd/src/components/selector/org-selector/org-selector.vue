@@ -12,7 +12,7 @@ import {
   Popover,
 } from 'ant-design-vue';
 
-import {getCompanyTreeData} from "#/api/org/company";
+import {getCompaniesListData, getCompanyTreeData} from "#/api/org/company";
 import {getOrgListData, getOrgTree} from "#/api/org/dept";
 import {forEach} from "#/utils/helper/treeHelper";
 import {objectOmit} from "@vueuse/core";
@@ -27,18 +27,22 @@ interface Props {
   placeholder?: string,
   // 仅在multipart=false单选时有效
   closeOnSelect?: boolean,
-  modelValue?: Array<any>,
+  // modelValue?: Array<any>,
   selectType?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  placeholder: '',
+  placeholder: '请选择组织',
   multiple: false,
   type: 'org',
   closeOnSelect: true,
-  modelValue: () => [],
+  // modelValue: () => [],
   selectOnModal: false,
   selectType: '',
+});
+
+onMounted(() => {
+  initData();
 });
 
 const selectorDataList = ref([]);
@@ -56,7 +60,7 @@ const currentSelect = ref(undefined);
 function handleDropdownVisibleChange(open) {
   // 展开时默认展开并滚动到选中的树节点
   if(open){
-    console.log(props.modelValue);
+    // console.log(props.modelValue);
   }
 }
 
@@ -65,22 +69,18 @@ function handleFilterTreeNode (searchValue: string, treeNode: any) {
   return treeNode?.title?.indexOf(searchValue) > -1;
 }
 
-watchEffect(() => {
+/*watchEffect(() => {
+  // debugger;
   currentSelect.value = modelValue.value;
 });
 
 watch(
   () => currentSelect.value,
   (v) => {
+    // debugger;
     emit('change', v);
   },
-);
-
-onMounted(() => {
-  if (!props.selectOnModal) {
-    // initData();
-  }
-});
+);*/
 
 enum OrgSelectType {
   COMPANY = '1',
@@ -91,7 +91,7 @@ enum OrgSelectType {
 async function initData() {
   debugger;
   if (props.type === 'company') {
-    const res = await getCompanyTreeData();
+    const res = await getCompaniesListData();
     treeData.value = res;
     if (unref(props.multiple)) {
       setTimeout(() => {
@@ -204,16 +204,18 @@ const api = computed(() => {
       <OrgSelectorModal ref="orgSelectorModalRef" @change="handleChange"/>
     </template>
     <template v-else>
-      <ApiComponent
+<!--      <ApiComponent
           labelField="name"
           valueField="code"
           :api="api"
           class="w-full"
           placeholder="请选择"
+          :labelInValue="true"
+          :mode="'tags'"
+          :allowClear="true"
           :component="TreeSelect"
           :treeDataSimpleMode="{id: 'id', pId: 'pid', rootPId: null}"
           loadingSlot="suffixIcon"
-          modelPropName="value"
           optionsPropName="treeData"
           visibleEvent="onVisibleChange"
           :multiple="multiple"
@@ -226,25 +228,27 @@ const api = computed(() => {
               </template>
               <Tag class="flex items-center gap-1 !text-sm p-px m-px mr-1" :closable="closable"
                    :color="option.color" @close="onClose">
-                <span class="icon-[ix--building2] size-4"></span>
+                <span class="icon-[ix&#45;&#45;building2] size-4"></span>
                 {{ label || '-' }}
               </Tag>
             </Popover>
           </template>
-      </ApiComponent>
-<!--      <TreeSelect
+      </ApiComponent>-->
+      <TreeSelect
+          labelField="name"
+          valueField="id"
           ref="selectorRef"
           searchPlaceholder="请选择"
           popupClassName="border !block"
-          v-model:value="currentSelect"
+          v-model:value="modelValue"
           :placeholder="placeholder"
           class="w-full "
           :multiple="multiple"
           :allowClear="true"
           :labelInValue="true"
           :tree-data="treeData"
+          :treeDataSimpleMode="{id: 'id', pId: 'pid', rootPId: null}"
           :showSearch="true"
-          @dropdownVisibleChange="handleDropdownVisibleChange"
           :filterTreeNode="handleFilterTreeNode"
       >
         <template #tagRender="{ label, closable, onClose, option }">
@@ -258,7 +262,7 @@ const api = computed(() => {
             </Tag>
           </Popover>
         </template>
-      </TreeSelect>-->
+      </TreeSelect>
     </template>
   </div>
 </template>

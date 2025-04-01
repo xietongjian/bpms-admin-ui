@@ -40,6 +40,7 @@ export const baseSetSchemas: FormSchema[] = [
     fieldName: 'realName',
     component: 'Input',
     label: '姓名',
+    formItemClass: 'col-span-2',
   },
 /*  {
     fieldName: 'introduction',
@@ -51,36 +52,76 @@ export const baseSetSchemas: FormSchema[] = [
     fieldName: 'tel',
     component: 'Input',
     label: '联系电话',
+    formItemClass: 'col-span-2',
   },
   {
     fieldName: 'email',
     component: 'Input',
     label: '邮箱',
+    formItemClass: 'col-span-2',
   },
   {
     fieldName: 'address',
     component: 'Input',
     label: '所在地区',
+    formItemClass: 'col-span-2',
   },
   {
-    fieldName: 'testOrgSelector',
+    fieldName: 'address',
+    component: 'Divider',
+    label: '组件测试',
+    componentProps: {
+      style: 'height: 2px; background-color: #7cb305'
+    },
+    formItemClass: 'col-span-3',
+  },
+  {
+    fieldName: 'testCompanySelector',
     component: 'OrgSelector',
-    label: '测试组织选择',
+    label: '公司选择-下拉-单选',
     componentProps: {
       placeholder: '请选择组织',
       multiple: false,
+      type: 'company',
+    },
+    formItemClass: '',
+  },
+  {
+    fieldName: 'testCompanySelector1',
+    component: 'OrgSelector',
+    label: '公司选择-下拉-多选',
+    componentProps: {
+      placeholder: '请选择组织',
+      multiple: true,
       type: 'company',
       modelValue: [{
         id: '1', value: '1', type: 'company',
       },{
         id: '2', value: '2', type: 'company',
       }]
-    }
+    },
+    formItemClass: '',
+  },
+  {
+    fieldName: 'testCompanySelectorModal',
+    component: 'OrgSelector',
+    label: '公司选择-弹窗',
+    componentProps: {
+      placeholder: '请选择组织',
+      multiple: true,
+      type: 'company',
+      modelValue: [{
+        id: '1', value: '1', type: 'company',
+      },{
+        id: '2', value: '2', type: 'company',
+      }]
+    },
+    formItemClass: '',
   },
   {
     fieldName: 'testOrgSelectorModal',
     component: 'OrgSelector',
-    label: '测试组织选择',
+    label: '组织选择-弹窗',
     componentProps: {
       placeholder: '请选择组织',
       multiple: true,
@@ -110,7 +151,7 @@ export const baseSetSchemas: FormSchema[] = [
   {
     fieldName: 'iconSelector',
     component: 'IconPicker',
-    label: '测试组织选择',
+    label: '人员选择',
     // value: 'ant-design:link-outlined'
   },
 ];

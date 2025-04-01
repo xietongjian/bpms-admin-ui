@@ -40,7 +40,12 @@
     showDefaultActions: false,
     layout: 'horizontal',
     schema: baseSetSchemas,
-    wrapperClass: 'grid-cols-1',
+    wrapperClass: 'grid-cols-3',
+    commonConfig: {
+      componentProps: {
+        class: 'w-full'
+      }
+    }
   });
 
   onMounted(async () => {
@@ -52,7 +57,8 @@
         value: '001', label: '张三', type: 'personal',
       },{
         value: '002', label: '李四', type: 'personal',
-      }]
+      }],
+      testCompanySelector: '1'
     });
   });
 
