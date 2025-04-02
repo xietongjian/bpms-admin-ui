@@ -25,7 +25,7 @@ export enum RemarkDefaultEnum {
 }
 
 export enum FormValidPatternEnum {
-  SN = '^[0-9a-zA-Z-_]{1,}$',
+  SN = '^[0-9a-zA-Z-_]{1,}$', // 请输入英文或数字（以英文或下划线开头）！
   FIELD_NAME_SN = '(^_([a-zA-Z0-9]_?)*$)|(^[a-zA-Z](_?[a-zA-Z0-9])*_?$)',
   URL = '',
   EMAIL = '^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$',

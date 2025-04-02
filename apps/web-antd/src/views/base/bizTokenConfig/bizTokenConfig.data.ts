@@ -6,9 +6,22 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {FormValidPatternEnum, RemarkDefaultEnum} from '#/enums/commonEnum';
 import { CodeEditor, MODE } from '#/components/CodeEditor';
 
-const colProps = {
-  span: 24,
-};
+
+const ServerTypeList = [
+  {
+    label: '微服务',
+    value: 'sc',
+  },
+  {
+    label: 'RestFull',
+    value: 'rest',
+  },
+  /*{
+    label: 'Http',
+    value: 'http',
+  },*/
+];
+
 export const columns: VxeGridProps['columns'] = [
   {
     title: '接口类型',
@@ -63,29 +76,17 @@ export const columns: VxeGridProps['columns'] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    field: 'type',
+    fieldName: 'type',
     component: 'Select',
     label: '服务类型',
     labelWidth: 60,
-    colProps: {
-      span: 6,
-    },
     componentProps: {
       placeholder: '请选择服务类型',
-      options: [
-        {
-          label: '微服务',
-          value: 'sc',
-        },
-        {
-          label: 'RestFull',
-          value: 'rest',
-        },
-      ]
+      options: ServerTypeList
     },
   },
   {
-    field: 'name',
+    fieldName: 'name',
     label: '关键字',
     component: 'Input',
     componentProps: {
@@ -93,12 +94,6 @@ export const searchFormSchema: FormSchema[] = [
       allowClear: true,
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -119,20 +114,7 @@ export const formSchema: FormSchema[] = [
     defaultValue: 'sc',
     componentProps: ({schema, formModel, formActionType}) => {
       return {
-        options: [
-          {
-            label: '微服务',
-            value: 'sc',
-          },
-          {
-            label: 'RestFull',
-            value: 'rest',
-          },
-          /*{
-            label: 'Http',
-            value: 'http',
-          },*/
-        ],
+        options: ServerTypeList,
         onChange: (val) => {
           formActionType.updateSchema([
             { fieldName: 'serviceId', required: val === 'sc', componentProps: { show: val==='sc'  } },
@@ -145,7 +127,6 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'name',
     label: '名称',
-    required: true,
     component: 'Input',
     rules: z
         .string({
@@ -154,32 +135,22 @@ export const formSchema: FormSchema[] = [
         .trim()
         .min(1, "名称不能为空")
         .max(80, "字符长度不能大于80！")
-   /* rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 32,
-        message: '字符长度不能大于80！',
-      },
-    ],*/
   },
   {
     fieldName: 'serviceId',
     label: 'ServiceId',
-    required: true,
     component: 'Input',
-    show: ({ values }) => {
-      return values.type === 'sc';
+    dependencies: {
+      show: ({ values }) => {
+        return values.type === 'sc';
+      },
+      triggerFields: ['serviceId']
     },
-    colProps,
+    rules: 'required'
   },
   {
     fieldName: 'url',
     label: '请求地址',
-    required: true,
     component: 'Input',
     rules: z
         .string({
@@ -188,27 +159,12 @@ export const formSchema: FormSchema[] = [
         .trim()
         .min(1, "URL不能为空")
         .max(255, "字符长度不能大于255！")
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: 'URL不能为空！',
-      },
-      {
-        max: 255,
-        message: '字符长度不能大于255！',
-      },
-    ],
-    colProps,*/
   },
   {
     fieldName: 'method',
     component: 'RadioButtonGroup',
     label: '请求方式',
-    required: true,
-    colProps: {
-      span: 24,
-    },
+    rules: 'selectRequired',
     defaultValue: '',
     componentProps: {
       options: [
@@ -268,49 +224,52 @@ export const formSchema: FormSchema[] = [
         },
       ];
     },
-    colProps,
   },
   {
     fieldName: 'tokenKey',
     label: 'Token键名',
     help: '返回值中取token的字段名',
     component: 'Input',
-    colProps,
   },
   {
     fieldName: 'tokenName',
     label: 'Token名称',
     help: '设置到接口header里面的Token键名',
-    required: true,
     component: 'Input',
-    colProps,
+    rules: 'required'
   },
   {
     fieldName: 'serverAddr',
     label: '注册地址',
     component: 'Input',
-    show: ({ values }) => {
-      return values.type === 'sc';
-    },
-    colProps,
+    dependencies: {
+      show: ({ values }) => {
+        return values.type === 'sc';
+      },
+      triggerFields: ['serverAddr']
+    }
   },
   {
     fieldName: 'namespaceId',
     label: '命名空间',
     component: 'Input',
-    show: ({ values }) => {
-      return values.type === 'sc';
-    },
-    colProps,
+    dependencies: {
+      show: ({ values }) => {
+        return values.type === 'sc';
+      },
+      triggerFields: ['namespaceId']
+    }
   },
   {
     fieldName: 'groupName',
     label: '组名',
     component: 'Input',
-    show: ({ values }) => {
-      return values.type === 'sc';
-    },
-    colProps,
+    dependencies: {
+      show: ({ values }) => {
+        return values.type === 'sc';
+      },
+      triggerFields: ['groupName']
+    }
   },
   {
     label: '备注',
@@ -327,12 +286,5 @@ export const formSchema: FormSchema[] = [
         .max(500, "字符长度不能大于500！")
         .nullable()
         .optional()
-    /*rules: [
-      {
-        max: 500,
-        message: '字符长度不能大于500！',
-      },
-    ],
-    colProps,*/
   },
 ];

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import { PerEnum } from '#/enums/perEnum';
   import { ref, onMounted } from 'vue';
-  import { Button, message} from 'ant-design-vue';
+  import { Button, Tag, message} from 'ant-design-vue';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import type {VbenFormProps} from '@vben/common-ui';
   import type { Recordable } from '@vben/types';
@@ -174,6 +174,10 @@
       </template>
       <template #cName="{ row }">
         {{ companiesMap[row.companyId]?.shortName }}
+      </template>
+      <template #frontShow="{ row }">
+        <Tag v-if="row.frontShow === 1" class="text-green-500">显示</Tag>
+        <Tag v-else class="text-gray-500" >隐藏</Tag>
       </template>
     </BasicTable>
     <CategoryModal ref="categoryModalRef" @success="handleSuccess" />

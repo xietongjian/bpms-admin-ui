@@ -1,8 +1,8 @@
-// import { BasicColumn, FormSchema } from '@/components/Table';
 import { LevelNoDefaultEnum, OrderNoDefaultEnum } from '#/enums/commonEnum';
 import { uploadInstitutionFile } from '#/api/institution/institution';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {z} from "@vben/common-ui";
 
 
 export const InstitutionColumns: VxeGridProps['columns'] = [
@@ -69,18 +69,15 @@ export const InstitutionSearchForm: FormSchema[] = [
       placeholder: '请输入名称/编码',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   {
     fieldName: 'categoryId',
     label: '',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: ()=> false,
+      triggerFields: [""]
+    }
   },
 ];
 
@@ -107,34 +104,29 @@ export const InstitutionModalForm: FormSchema[] = [
     fieldName: 'name',
     label: '名称',
     component: 'Input',
-    required: true,
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 20,
-        message: '字符长度不能大于20！',
-      },
-    ],*/
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(100, "字符长度不能大于100！")
   },
   {
     fieldName: 'level',
     label: '级别',
     component: 'InputNumber',
-    required: true,
     defaultValue: LevelNoDefaultEnum.VALUE,
     componentProps: {
       min: LevelNoDefaultEnum.MIN,
       max: LevelNoDefaultEnum.MAX,
     },
+    rules: 'required'
   },
   {
     fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
@@ -144,15 +136,16 @@ export const InstitutionModalForm: FormSchema[] = [
   },
   {
     fieldName: 'filePath',
-    slot: 'UploadFile',
+    // slot: 'UploadFile',
     label: '制度文件',
+    component: 'Upload'
     // rules: [{ required: true, trigger: 'change', message: '请选择上传文件' }],
   },
   {
     fieldName: 'privilegeRange',
     component: 'RadioGroup',
     label: '权限范围',
-    required: true,
+    rules: 'selectRequired',
     componentProps: {
       options: [
         {
@@ -167,7 +160,6 @@ export const InstitutionModalForm: FormSchema[] = [
     },
   },
   {
-    ifShow: ({ values }) => values?.['privilegeRange'] === '2',
     fieldName: 'deptRangeData',
     label: '部门',
     component: 'OrgSelector',
@@ -176,14 +168,18 @@ export const InstitutionModalForm: FormSchema[] = [
       selectType: '2',
       placeholder: '请选择可见部门',
     },
+    dependencies: {
+      show: ({ values }) => values?.['privilegeRange'] === '2',
+      triggerFields: ['deptRangeData']
+    },
     // componentProps: {
     //   treeNodeFilterProp: 'name',
     //   getPopupContainer: () => document.body,
     // },
-    required: true,
+    // required: true,
+    rules: 'selectRequired'
   },
   {
-    ifShow: ({ values }) => values?.['privilegeRange'] === '2',
     fieldName: 'positionRangeData',
     label: '岗位',
     component: 'PositionSelector',
@@ -195,6 +191,10 @@ export const InstitutionModalForm: FormSchema[] = [
     //   treeNodeFilterProp: 'name',
     //   getPopupContainer: () => document.body,
     // },
-    required: true,
+    dependencies: {
+      show: ({ values }) => values?.['privilegeRange'] === '2',
+      triggerFields: ['positionRangeData']
+    },
+    rules: 'selectRequired'
   },
 ];

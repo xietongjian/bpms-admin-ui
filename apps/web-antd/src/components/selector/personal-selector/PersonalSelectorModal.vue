@@ -47,7 +47,7 @@
         </div>
 
         <div ref="tableContainerRef" class="bg-card border flex-1">
-          {{height-170}}
+          {{height-170}} - {{multiSelect}}
           <Table
               size="small"
               :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)"
@@ -165,6 +165,7 @@ const [BasicModal, modalApi] = useVbenModal({
         selectedRowKeyList.value = [];
       }
 
+      debugger;
       multiSelect.value = multiple;
 
       await fetchTreeData();
@@ -190,12 +191,14 @@ const currentNode = ref({});
 // const userStore = useUserStore();
 const treeRef = ref<any>(null);
 
-const rowSelection = {
+const rowSelection = computed(() => {
+  return {
     preserveSelectedRowKeys: true,
-    type: multiSelect ? 'checkbox' : 'radio',
+    type: multiSelect.value ? 'checkbox' : 'radio',
     selectedRowKeys: selectedRowKeyList,
     onChange: onSelectChange,
-};
+  }
+});
 
 function getTree() {
   const tree = unref(treeRef);

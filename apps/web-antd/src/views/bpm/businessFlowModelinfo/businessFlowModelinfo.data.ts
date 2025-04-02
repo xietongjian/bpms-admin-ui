@@ -35,6 +35,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'status',
     width: 80,
     align: 'left',
+    slots: {default: 'status'},
     customRender: ({ record }) => {
       const { status } = record;
       let statusName = '待发布';

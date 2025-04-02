@@ -4,6 +4,7 @@ import { Tag } from 'ant-design-vue';
 import { h } from 'vue';
 // import { DescItem } from '@/components/Description';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
+import {z} from "@vben/common-ui";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -35,18 +36,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'status',
     width: 80,
     align: 'center',
-    customRender: ({ record }) => {
-      const { status } = record;
-      let statusName = '待发布';
-      let color = '';
-      if (~~status === 0) {
-        color = 'yellow';
-      } else if (~~status === 1) {
-        color = 'green';
-        statusName = '已发布';
-      }
-      return h(Tag, { color: color }, () => statusName);
-    },
+    slots: { default: 'status'}
   },
   {
     title: '创建时间',
@@ -134,62 +124,49 @@ export const formSchema: FormSchema[] = [
     fieldName: 'id',
     label: 'ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'pid',
     label: '父id',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['pid']
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
     component: 'Input',
-    required: true,
-    rules: [
-      {
-        whitespace: true,
-        required: true,
-        message: '名称不能为空！',
-      },
-      {
-        pattern: new RegExp('^.{1,64}$'),
-        type: 'string',
-        message: '字符长度不能大于64！',
-      },
-    ],
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(64, "名称不能大于64个字符"),
   },
   {
     fieldName: 'code',
     label: '编号',
     component: 'Input',
-    required: true,
-    rules: [
-      {
-        whitespace: true,
-        required: true,
-        message: '编号不能为空！',
-      },
-      {
-        pattern: new RegExp('^.{1,64}$'),
-        type: 'string',
-        message: '编号长度不能大于64！',
-      },
-    ],
+    rules: z
+        .string({
+          required_error: '编号不能为空',
+        })
+        .trim()
+        .min(1, "编号不能为空")
+        .max(64, "编号不能大于64个字符"),
   },
   {
     label: '流程层级',
     fieldName: 'level',
     component: 'Input',
-    required: true,
-    rules: [
-      {
-        whitespace: true,
-        required: true,
-        message: '流程层级不能为空！',
-      },
-    ],
+    rules: 'required'
   },
   {
     label: '流程描述',
@@ -309,12 +286,12 @@ export const authSettingFormSchema: FormSchema[] = [
   {
     fieldName: 'businessFlowId',
     label: 'ID',
-    required: true,
     component: 'Input',
     dependencies: {
       show: () => false,
       triggerFields: [""]
-    }
+    },
+    rules: 'required'
   },
   {
     fieldName: 'authType',
@@ -338,6 +315,7 @@ export const authSettingFormSchema: FormSchema[] = [
       title: '选择岗位',
       multiple: true,
     },
+
     required: ({ values }) => {
       return false;
       return values.authType === '0';
@@ -412,19 +390,13 @@ export const businessFlowApplyFormSchema: FormSchema[] = [
     fieldName: 'name',
     label: '名称',
     component: 'Input',
-    required: true,
-    rules: [
-      {
-        whitespace: true,
-        required: true,
-        message: '名称不能为空！',
-      },
-      {
-        pattern: new RegExp('^.{1,64}$'),
-        type: 'string',
-        message: '字符长度不能大于64！',
-      },
-    ],
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(64, "名称不能大于64个字符")
   },
   {
     fieldName: 'businessFlowId',
@@ -439,7 +411,7 @@ export const businessFlowApplyFormSchema: FormSchema[] = [
     fieldName: 'frameworkId',
     label: '所属架构',
     component: 'Input',
-    required: true,
+    rules: 'required',
     dependencies: {
       show: () => false,
       triggerFields: [""]
@@ -471,12 +443,11 @@ export const businessFlowApplyFormSchema: FormSchema[] = [
   {
     fieldName: 'ownerCode',
     label: '流程Owner',
-    required: true,
+    rules: 'selectRequired',
     component: 'PersonalSelector',
     componentProps: {
       multiple: false,
       title: '选择流程拥有者',
-      selectedList: [],
     },
   },
   {

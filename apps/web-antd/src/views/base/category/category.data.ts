@@ -1,7 +1,6 @@
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
 import { checkEntityExist } from '#/api/base/category';
 
@@ -37,13 +36,9 @@ export const columns: VxeGridProps['columns'] = [
     title: '前台显示',
     field: 'frontShow',
     width: 80,
-    /*customRender: ({ record }) => {
-      const status = record.frontShow;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '显示' : '隐藏';
-      return h(Tag, { color: color }, () => text);
-    },*/
+    slots: {
+      default: 'frontShow'
+    }
   },
   {
     title: '排序',

@@ -2,9 +2,7 @@ import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { checkEntityExist } from '#/api/base/systemConfig';
-
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
-
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -87,7 +85,6 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'configName',
     label: '名称',
-    required: true,
     component: 'Input',
     rules: z
         .string({
@@ -96,28 +93,17 @@ export const formSchema: FormSchema[] = [
         .trim()
         .min(1, "名称不能为空")
         .max(30, "字符长度不能大于30！")
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 30,
-        message: '字符长度不能大于30！',
-      },
-    ],*/
   },
   {
     fieldName: 'configSn',
     label: '标识',
-    required: true,
+    rules: 'required',
     component: 'Input',
   },
   {
     fieldName: 'configKey',
     label: '配置Key',
-    required: true,
+    rules: 'required',
     component: 'Input',
   },
   {

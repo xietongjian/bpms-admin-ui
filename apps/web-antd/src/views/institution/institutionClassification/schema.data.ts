@@ -1,6 +1,7 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import { OrderNoDefaultEnum } from '#/enums/commonEnum';
+import {FormValidPatternEnum, OrderNoDefaultEnum} from '#/enums/commonEnum';
+import {z} from "@vben/common-ui";
 
 export const InstitutionalClassificationColumns: VxeGridProps['columns'] = [
   {
@@ -15,7 +16,7 @@ export const InstitutionalClassificationColumns: VxeGridProps['columns'] = [
     title: '编码',
     field: 'code',
     align: 'left',
-    width: 100,
+    minWidth: 100,
     resizable: true,
   },
   {
@@ -66,7 +67,6 @@ export const InstitutionalClassificationFormSchema: FormSchema[] = [
   {
     fieldName: 'pid',
     label: 'pid',
-    required: false,
     component: 'Input',
     dependencies: {
       show: () => false,
@@ -76,33 +76,38 @@ export const InstitutionalClassificationFormSchema: FormSchema[] = [
   {
     fieldName: 'name',
     label: '名称',
-    required: true,
     component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 64,
-        message: '字符长度不能大于64！',
-      },
-    ],*/
-    colProps: {
-      span: 24,
+    componentProps: {
+      placeholder: '请输入名称'
     },
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(64, "字符长度不能大于64！")
   },
   {
     fieldName: 'code',
     label: '编码',
-    required: true,
     component: 'Input',
+    componentProps: {
+      placeholder: '请输入编码'
+    },
+    rules: z
+        .string({
+          required_error: '编码不能为空',
+        })
+        .trim()
+        .min(1, "编码不能为空")
+        .max(60, "字符长度不能大于60！")
+        .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字（以英文或下划线开头）！'),
   },
   {
     fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
+    help: '数值越小越靠前！',
     component: 'InputNumber',
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {

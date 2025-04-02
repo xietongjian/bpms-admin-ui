@@ -1,7 +1,8 @@
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import { FormValidPatternEnum, RemarkDefaultEnum, OrderNoDefaultEnum } from '#/enums/commonEnum';
+import { FormValidPatternEnum, OrderNoDefaultEnum } from '#/enums/commonEnum';
+import { checkEntityExist } from '#/api/base/dicType';
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -69,25 +70,52 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'name',
     label: '名称',
-    required: true,
     component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 64,
-        message: '字符长度不能大于64！',
-      },
-    ],*/
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(64, "字符长度不能大于64！")
   },
   {
     fieldName: 'code',
     label: '编码',
     // required: true,
     component: 'Input',
+    dependencies: {
+      rules(values) {
+        const { id, code } = values;
+        return z
+            .string({
+              required_error: "编码不能为空！"
+            })
+            .min(1, "编码不能为空！")
+            .max(30, '字符长度不能大于30！')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'code',
+                      fieldValue: code || '',
+                      fieldName: '编码',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '编码已存在',
+                },
+            );
+      },
+      triggerFields: ['code'],
+    },
   },
   {
     fieldName: 'orderNo',

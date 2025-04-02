@@ -3,11 +3,6 @@ import {FormValidPatternEnum, OrderNoDefaultEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {checkEntityExist, getIconCategoryTreeData} from "#/api/base/iconInfo";
-// import {uploadApi} from "#/api/sys/upload";
-
-const colProps = {
-  span: 24,
-};
 export const columns: VxeGridProps['columns'] = [
   {
     title: '图标名称',
@@ -45,12 +40,6 @@ export const searchFormSchema: FormSchema[] = [
       allowClear: true,
     },
     labelWidth: 60,
-    colProps: {
-      span: 8,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -186,25 +175,4 @@ export const iconInfoFormSchema: FormSchema[] = [
     label: '图标',
     component: 'Input',
   },
-  /*{
-    field: 'icon',
-    label: '图标',
-    required: false,
-    component: 'ImageUpload',
-    show: true,
-    componentProps: {
-      api: uploadApi,
-      name: 'file',
-      maxCount: 1,
-      listType: 'picture-card',
-      maxSize: 1,
-      maxNumber: 1,
-      multiple: false,
-      helpText: '(仅支持gif,png)大小不超过1M，建议上传尺寸(像素)：200px*200px',
-      accept: ['gif', 'png'],
-    },
-    colProps: {
-      span: 12,
-    },
-  },*/
 ];

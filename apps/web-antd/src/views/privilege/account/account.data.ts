@@ -1,8 +1,23 @@
-// import { BasicColumn, FormSchema } from '@/components/Table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {z} from "@vben/common-ui";
 import { getAllList } from '#/api/privilege/group';
+
+/**
+ * 性别列表
+ */
+const SixList = [
+  {label: '男', value: 1},
+  {label: '女', value: 0},
+];
+
+/**
+ * 用户类型
+ */
+const UserTypeList = [
+  {label: '普通用户', value: 0},
+  {label: '管理员', value: 1},
+];
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -99,10 +114,7 @@ export const accountFormSchema: FormSchema[] = [
     component: 'RadioGroup',
     defaultValue: 0,
     componentProps: {
-      options: [
-        {label: '普通用户', value: 0},
-        {label: '管理员', value: 1},
-      ],
+      options: UserTypeList,
     },
   },
   {
@@ -113,29 +125,39 @@ export const accountFormSchema: FormSchema[] = [
   },
   {
     fieldName: 'realName',
-    label: '用户名',
+    label: '姓名',
     component: 'Input',
-    // dependencies: {
-    //   show: false,
-    //   triggerFields: ['']
-    // }
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'realNameSelector',
-    label: '姓名',
-    // rules: 'required',
-    // component: 'PersonalSelector',
-    component: 'Input',
+    label: '关联人员',
+    rules: 'selectRequired',
+    component: 'PersonalSelector',
+    componentProps: {
+      placeholder: '请选择人员',
+      multiple: false,
+      type: 'personal',
+      closeOnSelect: false,
+      selectOnModal: true,
+    }
   },
   {
     fieldName: 'headImg',
     label: '头像',
-    component: 'Input',
-    // slot: 'headImg',
-    colProps: {
-      style: 'margin: auto;position: absolute;right: 20px;',
-      span: 10,
+    component: 'Upload',
+    componentProps: {
+      name: "avatar",
+      listType: "picture-card",
+      class: "avatar-uploader",
+      accept: '',
+      maxCount: 1,
     },
+    formItemClass: '[&_.ant-upload-select]:!block',
+    // slot: 'headImg',
   },
   {
     fieldName: 'sex',
@@ -143,10 +165,7 @@ export const accountFormSchema: FormSchema[] = [
     component: 'RadioGroup',
     defaultValue: 1,
     componentProps: {
-      options: [
-        {label: '男', value: 1},
-        {label: '女', value: 0},
-      ],
+      options: SixList,
     },
   },
   {
@@ -194,23 +213,6 @@ export const passwordFormSchema: FormSchema[] = [
       .min(6, "长度必需在6-32之间！")
       .max(32, "长度必需在6-32之间！")
       .regex(new RegExp('[^\\u4e00-\\u9fa5]+'), "密码不能输入汉字！"),
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '请输入密码！',
-      },
-      {
-        pattern: new RegExp('[^\\u4e00-\\u9fa5]+'),
-        type: 'string',
-        message: '密码不能输入汉字！',
-      },
-      {
-        min: 6,
-        max: 32,
-        message: '长度必需在6-32之间！',
-      },
-    ],*/
   },
   {
     fieldName: 'confirmPassword',

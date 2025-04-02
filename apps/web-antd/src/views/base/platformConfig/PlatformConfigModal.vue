@@ -23,7 +23,6 @@
       }
     },
     onConfirm() {
-      // await formApi.submitForm();
       handleSubmit();
     },
   });

@@ -66,22 +66,6 @@ export const formSchema: FormSchema[] = [
         .min(1, "控件类型不能为空")
         .max(30, "字符长度不能大于30！")
         .regex(new RegExp(FormValidPatternEnum.FIELD_NAME_SN), '请输入英文或数字（以英文或下划线开头）！'),
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '不能为空！',
-      },
-      {
-        pattern:
-        type: 'string',
-        message: ,
-      },
-      {
-        max: 30,
-        message: '字符长度不能大于30！',
-      },
-    ],*/
   },
   {
     fieldName: 'makType',

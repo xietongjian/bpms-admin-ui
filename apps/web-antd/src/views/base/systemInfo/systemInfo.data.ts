@@ -65,7 +65,7 @@ export const formSchema: FormSchema[] = [
     fieldName: 'name',
     label: '名称',
     component: 'Input',
-    compnentProps: {
+    componentProps: {
       placeholder: '请输入名称',
     },
     rules: z

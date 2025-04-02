@@ -38,7 +38,7 @@ const formOptions: VbenFormProps = {
   wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
 };
 
-const gridOptions: VxeGridProps<any> = {
+const gridOptions: VxeGridProps = {
   checkboxConfig: {
     highlight: true,
     labelField: 'name',
@@ -75,26 +75,24 @@ const gridOptions: VxeGridProps<any> = {
 const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 function handleCreate() {
-  // setModalProps({ title: '新增制度分类' });
-  // openModal(true, { isUpdate: false });
   classificationModalRef.value.setData({});
   classificationModalRef.value.setState({title: '新增制度分类'});
   classificationModalRef.value.open();
 }
 
-function handleCreateChild(record: Recordable) {
+function handleCreateChild(record: Recordable<any>) {
   classificationModalRef.value.setData({ pid: record.id });
   classificationModalRef.value.setState({title: '新增【' + record.name + '】的子分类'});
   classificationModalRef.value.open();
 }
 
-function handleEdit(record: Recordable) {
+function handleEdit(record: Recordable<any>) {
   classificationModalRef.value.setData(record);
   classificationModalRef.value.setState({title: '修改制度分类'});
   classificationModalRef.value.open();
 }
 
-async function handleDelete(record: Recordable) {
+async function handleDelete(record: Recordable<any>) {
   if (record.children && record.children.length > 0) {
     message.warning('有子分类，不能删除！');
     return Promise.reject();
@@ -102,7 +100,7 @@ async function handleDelete(record: Recordable) {
   return deleteClassificationById(record.id).then(() => tableApi.reload());
 }
 
-const getTableActions = (record) => [
+const getTableActions = (record: Recordable<any>) => [
   {
     auth: [PerPrefix + PerEnum.ADD],
     tooltip: '添加子分类',
@@ -135,6 +133,7 @@ const getTableActions = (record) => [
 function handleSuccess() {
   tableApi.reload()
 }
+
 </script>
 
 <template>

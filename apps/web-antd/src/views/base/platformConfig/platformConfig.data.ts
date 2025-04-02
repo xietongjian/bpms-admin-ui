@@ -4,6 +4,11 @@ import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { checkEntityExist } from '#/api/base/platformConfig';
 
+const PlatformTypeList = [
+  { label: '钉钉', value: 'dingtalk' },
+  { label: '微信', value: 'weixin' },
+  { label: '飞书', value: 'feishu' },
+];
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -11,21 +16,9 @@ export const columns: VxeGridProps['columns'] = [
     field: 'type',
     align: 'left',
     width: 90,
-    /*customRender: ({ record }) => {
-      const { type } = record;
-      let typeName = '钉钉';
-      let color = '';
-      if (type === 'weixin') {
-        color = 'green';
-        typeName = '微信';
-      } else if (type === 'feishu') {
-        color = 'lime';
-        typeName = '飞书';
-      } else {
-        color = 'blue';
-      }
-      return h(Tag, { color: color }, () => typeName);
-    },*/
+    slots: {
+      default: 'type'
+    }
   },
   {
     title: 'appKey',
@@ -101,29 +94,20 @@ export const formSchema: FormSchema[] = [
     rules: 'selectRequired',
     component: 'Select',
     componentProps: {
-      options: [
-        { label: '钉钉', value: 'dingtalk' },
-        { label: '微信', value: 'weixin' },
-        { label: '飞书', value: 'feishu' },
-      ],
+      options: PlatformTypeList,
     },
   },
   {
     fieldName: 'appKey',
     label: 'appKey',
-    // required: true,
     component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: 'appKey不能为空！',
-      },
-      {
-        max: 32,
-        message: 'appKey长度不能大于32！',
-      },
-    ],*/
+    rules: z
+        .string({
+          required_error: 'appKey不能为空',
+        })
+        .trim()
+        .min(1, "appKey不能为空")
+        .max(32, "字符长度不能大于32！")
   },
   {
     fieldName: 'appSecret',
@@ -144,19 +128,14 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'returnUrl',
     label: '回调地址',
-    required: true,
     component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '回调地址不能为空！',
-      },
-      {
-        max: 128,
-        message: '字符长度不能大于128！',
-      },
-    ],*/
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(128, "字符长度不能大于128！")
   },
   {
     fieldName: 'agentId',

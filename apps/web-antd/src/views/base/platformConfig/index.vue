@@ -36,6 +36,11 @@
         </a>
         {{ row.corpId }}
       </template>
+      <template #type="{row}">
+        <Tag class="text-green-500" v-if="row.type === 'weixin'">微信</Tag>
+        <Tag class="text-lime-500" v-if="row.type === 'feishu'">飞书</Tag>
+        <Tag class="text-blue-500" v-if="row.type === 'dingtalk'">钉钉</Tag>
+      </template>
     </BasicTable>
     <PlatformConfigModal ref="platformConfigModalRef" @register="registerModal" @success="handleSuccess"/>
   </Page>
@@ -47,22 +52,17 @@ import type {Recordable} from '@vben/types';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {PerEnum} from "#/enums/perEnum";
-import {Button, message} from 'ant-design-vue';
+import {Button, Tag, message} from 'ant-design-vue';
 import {TableAction} from '#/components/table-action';
-
 import {Page} from '@vben/common-ui';
-
 import {getPlatformConfigListByPage, deleteByIds} from '#/api/base/platformConfig';
 import PlatformConfigModal from './PlatformConfigModal.vue';
 import {columns, searchFormSchema} from './platformConfig.data';
-// import { copyText } from '@/utils/copyTextToClipboard';
 import {CopyOutlined} from '@ant-design/icons-vue';
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
 import { useClipboard } from '@vueuse/core';
 
 const { copy } = useClipboard({ legacy: true });
-
-
 const PerPrefix = "PlatformConfig:";
 const platformConfigModalRef = ref();
 /*const [registerModal, { openModal, setModalProps }] = useModal();

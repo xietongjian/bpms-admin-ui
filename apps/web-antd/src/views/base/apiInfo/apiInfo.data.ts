@@ -2,7 +2,7 @@ import { OrderNoDefaultEnum, RemarkDefaultEnum, FormValidPatternEnum } from '#/e
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-
+import {CodeEditor, MODE} from '#/components/CodeEditor';
 // import { CodeEditor, MODE } from '#/components/CodeEditor';
 
 import { Tag } from 'ant-design-vue';
@@ -93,12 +93,12 @@ export const searchFormSchema: FormSchema[] = [
       allowClear: true,
     },
     labelWidth: 60,
-    colProps: {
+    /*colProps: {
       span: 8,
       lg: { span: 8, offset: 0 },
       sm: { span: 10, offset: 0 },
       xs: { span: 16, offset: 0 },
-    },
+    },*/
   },
 ];
 
@@ -116,35 +116,28 @@ export const apiCategoryFormSchema: FormSchema[] = [
     fieldName: 'pid',
     label: '父级分类',
     component: 'TreeSelect',
-    show: ({ values }) => {
-      return !!values.pid && !values.id;
-    },
     componentProps: {
+      show: ({ values }) => {
+        return !!values.pid && !values.id;
+      },
       fieldNames: {
         label: 'name',
         value: 'id',
       },
       getPopupContainer: () => document.body,
     },
-    colProps: { span: 24 },
   },
   {
     fieldName: 'name',
     label: '分类名称',
-    required: true,
     component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '分类名称不能为空！',
-      },
-      {
-        max: 255,
-        message: '分类名称长度不能大于255！',
-      },
-    ],*/
-    colProps,
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(255, "字符长度不能大于255！")
   },
   {
     fieldName: 'orderNo',
@@ -180,7 +173,7 @@ export const apiInfoFormSchema: FormSchema[] = [
       },
       getPopupContainer: () => document.body,
     },
-    colProps: { span: 16 },
+    // colProps: { span: 16 },
     rules: 'selectRequired'
   },
   {
@@ -193,18 +186,6 @@ export const apiInfoFormSchema: FormSchema[] = [
         })
         .min(1, {message: '名称不能为空！'})
         .max(255, {message: '字符长度不能大于255！'}),
-
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 255,
-        message: '名称长度不能大于255！',
-      },
-    ],*/
   },
   {
     fieldName: 'remark',
@@ -220,13 +201,12 @@ export const apiInfoFormSchema: FormSchema[] = [
   {
     fieldName: 'method',
     label: '请求地址',
-    required: true,
     defaultValue: 'GET',
-    fields: ['url'],
+    // fields: ['url'],
     // defaultValueObj: { method: 'GET', url: ''},
     component: 'Input',
-    slot: 'urlSlot',
-    colProps,
+    // slot: 'urlSlot',
+    rules: 'required'
   },
   {
     fieldName: 'headers',
@@ -237,14 +217,12 @@ export const apiInfoFormSchema: FormSchema[] = [
     fieldName: 'pathVariables',
     label: '路径参数',
     slot: 'pathVariablesSlot',
-    colProps,
   },
   {
     fieldName: 'queryVariables',
     label: '查询参数',
     slot: 'queryVariablesSlot',
     component: 'Input',
-    colProps,
   },
   {
     fieldName: 'requestBody',
