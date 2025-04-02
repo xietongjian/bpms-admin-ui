@@ -11,12 +11,10 @@
         <Tag v-if="row.type === 'sc'" color="#87d068">微服务</Tag>
         <Tag v-else color="#108ee9">RestFull</Tag>
       </template>
-      <template #method="{row}">
-        <Tag v-if="row.type === 'GET'" color="#108ee9">GET</Tag>
-        <Tag v-else color="#87d068">POST</Tag>
+      <template #name="{ row }">
+        {{row.name}}
       </template>
-
-<!--      <template #expandedRowRender="{ row }">
+      <template #nameContent="{row}">
         <div v-if="row.type === 'sc'">
           <Descriptions :title="null" size="small">
             <DescriptionsItem label="请求地址" :span="3">{{ row.url || '-' }}</DescriptionsItem>
@@ -48,13 +46,17 @@
             </DescriptionsItem>
           </Descriptions>
         </div>
-      </template>-->
+      </template>
+      <template #method="{row}">
+        <Tag v-if="row.type === 'GET'" color="#108ee9">GET</Tag>
+        <Tag v-else color="#87d068">POST</Tag>
+      </template>
     </BasicTable>
-    <BizTokenConfigDrawer ref="bizTokenConfigDrawerRef" @register="registerDrawer" @success="handleSuccess" />
+    <BizTokenConfigDrawer ref="bizTokenConfigDrawerRef" @success="handleSuccess" />
   </Page>
 </template>
 <script lang="ts" setup>
-  import { onMounted } from 'vue';
+  import { onMounted, ref } from 'vue';
   import { PerEnum } from '#/enums/perEnum';
 
   import type {VxeGridProps} from '#/adapter/vxe-table';
@@ -70,6 +72,8 @@
   import { columns, searchFormSchema } from './bizTokenConfig.data';
   import BizTokenConfigDrawer from './BizTokenConfigDrawer.vue';
 
+  const bizTokenConfigDrawerRef = ref();
+
   const DescriptionsItem = Descriptions.Item;
   const PerPrefix= 'BizTokenConfig:';
   const formOptions: VbenFormProps = {
@@ -78,7 +82,8 @@
     commonConfig: {
       labelWidth: 60,
     },
-    wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+    wrapperClass: 'grid-cols-2 md:grid-cols-1 lg:grid-cols-3',
+    actionWrapperClass: 'col-span-2 col-start-3 text-left ml-4',
     resetButtonOptions: {
       show: false,
     },
@@ -92,16 +97,17 @@
     keepSource: true,
     border: false,
     stripe: true,
+    pagerConfig: {
+      enabled: false,
+    },
+    expandConfig: {
+      padding: true,
+      trigger: 'row',
+    },
     proxyConfig: {
       ajax: {
-        query: async ({page}, formValues) => {
-          return getAll({
-            query: {
-              pageNum: page.currentPage,
-              pageSize: page.pageSize,
-            },
-            entity: formValues || {},
-          });
+        query: async ({}, formValues) => {
+          return getAll(formValues);
         },
       },
     },
@@ -133,65 +139,31 @@
       },
     ];
   }
-  /*const [registerDrawer, { openDrawer, setDrawerProps }] = useDrawer();
 
-  const [registerTable, { reload, getForm }] = useTable({
-    title: '列表',
-    api: getAll,
-    columns,
-    expandRowByClick: true,
-    formConfig: {
-      labelWidth: 100,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      showSubmitButton: true,
-      autoSubmitOnEnter: false,
-    },
-    pagination: false,
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: true,
-    showIndexColumn: true,
-    actionColumn: {
-      width: 140,
-      title: '操作',
-      dataIndex: 'action',
-    },
-  });
-*/
   onMounted(() => {
     // const {updateSchema, getFieldsValue} = getForm();
   });
 
-  function handleCreate() {
-    const { getFieldsValue } = getForm();
-    const value = getFieldsValue();
-    openDrawer(true, {
-      isUpdate: false,
-      record: value,
-    });
-    setDrawerProps({
-      // centered: true,
-      width: 800,
-    });
+  async function handleCreate() {
+    const { getValues } = tableApi.formApi;
+    const value = await getValues();
+
+    bizTokenConfigDrawerRef.value.setData(value);
+    bizTokenConfigDrawerRef.value.setState();
+    bizTokenConfigDrawerRef.value.open();
   }
 
   function handleEdit(record: Recordable<any>, e) {
     e.stopPropagation();
-    openDrawer(true, {
-      record,
-      isUpdate: true,
-    });
-    setDrawerProps({
-      // centered: true,
-      width: 800,
-    });
+
+    bizTokenConfigDrawerRef.value.setData(record);
+    bizTokenConfigDrawerRef.value.setState();
+    bizTokenConfigDrawerRef.value.open();
   }
 
-  function handleDelete(record: Recordable<any>, e) {
+  async function handleDelete(record: Recordable<any>, e) {
     e.stopPropagation();
-    const {success, msg} = deleteBusinessTokenById({ id: record.id });
+    const {success, msg} = await deleteBusinessTokenById({ id: record.id });
     if(success){
       tableApi.reload();
       message.success(msg)

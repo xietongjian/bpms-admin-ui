@@ -6,8 +6,8 @@ enum Api {
   DeleteBusinessTokenById = '/flow/bpmnDesigner/prod/api/deleteBusinessTokenById',
 }
 export const getAll = (params?: any) => {
-  return requestClient.post( Api.GetAll, params).then((res: any) => {
-    res.forEach((item) => {
+  return requestClient.post(Api.GetAll, params).then((res: any) => {
+    res.forEach((item: any) => {
       item.label = item.name;
       item.value = item.sn;
     });

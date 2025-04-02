@@ -49,9 +49,9 @@
       const values = await formApi.getValues();
       const {success, msg} = await saveOrUpdate(values);
       if(success){
+        message.success(msg);
         modalApi.close();
         emit('success');
-        message.success(msg);
       }else{
         message.error(msg);
       }

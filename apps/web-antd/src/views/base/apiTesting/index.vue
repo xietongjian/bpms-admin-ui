@@ -17,6 +17,7 @@
           toolbar
           search
           block-node
+          showIcon
           treeWrapperClassName="h-[calc(100%-35px)] overflow-auto"
           :clickRowToExpand="false"
           :treeData="apiInfoTreeData"

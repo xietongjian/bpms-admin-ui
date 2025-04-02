@@ -24,18 +24,23 @@ const ServerTypeList = [
 
 export const columns: VxeGridProps['columns'] = [
   {
-    title: '接口类型',
-    field: 'type',
-    width: 80,
-    align: 'center',
-    slots: {default: 'type'},
-  },
-  {
     title: '名称',
     minWidth: 200,
     field: 'name',
     align: 'left',
     resizable: true,
+    type: 'expand',
+    slots: {
+      default: 'name',
+      content: 'nameContent',
+    },
+  },
+  {
+    title: '接口类型',
+    field: 'type',
+    width: 100,
+    align: 'center',
+    slots: {default: 'type'},
   },
 
   {
@@ -109,20 +114,15 @@ export const formSchema: FormSchema[] = [
   },
   {
     fieldName: 'type',
-    component: 'RadioButtonGroup',
+    component: 'Select',
     label: '服务类型',
     defaultValue: 'sc',
-    componentProps: ({schema, formModel, formActionType}) => {
-      return {
-        options: ServerTypeList,
-        onChange: (val) => {
-          formActionType.updateSchema([
-            { fieldName: 'serviceId', required: val === 'sc', componentProps: { show: val==='sc'  } },
-
-          ]);
-        },
-      };
+    componentProps: {
+      placeholder: '请选择服务类型',
+      options: ServerTypeList
     },
+    rules: 'selectRequired',
+    wrapperClass: 'w-full'
   },
   {
     fieldName: 'name',
@@ -141,12 +141,14 @@ export const formSchema: FormSchema[] = [
     label: 'ServiceId',
     component: 'Input',
     dependencies: {
-      show: ({ values }) => {
+      show: (values) => {
         return values.type === 'sc';
       },
-      triggerFields: ['serviceId']
+      required(values) {
+        return values.type === 'sc';
+      },
+      triggerFields: ['type'],
     },
-    rules: 'required'
   },
   {
     fieldName: 'url',
@@ -162,7 +164,7 @@ export const formSchema: FormSchema[] = [
   },
   {
     fieldName: 'method',
-    component: 'RadioButtonGroup',
+    component: 'Radio',
     label: '请求方式',
     rules: 'selectRequired',
     defaultValue: '',
@@ -243,7 +245,7 @@ export const formSchema: FormSchema[] = [
     label: '注册地址',
     component: 'Input',
     dependencies: {
-      show: ({ values }) => {
+      show: (values) => {
         return values.type === 'sc';
       },
       triggerFields: ['serverAddr']
@@ -254,7 +256,7 @@ export const formSchema: FormSchema[] = [
     label: '命名空间',
     component: 'Input',
     dependencies: {
-      show: ({ values }) => {
+      show: (values) => {
         return values.type === 'sc';
       },
       triggerFields: ['namespaceId']
@@ -265,7 +267,7 @@ export const formSchema: FormSchema[] = [
     label: '组名',
     component: 'Input',
     dependencies: {
-      show: ({ values }) => {
+      show: (values) => {
         return values.type === 'sc';
       },
       triggerFields: ['groupName']
