@@ -1,10 +1,11 @@
-import { h } from 'vue';
+import { h , markRaw} from 'vue';
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 
 import {FormValidPatternEnum, RemarkDefaultEnum} from '#/enums/commonEnum';
 import { CodeEditor, MODE } from '#/components/CodeEditor';
+import RequestUrl from './component/request-url.vue';
 
 
 const ServerTypeList = [
@@ -153,16 +154,31 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'url',
     label: '请求地址',
-    component: 'Input',
-    rules: z
+    component: markRaw(RequestUrl),
+    disabledOnChangeListener: false,
+    defaultValue: ['GET', ''],
+    /*rules: z
         .string({
           required_error: 'URL不能为空',
         })
         .trim()
         .min(1, "URL不能为空")
-        .max(255, "字符长度不能大于255！")
+        .max(255, "字符长度不能大于255！"),*/
+    rules: z
+      .array(z.string().optional())
+      .length(2, '请选择请求方式并输入请求地址')
+      .refine((v) => !!v[0], {
+        message: '请选择请求方式',
+      })
+      .refine((v) => !!v[1] && v[1] !== '', {
+        message: '　　　　　　　　 输入请求URL',
+      })
+      .refine((v) => v[1]?.match(new RegExp(FormValidPatternEnum.URL)), {
+        // 使用全角空格占位，将错误提示文字挤到手机号码输入框的下面
+        message: '　　　　　　　　 URL格式不正确',
+      }),
   },
-  {
+  /*{
     fieldName: 'method',
     component: 'Radio',
     label: '请求方式',
@@ -183,7 +199,7 @@ export const formSchema: FormSchema[] = [
         console.log(e);
       },
     },
-  },
+  },*/
   {
     fieldName: 'params',
     label: '请求参数',

@@ -5,7 +5,9 @@
       showFooter
       @ok="handleSubmit"
   >
-    <BasicForm/>
+    <BasicForm>
+
+    </BasicForm>
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
