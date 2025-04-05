@@ -55,7 +55,7 @@
           </div>
         </template>
         <template #action>
-          <div class="flex flex-row flex-grow-1 flex-1">
+          <div class="flex flex-row flex-grow-1 flex-1 items-center">
             <div class="action-bar-left w-full text-left">
               <BasicForm class="w-full"/>
             </div>
@@ -160,16 +160,17 @@ async function handleSubmit() {
   if (!valid) {
     return;
   }
-  const formJson = unref(makingFormRef).getJSON();
-  const formModels = unref(makingFormRef).getFormModels()
-  console.log(formModels);
-  const values = await formApi.getValues();
-  const params = {
-    formJson,
-    ...values
-  };
   try {
     changeLoading(true);
+    const formJson = unref(makingFormRef).getJSON();
+    const formModels = unref(makingFormRef).getFormModels()
+    console.log(formModels);
+    const values = await formApi.getValues();
+    const params = {
+      formJson,
+      ...values
+    };
+    
     saveLoading.value = true;
     const {success, msg, data} = await saveOrUpdate(params);
     if (success) {

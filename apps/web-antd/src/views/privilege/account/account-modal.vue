@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {defineExpose, defineEmits} from 'vue';
+import {defineExpose, defineEmits, ref} from 'vue';
 import {useVbenModal} from '@vben/common-ui';
 import {message} from 'ant-design-vue';
 import {accountFormSchema} from './account.data';
@@ -25,17 +25,14 @@ const [BasicModal, modalApi] = useVbenModal({
     }
   },
   onConfirm() {
-    // await baseFormApi.submitForm();
     handleSubmit();
   },
 });
 
 const [BasicForm, baseFormApi] = useVbenForm({
-  // 所有表单项共用，可单独在表单内覆盖
   commonConfig: {
-    // 所有表单项
     componentProps: {
-      // class: 'w-full',
+      class: 'w-full',
     },
   },
   showDefaultActions: false,
@@ -58,8 +55,12 @@ async function handleSubmit() {
       } else {
         message.error(msg);
       }
-    } catch (e) {
-      message.error(e);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        message.error(error.message);
+      } else {
+        message.error('An unknown error occurred');
+      }
     } finally {
       modalApi.setState({loading: false, confirmLoading: false});
     }
@@ -69,11 +70,21 @@ async function handleSubmit() {
 
 defineExpose(modalApi);
 </script>
+
 <template>
   <BasicModal class="w-[600px]">
     <BasicForm/>
   </BasicModal>
 </template>
+
+<style lang="scss" scoped>
+.avatar-uploader {
+  :deep(.ant-upload) {
+    width: 100px;
+    height: 100px;
+  }
+}
+</style>
 
 
 

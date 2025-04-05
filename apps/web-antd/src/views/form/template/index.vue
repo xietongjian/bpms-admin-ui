@@ -45,6 +45,21 @@
         <template #categoryCode="{row}">
           {{ formCategoryDataMap[row.categoryCode]?.name || '-' }}
         </template>
+        <template #status="{row}">
+          <Popconfirm
+            :title="row.status == 1 ? '确定要将状态改为未生效吗？' : '确定要将状态改为已生效吗？'"
+            @confirm="(e) => handleStatusChange(row, row.status != 1)"
+            okText="确定"
+            cancelText="取消"
+          >
+            <Switch 
+              :checked="row.status == 1" 
+              :checkedChildren="'已生效'" 
+              :unCheckedChildren="'未生效'"
+              :loading="row.pendingStatus"
+            />
+          </Popconfirm>
+        </template>
       </BasicTable>
     </div>
     <FormTemplateModal
@@ -69,25 +84,32 @@
   import { columns, searchFormSchema } from './formTemplate.data';
   import FormTemplateModal from './FormTemplateModal.vue';
 
-  import { getFormTemplateList, deleteById, getFormCategoryListData, deleteFormCategoryById } from '#/api/form/formTemplate';
-  import {Button, Tree, Col, Popconfirm, Row, Tooltip, message} from "ant-design-vue";
+  import { getFormTemplateList, deleteById, getFormCategoryListData, deleteFormCategoryById, updateStatusById } from '#/api/form/formTemplate';
+  import {Button, Tree, Col, Popconfirm, Row, Tooltip, message, Switch} from "ant-design-vue";
 
   import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons-vue";
   import {listToTree} from "#/utils/helper/treeHelper";
   import FormCategoryModal from "#/views/form/template/FormCategoryModal.vue";
+  import type { DataNode } from 'ant-design-vue/es/tree';
+
+  interface TreeNode extends DataNode {
+    id: string | number;
+    code: string;
+    name: string;
+    title?: string;
+    pid?: string | number;
+    orderNo?: number;
+    children?: TreeNode[];
+  }
 
   const formTemplateModalRef = ref();
   const formCategoryModalRef = ref();
   const PerPrefix = 'FormTemplate:';
 
   const treeLoading = ref(true);
-  const formCategoryTreeData = ref([]);
-  const currentNode = ref(undefined);
-  const formCategoryDataMap = ref<any>({});
-  // const [registerFormCategoryModal, {openModal: openFormCategoryModal, setModalProps: setFormCategoryModalProps}] = useModal();
-/*  const [openFullLoading, closeFullLoading] = useLoading({
-    tip: '加载中...',
-  });*/
+  const formCategoryTreeData = ref<TreeNode[]>([]);
+  const currentNode = ref<TreeNode | undefined>();
+  const formCategoryDataMap = ref<Record<string, TreeNode>>({});
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -140,31 +162,6 @@
   };
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
-
-  /*const [registerTable, { reload, getForm }] = useTable({
-    title: '列表',
-    api: getFormTemplateList,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: true,
-    showIndexColumn: true,
-    indexColumnProps: {
-      width: 50,
-    },
-    actionColumn: {
-      width: 100,
-      title: '操作',
-      dataIndex: 'action',
-    },
-  });*/
 
   function createActions (row: Recordable<any>) {
     return [
@@ -284,12 +281,10 @@
   }
   function handleAddFormTemplate() {
     formTemplateModalRef.value.setData({ categoryCode: currentNode.value?.code });
-    formTemplateModalRef.value.open();
     formTemplateModalRef.value.setState({
       title: '添加模板'
     });
-    // openModal(true, { categoryCode: currentNode.value?.code });
-    // setEditModalProps('添加模板');
+    formTemplateModalRef.value.open();
   }
 
   function handleEditFormTemplate(record: Recordable<any>) {
@@ -298,8 +293,6 @@
     formTemplateModalRef.value.setState({
       title: '添加模板'
     });
-    // openModal(true, record);
-    // setEditModalProps('编辑模板');
   }
 
   function handleCloseFunc() {
@@ -317,12 +310,28 @@
     });
   }
 
+  async function handleStatusChange(record: Recordable<any>, checked: boolean) {
+    if (!Reflect.has(record, 'pendingStatus')) {
+      record.pendingStatus = false;
+    }
+    record.pendingStatus = true;
+    const newStatus = checked ? 1 : 0;
+    try {
+      await updateStatusById(record.id, newStatus.toString());
+      record.status = newStatus;
+      message.success('修改状态成功');
+    } catch (error) {
+      message.error('修改状态失败');
+    } finally {
+      record.pendingStatus = false;
+    }
+  }
+
   async function handleDeleteCategory(node: any) {
     if(node.children && node.children.length>0){
       message.warning('该分类下有子分类，不允许删除');
       return;
     }
-    // openFullLoading();
     try {
       const {success, msg} = await deleteFormCategoryById(node.id);
       if(success){

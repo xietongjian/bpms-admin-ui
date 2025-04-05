@@ -5,7 +5,7 @@ import type {VbenFormProps} from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
 
 import {Page} from '@vben/common-ui';
-import {Button, Image, Tag, Space, Avatar, Tooltip, Popconfirm, message} from 'ant-design-vue';
+import {Button, Tag, Space, Avatar, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {getAccountPageList, deleteByIds} from '#/api/privilege/account';
 import {columns, searchFormSchema} from './account.data';
@@ -140,14 +140,9 @@ function handleSetPassword(record: Recordable<any>) {
 function handleSetGroup(record: Recordable<any>) {
   setGroupModalRef.value.setData(record);
   setGroupModalRef.value.open();
-/*  openSetGroupModal(true, {
-    record,
-    isUpdate: true,
-  });*/
 }
 
 function handlePasswordSuccess() {
-  // reload();
   tableApi.reload();
 }
 
@@ -160,10 +155,6 @@ function previewImageHandle(headImg) {
     previewImage.value = headImg;
     previewImageVisible.value = true;
   }
-}
-
-function previewImageVisibleChange(visible, prevVisible) {
-  previewImageVisible.value = visible;
 }
 </script>
 
@@ -207,196 +198,3 @@ function previewImageVisibleChange(visible, prevVisible) {
     <SetGroupModal ref="setGroupModalRef" @success="handleSetGroupSuccess"/>
   </Page>
 </template>
-
-
-<!--
-<template>
-  <div>
-    <BasicTable @register="registerTable">
-      <template #toolbar>
-        <Authority :value="'Account:' + PerEnum.ADD">
-          <a-button type="primary" @click="handleCreate"> 新增 </a-button>
-        </Authority>
-      </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-            :actions="[
-              {
-                auth: 'Account:' + PerEnum.AUTH,
-                tooltip: '分配组',
-                icon: 'ant-design:usergroup-add',
-                onClick: handleSetGroup.bind(null, record),
-              },
-              {
-                auth: 'Account:' + PerEnum.UPDATE,
-                tooltip: '设置密码',
-                icon: 'ant-design:setting-outlined',
-                onClick: handleSetPassword.bind(null, record),
-              },
-              {
-                auth: 'Account:' + PerEnum.UPDATE,
-                tooltip: '修改',
-                icon: 'clarity:note-edit-line',
-                onClick: handleEdit.bind(null, record),
-              },
-              {
-                auth: 'Account:' + PerEnum.DELETE,
-                tooltip: '删除',
-                icon: 'ant-design:delete-outlined',
-                danger: true,
-                popConfirm: {
-                  title: '是否确认删除',
-                  confirm: handleDelete.bind(null, record),
-                  placement: 'left',
-                  okButtonProps: { danger: true },
-                },
-              },
-            ]"
-          />
-        </template>
-
-        <template v-else-if="column.key === 'image'">
-          <Avatar :src="record.image" @click="previewImageHandle(record.image)">
-            <template #icon>
-              <UserOutlined />
-            </template>
-          </Avatar>
-        </template>
-
-        <template v-else-if="column.key === 'groups'">
-          <Space>
-            <Tag color="green" v-for="item in record.groups">
-              {{ item.name }}
-            </Tag>
-          </Space>
-        </template>
-        <template v-if="column.key === 'sex'">
-          <Tag v-if="~~record.sex === 1" color="#10AEFF">男</Tag>
-          <Tag v-else color="#FB7373">女</Tag>
-        </template>
-        <template v-if="column.key === 'type'">
-          <Tag v-if="~~record.type === 1" color="#10AEFF">管理员</Tag>
-          <Tag v-else >普通用户</Tag>
-        </template>
-      </template>
-    </BasicTable>
-    <div style="width: 0; height: 0; overflow: hidden">
-      <Image
-        :width="0"
-        :height="0"
-        :src="previewImage"
-        :preview="{ visible: previewImageVisible, onVisibleChange: previewImageVisibleChange }"
-      />
-    </div>
-
-    <AccountModal @register="registerModal" @success="handleSuccess" />
-    <PasswordModal @register="registerPasswordModal" @success="handlePasswordSuccess" />
-    <SetGroupModal @register="registerSetGroupModal" @success="handleSetGroupSuccess" />
-  </div>
-</template>
-<script lang="ts" setup>
-  import { ref } from 'vue';
-
-  import { BasicTable, useTable, TableAction } from '@/components/Table';
-  import { getAccountPageList, deleteByIds } from '#/api/privilege/account';
-  import { UserOutlined } from '@ant-design/icons-vue';
-
-  import { useModal } from '@/components/Modal';
-  import AccountModal from './account-modal.vue';
-  import PasswordModal from './PasswordModal.vue';
-  import SetGroupModal from './SetGroupModal.vue';
-
-  import { columns, searchFormSchema } from './account.data';
-  import { Avatar, Image, Tag, Space } from 'ant-design-vue';
-  import { Authority } from '@/components/Authority';
-  import { PerEnum } from '@/enums/perEnum';
-
-  const [registerModal, { openModal }] = useModal();
-  const [registerPasswordModal, { openModal: openPasswordModal }] = useModal();
-  const [registerSetGroupModal, { openModal: openSetGroupModal }] = useModal();
-
-  const previewImage = ref<string>('');
-  const previewImageVisible = ref<boolean>(false);
-
-  const [registerTable, { reload }] = useTable({
-    title: '列表',
-    api: getAccountPageList,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: true,
-    showIndexColumn: false,
-    actionColumn: {
-      width: 160,
-      title: '操作',
-      dataIndex: 'action',
-    },
-  });
-
-  function handleCreate() {
-    openModal(true, {
-      isUpdate: false,
-    });
-  }
-
-  function handleEdit(record: Recordable<any>) {
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });
-  }
-
-  function handleSetPassword(record: Recordable<any>) {
-    openPasswordModal(true, {
-      record,
-      isUpdate: true,
-    });
-  }
-
-  function handleSetGroup(record: Recordable<any>) {
-    openSetGroupModal(true, {
-      record,
-      isUpdate: true,
-    });
-  }
-
-  function handleDelete(record: Recordable<any>) {
-    deleteByIds([record.id]).then((res) => {
-      reload();
-    });
-  }
-
-  function handleSuccess() {
-    setTimeout(() => {
-      reload();
-    }, 200);
-  }
-
-  function handlePasswordSuccess() {
-    reload();
-  }
-
-  function handleSetGroupSuccess() {
-    reload();
-  }
-
-  function previewImageHandle(headImg) {
-    if (headImg) {
-      previewImage.value = headImg;
-      previewImageVisible.value = true;
-    }
-  }
-
-  function previewImageVisibleChange(visible, prevVisible) {
-    previewImageVisible.value = visible;
-  }
-</script>
--->

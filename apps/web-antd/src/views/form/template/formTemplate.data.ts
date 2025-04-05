@@ -1,14 +1,7 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-
-// import { h } from 'vue';
-// import { Switch } from 'ant-design-vue';
-// import { useMessage } from '@/hooks/web/useMessage';
-// import { updateStatusById } from '#/api/form/formTemplate';
 import {OrderNoDefaultEnum} from "#/enums/commonEnum";
-import {getIconCategoryTreeData} from "#/api/base/iconInfo";
 import {getFormCategoryListData} from "#/api/form/formTemplate";
 
 export const columns: VxeGridProps['columns'] = [
@@ -31,33 +24,8 @@ export const columns: VxeGridProps['columns'] = [
     field: 'status',
     width: 120,
     align: 'center',
-    /*customRender: ({ record }) => {
-      if (!Reflect.has(record, 'pendingStatus')) {
-        record.pendingStatus = false;
-      }
-      return h(Switch, {
-        checked: parseInt(record.status) === 1,
-        checkedChildren: '已生效',
-        unCheckedChildren: '未生效',
-        loading: record.pendingStatus,
-        onChange(checked: boolean) {
-          record.pendingStatus = true;
-          const newStatus = checked ? 1 : 0;
-          const { createMessage } = useMessage();
-          updateStatusById(record.id, newStatus)
-            .then(() => {
-              record.status = newStatus;
-              createMessage.success(`修改状态成功`);
-            })
-            .catch(() => {
-              createMessage.error('修改状态失败');
-            })
-            .finally(() => {
-              record.pendingStatus = false;
-            });
-        },
-      });
-    },*/
+    slots: {default: 'status'}
+    
   },
   {
     title: '创建时间',
@@ -160,7 +128,7 @@ export const formSchema: FormSchema[] = [
     label: '分类',
     rules: "selectRequired",
     component: 'ApiTreeSelect',
-    formItemClass: 'grid-cols-2 pb-0 [&_div_p]:z-10 [&_div_p]:border [&_div_p]:rounded [&_div_p]:border-destructive [&_div_p]:px-2 [&_div_p]:bg-card [&_div_p]:bottom-[-26px] [&_div_p]:leading-8',
+    formItemClass: 'grid-cols-2 pb-0 [&_div_p]:z-10 [&_div_p]:border [&_div_p]:rounded [&_div_p]:border-destructive [&_div_p]:px-2 [&_div_p]:bg-card [&_div_p]:bottom-[-33px] [&_div_p]:leading-8',
     componentProps: {
       blockNode: true,
       api: getFormCategoryListData,

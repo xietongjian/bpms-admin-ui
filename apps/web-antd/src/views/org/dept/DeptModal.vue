@@ -4,6 +4,7 @@
   import { saveOrUpdate } from '#/api/org/dept';
   import {useVbenForm} from "#/adapter/form";
   import {useVbenModal} from '@vben/common-ui';
+  import { message } from 'ant-design-vue';
 
   const emit = defineEmits(['success', 'register']);
 
@@ -36,7 +37,6 @@
       }
     },
     onConfirm() {
-      // await formApi.submitForm();
       handleSubmit();
     },
   });
