@@ -1,6 +1,6 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" class="personalForm">
+  <BasicModal v-bind="$attrs" :title="getTitle" @ok="handleSubmit">
+    <BasicForm class="personalForm">
       <template #headImg="{ model, field }">
         <Upload
           style="margin: auto"
@@ -28,14 +28,8 @@
   import {useVbenForm} from '#/adapter/form';
 
   import { personalFormSchema } from './personal.data';
-  import { getDepts } from '#/api/org/dept';
-  import { getCompanies } from '#/api/org/company';
-  import { saveOrUpdate, checkEntityExist } from '#/api/org/personal';
+  import { saveOrUpdate } from '#/api/org/personal';
   import { message, Upload } from 'ant-design-vue';
-  import { getJobGradeTree } from '#/api/org/jobGrade';
-  import { getPositionInfoTree } from '#/api/org/positionInfo';
-  import { FormValidPatternEnum } from '#/enums/commonEnum';
-  import { findNode } from '#/utils/helper/treeHelper';
   import {PlusOutlined} from '@ant-design/icons-vue';
   const emit = defineEmits(['success']);
   const isUpdate = ref(true);

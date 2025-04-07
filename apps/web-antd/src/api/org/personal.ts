@@ -56,7 +56,7 @@ export const allocationRoles = (params: any) =>
 export const deleteByIds = (params?: Array<string>) => requestClient.post(Api.Delete, params);
 
 export const deletePersonalRole = (params: any) =>
-  requestClient.post( Api.DeletePersonalRole, params );
+  requestClient.post( Api.DeletePersonalRole, params, { responseReturn: 'body' });
 
 export const setLeaderCode = (params: any) =>
   requestClient.post(Api.SetLeaderCode + `/${params.leaderCode}/${params.id}` );
@@ -69,7 +69,7 @@ export const getByCodes = (params: Array<string>) => requestClient.post(Api.GetB
 export const getCurrUserSignatureImg = () => requestClient.get(Api.GetCurrUserSignatureImg);
 
 export const syncPersonalById = (params: any) =>
-  requestClient.post(Api.SyncPersonalById + '/' + params.id,{}, { isReturnNativeResponse: true });
+  requestClient.post(Api.SyncPersonalById + '/' + params.id,{}, { responseReturn: 'body' });
 
 export const syncAllPersonal = () =>
-  requestClient.post( Api.SyncAllPersonal ,{}, { isReturnNativeResponse: true });
+  requestClient.post( Api.SyncAllPersonal ,{}, { responseReturn: 'body' });
