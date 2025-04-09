@@ -105,12 +105,6 @@ export const searchFormSchema: FormSchema[] = [
       allowClear: true,
     },
     labelWidth: 60,
-    colProps: {
-      span: 8,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 14, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -179,10 +173,6 @@ export const personalFormSchema: FormSchema[] = [
     label: '',
     component: 'Input',
     // slot: 'headImg',
-    colProps: {
-      style: 'margin: auto;position: absolute;right: 25px; width: 150px;height: 150px;',
-      span: 8,
-    },
   },
   {
     fieldName: 'sex',
@@ -257,18 +247,6 @@ export const personalFormSchema: FormSchema[] = [
         })
         .max(256, "字符长度不能大于256")
         .regex(new RegExp('^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$'), "请输入正确的邮箱地址"),
-
-    /*rules: [
-      {
-        pattern: new RegExp('^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$'),
-        type: 'string',
-        message: '请输入正确的邮箱地址！',
-      },
-      {
-        max: 256,
-        message: '字符长度不能大于256！',
-      },
-    ],*/
   },
   {
     fieldName: 'status',

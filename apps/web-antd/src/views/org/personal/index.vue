@@ -76,7 +76,7 @@
               >
                 <div
                     class="mb-2"
-                    v-if="row.roles.filter((item) => item.type === 0).length > 0"
+                    v-if="row.roles.filter((item: any) => item.type === 0).length > 0"
                 >
                   <h3 class="mb-0">人员角色</h3>
                   <Divider
@@ -86,7 +86,7 @@
                   <Tag
                       :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
                       class="role-item"
-                      v-for="role in row.roles.filter((item) => item.type === 0)"
+                      v-for="role in row.roles.filter((item: any) => item.type === 0)"
                   >
                     {{ (role.companyName || '') + ' - ' + role.name }}
                   </Tag>
@@ -94,7 +94,7 @@
 
                 <div
                     class="mb-2"
-                    v-if="row.roles.filter((item) => item.type === 1).length > 0"
+                    v-if="row.roles.filter((item: any) => item.type === 1).length > 0"
                 >
                   <h3 class="mb-0">公司矩阵角色</h3>
                   <Divider
@@ -104,7 +104,7 @@
                   <Tag
                       :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
                       class="role-item"
-                      v-for="role in row.roles.filter((item) => item.type === 1)"
+                      v-for="role in row.roles.filter((item: any) => item.type === 1)"
                   >
                     {{ (role.companyName || '') + ' - ' + role.name }}
                   </Tag>
@@ -112,7 +112,7 @@
 
                 <div
                     class="mb-2"
-                    v-if="row.roles.filter((item) => item.type === 2).length > 0"
+                    v-if="row.roles.filter((item: any) => item.type === 2).length > 0"
                 >
                   <h3 class="mb-0">部门矩阵角色</h3>
                   <Divider
@@ -122,7 +122,7 @@
                   <Tag
                       :color="role.type === 0 ? 'green' : role.type === 1 ? 'cyan' : 'blue'"
                       class="role-item"
-                      v-for="role in row.roles.filter((item) => item.type === 2)"
+                      v-for="role in row.roles.filter((item: any) => item.type === 2)"
                   >
                     {{ (role.companyName || '') + ' - ' + role.name }}
                   </Tag>
@@ -154,7 +154,7 @@
     />
     <PersonalModal ref="personalModalRef" @success="handleSuccess" />
     <!--    <PersonalSelector @register="registerPersonalModal" @success="handleSettingLeaderSuccess" />-->
-    <PersonalSelectorModal @register="registerPersonalModal" @change="handleSettingLeaderSuccess" />
+    <PersonalSelectorModal @change="handleSettingLeaderSuccess" />
   </ColPage>
 </template>
 <script lang="ts" setup>
@@ -444,7 +444,7 @@
   }
 
   async function handleSettingRoleSuccess(selectedRoles: any) {
-    const roles = selectedRoles.map((item) => {
+    const roles = selectedRoles.map((item: any) => {
       return { id: item.id };
     });
     await allocationRoles({ personalId: unref(currentPersonal).id, roles: roles });
@@ -472,22 +472,22 @@
     });
   }
 
-  function handleSync(record: Recordable<any>) {
-    tableApi.setLoading(true);
-    syncPersonalById({ id: record.id })
-      .then((res) => {
-        tableApi.setLoading(false);
-        const { success, msg } = res.data;
-        if (success) {
-          message.success(msg);
-          tableApi.reload();
-        } else {
-          message.error(msg);
-        }
-      })
-      .catch((e) => {
-        tableApi.setLoading(false);
-      });
+  async function handleSync(record: Recordable<any>) {
+    try {
+      tableApi.setLoading(true);
+      const { success, msg } = await syncPersonalById({ id: record.id });
+      tableApi.setLoading(false);
+      if (success) {
+        message.success(msg);
+        tableApi.reload();
+      } else {
+        message.error(msg);
+      }
+    } catch (error) {
+      console.error('同步用户信息时出错:', error);
+    } finally {
+      tableApi.setLoading(false);
+    }
   }
 
   function handleSuccess() {
@@ -507,15 +507,22 @@
     previewImageVisible.value = visible;
   }
 
-  function confirmDeleteRole(personalId: string, roleId: string) {
+  async function confirmDeleteRole(personalId: string, roleId: string) {
     deleteRoleLoading.value[personalId] = true;
-    deletePersonalRole({ personalId, roleId })
-      .then(() => {
+    try {
+      const { success, msg } = await deletePersonalRole({ personalId, roleId });
+      if (success) {
+        message.success(msg);
         reloadTable();
-      })
-      .finally(() => {
-        deleteRoleLoading.value[personalId] = false;
-      });
+      } else {
+        message.error(msg);
+      }
+    } catch (error) {
+      console.error('删除角色时出错:', error);
+      message.error('删除角色时发生错误，请稍后重试');
+    } finally {
+      deleteRoleLoading.value[personalId] = false;
+    }
   }
 
   function reloadTable() {
