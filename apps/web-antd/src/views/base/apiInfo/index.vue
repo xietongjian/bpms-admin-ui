@@ -209,11 +209,7 @@ async function initApiCategoryTree() {
 }
 
 function handleSuccess() {
-  setTimeout(() => {
-    const {getFieldsValue} = getForm();
-    const values = getFieldsValue();
-    tableApi.reload({searchInfo: {categoryId: unref(currentNode)?.id, ...values}});
-  }, 200);
+  tableApi.reload();
 }
 
 function handleCategorySuccess() {
@@ -296,24 +292,20 @@ function createActions(record: Recordable<any>) {
         </Tree>
       </div>
     </template>
-    <BasicTable @register="registerTable" class="!p-0">
+    <BasicTable >
       <template #toolbar-tools>
-        <Button v-access:code="PerPrefix+PerEnum.ADD" size="small" type="primary"
-                @click="handleCreate">新增
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate">
+          新增
         </Button>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'categoryId'">
-          {{ apiCategoryDataMap[record.categoryId]?.name || '-' }}
-        </template>
+      <template #categoryId="{ row }">
+        {{ apiCategoryDataMap[row.categoryId]?.name || '-' }}
       </template>
       <template #action="{ row }">
-        <TableAction
-            :actions="createActions(row)"
-        />
+        <TableAction :actions="createActions(row)" />
       </template>
     </BasicTable>
-    <ApiInfoDrawer ref="apiInfoDrawerRef" @register="registerApiInfoDrawer" @success="handleSuccess"/>
-    <ApiCategoryModal ref="apiCategoryModalRef" @register="registerApiCategoryModal" @success="handleCategorySuccess"/>
+    <ApiInfoDrawer ref="apiInfoDrawerRef" @success="handleSuccess"/>
+    <ApiCategoryModal ref="apiCategoryModalRef" @success="handleCategorySuccess"/>
   </ColPage>
 </template>

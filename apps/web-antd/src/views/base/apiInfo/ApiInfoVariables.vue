@@ -4,9 +4,8 @@
       <template #action="{ row }">
         <TableAction outside :actions="createActions(row)" />
       </template>
-      <template #requiredRender="{ row }">
-        <Tag v-if="row.required" color="#87d068">是</Tag>
-        <Tag v-else>否</Tag>
+      <template #requiredOpen="{ row }">
+        <Switch v-model:checked="row.required" />
       </template>
     </BasicTable>
 
@@ -20,16 +19,14 @@
       >
       <!--      <a-button type="primary" style="width: 100%;" @click="handleSubmit">保存</a-button>-->
     </div>
-    <div style="height: 10px"></div>
+    <div class="h-3"></div>
   </div>
 </template>
 <script lang="ts" setup>
 import { defineComponent, reactive, ref, unref, watch, onMounted, computed, nextTick } from 'vue';
 import { vxeFlowVariableTableColumns } from './apiInfo.data';
-import { Tag, Button, message } from 'ant-design-vue';
+import {Tag, Button, message, Switch} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import type {VxeGridProps} from '#/adapter/vxe-table';
-import type {VbenFormProps} from '@vben/common-ui';
 import {TableAction} from '#/components/table-action';
 
 defineComponent({
@@ -53,6 +50,7 @@ const tableRef = ref<any>();
 
 vxeFlowVariableTableColumns.forEach(item => {
   if(item.field === 'required'){
+    return;
     if(props.type === 'path'){
       delete item.editRender;
     } else {
@@ -134,7 +132,7 @@ onMounted(async () => {
 });
 
 async function loadData() {
-  debugger;
+  // debugger;
   tableRef.value?.remove();
   if (!props.variables) {
     return;
@@ -150,8 +148,14 @@ async function loadData() {
 }
 
 function handleAddRow() {
-  const emptyRow = { field: undefined, label: undefined, required: props.type === 'path', helpMessage: undefined, defaultValue: undefined };
-  tableRef.value?.insertAt(emptyRow, -1);
+  const emptyRow = {
+    field: undefined,
+    label: undefined,
+    required: props.type === 'path',
+    helpMessage: undefined,
+    defaultValue: undefined
+  };
+  tableApi.grid?.insertAt(emptyRow, -1);
 }
 
 const createActions = (record) => {
@@ -160,9 +164,10 @@ const createActions = (record) => {
       label: '删除',
       danger: true,
       popConfirm: {
+        placement: 'left',
         title: '是否确认删除',
         confirm: () => {
-          tableRef.value?.remove(record);
+          return tableApi.grid?.remove(record);
         },
         okButtonProps: {
           danger: true

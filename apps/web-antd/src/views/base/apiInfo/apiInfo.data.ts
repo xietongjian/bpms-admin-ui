@@ -6,7 +6,9 @@ import {CodeEditor, MODE} from '#/components/CodeEditor';
 // import { CodeEditor, MODE } from '#/components/CodeEditor';
 
 import { Tag } from 'ant-design-vue';
-import { h } from 'vue';
+import { h, markRaw } from 'vue';
+import {getApiCategoryListData} from "#/api/base/apiInfo";
+import RequestUrl from "#/views/base/bizTokenConfig/component/request-url.vue";
 
 const colProps = {
   span: 24,
@@ -165,15 +167,19 @@ export const apiInfoFormSchema: FormSchema[] = [
   {
     fieldName: 'categoryId',
     label: '分类',
-    component: 'TreeSelect',
+    component: 'ApiTreeSelect',
     componentProps: {
+      api: getApiCategoryListData,
+      treeDataSimpleMode: {id: 'id', pId: 'pid', rootPid: null},
       fieldNames: {
         label: 'name',
         value: 'id',
       },
       getPopupContainer: () => document.body,
+      class: 'w-full'
     },
-    // colProps: { span: 16 },
+    wrapperClass: 'w-full',
+    formItemClass: 'w-full',
     rules: 'selectRequired'
   },
   {
@@ -198,7 +204,7 @@ export const apiInfoFormSchema: FormSchema[] = [
       },
     },
   },
-  {
+  /*{
     fieldName: 'method',
     label: '请求地址',
     defaultValue: 'GET',
@@ -207,6 +213,33 @@ export const apiInfoFormSchema: FormSchema[] = [
     component: 'Input',
     // slot: 'urlSlot',
     rules: 'required'
+  },*/
+  {
+    fieldName: 'url',
+    label: '请求地址',
+    component: markRaw(RequestUrl),
+    disabledOnChangeListener: false,
+    defaultValue: ['GET', ''],
+    /*rules: z
+        .string({
+          required_error: 'URL不能为空',
+        })
+        .trim()
+        .min(1, "URL不能为空")
+        .max(255, "字符长度不能大于255！"),*/
+    rules: z
+        .array(z.string().optional())
+        .length(2, '请选择请求方式并输入请求地址')
+        .refine((v) => !!v[0], {
+          message: '请选择请求方式',
+        })
+        .refine((v) => !!v[1] && v[1] !== '', {
+          message: '　　　　　　　　 输入请求URL',
+        })
+        .refine((v) => v[1]?.match(new RegExp(FormValidPatternEnum.URL)), {
+          // 使用全角空格占位，将错误提示文字挤到手机号码输入框的下面
+          message: '　　　　　　　　 URL格式不正确',
+        }),
   },
   {
     fieldName: 'headers',
@@ -279,7 +312,7 @@ export const vxeFlowVariableTableColumns = [
     field: 'field',
     align: 'left',
     editRender: {
-      name: 'AInput',
+      name: 'input',
       placeholder: '请点击输入',
     },
   },
@@ -288,7 +321,7 @@ export const vxeFlowVariableTableColumns = [
     field: 'label',
     align: 'left',
     editRender: {
-      name: 'AInput',
+      name: 'input',
       placeholder: '请点击输入',
     },
   },
@@ -297,28 +330,24 @@ export const vxeFlowVariableTableColumns = [
     width: 100,
     field: 'required',
     align: 'center',
-    slots: { default: 'requiredRender' },
-    editRender: {
-      name: 'ASwitch',
-      placeholder: '请点击输入',
-      defaultValue: false,
-    },
+    slots: { default: 'requiredOpen' },
   },
   {
     title: '字段描述',
     field: 'helpMessage',
     align: 'left',
     editRender: {
-      name: 'AInput',
+      name: 'input',
       placeholder: '请点击输入',
     },
   },
   {
     title: '默认值',
+    width: 100,
     field: 'defaultValue',
     align: 'left',
     editRender: {
-      name: 'AInput',
+      name: 'input',
       placeholder: '请点击输入',
     },
   },
