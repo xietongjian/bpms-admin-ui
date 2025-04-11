@@ -15,6 +15,6 @@ export const getAll = (params?: any) => {
   });
 };
 
-export const saveOrUpdate = (params: any) => requestClient.post(Api.SaveOrUpdate, params);
+export const saveOrUpdate = (params: any) => requestClient.post(Api.SaveOrUpdate, params, {responseReturn: 'body'});
 
 export const deleteBusinessTokenById = (params: any) => requestClient.post(Api.DeleteBusinessTokenById + "/" + params.id, {}, {responseReturn: 'body'});

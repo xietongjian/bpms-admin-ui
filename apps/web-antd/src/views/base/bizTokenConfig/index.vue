@@ -15,8 +15,8 @@
         {{row.name}}
       </template>
       <template #nameContent="{row}">
-        <div v-if="row.type === 'sc'">
-          <Descriptions :title="null" size="small">
+        <div class="bg-secondary p-2 m-2" >
+          <Descriptions v-if="row.type === 'sc'" :title="null" size="small">
             <DescriptionsItem label="请求地址" :span="3">{{ row.url || '-' }}</DescriptionsItem>
             <DescriptionsItem label="请求方式">{{ row.method || '-' }}</DescriptionsItem>
             <DescriptionsItem label="Token名称">{{ row.tokenName || '-' }}</DescriptionsItem>
@@ -31,9 +31,7 @@
               {{ row.remark || '-' }}
             </DescriptionsItem>
           </Descriptions>
-        </div>
-        <div v-else>
-          <Descriptions :title="null" size="small">
+          <Descriptions v-else :title="null" size="small">
             <DescriptionsItem label="请求地址" :span="3">{{ row.url || '-' }}</DescriptionsItem>
             <DescriptionsItem label="请求方式">{{ row.method || '-' }}</DescriptionsItem>
             <DescriptionsItem label="Token名称">{{ row.tokenName || '-' }}</DescriptionsItem>
@@ -64,7 +62,7 @@
   import type {Recordable} from '@vben/types';
 
   import {Page} from '@vben/common-ui';
-  import {Button, Space, Image, Tag, message, Descriptions} from 'ant-design-vue';
+  import {Button, Tag, message, Descriptions} from 'ant-design-vue';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {TableAction} from '#/components/table-action';
 
@@ -74,6 +72,7 @@
 
   const bizTokenConfigDrawerRef = ref();
 
+  const expandedRows = ref([]);
   const DescriptionsItem = Descriptions.Item;
   const PerPrefix= 'BizTokenConfig:';
   const formOptions: VbenFormProps = {
@@ -101,7 +100,7 @@
       enabled: false,
     },
     expandConfig: {
-      padding: true,
+      padding: false,
       trigger: 'row',
     },
     proxyConfig: {
@@ -151,6 +150,8 @@
     bizTokenConfigDrawerRef.value.setData(value);
     bizTokenConfigDrawerRef.value.setState();
     bizTokenConfigDrawerRef.value.open();
+
+    expandedRows.value = tableApi.grid.getRowExpandRecords();
   }
 
   function handleEdit(record: Recordable<any>, e) {
@@ -159,6 +160,8 @@
     bizTokenConfigDrawerRef.value.setData(record);
     bizTokenConfigDrawerRef.value.setState();
     bizTokenConfigDrawerRef.value.open();
+
+    expandedRows.value = tableApi.grid.getRowExpandRecords();
   }
 
   async function handleDelete(record: Recordable<any>, e) {
@@ -173,8 +176,9 @@
   }
 
   function handleSuccess() {
+    tableApi.reload();
     setTimeout(() => {
-      tableApi.reload();
-    }, 200);
+      tableApi.grid.setRowExpand(expandedRows.value, true);
+    }, 100);
   }
 </script>

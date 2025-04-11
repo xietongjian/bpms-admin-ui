@@ -51,7 +51,7 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     if (isOpen) {
       const values = drawerApi.getData<Record<string, any>>();
       if (values) {
-        formApi.setValues(values);
+        formApi.setValues({...values, requestArr: [values.method || '', values.url || '']});
         drawerApi.setState({loading: false, confirmLoading: false});
       }
     }
@@ -83,6 +83,10 @@ async function handleSubmit() {
     }
     const values = await formApi.getValues();
     values.params = values.params || '{}';
+    const [method, url] = values.requestArr;
+    values.method = method;
+    values.url = url;
+    delete values.requestArr;
     const {success, msg} = await saveOrUpdate(values);
     if (success) {
       drawerApi.close();
@@ -91,6 +95,8 @@ async function handleSubmit() {
     } else {
       message.error(msg);
     }
+  } catch (e) {
+    console.error(e);
   } finally {
     drawerApi.setState({loading: false, confirmLoading: false});
   }

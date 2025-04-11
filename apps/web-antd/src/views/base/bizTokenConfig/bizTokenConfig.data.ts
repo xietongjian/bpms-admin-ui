@@ -47,6 +47,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '请求地址',
     field: 'url',
+    minWidth: 200,
     align: 'left',
   },
   {
@@ -59,16 +60,19 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: 'Token名称',
     field: 'tokenName',
+    minWidth: 200,
     align: 'left',
   },
   {
     title: 'Token键名',
     field: 'tokenKey',
+    minWidth: 200,
     align: 'left',
   },
   {
     title: '备注',
     field: 'remark',
+    minWidth: 200,
     align: 'left',
   },
   {
@@ -115,15 +119,15 @@ export const formSchema: FormSchema[] = [
   },
   {
     fieldName: 'type',
-    component: 'Select',
+    component: 'RadioGroup',
     label: '服务类型',
     defaultValue: 'sc',
     componentProps: {
       placeholder: '请选择服务类型',
-      options: ServerTypeList
+      options: ServerTypeList,
+      class: 'w-full'
     },
     rules: 'selectRequired',
-    wrapperClass: 'w-full'
   },
   {
     fieldName: 'name',
@@ -152,18 +156,11 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    fieldName: 'url',
+    fieldName: 'requestArr',
     label: '请求地址',
     component: markRaw(RequestUrl),
     disabledOnChangeListener: false,
     defaultValue: ['GET', ''],
-    /*rules: z
-        .string({
-          required_error: 'URL不能为空',
-        })
-        .trim()
-        .min(1, "URL不能为空")
-        .max(255, "字符长度不能大于255！"),*/
     rules: z
       .array(z.string().optional())
       .length(2, '请选择请求方式并输入请求地址')
@@ -173,7 +170,9 @@ export const formSchema: FormSchema[] = [
       .refine((v) => !!v[1] && v[1] !== '', {
         message: '　　　　　　　　 输入请求URL',
       })
-      .refine((v) => v[1]?.match(new RegExp(FormValidPatternEnum.URL)), {
+      .refine((v) => {
+        return (new RegExp(FormValidPatternEnum.URL, 'i').test(v[1]||''));
+      }, {
         // 使用全角空格占位，将错误提示文字挤到手机号码输入框的下面
         message: '　　　　　　　　 URL格式不正确',
       }),
@@ -264,7 +263,7 @@ export const formSchema: FormSchema[] = [
       show: (values) => {
         return values.type === 'sc';
       },
-      triggerFields: ['serverAddr']
+      triggerFields: ['type'],
     }
   },
   {
@@ -275,7 +274,7 @@ export const formSchema: FormSchema[] = [
       show: (values) => {
         return values.type === 'sc';
       },
-      triggerFields: ['namespaceId']
+      triggerFields: ['type'],
     }
   },
   {
@@ -286,7 +285,7 @@ export const formSchema: FormSchema[] = [
       show: (values) => {
         return values.type === 'sc';
       },
-      triggerFields: ['groupName']
+      triggerFields: ['type'],
     }
   },
   {
