@@ -5,7 +5,6 @@
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref, defineEmits } from 'vue';
-  // import { BasicModal, useModalInner } from '@/components/Modal';
   import {useVbenModal} from '@vben/common-ui';
   import { setGroupFormSchema } from './account.data';
   import { allocationRoles } from '#/api/privilege/account';
@@ -14,18 +13,6 @@
   const emit = defineEmits(['success', 'register']);
   const isUpdate = ref(true);
   const title = ref('设置组');
-
-/*
-  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
-    labelWidth: 100,
-    schemas: setGroupFormSchema,
-    showActionButtonGroup: false,
-    actionColOptions: {
-      span: 23,
-    },
-  });
-*/
-
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,

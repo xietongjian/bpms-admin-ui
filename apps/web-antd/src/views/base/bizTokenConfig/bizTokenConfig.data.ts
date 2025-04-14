@@ -177,70 +177,29 @@ export const formSchema: FormSchema[] = [
         message: '　　　　　　　　 URL格式不正确',
       }),
   },
-  /*{
-    fieldName: 'method',
-    component: 'Radio',
-    label: '请求方式',
-    rules: 'selectRequired',
-    defaultValue: '',
-    componentProps: {
-      options: [
-        {
-          label: 'Get',
-          value: 'GET',
-        },
-        {
-          label: 'Post',
-          value: 'POST',
-        },
-      ],
-      onChange: (e) => {
-        console.log(e);
-      },
-    },
-  },*/
   {
     fieldName: 'params',
     label: '请求参数',
-    component: 'Textarea',
+    // component: 'Textarea',
+    component: markRaw(CodeEditor),
     componentProps: {
-      autoSize: {
-        minRows: RemarkDefaultEnum.MIN_ROWS,
-        maxRows: RemarkDefaultEnum.MAX_ROWS,
+      type: 'json',
+      class: 'w-full',
+      codeStyle: {
+        width: '100%', minHeight: '100px'
       },
+      placeholder: '请输入有效的JSON对象数据格式：如{"a": "123"}',
     },
-    /* render: ({ model, fieldName }) => {
-      return h(CodeEditor, {
-        value: model[field],
-        mode: MODE.JSON,
-        onChange: (value: string) => {
-          model[field] = value;
-        },
-        config: {
-          tabSize: 2,
-          height: 100,
-        }
-      });
-    },*/
-    dynamicRules: () => {
-      return [
-        {
-          trigger: ['change', 'blur'],
-          validator: (_, value) => {
-            if (value) {
-              try {
-                JSON.parse(value);
-                return Promise.resolve();
-              } catch (error) {
-                return Promise.reject("请输入JSON格式");
-              }
-            } else {
-              return Promise.resolve();
-            }
-          },
-        },
-      ];
-    },
+    formItemClass: 'items-start',
+    help: '请输入有效的JSON对象数据格式：如{"a": "123"}',
+    rules: z.string().refine((v) => {
+      try {
+        JSON.parse(v);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }, '请输入正确的参数格式，如{"a": "123"}').optional(),
   },
   {
     fieldName: 'tokenKey',
@@ -292,6 +251,7 @@ export const formSchema: FormSchema[] = [
     label: '备注',
     fieldName: 'remark',
     component: 'Textarea',
+    formItemClass: 'items-start',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,

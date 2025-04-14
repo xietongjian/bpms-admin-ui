@@ -10,7 +10,6 @@ const emit = defineEmits<{
   onSuccess: [void];
 }>();
 
-
 const [BasicForm, formApi] = useVbenForm({
   // 所有表单项共用，可单独在表单内覆盖
   commonConfig: {

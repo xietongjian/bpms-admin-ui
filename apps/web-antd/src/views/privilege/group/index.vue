@@ -1,38 +1,23 @@
 <script lang="ts" setup>
-import {ref, onMounted, nextTick, computed} from 'vue';
+import {ref} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
-
 import {Page} from '@vben/common-ui';
-import {Button, Space, Image, Tag, message} from 'ant-design-vue';
+import {Button, Space, Image, Tag, message, Popconfirm} from 'ant-design-vue';
+import {CloseOutlined} from '@ant-design/icons-vue'
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {TableAction} from '#/components/table-action';
-
 import {getGroupListByPage, deleteByIds} from '#/api/privilege/group';
-
+import {EmpInfo} from '#/views/components/EmpInfo';
 import GroupModal from './group-modal.vue';
 import {columns, searchFormSchema} from "./group.data";
 import SetAclModal from './SetAclModal.vue';
 import SetAccountModal from './SetAccountModal.vue';
-import { preferences, updatePreferences } from '@vben/preferences';
-
 import {PerEnum} from "#/enums/perEnum";
 
-
-onMounted(() => {
-  nextTick(() => {
-    // const appName = computed(() => preferences.app.name);
-    // const name = performance?.app?.name;
-    // 动态修改偏好设置
-    // updatePreferences({app: {name: '123'}});
-  })
-});
-
 const PerPrefix = "Group:";
-const setAccountModalRef = ref();
-const setAclModalRef = ref();
-const groupModalRef = ref();
+const setAccountModalRef = ref(), setAclModalRef = ref(), groupModalRef = ref();
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -51,6 +36,7 @@ const formOptions: VbenFormProps = {
 const gridOptions: VxeGridProps<any> = {
   columns,
   columnConfig: {resizable: true},
+  showOverflow: false,
   height: 'auto',
   keepSource: true,
   border: false,
@@ -108,22 +94,15 @@ async function handleDelete(record: any) {
       message.error(msg);
     }
   } catch (e) {
-    message.error(e.message);
+    message.error(e);
   }
 }
 function handleAddUser(record: Recordable<any>) {
-  setAccountModalRef.value.setData({});
+  setAccountModalRef.value.setData(record);
   setAccountModalRef.value.open();
   setAccountModalRef.value.setState({
-    title: '分配用户'
+    title: '给组【' + record.name + '(' + record.sn + ')】分配用户'
   });
-  /*openSetAccountModal(true, {
-    record,
-    isUpdate: true,
-  });
-  setAccountModalProps({
-    width: 700,
-  });*/
 }
 function createActions(record: Recordable<any>): any[] {
   return [
@@ -166,6 +145,10 @@ function handleSetAccountSuccess() {
     tableApi.reload();
   }, 200);
 }
+function handleRemoveGroupUser(){
+
+}
+
 </script>
 
 <template>
@@ -191,12 +174,19 @@ function handleSetAccountSuccess() {
       </template>
 
       <template #users="{ row }">
-        <div v-if="row.users">
-          <Tag v-for="item in row.users" :key="item.id" color="green">
-            {{ item.realName }}
-          </Tag>
+        <div class="max-h-300 overflow-y-auto gap-1" v-if="row.users">
+          <EmpInfo v-for="item in row.users" :no="item.username" :name="item.realName" >
+            <Tag class="my-1" color="green">
+              {{ item.realName }}
+<!--              <template #closeIcon>
+                <Popconfirm title="确定要移除该用户吗?" :okButtonProps="{danger: true}" @confirm="handleRemoveGroupUser(row, item)">
+                  <CloseOutlined />
+                </Popconfirm>
+              </template>-->
+            </Tag>
+          </EmpInfo>
         </div>
-        <Tag v-else>-</Tag>
+        <span class="text-gray-500" v-else>未分配</span>
       </template>
     </BasicTable>
     <GroupModal ref="groupModalRef" @onSuccess="tableApi.reload()"/>

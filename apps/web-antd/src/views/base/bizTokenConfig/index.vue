@@ -25,7 +25,7 @@
             <DescriptionsItem label="命名空间">{{ row.namespaceId || '-' }}</DescriptionsItem>
             <DescriptionsItem label="组名">{{ row.groupName || '-' }}</DescriptionsItem>
             <DescriptionsItem label="请求参数" :span="3">
-              {{ row.params || '{}' }}
+              <pre>{{ JSON.stringify(JSON.parse(row.params), null, 2) || '{}' }}</pre>
             </DescriptionsItem>
             <DescriptionsItem label="备注" :span="3">
               {{ row.remark || '-' }}
@@ -37,7 +37,7 @@
             <DescriptionsItem label="Token名称">{{ row.tokenName || '-' }}</DescriptionsItem>
             <DescriptionsItem label="Token键名">{{ row.tokenKey || '-' }}</DescriptionsItem>
             <DescriptionsItem label="请求参数" :span="3">
-              {{ row.params || '{}' }}
+              <pre>{{ JSON.stringify(JSON.parse(row.params), null, 2) || '{}' }}</pre>
             </DescriptionsItem>
             <DescriptionsItem label="备注" :span="3">
               {{ row.remark || '-' }}

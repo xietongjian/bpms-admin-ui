@@ -34,7 +34,7 @@
     </template>
     <div class="h-full">
       <div v-if="!!currentNode" class="bg-card h-full overflow-y-auto">
-        <div class="">
+        <div class="p-2">
           <Alert type="success">
             <template #message>
               <Row align="middle">
@@ -69,9 +69,7 @@
               <QueryVariableForm />
             </TabPane>
             <TabPane key="requestBody" tab="请求体" v-if="currentNode.requestBody">
-              aaa{{currentNode.requestBody}}<br/>
-              bbb{{requestBody}}<br/>
-              <CodeEditor v-model:value="requestBody" :mode="MODE.JSON"/>
+              <RequestBodyForm />
             </TabPane>
           </Tabs>
         </div>
@@ -87,10 +85,10 @@
         <div class="mt-0 p-2 !pt-0">
           <Tabs v-model:activeKey="activeResultKey">
             <TabPane key="testingResult" tab="调试结果">
-              <CodeEditor v-model:value="responseBody" :mode="MODE.JSON"/>
+              <CodeEditor placeholder="调试结果" v-model:value="responseBody" :mode="MODE.JSON" :disabled="true"/>
             </TabPane>
             <TabPane key="resultCase" tab="响应体示例">
-              <CodeEditor readonly v-model:value="responseBodyCase" :mode="MODE.JSON"/>
+              <CodeEditor placeholder="响应体示例" readonly v-model:value="responseBodyCase" :mode="MODE.JSON" :disabled="true"/>
             </TabPane>
           </Tabs>
         </div>
@@ -109,7 +107,7 @@ import {Page} from '@vben/common-ui';
 import {Alert, Button, Tree, Col, Row, Space, Tabs, Tag} from 'ant-design-vue';
 import {CodeEditor, MODE} from '#/components/CodeEditor';
 import {ColPage} from '@vben/common-ui';
-import {headerFormSchema, pathVariableFormSchema, queryVariableFormSchema} from './apiInfo.data';
+import {headerFormSchema, pathVariableFormSchema, queryVariableFormSchema, requestBodyFormSchema} from './apiInfo.data';
 import {forEach, listToTree} from "#/utils/helper/treeHelper";
 import {ApiOutlined, FolderOpenOutlined} from '@ant-design/icons-vue';
 import {useVbenForm} from "#/adapter/form";
@@ -126,7 +124,7 @@ const apiInfoTreeData = ref<any[]>([]);
 const activeParamKey = ref("header");
 const activeResultKey = ref("testingResult");
 
-const currentNode = ref(undefined);
+const currentNode = ref<any>(undefined);
 const requestBody = ref("");
 const responseBody = ref(undefined);
 const responseBodyCase = ref(undefined);
@@ -221,6 +219,17 @@ const [QueryVariableForm, queryVariableFormApi] = useVbenForm({
   schema: queryVariableFormSchema,
   wrapperClass: 'grid-cols-1',
 });
+const [RequestBodyForm, requestBodyFormApi] = useVbenForm({
+  commonConfig: {
+    componentProps: {
+      // class: 'w-full',
+    },
+  },
+  showDefaultActions: false,
+  layout: 'horizontal',
+  schema: requestBodyFormSchema,
+  wrapperClass: 'grid-cols-1',
+});
 
 fetchApiInfoTreeData();
 
@@ -247,9 +256,9 @@ async function initApiTestingInfo() {
   const {setState: resetPathVariableSchema } = pathVariableFormApi;
   const {setState: resetQueryVariableSchema } = queryVariableFormApi;
   if (apiInfo) {
+    debugger;
     if (apiInfo.headers && apiInfo.headers.length > 0) {
       apiInfo.headers.forEach(item => {
-        item.colProps = {span: 12};
         item.component = 'Input';
         item.fieldName = item.field;
       });
@@ -258,7 +267,6 @@ async function initApiTestingInfo() {
     }
     if (apiInfo.pathVariables && apiInfo.pathVariables.length > 0) {
       apiInfo.pathVariables.forEach(item => {
-        item.colProps = {span: 12};
         item.component = 'Input';
         item.rules = 'required';
         item.fieldName = item.field;
@@ -268,7 +276,6 @@ async function initApiTestingInfo() {
     }
     if (apiInfo.queryVariables && apiInfo.queryVariables.length > 0) {
       apiInfo.queryVariables.forEach(item => {
-        item.colProps = {span: 12};
         item.component = 'Input';
         item.fieldName = item.field;
       });
@@ -300,6 +307,8 @@ async function handleTesting() {
     apiTestingErrorMsg.value = '';
     const currentApi = unref(currentNode);
     let url = currentApi.url;
+
+    debugger;
 
     let headerFieldsValue = undefined;
     if (currentApi.headers && currentApi.headers.length > 0) {
@@ -338,6 +347,9 @@ async function handleTesting() {
         return;
       }
     }
+
+    const requestBodyValues = await requestBodyFormApi.getValues();
+    debugger;
     const body = unref(requestBody);
     let bodyContent = undefined;
     if (body) {

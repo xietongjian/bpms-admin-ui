@@ -35,7 +35,6 @@
 <script lang="ts" setup>
   import { ref, unref, defineExpose } from 'vue';
   import type {VxeGridProps} from '#/adapter/vxe-table';
-  import type {VbenFormProps} from '@vben/common-ui';
   import {aclColumns} from './group.data';
   import AclCheckboxGroup from './AclCheckboxGroup.vue';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
@@ -43,7 +42,6 @@
   import { Checkbox } from 'ant-design-vue';
   import { getModuleAclsByGroupId, setAllAcl } from '#/api/privilege/acl';
   import { forEach } from '#/utils/helper/treeHelper';
-  import {getGroupListByPage} from "#/api/privilege/group";
   import {useVbenModal} from "@vben/common-ui";
 
   const dataSource = ref<any[]>([]);
@@ -52,11 +50,11 @@
   const checkAllBox = ref<boolean>(false);
   const aclObj = ref({});
 
-
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
     centered: true,
     showConfirmButton: false,
+    cancelText: '关闭',
     onCancel() {
       modalApi.close();
     },
@@ -71,23 +69,6 @@
       }
     }
   });
-
-  /*const [registerTable, { setTableData, expandAll }] = useTable({
-    title: '',
-    size: 'small',
-    dataSource: dataSource,
-    loading: aclsTableLoading,
-    immediate: false,
-    searchInfo: {},
-    columns: aclColumns,
-    canResize: true,
-    isTreeTable: true,
-    useSearchForm: false,
-    showTableSetting: false,
-    bordered: false,
-    showIndexColumn: false,
-    pagination: false,
-  });*/
 
   const gridOptions: VxeGridProps<any> = {
     columns: aclColumns,
@@ -118,17 +99,7 @@
             dataSource.value = res;
             aclsTableLoading.value = false;
             return res
-            /*setTimeout(() => {
-              expandAll();
-            });*/
           });
-          /*return getGroupListByPage({
-            query: {
-              pageNum: page.currentPage,
-              pageSize: page.pageSize,
-            },
-            entity: formValues || {},
-          });*/
         },
       },
     },
@@ -182,11 +153,8 @@
               item.flag = e.target.checked;
             });
         });
-        debugger;
-        tableApi.loadData(dataSource.value);
-        // tableApi.setData(dataSource.value);
+        tableApi.reload();
         aclsTableLoading.value = false;
-
       })
       .catch(() => {
         aclsTableLoading.value = false;

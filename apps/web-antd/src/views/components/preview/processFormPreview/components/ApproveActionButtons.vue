@@ -79,16 +79,11 @@
 </template>
 <script lang="ts" setup>
 import {ref, defineProps, defineEmits, nextTick, defineExpose} from 'vue';
-import {Space, Spin, Button, message, Upload, TypographyLink} from 'ant-design-vue';
-import {EditOutlined, PaperClipOutlined, CloseOutlined, LoadingOutlined, FileOutlined} from '@ant-design/icons-vue'
+import {Space, Spin, Button, message } from 'ant-design-vue';
 import ApproveSelectorPersonalModal from './ApproveSelectorPersonalModal.vue';
 import ApproveCustomApproveSettingModal from './ApproveCustomApproveSettingModal.vue';
 import ApproveBackToStepModal from './ApproveBackToStepModal.vue';
 import {useVbenForm} from '#/adapter/form';
-import {formatFileSize} from '#/utils/index'
-import {EllipsisText} from '@vben/common-ui';
-import type {UploadChangeParam, UploadProps} from 'ant-design-vue';
-
 import {
   complete,
   stopProcess,

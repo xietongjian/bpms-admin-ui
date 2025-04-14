@@ -1,47 +1,18 @@
 <template>
-  <BasicDrawer
-      class="w-[1000px]"
-      title="接口编辑"
-      showFooter
-      @ok="handleSubmit"
-  >
+  <BasicDrawer class="w-[800px]" title="接口编辑">
     <BasicForm>
-
     </BasicForm>
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
-import {computed, defineEmits, ref, unref, defineExpose} from 'vue';
-import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
+import {defineEmits, defineExpose} from 'vue';
+import {useVbenDrawer} from '@vben/common-ui';
 import {useVbenForm} from '#/adapter/form';
-import {FormItem, FormItemRest, message, Input, Select} from "ant-design-vue";
-
+import { message} from "ant-design-vue";
 import {formSchema} from './bizTokenConfig.data';
 import {saveOrUpdate} from '#/api/base/bizTokenConfig';
 
-
-const emit = defineEmits(['success', 'register']);
-/*
-
-  const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
-    labelWidth: 100,
-    schemas: formSchema,
-    showActionButtonGroup: false,
-  });
-
-  const [registerModal, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
-    await resetFields();
-    setDrawerProps({ confirmLoading: false });
-    isUpdate.value = !!data?.isUpdate;
-    let formData = data.record;
-
-    await setFieldsValue({
-      ...formData,
-    });
-  });
-
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
-*/
+const emit = defineEmits(['success']);
 
 const [BasicDrawer, drawerApi] = useVbenDrawer({
   onCancel() {
@@ -51,13 +22,13 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     if (isOpen) {
       const values = drawerApi.getData<Record<string, any>>();
       if (values) {
-        formApi.setValues({...values, requestArr: [values.method || '', values.url || '']});
+        const params = JSON.stringify(JSON.parse(values.params), null, 2)
+        formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});
         drawerApi.setState({loading: false, confirmLoading: false});
       }
     }
   },
   onConfirm() {
-    // await formApi.submitForm();
     handleSubmit();
   },
 });
@@ -89,9 +60,9 @@ async function handleSubmit() {
     delete values.requestArr;
     const {success, msg} = await saveOrUpdate(values);
     if (success) {
+      message.success(msg);
       drawerApi.close();
       emit('success');
-      message.success(msg);
     } else {
       message.error(msg);
     }

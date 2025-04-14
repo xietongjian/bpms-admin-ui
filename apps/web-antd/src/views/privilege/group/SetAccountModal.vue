@@ -1,17 +1,12 @@
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
+  import { defineEmits, defineExpose } from 'vue';
   import { setAccountFormSchema } from './group.data';
-  import { getAllList } from '#/api/privilege/account';
   import { addUserGroups } from '#/api/privilege/group';
   import {useVbenForm} from "#/adapter/form";
   import {useVbenModal} from '@vben/common-ui';
   import {message} from 'ant-design-vue';
 
-  const emit = defineEmits(['success', 'register']);
-
-  const isUpdate = ref(true);
-  const accountOptions = ref<any[]>([]);
-
+  const emit = defineEmits(['success']);
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
@@ -22,7 +17,10 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          formApi.setValues(values);
+          const users = values.users?.map(item => {
+            return item.id
+          });
+          formApi.setValues({...values, users});
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -104,16 +102,16 @@
       }
       const values = await formApi.getValues();
       console.log(values);
-      values.users = values.users.map((item) => {
+      values.users = values.users?.map((item) => {
         return { id: item };
-      });
+      })||[];
       values.groupId = values.id;
       delete values.id;
 
       const {success, msg} = await addUserGroups(values);
       if(success){
-        emit('success');
         message.success(msg);
+        emit('success');
         modalApi.close();
       } else{
         message.error(msg);

@@ -50,10 +50,8 @@ watchEffect(() => {
 })
 const emits = defineEmits(['update:code', 'ready', 'change', 'focus', 'blur'])
 function handleReady (payload: any) {
-  // console.log('ready')
   emits('ready', payload)
   //editor.autoFormatRange({ line: 0, ch: 0 }, { line: totalLines });
-
 }
 function onChange (value: string, viewUpdate: any) {
   emits('change', value, viewUpdate)
@@ -67,7 +65,10 @@ function onFocus (viewUpdate: any) {
 }
 </script>
 <template>
-  <Codemirror
+  <div>
+    <Codemirror
+      :readOnly="true"
+      :options="{}"
       v-model="codeValue"
       :style="codeStyle"
       :disabled="disabled"
@@ -77,18 +78,9 @@ function onFocus (viewUpdate: any) {
       @focus="onFocus"
       @blur="onBlur"
       v-bind="$attrs"
-  />
+      :placeholder="placeholder"
+    />
+  </div>
 </template>
 <style lang="scss" scoped>
-:deep(.cm-editor) {
-  border-radius: 2px;
-  outline: none;
-  border: 1px solid transparent;
-  .cm-scroller {
-    border-radius: 2px;
-  }
-}
-:deep(.cm-focused) {
-  //border: 1px solid fade(@themeColor, 48%);
-}
 </style>

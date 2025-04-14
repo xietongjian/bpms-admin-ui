@@ -24,7 +24,7 @@ export const addUserGroups = (params: any) => {
 };
 
 export const deleteByIds = (params: Array<string>) =>
-  requestClient.post<any>(Api.Delete, params);
+  requestClient.post<any>(Api.Delete, params, {responseReturn: "body"});
 
 export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);

@@ -3,6 +3,7 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { RemarkDefaultEnum,FormValidPatternEnum } from '#/enums/commonEnum';
 import { checkEntityExist } from '#/api/privilege/group';
+import { getAllList } from '#/api/privilege/account';
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -165,9 +166,20 @@ export const setAccountFormSchema: FormSchema[] = [
   {
     label: '选择用户',
     fieldName: 'users',
-    component: 'Select',
+    component: 'ApiSelect',
     labelWidth: 65,
     componentProps: {
+      api: getAllList,
+      labelField: 'label',
+      valueField: 'field',
+      afterFetch: (res: any) => {
+        return res.map((item: any) => {
+          return {
+            label: item.realName + '(' + item.username + ')',
+            field: item.id,
+          }
+        });
+      },
       mode: 'multiple',
       placeholder: '请选择用户',
       class: 'w-full',
