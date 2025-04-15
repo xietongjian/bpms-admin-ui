@@ -27,7 +27,7 @@ export const saveOrUpdate = (params?: any) =>
 export const allocationRoles = (params: any) => {
   const userId = params.userId;
   delete params['userId'];
-  return requestClient.post<any>(Api.AllocationRoles + '/' + params.userId, params);
+  return requestClient.post<any>(Api.AllocationRoles + '/' + userId, params.groups, {responseReturn: 'body'});
 };
 
 export const setPassword = (params: any) =>

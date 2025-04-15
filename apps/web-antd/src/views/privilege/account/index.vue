@@ -16,9 +16,7 @@ import SetGroupModal from './SetGroupModal.vue';
 import {PerEnum} from "#/enums/perEnum";
 import {TableAction} from '#/components/table-action';
 
-const passwordModalRef = ref();
-const setGroupModalRef = ref();
-const accountModalRef = ref();
+const passwordModalRef = ref(), setGroupModalRef = ref(),accountModalRef = ref();
 
 const PerPrefix = 'Account:';
 
@@ -140,6 +138,9 @@ function handleSetPassword(record: Recordable<any>) {
 function handleSetGroup(record: Recordable<any>) {
   setGroupModalRef.value.setData(record);
   setGroupModalRef.value.open();
+  setGroupModalRef.value.setState({
+    title: '给账号【' + record.realName + '(' + record.username + ')】设置组'
+  });
 }
 
 function handlePasswordSuccess() {

@@ -1,18 +1,17 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal v-bind="$attrs" >
+    <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits } from 'vue';
+  import {defineEmits, defineExpose } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import { setGroupFormSchema } from './account.data';
   import { allocationRoles } from '#/api/privilege/account';
   import {useVbenForm} from "#/adapter/form";
+  import {message} from 'ant-design-vue';
 
-  const emit = defineEmits(['success', 'register']);
-  const isUpdate = ref(true);
-  const title = ref('设置组');
+  const emit = defineEmits(['success']);
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
@@ -23,7 +22,7 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          const groups = values.groups.map(item => item.sn);
+          const groups = values.groups.map(item => item.id);
           baseFormApi.setValues({...values, groups: groups});
           modalApi.setState({loading: false, confirmLoading: false});
         }
@@ -54,63 +53,30 @@
     wrapperClass: 'grid-cols-1',
   });
 
-
-  /*const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
-    resetFields();
-
-    setModalProps({
-      confirmLoading: false,
-      title: '给账号【' + data.record.realName + '(' + data.record.username + ')】设置组',
-    });
-    isUpdate.value = !!data?.isUpdate;
-
-    const groupList = (await getAllList()) as any;
-    groupList.forEach((item) => {
-      item.label = item.name;
-      item.value = item.id;
-    });
-    updateSchema([
-      {
-        field: 'groups',
-        componentProps: {
-          mode: 'multiple',
-          options: groupList,
-        },
-      },
-    ]);
-
-    if (unref(isUpdate)) {
-      let groups = data.record.groups || [];
-      groups = groups.map((item) => {
-        return item.id;
-      });
-      setFieldsValue({
-        ...data.record,
-        groups,
-      });
-    }
-  });
-*/
-  let getTitle = computed(() => (!unref(isUpdate) ? '新增' : title.value));
-
   async function handleSubmit() {
     try {
       modalApi.setState({confirmLoading: true});
       const {valid} = await baseFormApi.validate();
-
-      if(valid){
-        const values = await baseFormApi.getValues();
-        debugger;
-        values.groups = values.groups.map((item) => {
-          return { id: item };
-        });
-        values.userId = values.id;
-        delete values.id;
-
-        await allocationRoles(values);
-        emit('success');
+      if(!valid){
+        return;
       }
+      const values = await baseFormApi.getValues();
+      values.groups = values.groups.map((item) => {
+        return { id: item };
+      });
+      values.userId = values.id;
+      delete values.id;
 
+      const {success, msg} = await allocationRoles(values);
+      if(success){
+        message.success(msg);
+        await modalApi.close();
+        emit('success');
+      } else {
+        message.error(msg);
+      }
+    } catch (e){
+      console.error(e);
     } finally {
       modalApi.setState({confirmLoading: false});
     }

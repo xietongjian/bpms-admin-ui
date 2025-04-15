@@ -1,10 +1,10 @@
 <template>
-  <BasicModal :title="getTitle" @ok="handleSubmit">
+  <BasicModal>
     <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref } from 'vue';
+  import { defineEmits, defineExpose } from 'vue';
 
   import {useVbenModal} from '@vben/common-ui';
   import {passwordFormSchema} from './account.data';
@@ -12,6 +12,7 @@
   import { message } from 'ant-design-vue';
   import {useVbenForm} from '#/adapter/form';
 
+  const emit = defineEmits(['success']);
 
   const [BasicForm, formApi] = useVbenForm({
     schema: passwordFormSchema,
@@ -45,21 +46,21 @@
     },
   });
 
-  const getTitle = computed(() => '设置密码');
-
   async function handleSubmit() {
     try {
       modalApi.setState({loading: true, confirmLoading: true});
       const { valid } = await formApi.validate();
-      if(valid){
-        const values = await formApi.getValues();
-        const {success, msg} = await setPassword({id: values.id, password: values.passwordNew});
-        if (success) {
-          message.success(msg);
-          modalApi.close();
-        } else {
-          message.error(msg);
-        }
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
+      const {success, msg} = await setPassword({id: values.id, password: values.passwordNew});
+      if (success) {
+        message.success(msg);
+        modalApi.close();
+        emit('success');
+      } else {
+        message.error(msg);
       }
     } finally {
       modalApi.setState({loading: false, confirmLoading: false});
