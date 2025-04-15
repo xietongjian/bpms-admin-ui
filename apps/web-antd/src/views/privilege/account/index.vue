@@ -133,6 +133,9 @@ function createActions(record: any) {
 function handleSetPassword(record: Recordable<any>) {
   passwordModalRef.value.setData(record);
   passwordModalRef.value.open();
+  passwordModalRef.value.setState({
+    title: `给账号【${record.realName}(${record.username})】设置密码`
+  });
 }
 
 function handleSetGroup(record: Recordable<any>) {

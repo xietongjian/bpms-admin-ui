@@ -113,6 +113,8 @@ export const accountFormSchema: FormSchema[] = [
     label: '用户类型',
     component: 'RadioGroup',
     defaultValue: 0,
+    // 占满三列空间 基线对齐
+    formItemClass: 'col-span-3 items-baseline',
     componentProps: {
       options: UserTypeList,
     },

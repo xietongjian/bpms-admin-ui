@@ -44,28 +44,29 @@ const [BasicForm, baseFormApi] = useVbenForm({
 async function handleSubmit() {
   modalApi.setState({loading: true, confirmLoading: true});
   const {valid} = await baseFormApi.validate();
-  if (valid) {
-    try {
-      const values = await baseFormApi.getValues();
-      const {msg, success} = await saveOrUpdate(values);
-      if (success) {
-        message.success(msg);
-        modalApi.close();
-        emit('onSuccess');
-      } else {
-        message.error(msg);
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        message.error(error.message);
-      } else {
-        message.error('An unknown error occurred');
-      }
-    } finally {
-      modalApi.setState({loading: false, confirmLoading: false});
-    }
+  if (!valid) {
+    return;
   }
-  modalApi.setState({loading: false, confirmLoading: false});
+  try {
+    const values = await baseFormApi.getValues();
+    const {msg, success} = await saveOrUpdate(values);
+    if (success) {
+      message.success(msg);
+      modalApi.close();
+      emit('onSuccess');
+    } else {
+      message.error(msg);
+    }
+  } catch (error: unknown) {
+    console.error(error);
+    if (error instanceof Error) {
+      message.error(error.message);
+    } else {
+      message.error('An unknown error occurred');
+    }
+  } finally {
+    modalApi.setState({loading: false, confirmLoading: false});
+  }
 }
 
 defineExpose(modalApi);
