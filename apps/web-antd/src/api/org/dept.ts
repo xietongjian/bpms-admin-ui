@@ -70,7 +70,7 @@ export const getOrgTree = async () => {
 
 export const saveOrUpdate = (params: any) => requestClient.post(Api.SaveOrUpdate, params, {responseReturn: 'body'});
 
-export const deleteByIds = (params: Array<string>) => requestClient.post(Api.Delete, params);
+export const deleteByIds = (params: Array<string>) => requestClient.post(Api.Delete, params, {responseReturn: "body"});
 
 export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);

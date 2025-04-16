@@ -59,6 +59,7 @@ const gridOptions: VxeGridProps<any> = {
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
+        formValues.companyId = unref(currentNode)?.id;
         return await getDepts(formValues || {});
       },
     },
@@ -93,31 +94,25 @@ function handleCreateChild(record: Recordable<any>) {
   });
 }
 
-function handleDelete(record: Recordable<any>) {
+async function handleDelete(record: Recordable<any>) {
   if (record.children && record.children.length > 0) {
     message.warning('有子节点，不能删除！');
     return;
   }
-  deleteByIds([record.id]).then((res) => {
-    reloadData();
-  });
-}
-
-function reloadData() {
-  if (unref(currentNode) && unref(currentNode).id) {
-    tableApi.reload({companyId: unref(currentNode).id});
-  } else {
+  const {success, msg} = await deleteByIds([record.id]);
+  if(success){
+    message.success(msg);
     tableApi.reload();
   }
 }
 
 function handleSuccess() {
-  reloadData();
+  tableApi.reload()
 }
 
 function handleSelect(node: Recordable<any>) {
   currentNode.value = node;
-  reloadData();
+  tableApi.reload()
 }
 
 function createActions(row: Recordable<any>) {
