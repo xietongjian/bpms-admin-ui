@@ -113,32 +113,35 @@ export const accountFormSchema: FormSchema[] = [
     label: '用户类型',
     component: 'RadioGroup',
     defaultValue: 0,
-    // 占满三列空间 基线对齐
-    formItemClass: 'col-span-3 items-baseline',
+    formItemClass: 'col-span-4',
     componentProps: {
       options: UserTypeList,
     },
   },
   {
-    fieldName: 'username',
-    label: '用户名',
+    // fieldName: 'headImg',
+    label: '头像',
+    hideLabel: true,
+    // component: 'Upload',
     component: 'Input',
-    rules: 'required',
-  },
-  {
-    fieldName: 'realName',
-    label: '姓名',
-    component: 'Input',
-    dependencies: {
-      show: false,
-      triggerFields: ['']
-    }
+    fieldName: 'headImgSlot',
+    componentProps: {
+      name: "avatar",
+      listType: "picture-card",
+      class: "avatar-uploader",
+      accept: '',
+      maxCount: 1,
+    },
+    formItemClass: 'col-span-1',
+    wrapperClass: 'absolute justify-center',
+    // slot: 'headImg',
   },
   {
     fieldName: 'realNameSelector',
     label: '关联人员',
     rules: 'selectRequired',
     component: 'PersonalSelector',
+    formItemClass: 'col-span-4',
     componentProps: {
       placeholder: '请选择人员',
       multiple: false,
@@ -148,18 +151,29 @@ export const accountFormSchema: FormSchema[] = [
     }
   },
   {
-    fieldName: 'headImg',
-    label: '头像',
-    component: 'Upload',
-    componentProps: {
-      name: "avatar",
-      listType: "picture-card",
-      class: "avatar-uploader",
-      accept: '',
-      maxCount: 1,
-    },
-    formItemClass: '[&_.ant-upload-select]:!block',
-    // slot: 'headImg',
+    fieldName: 'username',
+    label: '用户名',
+    component: 'Input',
+    rules: 'required',
+    formItemClass: 'col-span-2 col-start-1 items-baseline',
+  },
+  {
+    fieldName: 'userNo',
+    label: '工号',
+    component: 'Input',
+    formItemClass: 'col-span-2',
+    // required: true,
+    rules: "required",
+  },
+  {
+    fieldName: 'realName',
+    label: '姓名',
+    component: 'Input',
+    formItemClass: 'col-span-1',
+    dependencies: {
+      show: false,
+      triggerFields: ['']
+    }
   },
   {
     fieldName: 'sex',
@@ -169,25 +183,21 @@ export const accountFormSchema: FormSchema[] = [
     componentProps: {
       options: SixList,
     },
-  },
-  {
-    fieldName: 'userNo',
-    label: '工号',
-    component: 'Input',
-    // required: true,
-    rules: "required",
+    formItemClass: 'col-span-4',
   },
   {
     label: '手机',
     fieldName: 'mobile',
     component: 'Input',
     rules: "required",
+    formItemClass: 'col-span-2',
   },
   {
     label: '邮箱',
     fieldName: 'email',
     component: 'Input',
     rules: "required",
+    formItemClass: 'col-span-3',
   },
 ];
 

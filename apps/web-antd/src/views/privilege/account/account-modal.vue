@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import {defineExpose, defineEmits, ref} from 'vue';
 import {useVbenModal} from '@vben/common-ui';
-import {message} from 'ant-design-vue';
+import {Input, message, Upload} from 'ant-design-vue';
 import {accountFormSchema} from './account.data';
 import {useVbenForm} from '#/adapter/form';
 import {saveOrUpdate} from '#/api/privilege/account';
+import type { UploadChangeParam, UploadProps } from 'ant-design-vue';
+import { PlusOutlined, LoadingOutlined } from '@ant-design/icons-vue';
 
 const emit = defineEmits<{
   onSuccess: [void];
@@ -19,6 +21,7 @@ const [BasicModal, modalApi] = useVbenModal({
     if (isOpen) {
       const values = modalApi.getData<Record<string, any>>();
       if (values) {
+        imageUrl.value = values.image;
         baseFormApi.setValues(values);
         modalApi.setState({loading: false, confirmLoading: false});
       }
@@ -34,11 +37,13 @@ const [BasicForm, baseFormApi] = useVbenForm({
     componentProps: {
       class: 'w-full',
     },
+    formItemClass: 'col-span-3',
+    labelWidth: 80,
   },
   showDefaultActions: false,
   layout: 'horizontal',
+  wrapperClass: 'grid-cols-5',
   schema: accountFormSchema,
-  wrapperClass: 'grid-cols-1',
 });
 
 async function handleSubmit() {
@@ -49,6 +54,10 @@ async function handleSubmit() {
   }
   try {
     const values = await baseFormApi.getValues();
+
+    values.image = imageUrl.value;
+    // delete values.realNameSelector;
+
     const {msg, success} = await saveOrUpdate(values);
     if (success) {
       message.success(msg);
@@ -69,22 +78,61 @@ async function handleSubmit() {
   }
 }
 
+function getBase64(img: Blob, callback: (base64Url: string) => void) {
+  const reader = new FileReader();
+  reader.addEventListener('load', () => callback(reader.result as string));
+  reader.readAsDataURL(img);
+}
+
+const imageUrl = ref<string>('');
+
+const beforeUpload = (file) => {
+  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+  if (!isJpgOrPng) {
+    message.error('只允许上传JPG图片！');
+    return false;
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    message.error('图片不能大于2MB！');
+    return false;
+  }
+  getBase64(file, (imgUrl) => {
+    imageUrl.value = imgUrl;
+  });
+  return false;
+};
+
 defineExpose(modalApi);
 </script>
 
 <template>
   <BasicModal class="w-[800px]">
-    <BasicForm/>
+    <BasicForm>
+      <template #headImgSlot="slotProps">
+        <div class="">
+          <Upload
+            style="margin: auto"
+            name="avatar"
+            list-type="picture-card"
+            class="avatar-uploader"
+            :show-upload-list="false"
+            :before-upload="beforeUpload"
+            :multiple="false"
+          >
+            <img v-if="imageUrl" :src="imageUrl" alt="avatar" class="w-[100px] h-[100px] object-contain"/>
+            <div v-else>
+              <plus-outlined />
+              <div class="ant-upload-text">上传头像</div>
+            </div>
+          </Upload>
+        </div>
+      </template>
+    </BasicForm>
   </BasicModal>
 </template>
 
 <style lang="scss" scoped>
-.avatar-uploader {
-  :deep(.ant-upload) {
-    width: 100px;
-    height: 100px;
-  }
-}
 </style>
 
 
