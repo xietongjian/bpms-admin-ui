@@ -176,7 +176,7 @@ export const deptFormSchema: FormSchema[] = [
       // childrenField: 'children',
       treeDataSimpleMode: { id: "id", pId: "pid", rootPId: null },
       labelField: 'cname',
-      valueField: 'code',
+      valueField: 'id',
       allowClear: true,
       getPopupContainer: () => document.body,
     },

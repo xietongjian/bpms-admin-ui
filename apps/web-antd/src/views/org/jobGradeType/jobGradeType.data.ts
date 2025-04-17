@@ -1,5 +1,3 @@
-import { h } from 'vue';
-import { Tag } from 'ant-design-vue';
 import { OrderNoDefaultEnum, RemarkDefaultEnum,FormValidPatternEnum } from '#/enums/commonEnum';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {checkEntityExist} from '#/api/org/jobGradeType';
@@ -12,7 +10,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '名称',
     field: 'name',
     align: 'left',
-    width: 300,
+    minWidth: 300,
     resizable: true,
   },
   {
@@ -96,6 +94,15 @@ export const formSchema: FormSchema[] = [
     }
   },
   {
+    fieldName: 'name',
+    label: '名称',
+    component: 'Input',
+    rules: z
+        .string({required_error: '名称不能为空！'})
+        .min(1, {message: '名称不能为空！'})
+        .max(80, {message: '字符长度不能大于80！'}),
+  },
+  {
     fieldName: 'code',
     label: '编码',
     component: 'Input',
@@ -131,15 +138,6 @@ export const formSchema: FormSchema[] = [
       },
       triggerFields: ['code'],
     },
-  },
-  {
-    fieldName: 'name',
-    label: '名称',
-    component: 'Input',
-    rules: z
-        .string({required_error: '名称不能为空！'})
-        .min(1, {message: '名称不能为空！'})
-        .max(80, {message: '字符长度不能大于80！'}),
   },
   {
     fieldName: 'status',

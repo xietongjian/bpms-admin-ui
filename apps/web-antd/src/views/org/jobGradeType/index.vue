@@ -11,37 +11,11 @@ import JobGradeTypeModal from './JobGradeTypeModal.vue';
 import {deleteById, getJobGradeTypes} from '#/api/org/jobGradeType';
 import type {Recordable} from '@vben/types';
 import {TableAction} from '#/components/table-action';
-import {Button, Tag} from 'ant-design-vue';
+import {Button, message, Tag} from 'ant-design-vue';
 
 const PerPrefix = "JobGradeType:";
 
 const jobGradeTypeModalRef = ref();
-
-/*const [registerModal, { openModal }] = useModal();
-const [registerTable, { reload }] = useTable({
-  title: '列表',
-  api: getJobGradeTypes,
-  columns,
-  formConfig: {
-    labelWidth: 120,
-    schemas: searchFormSchema,
-    showAdvancedButton: false,
-    showResetButton: false,
-    autoSubmitOnEnter: true,
-  },
-  canColDrag: true,
-  useSearchForm: true,
-  bordered: true,
-  pagination: false,
-  showIndexColumn: false,
-  isTreeTable: true,
-  actionColumn: {
-    width: 100,
-    title: '操作',
-    dataIndex: 'action',
-  },
-});
-*/
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -57,9 +31,13 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeGridProps<any> = {
-  checkboxConfig: {
-    highlight: true,
-    labelField: 'name',
+  pagerConfig: {
+    enabled: false,
+  },
+  treeConfig: {
+    parentField: 'pid',
+    rowField: 'id',
+    transform: true,
   },
   columns,
   columnConfig: {resizable: true},
@@ -69,14 +47,8 @@ const gridOptions: VxeGridProps<any> = {
   stripe: true,
   proxyConfig: {
     ajax: {
-      query: async ({page}, formValues) => {
-        return await getJobGradeTypes({
-          query: {
-            pageNum: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          entity: formValues || {},
-        });
+      query: async ({}, formValues) => {
+        return await getJobGradeTypes(formValues);
       },
     },
   },
@@ -101,16 +73,18 @@ function handleEdit(record: Recordable<any>) {
   });
 }
 
-function handleDelete(record: Recordable<any>) {
-  deleteById([record.id]).then(() => {
+async function handleDelete(record: Recordable<any>) {
+  const {success, msg} = await deleteById([record.id]);
+  if(success){
     tableApi.reload();
-  });
+    message.success(msg);
+  } else {
+    message.error(msg);
+  }
 }
 
 function handleSuccess() {
-  setTimeout(() => {
-    tableApi.reload();
-  }, 200);
+  tableApi.reload();
 }
 
 function createActions(record: Recordable<any>) {

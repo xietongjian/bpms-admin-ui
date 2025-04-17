@@ -45,11 +45,6 @@ const gridOptions: VxeGridProps = {
     keyField: 'id',
     isHover: true,
   },
-  treeConfig: {
-    parentField: 'pid',
-    rowField: 'id',
-    transform: true,
-  },
   height: 'auto',
   keepSource: true,
   border: false,
@@ -105,9 +100,7 @@ async function handleDelete(record: Recordable<any>) {
   }
 }
 function handleSuccess() {
-  setTimeout(() => {
-    tableApi.reload();
-  }, 200);
+  tableApi.reload();
 }
 
 function createActions(record: Recordable<any>) {
