@@ -47,12 +47,12 @@ const [BasicForm, baseFormApi] = useVbenForm({
 });
 
 async function handleSubmit() {
-  modalApi.setState({loading: true, confirmLoading: true});
-  const {valid} = await baseFormApi.validate();
-  if (!valid) {
-    return;
-  }
   try {
+    modalApi.setState({loading: true, confirmLoading: true});
+    const {valid} = await baseFormApi.validate();
+    if (!valid) {
+      return;
+    }
     const values = await baseFormApi.getValues();
 
     values.image = imageUrl.value;

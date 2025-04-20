@@ -72,6 +72,7 @@ interface Props {
    */
   modalTitle?: string;
   placeholder?: string;
+  change?: Function;
 }
 
 /**
@@ -104,6 +105,9 @@ watch(
     () => modelValue.value,
     (v) => {
       emit('change', v);
+      if (typeof props.change === 'function') {
+        props.change(v);
+      }
     },
 );
 watchEffect(() => {
@@ -122,6 +126,7 @@ function handleChange(items: any[]) {
   });
   modelValue.value = result;
   currentSelect.value = result;
+  // emit('change', result);
 }
 
 function clearSelectedList(e) {

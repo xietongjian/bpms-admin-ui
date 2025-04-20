@@ -148,6 +148,9 @@ export const accountFormSchema: FormSchema[] = [
       type: 'personal',
       closeOnSelect: false,
       selectOnModal: true,
+      change:(val) => {
+        debugger;
+      }
     }
   },
   {

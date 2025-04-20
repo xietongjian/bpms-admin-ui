@@ -1,8 +1,21 @@
 <template>
-  <BasicModal class="w-[1000px]">
-<!--    <div ref="selectorContainerRef" class="relative border h-full xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" >
+  <BasicModal class="w-[1000px] h-[80%]">
+<!--    <div class="h-full border border-red-500 flex flex-col relative">
+      <div class="h-[60px] border border-blue-500">
+aaaaa
+      </div>
+      <div class="flex-1 border border-green-500 flex flex-row h-0 ">
+        <div class="w-[30%] h-full">
+          <div class="h-full overflow-y-auto outline outline-red-500">
+            <p v-for="item in 20">test</p>
+          </div>
+        </div>
+        <div class="flex-1 h-full">
+
+        </div>
+      </div>
     </div>-->
-    <div class="selected-items mb-2 min-h-8 p-2">
+    <div class="selected-items min-h-8 p-2">
       <template
           v-if="selectedRowsList && selectedRowsList.length > 0"
           v-for="(item, index) in selectedRowsList"
@@ -16,12 +29,12 @@
         <div class="ant-select-selection-placeholder">请选择人员</div>
       </template>
     </div>
-    <div ref="selectorContainerRef" class="flex-1 flex p-0 h-full">
-      <div class="w-[30%] flex flex-col border h-full">
+    <div ref="selectorContainerRef" class="flex-1 flex p-0 h-0">
+      <div class="w-[30%] flex flex-col h-full">
         <div class="h-8 border">
           组织
         </div>
-        <div class="flex-1 p-1">
+        <div class="flex-1 p-1 overflow-y-auto">
           <Tree
               class=""
               title="组织"
@@ -34,12 +47,12 @@
           />
         </div>
       </div>
-      <div class="w-[70%] h-full flex flex-col border">
+      <div class="w-[70%] h-full flex flex-col">
         <div class="h-10">
           <Search
+              class="w-full"
               v-model:value="searchTxt"
               placeholder="请输入姓名/工号/手机/邮箱"
-              style="width: 100%"
               @search="doSearchFilter"
               @press-enter="doSearchFilter"
               :allowClear="true"
@@ -47,7 +60,6 @@
         </div>
 
         <div ref="tableContainerRef" class="bg-card border flex-1">
-          {{height-170}} - {{multiSelect}}
           <Table
               size="small"
               :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)"
@@ -56,33 +68,14 @@
               :columns="columns"
               :dataSource="tableData"
               :pagination="pagination"
-              :scroll="{ y: 160 }"
+              :resizable="true"
+              :scroll="{ y: tableHeight }"
               :loading="personalTableLoading"
               rowKey="code"
               :customRow="customRow"
           />
         </div>
       </div>
-
-
-      <!--          <div class="flex">
-                    <div class="left-tree bg-white w-1/4 xl:w-3/10 mr-2 overflow-hidden h-full">
-
-                    </div>
-
-                    <div class="w-3/4 xl:w-7/10 mb-0">
-                        &lt;!&ndash;        <Search
-                                    v-model:value="searchTxt"
-                                    placeholder="请输入姓名/工号/手机/邮箱"
-                                    style="width: 100%"
-                                    @search="doSearchFilter"
-                                    @press-enter="doSearchFilter"
-                                    :allowClear="true"
-                                />&ndash;&gt;
-
-                        &lt;!&ndash;        &ndash;&gt;
-                    </div>
-                </div>-->
     </div>
   </BasicModal>
 </template>
@@ -112,33 +105,29 @@ import {getOrgTree} from '#/api/org/dept';
 import {columns, searchFormSchema} from './selector.data';
 // import {searchFormSchema} from "#/views/privilege/account/account.data";
 import {getAccountPageList} from "#/api/privilege/account";
+import { useElementSize } from '@vueuse/core'
 
 const {Search} = Input;
 
+const tableHeight = ref(250);
+
 const emit = defineEmits(['change'])
-import { useElementSize } from '@vueuse/core'
 // 保存被选中的行的id列表
 const selectedRowKeyList = ref([])
 //保存被选中的行的完整数据
 const selectedRowsList = ref([])
 
 const selectorContainerRef = ref();
-const tempHeight = ref(250);
-
-const compHeight = computed(() => tempHeight.value)
 
 onMounted(() => {
 
 });
-const modalHeight = ref();
 // const eleId = document.getElementsByClassName('BBBBBBBBBBBBBBBBBB');
 // debugger;
 const { width, height } = useElementSize(selectorContainerRef)
-console.log(height);
-modalHeight.value = height.value;
-/*watch(height, () => {
-  debugger;
-})*/
+watch(height, () => {
+  tableHeight.value = height.value-150;
+})
 
 
 
@@ -146,7 +135,7 @@ modalHeight.value = height.value;
 const [BasicModal, modalApi] = useVbenModal({
   title: '选择人员',
   draggable: true,
-  contentClass: 'h-full flex flex-col min-h-[200px] wwwwwwwwwwwwwwwwwwwwwwwwwwww',
+  contentClass: 'flex flex-col min-h-[200px] h-full',
   onCancel() {
     modalApi.close();
   },
@@ -165,7 +154,7 @@ const [BasicModal, modalApi] = useVbenModal({
         selectedRowKeyList.value = [];
       }
 
-      debugger;
+      // debugger;
       multiSelect.value = multiple;
 
       await fetchTreeData();
@@ -391,6 +380,7 @@ function onSelectChange(selectedKeys: Array<object>, selectedRecords: Array<obje
 
 // 行点击
 function rowClick(record: any) {
+    debugger;
   let selectedRowKeys = state.selectedRowKeys;
   let selectedList = state.selectedList;
   let code = record.code;
@@ -420,6 +410,8 @@ function rowClick(record: any) {
       selectedRowKeys: [code],
       selectedList: [record],
     });
+      // state.selectedRowKeys = [code];
+      selectedRowKeyList.value = [code];
   }
 }
 
