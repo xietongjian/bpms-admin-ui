@@ -15,19 +15,24 @@ aaaaa
         </div>
       </div>
     </div>-->
-    <div class="selected-items min-h-8 p-2">
-      <template
+    <div class="group border border-blue-200 !border-dashed mb-2 flex justify-between">
+      <div class="flex flex-wrap gap-y-2 p-2">
+        <template
           v-if="selectedRowsList && selectedRowsList.length > 0"
           v-for="(item, index) in selectedRowsList"
           :key="index"
-      >
-        <Tag color="processing" closable @close="removeSelectedItem(item.code)">
-          {{ item.name }}
-        </Tag>
-      </template>
-      <template v-else>
-        <div class="ant-select-selection-placeholder">请选择人员</div>
-      </template>
+        >
+          <Tag color="processing" closable @close="removeSelectedItem(item.code)">
+            {{ item.name }}
+          </Tag>
+        </template>
+        <span class="text-sm" v-else>
+          请选择人员
+        </span>
+      </div>
+      <span class="h-full flex items-center">
+        <a class="p-1 cursor-pointer invisible group-hover:visible "><CloseCircleOutlined /></a>
+      </span>
     </div>
     <div ref="selectorContainerRef" class="flex-1 flex p-0 h-0">
       <div class="w-[30%] flex flex-col h-full">
@@ -106,6 +111,7 @@ import {columns, searchFormSchema} from './selector.data';
 // import {searchFormSchema} from "#/views/privilege/account/account.data";
 import {getAccountPageList} from "#/api/privilege/account";
 import { useElementSize } from '@vueuse/core'
+import {CloseCircleOutlined} from '@ant-design/icons-vue'
 
 const {Search} = Input;
 
@@ -383,6 +389,7 @@ function rowClick(record: any) {
     debugger;
   let selectedRowKeys = state.selectedRowKeys;
   let selectedList = state.selectedList;
+
   let code = record.code;
   if (multiSelect.value) {
     if (selectedRowKeys.length > 0) {
@@ -410,8 +417,9 @@ function rowClick(record: any) {
       selectedRowKeys: [code],
       selectedList: [record],
     });
-      // state.selectedRowKeys = [code];
-      selectedRowKeyList.value = [code];
+    selectedRowsList.value = [record];
+    // state.selectedRowKeys = [code];
+    selectedRowKeyList.value = [code];
   }
 }
 
