@@ -174,7 +174,7 @@ function handleRemoveGroupUser(){
       </template>
 
       <template #users="{ row }">
-        <div class="max-h-300 overflow-y-auto gap-1" v-if="row.users">
+        <div class="max-h-50 overflow-y-auto" v-if="row.users">
           <EmpInfo v-for="item in row.users" :no="item.username" :name="item.realName" >
             <Tag class="my-1" color="green">
               {{ item.realName }}

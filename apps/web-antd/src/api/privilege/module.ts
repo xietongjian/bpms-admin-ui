@@ -14,7 +14,7 @@ export const getModules = (params?: any) => {
 
 export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params);
 
-export const savePValue = (params: any) => requestClient.post<any>(Api.SavePValue, params);
+export const savePValue = (params: any) => requestClient.post<any>(Api.SavePValue, params, {responseReturn: 'body'});
 
 export const deleteByIds = (params: Array<string>) =>
     requestClient.post<any>(Api.Delete, params);

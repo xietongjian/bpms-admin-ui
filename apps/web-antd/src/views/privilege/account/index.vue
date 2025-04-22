@@ -15,6 +15,7 @@ import PasswordModal from './PasswordModal.vue';
 import SetGroupModal from './SetGroupModal.vue';
 import {PerEnum} from "#/enums/perEnum";
 import {TableAction} from '#/components/table-action';
+import {EmpInfo} from "#/views/components/EmpInfo";
 
 const passwordModalRef = ref(), setGroupModalRef = ref(),accountModalRef = ref();
 
@@ -40,6 +41,7 @@ const gridOptions: VxeGridProps<any> = {
     labelField: 'name',
   },
   columns,
+  showOverflow: false,
   columnConfig: {resizable: true},
   height: 'auto',
   keepSource: true,
@@ -177,11 +179,11 @@ function previewImageHandle(headImg) {
       </template>
 
       <template #groups="{ row }">
-        <Space>
-          <Tag color="green" v-for="item in row.groups">
+        <div class="max-h-50 overflow-y-auto" v-if="row.groups">
+          <Tag class="my-1" color="green" v-for="item in row.groups">
             {{ item.name }}
           </Tag>
-        </Space>
+        </div>
       </template>
       <template #sex="{ row }">
         <Tag v-if="~~row.sex === 1" color="#10AEFF">男</Tag>

@@ -21,6 +21,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '用户',
     field: 'users',
     align: 'left',
+    minWidth: 200,
     slots: {default: 'users'},
   },
   {

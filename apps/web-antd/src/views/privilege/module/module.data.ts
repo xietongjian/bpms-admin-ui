@@ -52,7 +52,7 @@ export const listColumns: VxeGridProps['columns'] = [
     title: '权限值',
     field: 'pvs',
     align: 'left',
-    width: 300,
+    minWidth: 200,
     resizable: true,
     slots: {default: 'pvs'}
   },

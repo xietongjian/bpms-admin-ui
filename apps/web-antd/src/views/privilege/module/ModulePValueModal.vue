@@ -9,14 +9,10 @@
   import {message} from 'ant-design-vue';
   import {useVbenForm} from '#/adapter/form';
 
-  import { formSchema } from './module.data';
+  import { pValueFormSchema } from './module.data';
   import { saveOrUpdate } from '#/api/privilege/module';
-  import {accountFormSchema} from "#/views/privilege/account/account.data";
 
   const emit = defineEmits(['success', 'register']);
-
-  const isUpdate = ref(true);
-
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
@@ -48,7 +44,7 @@
     },
     showDefaultActions: false,
     layout: 'horizontal',
-    schema: formSchema,
+    schema: pValueFormSchema,
     wrapperClass: 'grid-cols-1',
   });
 

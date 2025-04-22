@@ -35,6 +35,7 @@ const formOptions: VbenFormProps = {
 const gridOptions: VxeGridProps = {
   columns: listColumns,
   columnConfig: {resizable: true},
+  showOverflow: false,
   height: 'auto',
   keepSource: true,
   border: false,
@@ -117,31 +118,26 @@ async function handleDelete(record: Recordable<any>) {
   }
 }
 
-function handleCreateChild(record: Recordable, e) {
-  e.stopPropagation();
-  setModalProps({ title: '新增【' + record.name + '】的子菜单' });
+function handleCreateChild(record: Recordable<any>, e) {
   record = {
     pid: record.id,
     status: 1,
     showStatus: 1,
   };
-  openModal(true, {
-    record,
-    isUpdate: true,
+  moduleDrawerRef.value.setData(record);
+  moduleDrawerRef.value.setState({
+    title: '新增【' + record.name + '】的子菜单'
   });
+  moduleDrawerRef.value.open();
 }
 
 function handleEditPValue(record: Recordable<any>, e) {
   e.stopPropagation();
-  /*openPvalueModal(true, {
-    record,
-    isUpdate: true,
-  });*/
   pValueSettingModalRef.value.setData(record);
-  pValueSettingModalRef.value.open();
   pValueSettingModalRef.value.setState({
-    title: '新建'
+    title: '编辑'
   });
+  pValueSettingModalRef.value.open();
 }
 
 function createActions(record: Recordable<any>): any[] {
@@ -173,6 +169,7 @@ function createActions(record: Recordable<any>): any[] {
         e.stopPropagation();
       },
       popConfirm: {
+        placement: 'left',
         title: '是否确认删除',
         confirm: handleDelete.bind(null, record),
         okButtonProps: {
@@ -204,8 +201,8 @@ function createActions(record: Recordable<any>): any[] {
         </div>
       </template>
       <template #pvs="{ row }">
-        <div class="flex flex-row items-center gap-1">
-          <Tag v-for="item in row.pvs" :key="item.id" color="green">{{item.name}}</Tag>
+        <div class="max-h-50 overflow-y-auto">
+          <Tag class="my-1" v-for="item in row.pvs" :key="item.id" color="green">{{item.name}}</Tag>
         </div>
       </template>
 
@@ -220,7 +217,7 @@ function createActions(record: Recordable<any>): any[] {
       </template>
     </BasicTable>
 <!--    <ModuleModal ref="moduleModalRef" @register="registerModal" @success="handleSuccess" />-->
-    <ModuleDrawer ref="moduleDrawerRef" @register="registerModal" @success="handleSuccess" />
-    <PValueSettingModal ref="pValueSettingModalRef" @register="registerPValueModal" @success="handleSuccess" />
+    <ModuleDrawer ref="moduleDrawerRef" @success="handleSuccess" />
+    <PValueSettingModal ref="pValueSettingModalRef" @success="handleSuccess" />
   </Page>
 </template>
