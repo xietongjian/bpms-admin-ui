@@ -22,7 +22,10 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     if (isOpen) {
       const values = drawerApi.getData<Record<string, any>>();
       if (values) {
-        formApi.setValues(values);
+        if(values.id){
+          values.moduleType = values.component === 'LAYOUT' ? 'dictionary' : 'menu';
+        }
+        formApi.setValues({...values});
         drawerApi.setState({loading: false, confirmLoading: false});
       }
     }

@@ -8,7 +8,7 @@ import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import type { Recordable } from '@vben/types';
 import { TableAction } from '#/components/table-action';
 
-import { getModules } from '#/api/privilege/module';
+import { getModules, deleteByIds } from '#/api/privilege/module';
 import { useAccess } from '@vben/access';
 import ModuleDrawer from './module-drawer.vue';
 import {listColumns, searchFormSchema} from "#/views/privilege/module/module.data";
@@ -88,37 +88,29 @@ function handleEdit(record: Recordable<any>) {
   moduleDrawerRef.value.setState({
     title: '修改'
   });
-  /*modalApi.setData(record);
-  modalApi.open();
-  modalApi.setState({
-    title: '修改'
-  });*/
-}
-
-function handleViewSecretKey(record: Recordable<any>) {
-  /*secretKeyModalApi.setData(record);
-  secretKeyModalApi.open();
-  secretKeyModalApi.setState({
-    title: '查看密钥',
-  });*/
 }
 
 async function handleDelete(record: Recordable<any>) {
   try {
-    /*const result = await deleteByIds([record.id]);
+    if (record.children && record.children.length > 0) {
+      message.warning('有子节点，不能删除！');
+      return;
+    }
+    const result = await deleteByIds([record.id]);
     const {success, msg} = result;
     if (success) {
       message.success(msg);
       await gridApi.reload();
     } else{
       message.error(msg);
-    }*/
+    }
   } catch (e) {
     message.error(e);
   }
 }
 
 function handleCreateChild(record: Recordable<any>, e) {
+  const title = `新增【${record.name}】的子菜单`
   record = {
     pid: record.id,
     status: 1,
@@ -126,7 +118,7 @@ function handleCreateChild(record: Recordable<any>, e) {
   };
   moduleDrawerRef.value.setData(record);
   moduleDrawerRef.value.setState({
-    title: '新增【' + record.name + '】的子菜单'
+    title
   });
   moduleDrawerRef.value.open();
 }
@@ -140,7 +132,7 @@ function handleEditPValue(record: Recordable<any>, e) {
   pValueSettingModalRef.value.open();
 }
 
-function createActions(record: Recordable<any>): any[] {
+function createActions(record: Recordable<any>) {
   return [
     {
       auth: [PerPrefix + PerEnum.ADD],
@@ -209,6 +201,11 @@ function createActions(record: Recordable<any>): any[] {
       <template #status="{ row }">
         <Tag v-if="row.status===1" color="green">启用</Tag>
         <Tag v-else color="red">禁用</Tag>
+      </template>
+
+      <template #componentType="{ row }">
+        <Tag v-if="row.component==='LAYOUT'" color="blue">目录</Tag>
+        <Tag v-else color="green">菜单</Tag>
       </template>
 
       <template #showStatus="{ row }">
