@@ -149,8 +149,24 @@ export const accountFormSchema: FormSchema[] = [
       closeOnSelect: false,
       selectOnModal: true,
       change:(val) => {
-        debugger;
+        // debugger;
       }
+    },
+    dependencies: {
+      triggerFields: ['realNameSelector'],
+      trigger(values, form) {
+        debugger;
+        if(values.realNameSelector){
+          const currentPersonal = values.realNameSelector[0];
+          form.setValues({
+              username: currentPersonal.label,
+              userNo: currentPersonal.value,
+          });
+          debugger;
+          // form.setFieldValue('username',)
+        }
+        // !values.id && form.setFieldValue('component', values.moduleType === 'dictionary' ? 'LAYOUT' : '');
+      },
     }
   },
   {

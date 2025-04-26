@@ -1,20 +1,5 @@
 <template>
   <BasicModal class="w-[1000px] h-[80%]">
-<!--    <div class="h-full border border-red-500 flex flex-col relative">
-      <div class="h-[60px] border border-blue-500">
-aaaaa
-      </div>
-      <div class="flex-1 border border-green-500 flex flex-row h-0 ">
-        <div class="w-[30%] h-full">
-          <div class="h-full overflow-y-auto outline outline-red-500">
-            <p v-for="item in 20">test</p>
-          </div>
-        </div>
-        <div class="flex-1 h-full">
-
-        </div>
-      </div>
-    </div>-->
     <div class="group border border-blue-200 !border-dashed mb-2 flex justify-between">
       <div class="flex flex-wrap gap-y-2 p-2">
         <template
@@ -35,8 +20,8 @@ aaaaa
       </span>
     </div>
     <div ref="selectorContainerRef" class="flex-1 flex p-0 h-0">
-      <div class="w-[30%] flex flex-col h-full">
-        <div class="h-8 border">
+      <div class="w-[30%] flex flex-col h-full border border-blue-400">
+        <div class="h-8 border-b leading-8 pl-2">
           组织
         </div>
         <div class="flex-1 p-1 overflow-y-auto">
@@ -98,18 +83,13 @@ import {
   nextTick,
   watch
 } from 'vue';
-import type {VxeGridProps} from '#/adapter/vxe-table';
-import type {VbenFormProps} from '@vben/common-ui';
-// import { useUserStore } from '@/store/modules/user';
+
 import {ColPage, useVbenModal} from '@vben/common-ui';
-// import {useVbenVxeGrid} from '#/adapter/vxe-table';
 
 import {getPersonalPageList} from '#/api/org/personal';
 import {Tag, Tree, Table, Input, Checkbox, Radio} from 'ant-design-vue';
 import {getOrgTree} from '#/api/org/dept';
 import {columns, searchFormSchema} from './selector.data';
-// import {searchFormSchema} from "#/views/privilege/account/account.data";
-import {getAccountPageList} from "#/api/privilege/account";
 import { useElementSize } from '@vueuse/core'
 import {CloseCircleOutlined} from '@ant-design/icons-vue'
 
@@ -128,15 +108,11 @@ const selectorContainerRef = ref();
 onMounted(() => {
 
 });
-// const eleId = document.getElementsByClassName('BBBBBBBBBBBBBBBBBB');
-// debugger;
+
 const { width, height } = useElementSize(selectorContainerRef)
 watch(height, () => {
   tableHeight.value = height.value-150;
 })
-
-
-
 
 const [BasicModal, modalApi] = useVbenModal({
   title: '选择人员',
@@ -344,22 +320,18 @@ function doSearchFilter(e) {
 
 const removeSelectedItem = (code) => {
   selectedRowKeyList.value = selectedRowKeyList.value.filter((tag) => tag !== code);
-  // const selectedRowKeys = keys;
 
   const idx = selectedRowsList.value.findIndex((item) => item.code === code);
 
   selectedRowsList.value.splice(idx, 1);
-  // Object.assign(state, {
-  //   selectedRowKeys,
-  //   selectedList: state.selectedList,
-  // });
+
 };
 
 // 选择多选框选中行
 function onSelectChange(selectedKeys: Array<object>, selectedRecords: Array<object>) {
-  // debugger;
   selectedRowsList.value = selectedRecords;
   selectedRowKeyList.value = selectedKeys;
+  debugger;
   console.log(selectedKeys, '####====================');
   return;
   // , ...state.selectedRowKeys
@@ -386,9 +358,8 @@ function onSelectChange(selectedKeys: Array<object>, selectedRecords: Array<obje
 
 // 行点击
 function rowClick(record: any) {
-    debugger;
-  let selectedRowKeys = state.selectedRowKeys;
-  let selectedList = state.selectedList;
+  let selectedRowKeys = JSON.parse(JSON.stringify(selectedRowKeyList.value));
+  let selectedList = JSON.parse(JSON.stringify(selectedRowsList.value));
 
   let code = record.code;
   if (multiSelect.value) {
@@ -408,17 +379,10 @@ function rowClick(record: any) {
       selectedRowKeys.push(code);
       selectedList.push(record);
     }
-    Object.assign(state, {
-      selectedRowKeys,
-      selectedList,
-    });
+    selectedRowsList.value = selectedList;
+    selectedRowKeyList.value = selectedRowKeys;
   } else {
-    Object.assign(state, {
-      selectedRowKeys: [code],
-      selectedList: [record],
-    });
     selectedRowsList.value = [record];
-    // state.selectedRowKeys = [code];
     selectedRowKeyList.value = [code];
   }
 }
@@ -426,6 +390,15 @@ function rowClick(record: any) {
 function handleSubmit() {
   emit('change', selectedRowsList.value);
   modalApi.close();
+}
+
+function genPersonalData (record) {
+  return {
+    label: record.name,
+    key: record.code,
+    sex: record.sex,
+    mobile: record.mobile,
+  };
 }
 
 // 选择树
