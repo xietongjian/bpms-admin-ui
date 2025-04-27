@@ -139,7 +139,6 @@ export const accountFormSchema: FormSchema[] = [
   {
     fieldName: 'realNameSelector',
     label: '关联人员',
-    rules: 'selectRequired',
     component: 'PersonalSelector',
     formItemClass: 'col-span-4',
     componentProps: {
@@ -148,24 +147,18 @@ export const accountFormSchema: FormSchema[] = [
       type: 'personal',
       closeOnSelect: false,
       selectOnModal: true,
-      change:(val) => {
-        // debugger;
-      }
     },
     dependencies: {
       triggerFields: ['realNameSelector'],
       trigger(values, form) {
-        debugger;
         if(values.realNameSelector){
           const currentPersonal = values.realNameSelector[0];
           form.setValues({
-              username: currentPersonal.label,
+              username: currentPersonal.value,
               userNo: currentPersonal.value,
           });
           debugger;
-          // form.setFieldValue('username',)
         }
-        // !values.id && form.setFieldValue('component', values.moduleType === 'dictionary' ? 'LAYOUT' : '');
       },
     }
   },

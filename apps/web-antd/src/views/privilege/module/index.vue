@@ -2,23 +2,22 @@
 import {nextTick, ref} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
-import {Page, useVbenModal} from '@vben/common-ui';
-import {Button, Image, Space, Tag, Tooltip, Popconfirm, message} from 'ant-design-vue';
+import {Page} from '@vben/common-ui';
+import {Button, Space, Tag, message} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import type { Recordable } from '@vben/types';
-import { TableAction } from '#/components/table-action';
-
-import { getModules, deleteByIds } from '#/api/privilege/module';
-import { useAccess } from '@vben/access';
+import type {Recordable} from '@vben/types';
+import {TableAction} from '#/components/table-action';
+import {getModules, deleteByIds} from '#/api/privilege/module';
 import ModuleDrawer from './module-drawer.vue';
 import {listColumns, searchFormSchema} from "#/views/privilege/module/module.data";
 import {PerEnum} from "#/enums/perEnum";
-import { IconifyIcon } from '@vben/icons';
-import PValueSettingModal from './ModulePValueModal.vue';
+import {IconifyIcon} from '@vben/icons';
+import PValueSettingModal from './PValueSettingModal.vue';
 
 const PerPrefix = "Module:";
-const moduleDrawerRef = ref(), pValueSettingModalRef=ref();
+const moduleDrawerRef = ref(), pValueSettingModalRef = ref();
 
+const currentRow = ref();
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
   submitOnEnter: true,
@@ -90,6 +89,14 @@ function handleEdit(record: Recordable<any>) {
   });
 }
 
+function handlePValueSuccess(pvs) {
+  currentRow.value.pvs = pvs;
+}
+
+function handleSuccess() {
+  gridApi.reload();
+}
+
 async function handleDelete(record: Recordable<any>) {
   try {
     if (record.children && record.children.length > 0) {
@@ -101,7 +108,7 @@ async function handleDelete(record: Recordable<any>) {
     if (success) {
       message.success(msg);
       await gridApi.reload();
-    } else{
+    } else {
       message.error(msg);
     }
   } catch (e) {
@@ -123,12 +130,9 @@ function handleCreateChild(record: Recordable<any>, e) {
   moduleDrawerRef.value.open();
 }
 
-function handleEditPValue(record: Recordable<any>, e) {
-  e.stopPropagation();
+function handleEditPValue(record: Recordable<any>) {
+  currentRow.value = record;
   pValueSettingModalRef.value.setData(record);
-  pValueSettingModalRef.value.setState({
-    title: '编辑'
-  });
   pValueSettingModalRef.value.open();
 }
 
@@ -183,18 +187,18 @@ function createActions(record: Recordable<any>) {
       </template>
 
       <template #action="{ row }">
-        <TableAction :actions="createActions(row)" />
+        <TableAction :actions="createActions(row)"/>
       </template>
 
       <template #name="{ row }">
         <div class="flex flex-row items-center gap-1">
           <IconifyIcon :icon="row.image || 'ant-design:ellipsis-outlined'" class="size-5" height="20" width="20"/>
-          <span>{{row.name}}</span>
+          <span>{{ row.name }}</span>
         </div>
       </template>
       <template #pvs="{ row }">
         <div class="max-h-50 overflow-y-auto">
-          <Tag class="my-1" v-for="item in row.pvs" :key="item.id" color="green">{{item.name}}</Tag>
+          <Tag class="my-1" v-for="item in row.pvs" :key="item.id" color="green">{{ item.name }}</Tag>
         </div>
       </template>
 
@@ -213,8 +217,7 @@ function createActions(record: Recordable<any>) {
         <Tag v-else>关闭</Tag>
       </template>
     </BasicTable>
-<!--    <ModuleModal ref="moduleModalRef" @register="registerModal" @success="handleSuccess" />-->
-    <ModuleDrawer ref="moduleDrawerRef" @success="handleSuccess" />
-    <PValueSettingModal ref="pValueSettingModalRef" @success="handleSuccess" />
+    <ModuleDrawer ref="moduleDrawerRef" @success="handleSuccess"/>
+    <PValueSettingModal ref="pValueSettingModalRef" @success="handlePValueSuccess"/>
   </Page>
 </template>

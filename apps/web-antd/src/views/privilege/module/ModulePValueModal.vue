@@ -21,8 +21,10 @@
     },
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
+        debugger;
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
+          values.pvs = values.pvs.map(item => item.id);
           baseFormApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }

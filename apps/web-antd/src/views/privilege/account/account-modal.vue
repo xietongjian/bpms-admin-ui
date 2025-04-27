@@ -22,6 +22,10 @@ const [BasicModal, modalApi] = useVbenModal({
       const values = modalApi.getData<Record<string, any>>();
       if (values) {
         imageUrl.value = values.image;
+        values.realNameSelector = [{
+          label: values.realName,
+          value: values.userNo
+        }];
         baseFormApi.setValues(values);
         modalApi.setState({loading: false, confirmLoading: false});
       }
