@@ -226,8 +226,8 @@ const processFormPreviewDrawerRef = shallowRef();
       modelKey: record.processDefinitionKey,
       showOperation: activeKey.value === 'todo',
     });
+    processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.formName}】的表单`});
     processFormPreviewDrawerRef.value.open();
-    processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.title}】的表单`});
   }
 
   function handleToMore() {

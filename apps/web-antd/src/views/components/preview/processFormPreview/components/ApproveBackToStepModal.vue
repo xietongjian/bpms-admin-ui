@@ -19,55 +19,19 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref, defineExpose } from 'vue';
+  import { ref, computed, unref, defineExpose, defineEmits } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import { approveBackToStepFormSchema, backToStepTableColumns } from './action.data';
   import { Button, Tag, Table, message } from 'ant-design-vue';
   import { backToStep, backToSubmitter, getBackToStepNodes } from '#/api/flowoperation/processTask';
 
+  const emit = defineEmits(['success'])
   const backToStepNodeList = ref([]);
   const backToStepNodeListLoading = ref(false);
   const selectedKeys = ref([]);
   const selectedRows = ref([]);
   const backToStepNodeTableRef = ref();
-  // const go = useGo();
-
-  /*const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
-    labelWidth: 100,
-    schemas: approveBackToStepFormSchema,
-    showActionButtonGroup: false,
-    actionColOptions: {
-      span: 23,
-    },
-  });
-
-  const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
-      async (data) => {
-        await resetFields();
-        genLoading(false);
-        const { taskId, procInstId, message } = data.selectorProps;
-        selectedKeys.value = [];
-        selectedRows.value = [];
-        setModalProps({ title: '驳回' });
-
-        backToStepNodeListLoading.value = true;
-        getBackToStepNodes({ taskId })
-            .then((res) => {
-              backToStepNodeList.value = res;
-              backToStepNodeListLoading.value = false;
-            })
-            .then((e) => {
-              backToStepNodeListLoading.value = false;
-            });
-
-        setFieldsValue({
-          taskId,
-          procInstId,
-          message,
-        });
-      },
-  );*/
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
@@ -121,9 +85,7 @@
   }
 
   function genLoading(status) {
-    // setModalProps({ confirmLoading: status });
     modalApi.setState({loading: status, confirmLoading: status})
-    // changeLoading(status);
   }
 
   async function handleSubmit() {
@@ -155,7 +117,8 @@
         return;
       }
     } catch (e) {
-      message.error('请选择要驳回的节点!');
+      message.error('驳回失败，请稍后再试!');
+      console.error(e);
     } finally {
       genLoading(false);
     }

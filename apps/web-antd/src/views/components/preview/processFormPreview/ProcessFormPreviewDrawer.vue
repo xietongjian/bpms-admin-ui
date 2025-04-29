@@ -1,5 +1,5 @@
 <template>
-  <BasicDrawer content-class="py-0">
+  <BasicDrawer content-class="py-0 form-preview-container">
     <template #extra>
       <div>
         <Button
@@ -46,28 +46,6 @@
                   />
                 </CollapsePanel>
               </Collapse>
-<!--
-              <CollapseContainer>
-                <template #title>
-                  <div style="font-weight: bold; width: 200px">表单信息</div>
-                </template>
-                <div
-                  v-if="formGeneratePropsInfo.modelKey"
-                  class="generate-form-container"
-                  style="height: auto"
-                >
-                  <GenerateForm
-                    class="generateForm"
-                    id="generateFormId"
-                    ref="generateFormRef"
-                    :edit="showOperation"
-                    :data="jsonData"
-                    :print-read="printRead"
-                    style="min-height: 200px"
-                  />
-                  <div v-if="showErrorMsg" class="show-error-tip">{{ errorMsg }}</div>
-                </div>
-              </CollapseContainer>-->
 
               <div v-if="currentApproverList.length > 0" class="mt-2 desc-wrap">
                 <CurrentApprover :approverList="currentApproverList" ></CurrentApprover>
@@ -153,7 +131,7 @@
 </template>
 <script lang="ts" setup>
   import { h, ref, unref, reactive, onMounted, watch, computed, defineEmits, defineExpose, nextTick, shallowRef } from 'vue';
-  import {useVbenModal, useVbenDrawer} from '@vben/common-ui';
+  import { useVbenDrawer} from '@vben/common-ui';
 
   import {
     Button,
@@ -741,7 +719,6 @@
   }
 
   function approveSaveFormData(callback) {
-    debugger;
     return saveFormData()
       .then((res) => {
         console.log('》》》》》》》》》》》》》》》》》》》》保存表单数据结果：', res);
@@ -828,81 +805,17 @@
 </script>
 
 <style lang="scss">
-  .process-form-full-modal {
-    .ant-modal {
-      top: 0;
-      padding-bottom: 0;
-      margin: 0;
-      .ant-modal-body {
-        flex: 1;
-        .scroll-container {
-          padding-top: 0;
-          padding-bottom: 0;
-        }
-      }
-    }
-    .ant-modal-content {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .ant-modal-footer {
-      padding: 6px 16px;
-      margin-top: 0;
-    }
+.form-preview-container{
+  /* 如果需要调整标签栏的高度，可以通过修改下面的类 */
+  .ant-tabs-top .ant-tabs-nav {
+    /* 根据需要调整标签栏的高度 */
+    height: 50px;
   }
-  .generate-form-container {
-    position: relative;
-    .show-error-tip {
-      z-index: 9;
-      width: 100%;
-      top: 0;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 100%;
-      font-size: 24px;
-      color: #ffbb00;
-      text-align: center;
-      line-height: 140px;
-      &:after {
-        width: 100%;
-        top: 0;
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(0, 0, 0, 0.1);
-        height: 100%;
-        z-index: 9999;
-        -webkit-filter: blur(20px);
-        filter: blur(20px);
-        transform: scale(0.95);
-        -webkit-transform: scale(0.95);
-      }
-    }
+
+  /* 调整内容区域的高度 */
+  .ant-tabs-content {
+    height: calc(100% - 10px);
+    overflow-y: auto;
   }
-</style>
-
-<style lang="scss">
-
-/* 设置Tabs组件的高度以适应父容器 */
-.ant-tabs {
-  height: 100%;
-}
-
-/* 如果需要调整标签栏的高度，可以通过修改下面的类 */
-.ant-tabs-top .ant-tabs-nav {
-  /* 根据需要调整标签栏的高度 */
-  height: 50px;
-}
-
-/* 调整内容区域的高度 */
-.ant-tabs-content {
-  height: calc(100% - 10px);
-  //padding-top: 50px; /* 与标签栏的高度相匹配 */
-  overflow-y: auto;
 }
 </style>

@@ -240,7 +240,7 @@ function handleLaunch(record: Recordable<any>) {
     showOperation: true,
   });
   processFormPreviewDrawerRef.value.open();
-  processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.formName}】的表单`});
+  processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.name}】的表单`});
 }
 
 async function handleDelFormDraftById(id) {

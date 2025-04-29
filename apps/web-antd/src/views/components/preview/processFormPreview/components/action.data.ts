@@ -59,21 +59,21 @@ export const approveMsgSchemas: FormSchema[] = [
 ];
 
 
-export const backToStepTableColumns: VxeGridProps['columns'] = [
+export const backToStepTableColumns = [
   {
     title: '节点名称',
-    field: 'nodeName',
+    dataIndex: 'nodeName',
     align: 'left',
   },
   {
     title: '审批人姓名',
-    field: 'userName',
+    dataIndex: 'userName',
     width: 120,
     align: 'left',
   },
   {
     title: '审批人工号',
-    field: 'userCode',
+    dataIndex: 'userCode',
     width: 120,
     align: 'left',
   },
