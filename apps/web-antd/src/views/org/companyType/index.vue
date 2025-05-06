@@ -99,13 +99,18 @@ async function handleDelete(record: Recordable<any>) {
   const {success, msg} = await deleteById({id: record.id});
   if(success){
     message.success(msg);
-    tableApi.reload();
+      handleSuccess();
   }
 }
 
 function handleSuccess() {
+  const expandRecords = tableApi.grid.getTreeExpandRecords();
+  const {scrollLeft, scrollTop} = tableApi.grid.getScroll();
   tableApi.reload();
-
+  if(expandRecords){
+    tableApi.grid.setTreeExpand(expandRecords, true);
+    tableApi.grid.scrollTo(scrollLeft, scrollTop);
+  }
 }
 
 function createActions(record: Recordable<any>) {

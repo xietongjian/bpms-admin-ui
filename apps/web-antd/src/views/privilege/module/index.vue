@@ -70,7 +70,7 @@ const gridOptions: VxeGridProps = {
 const [BasicTable, gridApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 function expandAll() {
-  gridApi.grid?.setAllTreeExpand(true);
+  // gridApi.grid?.setAllTreeExpand(true);
 }
 
 function handleAdd() {
@@ -93,8 +93,14 @@ function handlePValueSuccess(pvs) {
   currentRow.value.pvs = pvs;
 }
 
-function handleSuccess() {
-  gridApi.reload();
+async function handleSuccess() {
+  const expandRecords = gridApi.grid.getTreeExpandRecords();
+  const {scrollLeft, scrollTop} = gridApi.grid.getScroll();
+  await gridApi.reload();
+  if(expandRecords){
+    await gridApi.grid.setTreeExpand(expandRecords, true);
+    await gridApi.grid.scrollTo(scrollLeft, scrollTop);
+  }
 }
 
 async function handleDelete(record: Recordable<any>) {
@@ -107,7 +113,7 @@ async function handleDelete(record: Recordable<any>) {
     const {success, msg} = result;
     if (success) {
       message.success(msg);
-      await gridApi.reload();
+      await handleSuccess();
     } else {
       message.error(msg);
     }

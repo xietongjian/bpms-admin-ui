@@ -45,6 +45,11 @@ const gridOptions: VxeGridProps = {
     keyField: 'id',
     isHover: true,
   },
+  treeConfig: {
+    parentField: 'pid',
+    rowField: 'id',
+    transform: true,
+  },
   height: 'auto',
   keepSource: true,
   border: false,
@@ -96,11 +101,17 @@ async function handleDelete(record: Recordable<any>) {
   const {success, msg} = await deleteByIds([record.id]);
   if(success){
     message.success(msg);
-    tableApi.reload();
+    handleSuccess();
   }
 }
 function handleSuccess() {
+  const expandRecords = tableApi.grid.getTreeExpandRecords();
+  const {scrollLeft, scrollTop} = tableApi.grid.getScroll();
   tableApi.reload();
+  if(expandRecords){
+    tableApi.grid.setTreeExpand(expandRecords, true);
+    tableApi.grid.scrollTo(scrollLeft, scrollTop);
+  }
 }
 
 function createActions(record: Recordable<any>) {
