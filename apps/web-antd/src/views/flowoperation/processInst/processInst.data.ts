@@ -161,7 +161,7 @@ export const searchFormSchema: FormSchema[] = [
     componentProps: {
       allowClear: true,
       placeholder: '请选择提交人',
-      multiple: true,
+      multiple: false,
     },
   },
   {

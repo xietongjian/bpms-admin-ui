@@ -179,16 +179,6 @@
   });
   */
 
-/*  useRequest(
-    () => {
-      tableApi.reload();
-      return Promise.resolve({});
-    },
-    {
-      refreshOnWindowFocus: true,
-    },
-  );*/
-
   const formOptions: VbenFormProps = {
     showCollapseButton: true,
     collapsed: true,
@@ -221,6 +211,7 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
+          formValues.startedUserIds = (formValues.startedUserIds && formValues.startedUserIds.map(item => item.value)[0]);
           return await findProcessinstancesPagerModel({
             query: {
               pageNum: page.currentPage,
