@@ -18,7 +18,7 @@
                 processModelKey
               }}</TypographyText>
               -
-              <Tag :color="finallyStatusStyle.color">{{ finallyStatusStyle.statusName||'草稿' }}</Tag>
+              <Tag :color="finallyStatusStyle.color">{{ finallyStatusStyle.statusName || '草稿' }}</Tag>
             </Tooltip>
           </Col>
           <Col span="8">
@@ -306,9 +306,9 @@
 
     // 如果是新增
     if (!params.modelId) {
-      stepsDisabled.value = { formDesigner: false, bpmnDesigner: true, settingInfo: true };
+      stepsDisabled.value = { bpmnDesigner: true, settingInfo: false, flowVariable: true };
     } else {
-      stepsDisabled.value = { formDesigner: false, bpmnDesigner: false, settingInfo: false };
+      stepsDisabled.value = { bpmnDesigner: false, settingInfo: false, flowVariable: false };
     }
     refreshStatus();
     autoSaveStatus.value = -1;
@@ -387,7 +387,6 @@
         saveLoading.value = false;
         changeLoading(false);
       });
-
   }
 
   function handleContinueEdit() {
@@ -584,8 +583,8 @@
       }
     } catch (e) {
       message.error('调用验证Bpmn的XML时出现异常！' + e);
-      saveLoading.value = false;
     } finally {
+      saveLoading.value = false;
     }
   }
 
