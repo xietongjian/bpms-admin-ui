@@ -4,6 +4,7 @@ import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { Tag } from 'ant-design-vue';
 import { checkEntityExist } from '#/api/form/bizForm';
+
 import {getAll} from '#/api/base/app';
 import { getAppliedRange, getSkipSet } from '#/api/form/form';
 import { getAll as getAuthPoints } from '#/api/form/authPoint';
@@ -196,12 +197,10 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     component: 'ApiTreeSelect',
     componentProps: {
       class: 'w-full',
-      api: getFlowCategories,
-      treeDataSimpleMode: {id: 'id', pId: 'pid'},
-      treeNodeFilterProp: 'name',
-      labelField: 'name',
-      valueField: 'code',
-      getPopupContainer: () => document.body,
+      labelField: 'label',
+      valueField: 'value',
+      childrenField: 'children',
+      api: getFlowCategoryTreeData,
     },
     wrapperClass: 'w-full'
   },
@@ -423,13 +422,11 @@ export const copyModelInfoFormSchema: FormSchema[] = [
     rules: 'selectRequired',
     component: 'ApiTreeSelect',
     componentProps: {
-      api: getFlowCategories,
       class: 'w-full',
-      treeDataSimpleMode: {id: 'id', pId: 'pid'},
-      treeNodeFilterProp: 'name',
-      labelField: 'name',
-      valueField: 'code',
-      getPopupContainer: () => document.body,
+      labelField: 'label',
+      valueField: 'value',
+      childrenField: 'children',
+      api: getFlowCategoryTreeData,
     },
   },
 ];
@@ -460,28 +457,57 @@ export const copyBizModelInfoFormSchema: FormSchema[] = [
     fieldName: 'newModelKey',
     label: '新表单Key',
     component: 'Input',
-    rules: z
-        .string({
-          required_error: 'Key不能为空！',
-        })
-        .trim()
-        .min(1, "Key不能为空！")
-        .max(60, "字符长度不能大于60！")
-        .regex(new RegExp('^[a-zA-Z_]{1,}[0-9a-zA-Z_]{1,}$'),'请输入英文或数字且以英文或下划线开头！'),
+    // rules: z
+    //     .string({
+    //       required_error: 'Key不能为空！',
+    //     })
+    //     .trim()
+    //     .min(1, "Key不能为空！")
+    //     .max(60, "字符长度不能大于60！")
+    //     .regex(new RegExp('^[a-zA-Z_]{1,}[0-9a-zA-Z_]{1,}$'),'请输入英文或数字且以英文或下划线开头！'),
+    dependencies: {
+        rules(values) {
+            const { id, newModelKey } = values;
+            debugger
+            return z
+                .string({required_error: '编码不能为空！'})
+                .min(1, {message: '编码不能为空！'})
+                .max(100, {message: '字符长度不能大于100！'})
+                .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
+                .refine(
+                    async (e) => {
+                        let result = false;
+                        try {
+                            result = await checkEntityExist({
+                                id: id,
+                                field: 'newModelKey',
+                                fieldValue: newModelKey || '',
+                                fieldName: '新表单Key',
+                            });
+                        } catch (e) {
+                            console.error(e);
+                        }
+                        return result;
+                    },
+                    {
+                        message: '系统标识已存在',
+                    },
+                );
+        },
+        triggerFields: ['newModelKey'],
+    },
   },
   {
     fieldName: 'newCategoryCode',
     label: '新分类',
     rules: 'selectRequired',
-    component: 'TreeSelect',
+    component: 'ApiTreeSelect',
     componentProps: {
-      treeNodeFilterProp: 'name',
-      replaceFields: {
-        title: 'name',
-        key: 'code',
-        value: 'code',
-      },
-      getPopupContainer: () => document.body,
+      class: 'w-full',
+      labelField: 'label',
+      valueField: 'value',
+      childrenField: 'children',
+      api: getFlowCategoryTreeData,
     },
   },
 ];

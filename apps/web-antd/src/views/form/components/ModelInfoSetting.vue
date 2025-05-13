@@ -364,6 +364,7 @@
     // 获取数据回显
     getByModelId(modelId)
       .then(async (res) => {
+          debugger;
         const dockings = [] as any,
           owner = [] as any,
           ownDept = [] as any;
@@ -395,7 +396,6 @@
           });
         }
 
-        debugger;
         const applyCompanies = JSON.parse(res.applyCompanies||'[]') || [];
         applyCompanies &&
           applyCompanies.forEach((item) => {
@@ -405,7 +405,6 @@
             item.label = item.name;
           });
 
-        debugger;
         const superuser = res.superuser ? JSON.parse(res.superuser) : [];
         superuser &&
           superuser.forEach((item) => {

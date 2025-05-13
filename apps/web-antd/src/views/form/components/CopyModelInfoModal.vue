@@ -12,6 +12,7 @@
   import { copyModelInfoFormSchema, copyBizModelInfoFormSchema } from './modelInfo.data';
   import { copyCustForm } from '#/api/form/customForm';
   import { copyBizForm, checkEntityExist } from '#/api/form/bizForm';
+  import {getFlowCategoryTreeData} from "#/api/base/category";
 
   const emit = defineEmits(['success', 'register']);
 
