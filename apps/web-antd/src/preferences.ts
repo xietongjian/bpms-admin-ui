@@ -20,6 +20,8 @@ export const overridesPreferences = defineOverridesPreferences({
     enableCheckUpdates: true,
     // 检查更新的时间间隔，单位为分钟
     checkUpdatesInterval: 1,
+    defaultHomePath: '/dashboard/workbench',
+    defaultAvatar: ''
   },
   copyright: {
     enable: true,

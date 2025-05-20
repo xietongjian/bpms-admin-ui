@@ -26,31 +26,6 @@ function genMenuTree(menus){
     };
     item.name = sn;
   });
-  menus.push({
-    id: '100002',
-    pid: '',
-    component: 'BasicLayout',
-    meta: {
-      icon: 'lucide:layout-dashboard',
-      order: -1,
-      title: '工作台',
-    },
-    name: 'Dashboardccc',
-    path: '/',
-  });
-  menus.push({
-    id: '33',
-    pid: '100002',
-    name: 'Analyticsbbb',
-    path: '/analytics',
-    component: '/views/dashboard/analytics/index',
-    meta: {
-      affixTab: true,
-      icon: 'lucide:area-chart',
-      title: '主页',
-    }
-  });
-
   const menuTree = listToTree(menus);
 
   // 如果是中间层级的目录，则去除component属性

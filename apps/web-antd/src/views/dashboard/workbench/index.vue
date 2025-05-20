@@ -28,6 +28,7 @@ import GrowCard from './components/GrowCard.vue';
 import TodoCenter from './components/TodoCenter.vue';
 import CalendarCard from './components/CalendarCard.vue';
 import CommonSystem from './components/CommonSystem.vue';
+import NoticeInfo from './components/NoticeInfo.vue';
 
 const userStore = useUserStore();
 
@@ -252,11 +253,11 @@ function navTo(nav: WorkbenchProjectItem | WorkbenchQuickNavItem) {
     <div class="flex flex-col lg:flex-row">
       <div class="mr-4 w-full lg:w-1/3">
         <GrowCard />
-        <TodoCenter :loading="loading" class="!mb-4 enter-y" />
+        <TodoCenter class="!mb-4 enter-y" />
       </div>
       <div class="mr-4 w-full lg:w-1/3">
-        <QuickNav :loading="loading" class="enter-y mb-4" />
-        <CommonSystem :loading="loading" class="enter-y" />
+        <QuickNav class="enter-y mb-4" />
+        <CommonSystem class="enter-y" />
       </div>
       <div class="w-full lg:w-1/3">
         <WorkbenchHeader class="mb-4" />

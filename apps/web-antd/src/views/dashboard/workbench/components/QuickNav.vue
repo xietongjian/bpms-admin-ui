@@ -5,7 +5,7 @@
       常用业务
     </template>
     <template #extra>
-      <a-button type="link" @click="handleToMore()" size="small">更多</a-button>
+      <Button type="link" @click="handleToMore()" size="small">更多</Button>
     </template>
     <div class="min-h-[200px]">
       <Row :gutter="[10, 10]">
@@ -31,12 +31,12 @@
       </Row>
     </div>
 
-    <LaunchModal ref="launchModalRef" @register="registerLaunchModal" @success="handleSuccess" />
+    <LaunchModal ref="launchModalRef" @success="handleSuccess" />
   </Card>
 </template>
 <script lang="ts" setup>
   import {computed, ref} from 'vue';
-  import {Avatar, Tooltip, Empty, Card, Col, Row, TypographyLink} from 'ant-design-vue';
+  import {Avatar, Tooltip, Empty, Button, Card, Col, Row, TypographyLink} from 'ant-design-vue';
   import { getMyCommonlyList } from '#/api/process/process';
   import {StarFilled, PictureFilled} from "@ant-design/icons-vue";
   import LaunchModal from '#/views/process/actions/LaunchModal.vue';

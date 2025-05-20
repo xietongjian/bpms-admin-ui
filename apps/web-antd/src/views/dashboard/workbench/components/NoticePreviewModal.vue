@@ -1,8 +1,5 @@
 <template>
-  <BasicModal
-    v-bind="$attrs"
-    @register="registerNoticePreviewModal"
-  >
+  <BasicModal class="w-[800px]">
     <div class="h-full">
       <div class="notice-wrapper">
         <h1 class="notice-title">{{ noticeInfo?.title || '无标题' }}</h1>
@@ -50,17 +47,14 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, unref } from 'vue';
+  import { ref, unref, defineExpose } from 'vue';
   import { getNoticeById } from '#/api/portal/cms/notice';
   import { getNoticeTitleById } from '#/api/portal/cms/noticeTitle';
   import { getNoticeSubjectById } from '#/api/portal/cms/noticeSubject';
   import { formatToDate } from '#/utils/dateUtil';
   import { Row, Col } from 'ant-design-vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
   import { useUserStore } from '@vben/stores';
-
-  // import {ScrollContainer} from "@/components/Container";
-
+  import {useVbenModal} from '@vben/common-ui';
   const userStore = useUserStore();
 
   const noticeInfo = ref({});
@@ -70,21 +64,30 @@
   const { userInfo } = userStore;
   console.log(userInfo);
 
-  const [registerNoticePreviewModal, { setModalProps }] = useModalInner(async (data) => {
-    setModalProps({ loading: true });
+  const [BasicModal, modalApi] = useVbenModal({
+    showConfirmButton: false,
+    cancelText: '关闭',
+    onOpenChange: async (isOpen) => {
+      if (!isOpen) {
+        return null;
+      }
+      modalApi.setState({loading: true, confirmLoading: true});
 
-    // 根据公文ID进行预览
-    // 获取公文数据
-    noticeInfo.value = await getNoticeById({ id: data.record.id });
-    if (unref(noticeInfo).titleId) {
-      // 获取套头数据
-      noticeTitle.value = await getNoticeTitleById(unref(noticeInfo).titleId);
-    }
+      const values = modalApi.getData<Record<string, any>>();
+      // 根据公文ID进行预览
+      // 获取公文数据
+      noticeInfo.value = await getNoticeById({ id: values.id });
+      if (unref(noticeInfo).titleId) {
+        // 获取套头数据
+        noticeTitle.value = await getNoticeTitleById(unref(noticeInfo).titleId);
+      }
 
-    noticeSubject.value = await getNoticeSubjectById(unref(noticeInfo).subjectId);
-    setModalProps({ loading: false });
-
+      noticeSubject.value = await getNoticeSubjectById(unref(noticeInfo).subjectId);
+      modalApi.setState({loading: false, confirmLoading: false});
+    },
   });
+
+  defineExpose(modalApi);
 </script>
 
 <style lang="less" scoped>

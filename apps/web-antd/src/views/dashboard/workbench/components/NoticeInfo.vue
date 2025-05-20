@@ -1,8 +1,6 @@
 <template>
   <Card
     size="small"
-    v-bind="$attrs"
-    :style="`height:${height}px;`"
   >
     <template #title>
       <NotificationOutlined class="mr-1 color-[#2d93f9]" />
@@ -33,7 +31,7 @@
         </ListItem>
       </template>
     </List>
-    <NoticePreviewModal @register="registerNoticePreviewModal" />
+    <NoticePreviewModal ref="noticePreviewModalRef" />
   </Card>
 </template>
 <script lang="ts" setup>
@@ -42,19 +40,19 @@
   import { formatToDateTime } from '#/utils/dateUtil';
   import { getNoticeListByPage } from '#/api/portal/cms/notice';
   import NoticePreviewModal from "./NoticePreviewModal.vue";
-  import { useModal } from '@/components/Modal';
-  import { useGo } from '@/hooks/web/usePage';
+  // import { useModal } from '@/components/Modal';
+  // import { useGo } from '@/hooks/web/usePage';
   import {AuditOutlined, NotificationOutlined} from "@ant-design/icons-vue";
 
 
   const ListItem = List.Item;
-  const go = useGo();
+  // const go = useGo();
 
   const dataList = ref([]);
-  const [
-    registerNoticePreviewModal,
-    { openModal: openNoticePreviewModal, setModalProps: setNoticePreviewModalProps },
-  ] = useModal();
+  // const [
+  //   registerNoticePreviewModal,
+  //   { openModal: openNoticePreviewModal, setModalProps: setNoticePreviewModalProps },
+  // ] = useModal();
 
   onMounted(() => {
     fetchData();
