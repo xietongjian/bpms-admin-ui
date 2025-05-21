@@ -55,10 +55,7 @@
     <ApproveHistoryModal ref="approveHistoryModalRef" />
     <FlowPropertiesModal ref="flowPropertiesModalRef" />
     <BpmnPreviewModal ref="bpmnPreviewModalRef" />
-<!--    <ProcessFormModal ref="processFormModalRef" />-->
-    <ProcessNodeSelectionModal ref="processNodeSelectionModalRef"
-      @success="handleReload"
-    />
+    <ProcessNodeSelectionModal ref="processNodeSelectionModalRef" @success="handleReload"/>
     <ProcessVersionSelectionModal ref="processVersionSelectionModalRef" @success="handleReload" />
     <ProcessVariablesModal ref="processVariablesModalRef" @success="handleReload" />
     <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
@@ -70,10 +67,10 @@
   import { PerEnum } from '#/enums/perEnum';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
-  import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
+  import type {VxeGridProps} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
-  import {ColPage, Page} from '@vben/common-ui';
+  import {Page} from '@vben/common-ui';
   import { TableAction } from '#/components/table-action';
 
   import {
@@ -104,10 +101,9 @@
   const approveHistoryModalRef = ref(),
       flowPropertiesModalRef = ref(),
       bpmnPreviewModalRef = ref(),
-      // processFormModalRef = ref(),
       processNodeSelectionModalRef = ref(),
       processVersionSelectionModalRef = ref(),
-    processFormPreviewDrawerRef = ref(),
+      processFormPreviewDrawerRef = ref(),
       processVariablesModalRef = ref();
 
   const { copy } = useClipboard({ legacy: true });
@@ -117,26 +113,6 @@
 
   const procInstDataType = ref('running');
 
-  /*const [
-    registerProcessFormModal,
-    { openModal: openProcessFormModal, setModalProps: setProcessFormModalProps },
-  ] = useModal();
-  const [registerApproveHistoryModal, { openModal: openApproveHistoryModal, setModalProps }] =
-    useModal();
-  const [
-    registerFlowPropertiesModal,
-    { openModal: openFlowPropertiesModal, setModalProps: setFlowPropertiesModalProps },
-  ] = useModal();
-  const [
-    registerBpmnPreviewModal,
-    { openModal: openBpmnPreviewModal, setModalProps: setBpmnPreviewProps },
-  ] = useModal();
-  const [registerProcessNodeSelectionModal, { openModal: openProcessNodeSelectionModal }] =
-    useModal();
-  const [registerProcessVersionSelectionModal, { openModal: openProcessVersionSelectionModal }] =
-    useModal();
-  const [registerProcessVariableModal, { openModal: openProcessVariableModal }] = useModal();
-*/
  /* const [registerTable, { getForm, reload }] = useTable({
     size: 'small',
     api: findProcessinstancesPagerModel,
@@ -191,6 +167,7 @@
       show: true,
     },
     schema: searchFormSchema,
+    fieldMappingTime: [['dateRange', ['startTime', 'endTime'], 'YYYY-MM-DD']],
   };
 
   const gridOptions: VxeGridProps = {
@@ -223,28 +200,8 @@
       },
     },
   };
-/*
-
-  const gridEvents: VxeGridListeners = {
-    radioChange: ({row}) => {
-      // clickRow(row);
-    }
-  };
-*/
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
-
-  nextTick(() => {
-    // const { updateSchema } = tableApi.formApi;
-    /*getAll().then((res) => {
-      updateSchema([
-        {
-          fieldName: 'appSn',
-          componentProps: { options: res, labelField: 'id' },
-        },
-      ]);
-    });*/
-  });
 
   async function handleChangeProcInstType(e: Event) {
     const values = await tableApi?.formApi.getValues();
@@ -252,9 +209,6 @@
   }
 
   function handleViewForm(record: Recordable<any>) {
-    // processFormModalRef.value.setData(record);
-    // processFormModalRef.value.open();
-    // processFormModalRef.value.setState({title: `查看流程【${record.formName}】的表单`});
     record.allowsOperation = true;
     processFormPreviewDrawerRef.value.setData({
       ...record,
@@ -280,15 +234,6 @@
     flowPropertiesModalRef.value.setState({
       title: `查看流程【${record.formName}】的变量`,
     });
-    /*openFlowPropertiesModal(true, {
-      record,
-    });
-    setFlowPropertiesModalProps({
-      title: `查看流程【${record.formName}】的变量`,
-      showOkBtn: false,
-      centered: true,
-      cancelText: '关闭',
-    });*/
   }
 
   // 终止
@@ -376,17 +321,6 @@
       procInstId: record.processInstanceId,
     });
     bpmnPreviewModalRef.value.open();
-    /*openBpmnPreviewModal(true, {
-      modelKey: record.modelKey,
-      procInstId: record.processInstanceId,
-    });
-    setBpmnPreviewProps({
-      title: `预览-${record.formName}`,
-      centered: true,
-      useWrapper: false,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });*/
   }
 
   // 干预
@@ -434,7 +368,6 @@
 
   // 变量补偿
   function handleChangeVariable(record: Recordable<any>) {
-    // openProcessVariableModal(true, { record });
     processVariablesModalRef.value.setData(record);
     processVariablesModalRef.value.open();
   }

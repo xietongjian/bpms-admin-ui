@@ -65,30 +65,6 @@ import { useClipboard } from '@vueuse/core';
 const { copy } = useClipboard({ legacy: true });
 const PerPrefix = "PlatformConfig:";
 const platformConfigModalRef = ref();
-/*const [registerModal, { openModal, setModalProps }] = useModal();
-
-const [registerTable, { reload }] = useTable({
-  title: '列表',
-  api: getPlatformConfigListByPage,
-  columns,
-  formConfig: {
-    labelWidth: 100,
-    schemas: searchFormSchema,
-    showAdvancedButton: false,
-    showResetButton: false,
-    autoSubmitOnEnter: true,
-  },
-  canColDrag: true,
-  useSearchForm: true,
-  bordered: true,
-  showIndexColumn: true,
-  actionColumn: {
-    width: 140,
-    title: '操作',
-    dataIndex: 'action',
-  },
-});*/
-
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,

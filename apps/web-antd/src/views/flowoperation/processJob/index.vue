@@ -313,26 +313,3 @@
     message.success('已拷贝到剪切板！');
   }
 </script>
-<style lang="scss">
-  .job-search-form {
-    & > .ant-row {
-      & > :last-child {
-        flex: 1;
-      }
-    }
-  }
-  .duedate-wrap {
-    .duedate-modify {
-      display: none;
-      cursor: pointer;
-      &:hover {
-        color: blue;
-      }
-    }
-    &:hover {
-      .duedate-modify {
-        display: inline-block;
-      }
-    }
-  }
-</style>

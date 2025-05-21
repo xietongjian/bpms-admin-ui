@@ -51,20 +51,14 @@
 
     </BasicTable>
     <BpmnPreviewModal ref="bpmnPreviewModalRef" @success="handleSuccess" />
-    <PersonalSelectorModal ref="personalSelectorModalRef"
-      @change="handleSettingPersonalSuccess"
-    />
+    <PersonalSelectorModal ref="personalSelectorModalRef" @change="handleSettingPersonalSuccess" />
     <FlowPropertiesModal ref="flowPropertiesModalRef" />
     <ApproveHistoryModal ref="approveHistoryModalRef" />
-<!--    <ProcessFormModal ref="processFormModalRef"
-      @register="registerProcessFormModal"
-      @reload="handleProcessFormVisibleChange"
-    />-->
     <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
   </Page>
 </template>
 <script lang="ts" setup>
-  import { createVNode, nextTick, ref, unref } from 'vue';
+  import { createVNode, ref, unref } from 'vue';
   import { useVbenVxeGrid } from '#/adapter/vxe-table';
   import type {Recordable} from '@vben/types';
   import type {VxeGridProps} from '#/adapter/vxe-table';
@@ -78,8 +72,6 @@
   } from '#/api/flowoperation/processTask';
   import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
   import PersonalSelectorModal from '#/components/selector/personal-selector/PersonalSelectorModal.vue';
-
-  // import PersonalSelectorModal from '#/components/Selector/src/FlowModelSelectorModal.vue';
   import FlowPropertiesModal from '../processInst/FlowPropertiesModal.vue';
   import { columns, searchFormSchema } from './processTask.data';
   import ApproveHistoryModal from '../processInst/ApproveHistoryModal.vue';
@@ -105,30 +97,6 @@
     flowPropertiesModalRef = ref(),
     approveHistoryModalRef = ref(),
     processFormPreviewDrawerRef = ref();
-
-  // 人员选择弹窗
-  /*const [
-    registerPersonalModal,
-    { openModal: openPersonalSelector, setModalProps: setPersonalModalProps },
-  ] = useModal();
-  const currentTask = ref<Recordable>({});
-  const [openFullLoading, closeFullLoading] = useLoading({
-    tip: '执行中...',
-  });
-  const [registerApproveHistoryModal, { openModal: openApproveHistoryModal, setModalProps }] =
-    useModal();
-  const [
-    registerFlowPropertiesModal,
-    { openModal: openFlowPropertiesModal, setModalProps: setFlowPropertiesModalProps },
-  ] = useModal();
-  const [
-    registerProcessFormModal,
-    { openModal: openProcessFormModal, setModalProps: setProcessFormModalProps },
-  ] = useModal();
-  const [
-    registerBpmnPreviewModal,
-    { openModal: openBpmnPreviewModal, setModalProps: setBpmnPreviewProps },
-  ] = useModal();*/
 
   /*const [registerTable, { getForm, reload }] = useTable({
     title: '',
@@ -178,7 +146,7 @@
     schema: searchFormSchema,
   };
 
-  const gridOptions: VxeGridProps<any> = {
+  const gridOptions: VxeGridProps = {
     checkboxConfig: {
       highlight: true,
       labelField: 'name',
@@ -205,16 +173,6 @@
   };
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
-
-  /*  useRequest(
-      () => {
-        tableApi.reload();
-        return Promise.resolve({});
-      },
-      {
-        refreshOnWindowFocus: true,
-      },
-    );*/
 
   // 人员选择后回调
   function handleSettingPersonalSuccess(selectedPersonal) {
