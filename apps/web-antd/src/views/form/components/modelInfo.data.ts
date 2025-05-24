@@ -8,7 +8,7 @@ import { checkEntityExist } from '#/api/form/bizForm';
 import {getAll} from '#/api/base/app';
 import { getAppliedRange, getSkipSet } from '#/api/form/form';
 import { getAll as getAuthPoints } from '#/api/form/authPoint';
-
+import pinyin from 'js-pinyin';
 import { h } from 'vue';
 import { OrderNoDefaultEnum } from '#/enums/commonEnum';
 import {getFlowCategories, getFlowCategoryTreeData} from "#/api/base/category";
@@ -141,7 +141,6 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     label: '流程名称',
     rules: 'required',
     component: 'Input',
-
     dependencies: {
       show(values) {
         return values.formType !== 0;
@@ -160,8 +159,53 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
       },
       disabled(values){
         return !!values.id;
-      } ,
-      triggerFields: [''],
+      },
+      trigger(values, form) {
+        if (!values.id){
+          // 将空格及特殊字符替换替换
+          let value = values.name.replace(/[^_|^\d|^\[a-zA-Z\]|^\[\u4e00-\u9fa5\]]/g, '_');
+          // 是否统一为小写
+          // value = value.toLowerCase();
+          value = pinyin.getCamelChars(value);
+          form.setFieldValue('modelKey', value);
+        }
+      },
+      triggerFields: ['name'],
+      rules(values) {
+        const { id, sn } = values;
+        return z
+            .string({
+              required_error: "标识不能为空"
+            })
+            .min(1, "标识不能为空")
+            .max(60, '字符长度不能大于60！')
+            .regex(new RegExp('^[a-zA-Z_]{1,}[0-9a-zA-Z_]{0,}$'), '请输入英文或数字且以英文或下划线开头！')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'modelKey',
+                      fieldValue: '',
+                      fieldName: '流程标识',
+                    });
+                    /**
+                     * id: params.id,
+                     * field: params.field,
+                     * fieldValue: value,
+                     * fieldName: params.fieldName,
+                     */
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '标识已存在',
+                },
+            );
+      },
     }
   },
   {
