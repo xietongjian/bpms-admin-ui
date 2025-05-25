@@ -19,10 +19,10 @@ import { router } from './router';
 
 import 'element-plus/dist/index.css';
 import 'element-plus/theme-chalk/dark/css-vars.css';
-import '/public/static/form-making/dist/index.css';
+import '../public/static/form-making/dist/index.css';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
-import FormMakingV3 from '/public/static/form-making/dist/form-making-v3.es.js';
+import FormMakingV3 from '../public/static/form-making/dist/form-making-v3.es.js';
 
 async function bootstrap(namespace: string) {
   // 初始化组件适配器
@@ -74,14 +74,13 @@ async function bootstrap(namespace: string) {
       useTitle(pageTitle);
     }
   });
-
   app.use(ElementPlus, {
     locale: zhCn,
   });
   app.use(FormMakingV3, {
     locale: 'zh-cn',
-    kindEditorUrl: '/form-making/dist/lib/kindeditor',
-    aceurl: '/form-making/dist/lib/ace',
+    kindEditorUrl: '/static/form-making/dist/lib/kindeditor',
+    aceurl: '/static/form-making/dist/lib/ace',
   });
   app.mount('#app');
 }
