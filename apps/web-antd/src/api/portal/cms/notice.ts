@@ -32,20 +32,6 @@ export const getSigner = (params) => {
 };
 
 export const getNoticeListByPage = (params) => {
-  // if(params.field){
-  //   params.orders = [{
-  //     column: humpToLine(params.field),
-  //     asc: params.order === 'ascend'
-  //   }];
-  // }
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { query, entity };
-
   return requestClient.post(Api.NoticePageList, params);
 };
 

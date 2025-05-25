@@ -177,7 +177,7 @@
   }
 
   function ctrlForm() {
-    const getBaseDynamicRules = (params: CheckExistParams) => {
+    /*const getBaseDynamicRules = (params: CheckExistParams) => {
       if (props.id) {
         return [];
       }
@@ -218,10 +218,10 @@
           },
         },
       ] as Rule[];
-    };
+    };*/
     if (props.formType === 'biz') {
       // 业务表单增加表单验证
-      updateSchema([
+      /*updateSchema([
         {
           field: 'formName',
           label: '流程名称',
@@ -257,7 +257,7 @@
             ];
           },
         },
-      ]);
+      ]);*/
     } else {
     }
   }

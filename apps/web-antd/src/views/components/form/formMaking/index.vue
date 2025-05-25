@@ -188,6 +188,7 @@
   });
 
   function setFormJson(formJson) {
+    debugger
     if (formJson) {
       if (typeof formJson === 'string') {
         formJson = JSON.parse(formJson);
@@ -230,22 +231,16 @@
         })
         getBizInfoByModelKey({ modelKey: props.modelKey })
           .then((res) => {
+            debugger;
             formApi.setValues({
               id: res.id,
               formName: res.title,
             });
-            formApi.updateSchema({
+            /*formApi.updateSchema({
               fieldName: 'formKey',
               componentProps: {
                 disabled: true,
               },
-            });
-            /*updateSchema({
-              field: 'formKey',
-              componentProps: {
-                disabled: true,
-              },
-              dynamicRules: () => [],
             });*/
 
             setFormJson(res.formJson);
@@ -262,10 +257,6 @@
                 id: res.id,
                 formName: res.title,
               });
-              /*setFieldsValue({
-                id: res.id,
-                formName: res.title,
-              });*/
               setFormJson(res.formJson);
               loading.value = false;
             })
@@ -281,7 +272,7 @@
   }
 
   function ctrlForm() {
-    const getBaseDynamicRules = (params: any) => {
+    /*const getBaseDynamicRules = (params: any) => {
       if (props.id) {
         return [];
       }
@@ -322,43 +313,24 @@
           },
         },
       ];
-    };
+    };*/
     if (props.formType === 'biz') {
       // 业务表单增加表单验证
-      updateSchema([
+      formApi.updateSchema([
         {
-          field: 'formName',
-          colProps: { span: 14 },
+          fieldName: 'formName',
           show: false,
+          dependencies: {
+            show: false,
+            triggerFields: ['']
+          }
         },
         {
-          field: 'formKey',
-          show: false,
-          colProps: { span: 10 },
-          dynamicRules: () => {
-            return [
-              {
-                required: true,
-                whitespace: true,
-                message: '标识不能为空！',
-              },
-              {
-                pattern: new RegExp(FormValidPatternEnum.SN),
-                type: 'string',
-                message: '请输入英文或数字！',
-              },
-              {
-                max: 40,
-                message: '字符长度不能大于40！',
-              },
-              /*...getBaseDynamicRules({
-                id: unref(id),
-                field: 'modelKey',
-                fieldValue: '',
-                fieldName: '流程标识',
-              }),*/
-            ];
-          },
+          fieldName: 'formKey',
+          dependencies: {
+            show: false,
+            triggerFields: ['']
+          }
         },
       ]);
     } else {
@@ -453,16 +425,16 @@
 
       return saveBizInfo(saveData)
         .then((res) => {
-          setFieldsValue({
+          formApi.setValues({
             id: res.formInfoId,
             formKey: res.modelKey,
           });
-          updateSchema({
+          /*updateSchema({
             field: 'formKey',
             componentProps: {
               disabled: true,
             },
-          });
+          });*/
           message.success({ content: '保存成功！', style: { marginTop: '40px' } });
           // emit('onSave', res);
           return Promise.resolve(res);

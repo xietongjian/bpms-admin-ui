@@ -6,6 +6,7 @@
     :title="getTitle"
   >
     <div class="min-h-[30px] !border-1">
+<!--      {{selectedList}}-->
       <template v-if="selectedList && selectedList.length > 0" v-for="(item, index) in selectedList" :key="item.id">
         <Tag color="processing" closable @close="removeSelectedItem(item.id)">
           {{ item.shortName }}
@@ -24,7 +25,7 @@
         />
       </div>
       <div class="flex-1 overflow-y-auto mt-2">
-        <Transfer
+<!--        <Transfer
             show-search
             :filter-option="filterOption"
             v-model:target-keys="targetKeys"
@@ -55,7 +56,7 @@
                 "
             />
           </template>
-        </Transfer>
+        </Transfer>-->
         <Tree
           ref="treeRef"
           title="组织"
@@ -116,7 +117,7 @@
     ORG = '3',
   }
 
-  const emit = defineEmits(['change', 'register'])
+  const emit = defineEmits(['change'])
   const props = defineProps({
     title: {
       type: String,
@@ -379,10 +380,11 @@
 
   async function initData(values) {
     if (values.selectType === 'company') {
-      const list = await getCompaniesListData();
+      const list = await getCompanies();
 
-      treeData.value = listToTree(list);
-      treeListData.value = listToTree(list);
+      treeData.value = list;// listToTree(list);
+      debugger;
+      treeListData.value = list;// listToTree(list);
       if (unref(multiSelect)) {
         setTimeout(() => {
           // getTree()?.setCheckedKeys(selectedRowKeys);
@@ -518,13 +520,14 @@
 
   function onSelectChange(selectedKeys, selectedRecords) {
     let selectedRowKeys = selectedKeys;
-    let selectedList = selectedRecords.map((item) => {
+    let selectedListTemp = selectedRecords.map((item) => {
       return { id: item.id, code: item.code, name: item.name };
     });
-    Object.assign(state, {
+    selectedList.value = selectedListTemp;
+    /*Object.assign(state, {
       selectedRowKeys,
       selectedList,
-    });
+    });*/
   }
 
   // 行点击
@@ -556,22 +559,26 @@
 
   function handleSubmit() {
     // const selectedRows = getSelectRows();
-    emit('change', state.selectedList);
+    emit('change', selectedList.value);
     // closeModal();
+    modalApi.close();
   }
 
   // 选择树
   function handleSelect(node: any, e) {
     let selectedRowKeys = [];
-    let selectedList = treeNodes2SelectedList(e.selectedNodes);
-    selectedList.forEach((item) => {
+    debugger;
+    let selectedListTemp = treeNodes2SelectedList(e.selectedNodes);
+    selectedListTemp.forEach((item) => {
       delete item.children;
       delete item.node;
     });
-    Object.assign(state, {
-      selectedRowKeys,
-      selectedList,
-    });
+    debugger;
+    selectedList.value = selectedListTemp;
+    // Object.assign(state, {
+    //   selectedRowKeys,
+    //   selectedList,
+    // });
   }
 
   function treeNodes2SelectedList(selectedNodes) {

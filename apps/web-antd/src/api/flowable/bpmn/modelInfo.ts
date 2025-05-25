@@ -80,7 +80,7 @@ export function saveOrUpdateProcessVariable(params: any) {
   return requestClient.post(
     Api.SaveOrUpdateProcessVariable,
       params,
-    { isReturnNativeResponse: true },
+    { responseReturn: 'body' },
   );
 }
 

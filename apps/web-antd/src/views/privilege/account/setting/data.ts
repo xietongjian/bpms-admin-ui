@@ -83,10 +83,11 @@ export const baseSetSchemas: FormSchema[] = [
       placeholder: '请选择组织',
       multiple: false,
       type: 'company',
+      selectOnModal: false,
     },
     formItemClass: '',
   },
-  {
+  /*{
     fieldName: 'testCompanySelector1',
     component: 'OrgSelector',
     label: '公司选择-下拉-多选',
@@ -153,7 +154,7 @@ export const baseSetSchemas: FormSchema[] = [
     component: 'IconPicker',
     label: '人员选择',
     // value: 'ant-design:link-outlined'
-  },
+  },*/
 ];
 
 // 安全设置 list

@@ -291,7 +291,7 @@
               }
             },
           },
-        ] as Rule[];
+        ] as any[];
       };
       // 业务表单增加表单验证
       formApi.updateSchema([
@@ -354,7 +354,6 @@
 
   onMounted(() => {
     initDefaultData();
-
     initFormSchema();
   });
 
@@ -364,7 +363,7 @@
     // 获取数据回显
     getByModelId(modelId)
       .then(async (res) => {
-          debugger;
+        debugger;
         const dockings = [] as any,
           owner = [] as any,
           ownDept = [] as any;

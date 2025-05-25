@@ -177,6 +177,7 @@
     Modal, Badge, Button, Space, Tooltip, Row, Col, Steps, Tag, Popconfirm, Result, message, TypographyText,
   } from 'ant-design-vue';
   import ModelInfoSetting from '#/views/form/components/ModelInfoSetting.vue';
+  import FlowVariableSetting from '#/views/form/components/FlowVariableSetting.vue';
   import FormDesigner from '#/views/components/form/formMaking/index.vue';
   import BpmnBaseInfo from '#/views/form/components/BpmnBaseInfo.vue';
   import {useAccess} from '@vben/access';
@@ -439,14 +440,16 @@
 
   const saveBaseInfo = () => {
     saveLoading.value = true;
-    baseSettingRef.value
+    return baseSettingRef.value
       .handleSubmit()
       .then(() => {
         saveLoading.value = false;
         refreshStatus();
+        return Promise.resolve(true);
       })
       .catch(() => {
         saveLoading.value = false;
+        return Promise.reject(false);
       });
   };
 

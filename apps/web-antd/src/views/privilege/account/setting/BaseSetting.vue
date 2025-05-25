@@ -58,7 +58,10 @@
       },{
         value: '002', label: '李四', type: 'personal',
       }],
-      testCompanySelector: '1'
+      testCompanySelector: [
+          {id: '1', label: '中国石化'},
+          {id: '2', label: '外国石化'},
+      ]
     });
   });
 

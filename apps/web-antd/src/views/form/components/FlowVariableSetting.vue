@@ -26,7 +26,7 @@
     </div>
     <div class="h-[50px]"></div>
 
-    <FlowVariableFileModal ref="flowVariableFileModalRef" @register="registerModal" @success="handleResetVariables" />
+    <FlowVariableFileModal ref="flowVariableFileModalRef" @success="handleResetVariables" />
   </div>
 </template>
 
@@ -45,6 +45,7 @@
   import { downloadByUrl } from '#/utils/file/download';
   import FlowVariableFileModal from '#/views/form/components/FlowVariableFileModal.vue';
   // import { useModal } from '@/components/Modal';
+  import type {VxeGridProps} from '#/adapter/vxe-table';
 
   const flowVariableFileModalRef = ref();
 
@@ -74,10 +75,9 @@
   const loadingRef = ref(false);
   // const { message } = useMessage();
 
-  const tableRef = ref<VxeGridInstance>();
+  const tableRef = ref<any>();
 
-  const gridOptions = reactive<BasicTableProps>({
-    id: 'VxeTable',
+  const gridOptions = reactive<VxeGridProps>({
     minHeight: 200,
     maxHeight: 500,
     size: 'small',
@@ -101,7 +101,7 @@
             },
             events: {
               click: () => {
-                tableRef.value?.insertAt({ name: '新增的' }, -1);
+                tableApi.grid.insertAt({ name: '新增的' }, -1);
               },
             },
           },
@@ -127,18 +127,22 @@
       showMessage: true,
     },
     editRules: {
-      value: [{ required: true, message: '请输入变量描述' }],
-      key: [
-        { required: true, message: '请输入变量标识' },
-        { pattern: '^[a-zA-Z_$][a-zA-Z\\d_$]*$', message: '格式不正确' },
+      "key": [
+        { required: true, trigger: 'blur', content: '请输入变量标识' },
+        { pattern: '^[a-zA-Z_$][a-zA-Z\\d_$]*$', content: '格式不正确' },
         {
           validator({ cellValue }) {
-            const { fullData } = tableRef.value?.getTableData();
+            const { fullData } = tableApi.grid?.getTableData();
             // 判断是否有重复的key
             const keyMap = {};
+            if(fullData.length === 1){
+              if (!fullData[0].key) {
+                return new Error('请输入变量标识');
+              }
+            }
             for (let item of fullData) {
               if (!item.key) {
-                return new Error('存在重复的变量标识');
+                return new Error('请输入变量标识');
               }
               if (keyMap[item.key]) {
                 message.error({
@@ -152,6 +156,7 @@
           },
         },
       ],
+      "value": [{ required: true, content: '请输入变量名称' }],
     },
   });
   const [BasicTable, tableApi] = useVbenVxeGrid({gridOptions});
@@ -164,7 +169,7 @@
     if (data) {
       const rows = JSON.parse(data.variables);
       rows.forEach((item) => {
-        tableRef.value?.insertAt(item, -1);
+        tableApi.grid?.insertAt(item, -1);
       });
     }
     gridOptions.loading = false;
@@ -186,24 +191,25 @@
   function handleResetVariables(newData: any[] = []) {
     console.log('imported new variables', newData);
     newData.forEach(({ fieldName, fieldSn }) => {
-      tableRef.value?.insertAt({ value: fieldName, key: fieldSn }, -1);
+      tableApi.grid?.insertAt({ value: fieldName, key: fieldSn }, -1);
     });
   }
 
   function handleAddRow() {
     const emptyRow = { key: undefined, value: undefined, innerVariable: false };
-    tableRef.value?.insertAt(emptyRow, -1);
+    // tableRef.value?.insertAt(emptyRow, -1);
+    tableApi.grid.insertAt(emptyRow, -1);
   }
 
   const createActions = (record) => {
-    const actions: ActionItem[] = [
+    const actions: any[] = [
       {
         label: '删除',
         danger: true,
         popConfirm: {
           title: '是否确认删除',
           confirm: () => {
-            tableRef.value?.remove(record);
+            tableApi.grid?.remove(record);
           },
           okButtonProps: { danger: true },
         },
@@ -218,14 +224,19 @@
       return Promise.reject(false);
     }
     gridOptions.loading = true;
-    const $table = tableRef.value;
+    const $table = tableApi.grid;
     if ($table) {
       const errMap = await $table.validate();
       if (errMap) {
         console.error(errMap);
         gridOptions.loading = false;
       } else {
-        const { fullData } = tableRef.value!.getTableData();
+        const { fullData } = $table!.getTableData();
+        if(fullData.length === 1){
+          if(!fullData[0].key){
+            return Promise.reject(false);
+          }
+        }
         // 判断是否有重复的key
         const keyMap = {};
         for (let item of fullData) {
@@ -251,13 +262,13 @@
           variables: JSON.stringify(resultData),
         };
 
-        const result = await saveOrUpdateProcessVariable(values);
-        if (result.data && result.data.success) {
-          message.success({ content: result.data.msg, style: { marginTop: '40px' } });
+        const {data, msg, success} = await saveOrUpdateProcessVariable(values);
+        if (success) {
+          message.success({ content: msg, style: { marginTop: '40px' } });
           gridOptions.loading = false;
           return Promise.resolve(true);
         } else {
-          message.error(result.data.msg);
+          message.error(msg);
           gridOptions.loading = false;
           return Promise.reject(false);
         }

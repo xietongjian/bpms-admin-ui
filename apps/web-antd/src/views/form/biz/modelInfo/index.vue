@@ -131,17 +131,15 @@
     <CopyModelInfoModal ref="copyModelInfoModalRef" @success="handleSuccess" formType="biz" />
     <BpmnPreviewModal ref="bpmnPreviewModalRef" @success="handleSuccess" />
     <BizBpmnDesignerModal ref="bizBpmnDesignerModalRef"
-      @register="registerBpmnDesignerModal"
       @success="handleBpmnDesignerModalSuccess"
     />
     <BizNoFormBpmnDesignerModal ref="bizNoFormBpmnDesignerModalRef"
-      @register="registerNoFormBpmnDesignerModal"
       @success="handleBpmnDesignerModalSuccess"
     />
   </ColPage>
 </template>
 <script lang="ts" setup>
-  import { nextTick, ref, unref, watch } from 'vue';
+  import { ref, unref, watch } from 'vue';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
@@ -165,7 +163,6 @@
   import { PerEnum } from '#/enums/perEnum';
   import BizBpmnDesignerModal from '#/views/form/components/BizBpmnDesignerModal.vue';
   import BizNoFormBpmnDesignerModal from '#/views/form/components/BizNoFormBpmnDesignerModal.vue';
-  import {getCustomPagerModel} from "#/api/form/customForm";
 
   const MenuItem = Menu.Item;
   const PerPrefix = 'Biz:';
@@ -173,22 +170,6 @@
       bizNoFormBpmnDesignerModalRef = ref(),
       copyModelInfoModalRef = ref(),
       bpmnPreviewModalRef = ref();
-  // const [registerCopyModal, { openModal: openCopyModal, setModalProps: setCopyModalProps }] =
-  //   useModal();
-  // const [
-  //   registerBpmnDesignerModal,
-  //   { openModal: openBpmnDesignerModal, setModalProps: setBpmnDesignerModalProps },
-  // ] = useModal();
-  // const [
-  //   registerNoFormBpmnDesignerModal,
-  //   { openModal: openNoFormBpmnDesignerModal, setModalProps: setNoFormBpmnDesignerModalProps },
-  // ] = useModal();
-
-  // const [
-  //   registerBpmnPreviewModal,
-  //   { openModal: openBpmnPreviewModal, setModalProps: setBpmnPreviewProps },
-  // ] = useModal();
-  // const { message } = useMessage();
 
   const currentModelInfo = ref<Recordable<any>>({});
   const currentCategory = ref<Recordable<any>>({});
@@ -196,38 +177,13 @@
   const showPublishBtn = ref(false);
   const showStopBtn = ref(false);
 
-  /*const [registerTable, { getForm, reload, getSelectRows, clearSelectedRowKeys }] = useTable({
-    title: '列表',
-    api: getPagerModel,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    clearSelectOnPageChange: true,
-    rowSelection: { type: 'radio', columnWidth: 40 },
-    useSearchForm: true,
-    showIndexColumn: false,
-    bordered: true,
-    rowKey: 'id',
-    actionColumn: {
-      width: 100,
-      align: 'left',
-      title: '操作',
-      dataIndex: 'action',
-    },
-  });*/
-
-
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
     submitOnEnter: true,
     commonConfig: {
       labelWidth: 60,
     },
+    // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个
     wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
     actionWrapperClass: 'col-span-2 col-start-3 text-left ml-4',
     resetButtonOptions: {
@@ -368,6 +324,8 @@
   }
 
   function handleEdit(record: Recordable<any>) {
+    debugger;
+
     const { modelKey, modelId, categoryCode, formType } = record;
     const query = {
       modelKey,

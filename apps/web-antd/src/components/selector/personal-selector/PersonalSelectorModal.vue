@@ -105,10 +105,6 @@ const selectedRowsList = ref([])
 
 const selectorContainerRef = ref();
 
-onMounted(() => {
-
-});
-
 const { width, height } = useElementSize(selectorContainerRef)
 watch(height, () => {
   tableHeight.value = height.value-150;

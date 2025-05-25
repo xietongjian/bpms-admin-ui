@@ -122,6 +122,7 @@ function handleChange(items: any[]) {
       label: item.name || item.label,
       value: item.code || item.value,
       key: item.code,
+      id: item.id,
     }
   });
   modelValue.value = result;

@@ -12,19 +12,15 @@ enum Api {
 export const getCompaniesListData = async (params?: any) => {
   const result = await requestClient.post<any>(Api.CompanyList, params||{});
   result.forEach((item: any) => {
-    item.title = item.cname;
+    item.title = item.shortName||item.cname;
     item.key = item.id;
+    item.value = item.id;
+    item.label = item.shortName||item.cname;
   });
   return result;
 }
 export const getCompanies = async (params?: any) => {
   const res = await getCompaniesListData(params);
-  res.forEach((item: any) => {
-    item.key = item.id;
-    item.value = item.id;
-    item.title = item.shortName;
-    item.icon = 'bx:building-house';
-  });
   const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
   forEach(
       treeData,

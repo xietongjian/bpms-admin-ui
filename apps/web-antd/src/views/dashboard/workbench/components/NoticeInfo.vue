@@ -59,7 +59,7 @@
   });
 
   async function fetchData() {
-    const res = await getNoticeListByPage({ pageSize: 5, pageNum: 1 });
+    const res = await getNoticeListByPage({entity: {}, query: { pageSize: 5, pageNum: 1 }});
     dataList.value = res.rows;
   }
 

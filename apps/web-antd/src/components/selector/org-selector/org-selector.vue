@@ -42,7 +42,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 onMounted(() => {
-  initData();
+  !props.selectOnModal && initData();
 });
 
 const selectorDataList = ref([]);
@@ -82,6 +82,17 @@ watch(
   },
 );*/
 
+watch(
+    () => modelValue.value,
+    (v) => {
+      debugger;
+      // emit('change', v);
+      // if (typeof props.change === 'function') {
+      //   props.change(v);
+      // }
+    },
+);
+
 enum OrgSelectType {
   COMPANY = '1',
   DEPT = '2',
@@ -89,9 +100,9 @@ enum OrgSelectType {
 }
 
 async function initData() {
-  debugger;
   if (props.type === 'company') {
     const res = await getCompaniesListData();
+    debugger;
     treeData.value = res;
     if (unref(props.multiple)) {
       setTimeout(() => {
@@ -109,37 +120,35 @@ async function initData() {
     }, 100);
   } else {
     // 部门和公司树（组织树）
-    getOrgTree()
-      .then((res) => {
-        treeData.value = res;
-        const expandKeys = [];
-        // 如果只能选择部门，则将公司的数据设置禁用
-        if (props.selectType === OrgSelectType.DEPT) {
-          forEach(res, (item) => {
-            // 只能选部门
-            item.disabled = item.sourceType === OrgSelectType.COMPANY; // 部门选择器，禁用公司的选项
-            item.sourceType === OrgSelectType.COMPANY && expandKeys.push(item.id); // 如果只能选择部门，需要将公司全部展开
-          });
-        }
+    const res = await getOrgListData();
+    debugger;
+    treeData.value = res;
+    const expandKeys = [];
+    // 如果只能选择部门，则将公司的数据设置禁用
+    if (props.selectType === OrgSelectType.DEPT) {
+      forEach(res, (item) => {
+        // 只能选部门
+        item.disabled = item.sourceType === OrgSelectType.COMPANY; // 部门选择器，禁用公司的选项
+        item.sourceType === OrgSelectType.COMPANY && expandKeys.push(item.id); // 如果只能选择部门，需要将公司全部展开
+      });
+    }
 
-        treeData.value = res as unknown as any[];
+    treeData.value = res as unknown as any[];
 
-        // if (unref(props.multiple)) {
-        //   setTimeout(() => {
-        //     // unref(treeRef)?.setCheckedKeys(selectedRowKeys);
-        //   }, 200);
-        // } else {
-        //   setTimeout(() => {
-        //     // TODO 这里有个问题：默认展开时无法展开父节点
-        //     console.log(selectedRowKeys);
-        //     // getTree()?.setSelectedKeys(selectedRowKeys);
-        //   }, 200);
-        // }
-        // expandKeys.concat(selectedRowKeys);
+    // if (unref(props.multiple)) {
+    //   setTimeout(() => {
+    //     // unref(treeRef)?.setCheckedKeys(selectedRowKeys);
+    //   }, 200);
+    // } else {
+    //   setTimeout(() => {
+    //     // TODO 这里有个问题：默认展开时无法展开父节点
+    //     console.log(selectedRowKeys);
+    //     // getTree()?.setSelectedKeys(selectedRowKeys);
+    //   }, 200);
+    // }
+    // expandKeys.concat(selectedRowKeys);
 
-        // getTree()?.setExpandedKeys(expandKeys);
-      })
-      .finally(() => {});
+    // getTree()?.setExpandedKeys(expandKeys);
   }
 }
 
@@ -171,14 +180,29 @@ const api = computed(() => {
   }
 })
 
+function handleChange(items) {
+  const selectedItems = JSON.parse(JSON.stringify(items));
+  const result = selectedItems.map(item => {
+    return {
+      label: item.name || item.label || item.shortName,
+      value: item.code || item.value,
+      key: item.code,
+      id: item.id
+    }
+  });
+  modelValue.value = result;
+  currentSelect.value = result;
+}
+
 
 </script>
 <template>
   <div class="w-full">
     <template v-if="selectOnModal">
       <Select
+        v-bind="$attrs"
         ref="selectorRef"
-        :value="selectorDataList"
+        :value="modelValue"
         :placeholder="placeholder"
         class="w-full"
         :open="false"
@@ -239,29 +263,30 @@ const api = computed(() => {
           valueField="id"
           ref="selectorRef"
           searchPlaceholder="请选择"
-          popupClassName="border !block"
           v-model:value="modelValue"
           :placeholder="placeholder"
+          :treeCheckStrictly="props.multiple"
+          showCheckedStrategy="SHOW_ALL"
           class="w-full "
-          :multiple="multiple"
+          :multiple="props.multiple"
           :allowClear="true"
-          :labelInValue="true"
+          :labelInValue="props.multiple"
           :tree-data="treeData"
           :treeDataSimpleMode="{id: 'id', pId: 'pid', rootPId: null}"
           :showSearch="true"
           :filterTreeNode="handleFilterTreeNode"
       >
-        <template #tagRender="{ label, closable, onClose, option }">
+<!--        <template #tagRender="{ label, closable, onClose, option }">
           <Popover :z-index="1200">
             <template #content>
               {{ label || '-' }}
             </template>
             <Tag class="flex items-center gap-1 !text-sm p-px m-px mr-1" :closable="closable" :color="option.color" @close="onClose">
-              <span class="icon-[ix--building2] size-4" ></span>
+              <span class="icon-[ix&#45;&#45;building2] size-4" ></span>
               {{ label || '-' }}
             </Tag>
           </Popover>
-        </template>
+        </template>-->
       </TreeSelect>
     </template>
   </div>

@@ -10,7 +10,7 @@
       :auto-content-height="true"
       content-class="h-full">
     <template #left>
-      <FlowCategoryTree class="w-full" @select="handleSelect"/>
+      <FlowCategoryTree @select="handleSelect"/>
     </template>
     <div class="bg-card h-full">
       <BasicTable >
@@ -145,62 +145,12 @@ const dmnDesignerModalRef = ref(),
     dmnPreviewModalRef = ref();
 
 const MenuItem = Menu.Item;
-// const go = useGo();
-/*const [
-  registerDmnDesignerModal,
-  { openModal: openDmnDesignerModal, setModalProps: setDmnDesignerModalProps },
-] = useModal();
-
-const [
-  registerCodePreviewModal,
-  { openModal: openCodePreviewModal, setModalProps: setCodePreviewModalProps },
-] = useModal();
-
-const [
-  registerDmnSimulatorModal,
-  { openModal: openDmnSimulatorModal, setModalProps: setDmnSimulatorModalProps },
-] = useModal();
-
-const [
-  registerDmnPreviewModal,
-  { openModal: openDmnPreviewModal, setModalProps: setDmnPreviewModalProps },
-] = useModal();*/
 
 const currentModelInfo = ref<Recordable>({});
 const currentCategory = ref<Recordable>({});
 const loadingRef = ref(false);
 const showPublishBtn = ref(false);
 const showStopBtn = ref(false);
-/*
-
-  const [
-    registerTable,
-    { getForm, reload, getSelectRows, clearSelectedRowKeys, setSelectedRowKeys },
-  ] = useTable({
-    title: '列表',
-    api: getDmnPagerModel,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    searchInfo: { modelType: 4 },
-    rowKey: 'id',
-    rowSelection: { type: 'radio', columnWidth: 40 },
-    useSearchForm: true,
-    showIndexColumn: false,
-    bordered: true,
-    actionColumn: {
-      width: 120,
-      align: 'center',
-      title: '操作',
-      dataIndex: 'action',
-    },
-  });
-*/
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -209,7 +159,7 @@ const formOptions: VbenFormProps = {
     labelWidth: 60,
   },
   wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-  actionWrapperClass: 'col-span-2 col-start-3 text-left ml-4',
+  actionWrapperClass: 'col-span-2 col-start-3 text-left ml-2',
   resetButtonOptions: {
     show: false,
   },
@@ -220,7 +170,6 @@ const gridOptions: VxeGridProps = {
   columns,
   columnConfig: {resizable: true},
   height: 'auto',
-  maxHeight: '100%',
   border: false,
   keepSource: true,
   autoResize: false,

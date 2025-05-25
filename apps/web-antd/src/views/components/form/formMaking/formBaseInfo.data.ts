@@ -58,23 +58,6 @@ export const formBaseInfoFormSchema: FormSchema[] = [
       autoComplete: 'off',
       allowClear: false,
     },
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '标识不能为空！',
-      },
-      {
-        max: 60,
-        message: '字符长度不能大于60！',
-      },
-      {
-        // 英文或数字且以英文或下划线开头
-        pattern: new RegExp('^[a-zA-Z_]{1,}[0-9a-zA-Z_]{0,}$'),
-        type: 'string',
-        message: '请输入英文或数字且以英文或下划线开头！',
-      },
-    ],*/
     dependencies: {
       show: false,
       rules(values) {

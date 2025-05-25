@@ -161,18 +161,18 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
         return !!values.id;
       },
       trigger(values, form) {
-        if (!values.id){
+        if (!values.id && values.name){
           // 将空格及特殊字符替换替换
-          let value = values.name.replace(/[^_|^\d|^\[a-zA-Z\]|^\[\u4e00-\u9fa5\]]/g, '_');
+          let value = values.name ? values.name.replace(/[^_|^\d|^\[a-zA-Z\]|^\[\u4e00-\u9fa5\]]/g, '_') : '';
           // 是否统一为小写
           // value = value.toLowerCase();
           value = pinyin.getCamelChars(value);
           form.setFieldValue('modelKey', value);
         }
       },
-      triggerFields: ['name'],
+      triggerFields: ['modelKey'],
       rules(values) {
-        const { id, sn } = values;
+        const { id, modelId, sn } = values;
         return z
             .string({
               required_error: "标识不能为空"
@@ -185,7 +185,7 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
                   let result = false;
                   try {
                     result = await checkEntityExist({
-                      id: id,
+                      id: modelId,
                       field: 'modelKey',
                       fieldValue: '',
                       fieldName: '流程标识',
@@ -556,7 +556,7 @@ export const copyBizModelInfoFormSchema: FormSchema[] = [
   },
 ];
 
-export const vxeFlowVariableTableColumns = [
+export const vxeFlowVariableTableColumns: VxeGridProps['columns']  = [
   {
     title: '序号',
     type: 'seq',
@@ -570,7 +570,7 @@ export const vxeFlowVariableTableColumns = [
     field: 'value',
     align: 'left',
     editRender: {
-      name: 'AInput',
+      name: 'input',
       placeholder: '请点击输入',
     },
   },
@@ -579,7 +579,7 @@ export const vxeFlowVariableTableColumns = [
     field: 'key',
     align: 'left',
     editRender: {
-      name: 'AInput',
+      name: 'input',
       placeholder: '请点击输入',
     },
   },
@@ -599,7 +599,6 @@ export const vxeFlowVariableTableColumns = [
     title: '操作',
     align: 'center',
     slots: { default: 'action' },
-    fixed: 'center',
   },
 ];
 export const flowVariableTableColumns: VxeGridProps['columns'] = [
