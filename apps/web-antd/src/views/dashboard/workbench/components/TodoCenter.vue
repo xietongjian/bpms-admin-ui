@@ -44,12 +44,14 @@
                 </Space>
               </template>
               <template #title>
-                <TypographyLink @click="handleViewForm(item)">
+                <TypographyLink :title="item.formName" @click="handleViewForm(item)">
+                  <Badge v-if="item.processStatus === 'end'" status="success" />
+                  <Badge v-else-if="item.processStatus === 'applying'" status="processing" />
+                  <Badge v-else-if="item.processStatus === 'revoke'" status="warning" />
+                  <Badge v-else-if="item.processStatus === 'zz'" status="error" />
+                  <Badge v-else status="default" />
                   {{ item.formName }}
                 </TypographyLink>
-              </template>
-              <template #avatar>
-                <Badge color="blue"/>
               </template>
             </ListItemMeta>
           </ListItem>
@@ -75,11 +77,13 @@
               </template>
               <template #title>
                 <TypographyLink @click="handleViewForm(item)">
+                  <Badge v-if="item.processStatus === 'end'" status="success" />
+                  <Badge v-else-if="item.processStatus === 'applying'" status="processing" />
+                  <Badge v-else-if="item.processStatus === 'revoke'" status="warning" />
+                  <Badge v-else-if="item.processStatus === 'zz'" status="error" />
+                  <Badge v-else status="default" />
                   {{ item.formName }}
                 </TypographyLink>
-              </template>
-              <template #avatar>
-                <Badge color="blue"/>
               </template>
             </ListItemMeta>
           </ListItem>
@@ -113,11 +117,13 @@
               </template>
               <template #title>
                 <TypographyLink @click="handleViewForm(item)">
+                  <Badge v-if="item.processStatus === 'end'" status="success"/>
+                  <Badge v-else-if="item.processStatus === 'applying'" status="processing"/>
+                  <Badge v-else-if="item.processStatus === 'revoke'" status="warning"/>
+                  <Badge v-else-if="item.processStatus === 'zz'" status="error"/>
+                  <Badge v-else status="default"/>
                   {{ item.formName }}
                 </TypographyLink>
-              </template>
-              <template #avatar>
-                <Badge color="blue"/>
               </template>
             </ListItemMeta>
           </ListItem>

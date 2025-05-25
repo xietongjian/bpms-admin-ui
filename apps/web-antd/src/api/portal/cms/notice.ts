@@ -15,41 +15,41 @@ enum Api {
   Sync = '/flow/portal/cms/notice/sync',
 }
 
-export const getAllNotice = (params) => {
+export const getAllNotice = (params: any) => {
   return requestClient.post(Api.NoticeList, params).then((res: any) => {
     return Promise.resolve(res);
   });
 };
 
-export const getNoticeById = (params) => {
+export const getNoticeById = (params: any) => {
   return requestClient.get(Api.GetNoticeById + `/${params.id}`).then((res: any) => {
     return Promise.resolve(res);
   });
 };
 // 获取签发人
-export const getSigner = (params) => {
+export const getSigner = (params: any) => {
   return requestClient.post(Api.GetSigner, params);
 };
 
-export const getNoticeListByPage = (params) => {
+export const getNoticeListByPage = (params: any) => {
   return requestClient.post(Api.NoticePageList, params);
 };
 
-export const insert = (params) => {
+export const insert = (params: any) => {
   // 将html/xml内容进行转成Base64编码传入后端 - 避免xss防攻击拦截
   params.content = Base64.encode(params.content);
   return requestClient.post(Api.Insert, params, { responseReturn: 'body' });
 };
 
-export const update = (params) =>
+export const update = (params: any) =>
   requestClient.post(Api.Update, params, { responseReturn: 'body' });
 
-export const publish = (params) =>
+export const publish = (params: any) =>
   requestClient.post(Api.Publish, params, { responseReturn: 'body' });
 
-export const checkEntityExist = (params) =>
+export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
-export const deleteByIds = (params?: Array<string>) => requestClient.delete(Api.Delete, params);
+export const deleteByIds = (params: Array<string>) => requestClient.delete(Api.Delete, params);
 
 export const SyncNotice = () => requestClient.post(Api.Sync );

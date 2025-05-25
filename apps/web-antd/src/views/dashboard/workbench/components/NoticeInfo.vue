@@ -16,7 +16,7 @@
             <span class="">{{ formatToDateTime(item.publishTime || new Date(), 'YYYY-MM-DD HH:mm') }}</span>
           </template>
           <div class="content">
-            <TypographyLink @click="handleShowDetail(item)" :title="item.title">
+            <TypographyLink class="overflow-hidden" @click="handleShowDetail(item)" :title="item.title">
               <span v-if="item.categoryName" :style="{ color: item.style || 'initial' }">
                 [{{ item.categoryName }}]
               </span>
@@ -25,7 +25,9 @@
                 {{ item.noticeNo }}
                 -
               </span>
-              {{ item.title }}
+              <span class="">
+                {{ item.title }}
+              </span>
             </TypographyLink>
           </div>
         </ListItem>
@@ -84,7 +86,7 @@
 
   }
 </script>
-<style lang="less">
+<style lang="scss">
 .custom-list-item {
   padding-left: 0 !important;
   padding-right: 0 !important;

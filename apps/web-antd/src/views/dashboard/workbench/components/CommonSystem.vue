@@ -23,7 +23,7 @@
                 </Avatar>
               </a>
               <a :href="item.url" target="_blank" class="flex-1 color-[#2d93f9]">
-                <div class="font-size-[14px] font-weight-[900] line-height-[20px] flex-1 text-lg">
+                <div class="font-size-[14px] font-weight-[600] line-height-[20px] flex-1">
                   <Tooltip placement="top" :title="item.name">
                     <div class="line-clamp-1 font-bold color-gray-900/80">{{ item.name }}</div>
                   </Tooltip>
