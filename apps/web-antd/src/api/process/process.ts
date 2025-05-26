@@ -50,9 +50,7 @@ enum Api {
 
 // 发起流程
 export function startCustomFormProcess(params: any) {
-  return requestClient.post(Api.StartCustomFormProcess, params, {isReturnNativeResponse: true}).then((res)=>{
-    return Promise.resolve(res.data);
-  });
+  return requestClient.post(Api.StartCustomFormProcess, params, {responseReturn: 'body'});
 }
 
 // 通过表单信息获取模拟流程的节点信息
@@ -228,11 +226,12 @@ export function getPagerModelModelInfo(params: any) {
   return requestClient.post<any>(Api.GetPagerModelModelInfo, params );
 }
 
-export function getCustomFormInfoVoByModelKeyAndBusinessKey(params) {
+export function getCustomFormInfoVoByModelKeyAndBusinessKey(params: any) {
   const url = Api.GetCustomFormInfoVoByModelKeyAndBusinessKey;
-  return requestClient.get<any>(url + '/' + params.modelKey+'?businessKey='+params.bizId+'&procInstId='+params.procInstId,{}, {isReturnNativeResponse: true});
+  //  + '/' + params.modelKey+'?businessKey='+params.bizId+'&procInstId='+params.procInstId
+  return requestClient.post<any>(Api.GetCustomFormInfoVoByModelKeyAndBusinessKey, params,{responseReturn: 'body'});
 }
-export function getBizInfoVoByModelKey(params) {
+export function getBizInfoVoByModelKey(params: any) {
   const url = Api.GetBizInfoVoByModelKey;
   return requestClient.get<any>(url + '/' + params.modelKey+'?businessKey='+params.bizId+'&procInstId='+params.procInstId,{}, {isReturnNativeResponse: true});
 }

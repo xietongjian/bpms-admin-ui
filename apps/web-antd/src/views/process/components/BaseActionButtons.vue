@@ -12,19 +12,21 @@
         </template>
       </Button>
     </Space>
-    <BpmnPreviewModal @register="registerBpmnPreviewModal"/>
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" />
     <!--    <PrintPreviewModal @register="registerPrintPreviewModal" />-->
   </div>
 </template>
 <script lang="ts" setup>
+  import {ref, defineExpose} from 'vue';
   import {ApartmentOutlined, PrinterOutlined} from '@ant-design/icons-vue';
   import {Button, Space} from 'ant-design-vue';
   import {useRouter} from 'vue-router';
   // import {useModal} from '@/components/Modal';
-  import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
+  import {BpmnPreviewModal} from '#/views/components/preview';
   // import PrintPreviewModal from '#/views/components/preview/printPreview/index.vue';
   // import {useGo} from '@/hooks/web/usePage';
   const router = useRouter();
+  const bpmnPreviewModalRef = ref();
 
   const props = defineProps({
     formType: {
@@ -52,27 +54,21 @@
   // const go = useGo();
   // const {params: {modelKey, procInstId, bizId, taskId}} = unref(currentRoute);
 
-  const [registerBpmnPreviewModal, {
+ /* const [registerBpmnPreviewModal, {
     openModal: openBpmnPreviewModal,
     setModalProps: setBpmnPreviewProps
   }] = useModal();
   const [registerPrintPreviewModal, {
     openModal: openPrintPreviewModal,
     setModalProps: setPrintPreviewProps
-  }] = useModal();
+  }] = useModal();*/
 
   function showFlowDiagram() {
-    openBpmnPreviewModal(true, {
-      name: '',
+    bpmnPreviewModalRef.value.setData({
       modelKey: props.modelKey,
       procInstId: (!props.procInstId || props.procInstId === '0') ? '' : props.procInstId,    // 参数空时传过来的是0
     });
-    setBpmnPreviewProps({
-      centered: true,
-      useWrapper: false,
-      showOkBtn: false,
-      cancelText: '关闭'
-    });
+    bpmnPreviewModalRef.value.open();
   }
 
   function handleCloseFunc() {
@@ -81,6 +77,6 @@
 
   function handlePrintProcess() {
     // go(`/process/print/${props.modelKey}/${props.procInstId}/${props.bizId}/${props.taskId}/0`);
-    router.push({ name: 'VbenAbout' });
+    // router.push({ name: 'VbenAbout' });
   }
 </script>

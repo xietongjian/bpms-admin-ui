@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { nextTick, ref, unref, shallowRef } from 'vue';
+import { nextTick, ref, unref, shallowRef, onMounted } from 'vue';
 
 import { Page, ColPage } from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
@@ -26,6 +26,7 @@ import {
   message
 } from 'ant-design-vue';
 import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
+import ProcessFormLaunchModal from '#/views/process/actions/LaunchModal.vue';
 
 import { getFlowCategories } from '#/api/base/category';
 import {
@@ -36,6 +37,8 @@ import {
 } from '#/api/process/process';
 import { forEach, listToTree } from '#/utils/helper/treeHelper';
 import { groupBy } from '#/utils/index';
+import { useRouter } from 'vue-router';
+import {changeURLPar} from "#/utils/domUtils";
 
 const showModel = ref(true);
 
@@ -51,9 +54,11 @@ const dataListLoading = ref<boolean>(false);
 const basicTreeRef = ref<any>(null);
 const currentCategory = ref<any>({});
 const InputSearch = Input.Search;
+const router = useRouter();
 
 const bpmnPreviewModalRef = ref(),
-    processFormPreviewDrawerRef = shallowRef();
+    processFormPreviewDrawerRef = shallowRef(),
+    processFormLaunchModalRef = ref();
 
 // const [AppModal, modalApi] = useVbenModal({
 //   connectedComponent: null,//AppInputModal,
@@ -163,8 +168,20 @@ async function fetchModelByPage() {
 
 const selectNodeId = ref([]);
 const categoryTreeRef = ref(null);
-fetch();
-fetchModelByPage();
+
+onMounted(() => {
+  const { currentRoute } = useRouter();
+  const {
+    query: { modelKey },
+  } = unref(currentRoute);
+
+  fetch();
+  fetchModelByPage();
+  if(modelKey){
+    handleLaunch({modelKey});
+    return;
+  }
+})
 
 async function fetch() {
   // treeLoading.value = true;
@@ -233,14 +250,22 @@ function handleBpmnPreview(modelKey, procInstId) {
 }
 
 function handleLaunch(record: Recordable<any>) {
-  processFormPreviewDrawerRef.value.setData({
-    ...record,
-    procInstId: record.processInstanceId,
-    modelKey: record.processDefinitionKey,
-    showOperation: true,
+  processFormLaunchModalRef.value.setData({
+    modelKey: record.modelKey,
+    businessKey: record.businessKey || '',
+    viewType: 'launch',
   });
-  processFormPreviewDrawerRef.value.open();
-  processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.name}】的表单`});
+  processFormLaunchModalRef.value.open();
+  processFormLaunchModalRef.value.setState({title: `查看流程【${record.name}】的表单`});
+
+  changeLaunchUrl(record.modelKey, record.businessKey || '');
+}
+
+function changeLaunchUrl(modelKey, businessKey) {
+  let newUrl = changeURLPar(window.location.href, 'modelKey', modelKey);
+  newUrl = changeURLPar(newUrl, 'viewType', 'launch');
+  newUrl = changeURLPar(newUrl, 'businessKey', businessKey);
+  window.history.replaceState({ path: newUrl }, '', newUrl);
 }
 
 async function handleDelFormDraftById(id) {
@@ -253,6 +278,11 @@ async function handleDelFormDraftById(id) {
       message.error(msg);
     }
   }
+}
+
+function handleLaunchSuccess() {
+  changeLaunchUrl('', '');
+  router.push({ name: 'Launched' });
 }
 </script>
 
@@ -403,7 +433,8 @@ async function handleDelFormDraftById(id) {
         </List>
       </div>
       <BpmnPreviewModal ref="bpmnPreviewModalRef" />
-      <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" @reload="handleReload"/>
+      <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
+      <ProcessFormLaunchModal ref="processFormLaunchModalRef" @success="handleLaunchSuccess" />
     </div>
   </ColPage>
 </template>

@@ -1,11 +1,11 @@
 <template>
   <BasicModal>
     <template #title>
-      <div style="width: 100%">
+      <div class="w-full">
         <Row>
-          <Col span="8">
+          <Col span="8" class="flex items-center">
             <span v-if="!modelBaseInfo.name">新建流程</span>
-            <Tooltip v-else placement="leftBottom">
+            <Tooltip :zIndex="10000" v-else placement="buttom">
               <template #title>
                 {{ modelBaseInfo.name }}
               </template>
@@ -18,7 +18,7 @@
                 processModelKey
               }}</TypographyText>
               -
-              <Tag :color="finallyStatusStyle.color">{{ finallyStatusStyle.statusName }}</Tag>
+              <Tag :color="finallyStatusStyle.color">{{ finallyStatusStyle.statusName||'草稿' }}</Tag>
             </Tooltip>
           </Col>
           <Col span="8">

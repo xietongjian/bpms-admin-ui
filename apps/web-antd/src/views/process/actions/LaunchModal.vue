@@ -1,5 +1,5 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal">
+  <BasicModal class="w-full" >
     <template #title>
       <Row>
         <Col span="16">
@@ -25,7 +25,7 @@
             @do-simulation="doSimulation"
           />-->
           <Space>
-            <!--    <a-button @click="doSimulation" > 模拟 </a-button>-->
+            <Button @click="doSimulation" > 模拟 </Button>
             <Button type="primary" @click="doLaunch" :loading="submitLoading"> 提交</Button>
             <!--    <a-button @click="doSave" :loading="loading" > 存草稿 </a-button>-->
             <!--    <PopConfirmButton v-if="canStop" type="error" title="确定要作废该流程吗？" @confirm="doStop"  > 作废 </PopConfirmButton>-->
@@ -35,7 +35,7 @@
       </Row>
     </template>
     <Affix :offset-top="0" style="width: 100%" @change="handleAffixChange">
-      <div class="bg-white launch-header" :class="{ affixed: launchHeaderAfixed }">
+      <div class="launch-header" :class="{ affixed: launchHeaderAfixed }">
         <div v-show="!launchHeaderAfixed" class="p-2 launch-header-desc" style="padding-top: 0">
           <Tag>归属部门：{{ flowBaseInfo.ownDeptName || '-' }}</Tag>
           <Tag>
@@ -65,8 +65,8 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, unref, onMounted, nextTick } from 'vue';
-  import { Space, Tag, Row, Col, Modal, Affix, message } from 'ant-design-vue';
+  import { ref, unref, onMounted, defineExpose, nextTick } from 'vue';
+  import { Space, Button, Tag, Row, Col, Modal, Affix, message } from 'ant-design-vue';
   // import { useUserStore } from '@/store/modules/user';
   import FormContainer from '#/views/process/components/FormContainer.vue';
   // import BpmnSimulatorModal from '#/views/components/preview/bpmnSimulator/index.vue';
@@ -85,8 +85,12 @@
   // import { useMessage } from '@/hooks/web/useMessage';
   import ApprovalHistory from '#/views/process/components/ApprovalHistory.vue';
   import {EmpInfo} from '#/views/components/EmpInfo';
+  import { useUserStore } from '@vben/stores';
   import { updateCustomFormData } from '#/api/process/customForm';
+  import {changeURLPar} from "#/utils/domUtils";
   // import { useGo } from '@/hooks/web/usePage';
+  const emit = defineEmits(['success'])
+  const userStore = useUserStore();
 
   // const go = useGo();
   const flowBaseInfo = ref({});
@@ -130,10 +134,21 @@
     });
   });*/
 
+  function changeLaunchUrl(modelKey, businessKey) {
+    let newUrl = changeURLPar(window.location.href, 'modelKey', modelKey);
+    newUrl = changeURLPar(newUrl, 'viewType', 'launch');
+    newUrl = changeURLPar(newUrl, 'businessKey', businessKey);
+    window.history.replaceState({ path: newUrl }, '', newUrl);
+  }
 
   const [BasicModal, modalApi] = useVbenModal({
-    draggable: true,
+    draggable: false,
+    closable: false,
+    footer: false,
+    fullscreen: true,
+    fullscreenButton: false,
     onCancel() {
+      changeLaunchUrl('', '');
       modalApi.close();
     },
     onOpenChange(isOpen: boolean) {
@@ -152,6 +167,8 @@
           initData();
           modalApi.setState({loading: false, confirmLoading: false});
         }
+      } else {
+        changeLaunchUrl('', '');
       }
     },
     onConfirm() {
@@ -197,7 +214,7 @@
 
     // alert(JSON.stringify(userStore.getUserInfo));
     nextTick(() => {
-      window['currentUser'] = userStore.getUserInfo;
+      window['currentUser'] = userStore.userInfo;
       window['procInstId'] = procInstId;
       window['modelKey'] = modelKey;
       window['bizId'] = bizId;
@@ -309,11 +326,11 @@
   // 提交/保存自定义流程数据
   async function startCustomProcess(formData, status) {
     // 组装提交流程的数据结构
-    const dataJson = { defaultFormDataVo: { code: getUrlValue(bizId) }, makFormDataVo: formData };
+    const dataJson = { defaultFormDataVo: { code: unref(processBaseInfo).bizId }, makFormDataVo: formData };
     const data = {
       dataJson: JSON.stringify(dataJson),
       formDraftStatus: status,
-      modelKey: modelKey,
+      modelKey: unref(processBaseInfo).modelKey,
       processNameExp: genProcessNameExp(formData),
     };
 
@@ -355,20 +372,19 @@
       } else {
         message.error('未知的表单类型！');
       }
-      if(res){
-        if (res.success) {
-          changeSubmitLoading(false);
-          message.success(res.msg);
-          // 发起流程成功后关闭
-          modalApi.close();
-          // 关闭后跳转到我发起的流程页面
-          // go({name: 'Launched'});
-        } else {
-          message.error(res.msg);
-          changeSubmitLoading(false);
-        }
+      const {success, msg, data} = res;
+      if (success) {
+        changeSubmitLoading(false);
+        message.success(msg);
+        // 发起流程成功后关闭
+        modalApi.close();
+        // 关闭后跳转到我发起的流程页面
+        // go({name: 'Launched'});
+        // 关闭后跳转到我发起的流程页面
+        emit('success');
       } else {
-        message.error('提交表单失败！');
+        message.error(msg);
+        console.error('表单发起失败，原因：' + msg);
         changeSubmitLoading(false);
       }
     }catch (e){
@@ -394,6 +410,7 @@
         });
         setBpmnSimulatorProps({
           title: '模拟',
+          draggable: false,
           bodyStyle: { padding: '0px', margin: '0px' },
           width: 900,
           height: 450,
@@ -428,6 +445,7 @@
     doSubmit('1');
   }
 
+  defineExpose(modalApi)
   /*
     export default defineComponent({
       components: {
@@ -464,43 +482,5 @@
 </script>
 
 <style lang="scss">
-  //@import '../index.scss';
 
-  .process-launch {
-    overflow: visible;
-
-    .launch-header {
-      &.affixed {
-        //border-bottom: 1px solid var(--border-color);
-        border-bottom: 2px solid #1890ff;
-
-        launch-header-desc {
-          display: none;
-        }
-      }
-
-      width: 100%;
-      padding: 16px;
-
-      .launch-header-title {
-        font-size: 20px;
-        font-weight: bold;
-      }
-
-      .launch-header-desc {
-        display: block;
-        margin-top: 8px;
-      }
-    }
-  }
-
-  .content-container {
-    height: auto;
-  }
-
-  .content-container,
-  body,
-  html {
-    overflow: visible;
-  }
 </style>

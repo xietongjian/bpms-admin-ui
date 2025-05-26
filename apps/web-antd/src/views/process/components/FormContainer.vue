@@ -1,10 +1,6 @@
 <template>
   <div class="">
-    <div
-      v-if="showBaseFormInfo"
-      class="form-header-base-info bg-white"
-      style="padding: 0px 25px 0px; margin-top: 0"
-    >
+    <div v-if="showBaseFormInfo" class="form-header-base-info " >
       <Descriptions title="" size="small">
         <DescriptionsItem label="提交人">
           {{ baseFormInfo.personalName || '-' }}
@@ -16,29 +12,37 @@
         <DescriptionsItem label="提交时间">{{ baseFormInfo.launchTime || '-' }}</DescriptionsItem>
       </Descriptions>
     </div>
+
+    <Collapse size="small" collapsible="header" default-active-key="1">
+      <CollapsePanel key="1" header="表单内容">
+        <div style="min-height: 300px" class="p-4">
+          <Skeleton :loading="jsonData === null" active>
+            <GenerateForm
+                class="generate-form"
+                ref="generateFormRef"
+                v-if="jsonData && jsonData !== null"
+                :edit="formIsEdit"
+                :data="jsonData"
+                :print-read="printRead"
+                style="height: 100%; min-height: 300px"
+            />
+          </Skeleton>
+        </div>
+      </CollapsePanel>
+    </Collapse>
+<!--
     <CollapseContainer :canExpand="true" class="generate-form-container mt-2">
       <template #title>
         <div class="font-bold">表单内容</div>
       </template>
-      <div style="min-height: 300px" class="p-4">
-        <Skeleton :loading="jsonData === null" active>
-          <GenerateForm
-            class="generate-form"
-            ref="generateFormRef"
-            v-if="jsonData && jsonData !== null"
-            :edit="formIsEdit"
-            :data="jsonData"
-            :print-read="printRead"
-            style="height: 100%; min-height: 300px"
-          />
-        </Skeleton>
-      </div>
-    </CollapseContainer>
+
+    </CollapseContainer>-->
   </div>
 </template>
 <script lang="ts" setup>
   import { nextTick, onMounted, ref, unref, watch } from 'vue';
-  import { Collapse, Descriptions, DescriptionsItem, Skeleton } from 'ant-design-vue';
+  import { Collapse, Descriptions, DescriptionsItem, Skeleton, message, CollapsePanel
+  } from 'ant-design-vue';
   import { useRouter } from 'vue-router';
 
   import {
@@ -49,6 +53,8 @@
   // import { CollapseContainer } from '@/components/Container';
   import { GenerateForm } from '/public/static/form-making';
   import { updateCustomFormData, getFormItemShowsByTaskId } from '#/api/process/customForm';
+  import ProcessApproveHistoryInfo
+    from "#/views/components/preview/processFormPreview/components/ProcessApproveHistoryInfo.vue";
   const router = useRouter();
 
   const CollapseItem = Collapse.Item;
@@ -87,7 +93,6 @@
   const showBaseFormInfo = ref(false);
 
   const { currentRoute } = useRouter();
-  const { createMessage } = useMessage();
   const jsonData = ref(null);
   const generateFormRef = ref();
   // approve/:modelKey/:procInstId/:bizId/:taskId/:showPost
@@ -111,21 +116,21 @@
       if (newValue !== -1) {
         // fetch();
       } else {
-        createMessage.error('未定义的表单类型！');
+        message.error('未定义的表单类型！');
       }
     },
   );
 
   onMounted(() => {
     if (props.modelKey == 0) {
-      // createMessage.error("流程定义Key【processDefinitionKey】不能为空！");
+      // message.error("流程定义Key【processDefinitionKey】不能为空！");
       return;
     }
     // 加载数据
     // fetch();
   });
 
-  function fetchFormData(params) {
+  function fetchFormData(params: any) {
     // modelKey, bizId, procInstId
     if (params.formType === 1) {
       // 渲染业务表单数据
@@ -144,23 +149,24 @@
               setFormPermission();
             });
           } else {
-            createMessage.error(result.msg);
+            message.error(result.msg);
           }
         })
         .finally(() => {
           // unref(framePageRef).hideIframeLoading();
         });
     } else if (params.formType === 0) {
+      debugger;
       // 渲染自定义表单数据
       getCustomFormInfoVoByModelKeyAndBusinessKey({
-        modelKey: params.modelKey,
-        bizId: params.bizId,
-        procInstId: params.procInstId,
+        modelKey: params.modelKey??'',
+        bizId: params.bizId??'',
+        procInstId: params.procInstId??'',
       })
         .then((res) => {
-          const result = res.data;
-          if (result.success) {
-            const { formDatas, formInfo } = result.data;
+          const {success, msg, data} = res;
+          if (success) {
+            const { formDatas, formInfo } = data;
             if (formDatas.personal_name) {
               showBaseFormInfo.value = true;
               baseFormInfo.value = {
@@ -183,8 +189,11 @@
             // iframe.loadCustomFormData({...result.data, isEdit: formIsEdit});
             // 加载成功后关闭Loading
           } else {
-            createMessage.error(result.msg);
+            message.error(msg);
           }
+        })
+        .catch((e) => {
+          console.error(e);
         })
         .finally(() => {
           // unref(framePageRef).hideIframeLoading();
@@ -293,7 +302,7 @@
           // 判断是否有doSaveForm事件
           const eventExists = validEventExists('doSaveForm');
           if (!eventExists) {
-            createMessage.error('未找到动作【doSaveForm】');
+            message.error('未找到动作【doSaveForm】');
             return Promise.reject(
               "未找到动作【doSaveForm】。\n提示：\n1、请在表单中添加【doSaveForm】动作；\n2、该动作需要返回【Promise.resolve({success: true, msg: '保存成功', code: '100'})】对象。",
             );
@@ -337,7 +346,7 @@
 
   // 表单验证错误提示
   function formValidateMsg(msg) {
-    createMessage.warn(msg);
+    message.warn(msg);
     const isError = document.querySelector('.fm-form .is-error');
     if (isError) {
       isError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -379,7 +388,7 @@
         .then((formData) => {
           const eventExists = validEventExists('doSubmitForm');
           if (!eventExists) {
-            createMessage.error('未找到动作【doSubmitForm】');
+            message.error('未找到动作【doSubmitForm】');
             return Promise.reject(
               "未找到动作【doSubmitForm】。\n提示：\n1、请在表单中添加【doSubmitForm】动作；\n2、该动作需要返回【Promise.resolve({success: true, msg: '提交成功', code: '100'})】对象。",
             );
