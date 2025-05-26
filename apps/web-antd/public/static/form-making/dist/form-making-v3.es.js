@@ -37334,11 +37334,11 @@ const ruleToFuncString = (rule) => {
         return `'${item2}' : ${JSON.stringify((_b = rule.options.values[item2]) != null ? _b : "")}`;
       }
     });
-    return `${condition} await this.setData({${setField.join(",")}});`;
+    return `${condition} this.setData({${setField.join(",")}});`;
   }
   if (rule.action == "validate") {
     if (rule.options.failSuspend) {
-      return `${condition} await this.validate(${JSON.stringify(rule.options.fields)});`;
+      return `${condition} this.validate(${JSON.stringify(rule.options.fields)});`;
     } else {
       return `${condition} this.validate(${JSON.stringify(rule.options.fields)});`;
     }
@@ -37362,7 +37362,7 @@ const ruleToFuncString = (rule) => {
       let responseStatement = ` let ${rule.options.responseVariable} = undefined;`;
       return `${responseStatement} ${condition} ${rule.options.responseVariable} = await this.sendRequest('${rule.options.dataSource.value}', {${argsArray.join(",")}});`;
     } else {
-      return `${condition} await this.sendRequest('${rule.options.dataSource.value}', {${argsArray.join(",")}});`;
+      return `${condition} this.sendRequest('${rule.options.dataSource.value}', {${argsArray.join(",")}});`;
     }
   }
   if (rule.action == "refreshFieldDataSource") {
@@ -37380,7 +37380,7 @@ const ruleToFuncString = (rule) => {
         return `'${argKey}' : ${JSON.stringify((_a3 = rule.options.dataSource.args[argKey]) != null ? _a3 : "")}`;
       }
     });
-    return `${condition} await this.refreshFieldDataSource('${rule.options.field}', {${argsArray.join(",")}});`;
+    return `${condition} this.refreshFieldDataSource('${rule.options.field}', {${argsArray.join(",")}});`;
   }
   if (rule.action == "getFieldDataSource") {
     if (rule.options.localVariable) {
@@ -37533,6 +37533,7 @@ const _sfc_main$1F = {
       return new Promise((resolve, reject) => {
         this.$refs.dataForm.validate((valid) => {
           if (valid) {
+            debugger;
             try {
               if (this.formData.type === "rule") {
                 const AsyncFunction = Object.getPrototypeOf(async function() {
@@ -37558,6 +37559,8 @@ const _sfc_main$1F = {
                 resolve();
               }, 300);
             } catch (error) {
+              debugger;
+              console.error(error);
               ElMessage({
                 message: this.$t("fm.message.eventSaveError") + error.message,
                 type: "error"
