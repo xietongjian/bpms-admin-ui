@@ -19,41 +19,15 @@ const [modal, contextHolder] = Modal.useModal();
 const loginLogModalRef = ref();
 const PerPrefix = "LoginLog:";
 
-/*
-  const [registerTable, { reload, getSelectRows }] = useTable({
-    title: '列表',
-    api: getLoginLogListByPage,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-      fieldMapToTime: [['dateRange', ['startTimeStr', 'endTimeStr'], 'YYYY-MM-DD']],
-    },
-    rowSelection: {
-      type: 'checkbox',
-      columnWidth: 30,
-    },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: true,
-    showIndexColumn: false,
-    actionColumn: {
-      width: 60,
-      title: '操作',
-      dataIndex: 'action',
-    },
-  });*/
-
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
   submitOnEnter: true,
   commonConfig: {
     labelWidth: 60,
   },
-  wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+  // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
+  actionWrapperClass: 'col-span-3 col-start-3 text-left ml-2',
   resetButtonOptions: {
     show: false,
   },
@@ -61,7 +35,7 @@ const formOptions: VbenFormProps = {
   schema: searchFormSchema,
 };
 
-const gridOptions: VxeGridProps<any> = {
+const gridOptions: VxeGridProps = {
   checkboxConfig: {
     highlight: true,
     labelField: 'ip',
@@ -88,18 +62,6 @@ const gridOptions: VxeGridProps<any> = {
 };
 
 const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
-function handleCreate() {
-  loginLogModalRef.value.setData({});
-  loginLogModalRef.value.open();
-}
-
-function handleEdit(record: Recordable<any>) {
-  loginLogModalRef.value.setData(record);
-  loginLogModalRef.value.open();
-  loginLogModalRef.value.setState({
-    title: '编辑'
-  });
-}
 
 async function handleDelete(record: Recordable<any>) {
   const {success, msg} = await deleteByIds([record.id]);
@@ -165,7 +127,7 @@ function createActions(row: Recordable<any>): any[] {
     <BasicTable>
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.DELETE"
-                type="danger"
+                type="primary" danger
                 @click="handleDeleteAll"> 删除</Button>
       </template>
       <template #action="{ row }">

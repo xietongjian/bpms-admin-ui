@@ -7,7 +7,7 @@ enum Api {
   CheckEntityExist = '/flow/org/companyType/checkEntityExist',
 }
 
-export const getCompanyTypes = (params?: any) => {
+export const getCompanyTypes = (params: any) => {
   return requestClient.post<any>(Api.CompanyTypeList, params);
 };
 

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {ref} from "vue";
+import {ref, onMounted} from "vue";
 import {Button, message, Tag} from "ant-design-vue";
 
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
@@ -13,9 +13,21 @@ import {deleteByIds, getCompaniesListData} from '#/api/org/company';
 import {columns, searchFormSchema} from './company.data';
 import CompanyModal from './company-modal.vue';
 import {PerEnum} from '#/enums/perEnum';
+import {getCompanyTypes} from "#/api/org/companyType";
 
 const PerPrefix = 'Company:';
 const companyModalRef = ref();
+const companyTypeList = ref([]);
+const companyTypeMap = ref(new Map());
+
+onMounted(async () => {
+  const companyTypes = await getCompanyTypes({});
+  companyTypeList.value = companyTypes;
+  companyTypeMap.value = companyTypes.reduce((acc: any, item: any) => {
+    acc.set(item.id, item.name);
+    return acc;
+  }, new Map());
+})
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -159,7 +171,7 @@ function createActions(record: Recordable<any>) {
         <TableAction :actions="createActions(row)" />
       </template>
       <template #typeId="{ row }">
-        {{row.typeId}}
+        {{companyTypeMap.get(row.typeId)}}
       </template>
       <template #status="{ row }">
         <Tag v-if="row.status === 1" color="green">启用</Tag>

@@ -21,4 +21,4 @@ export const getLoginLogListByPage = (params: any) => {
 export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params);
 
 export const deleteByIds = (params: Array<string>) =>
-  requestClient.post<any>(Api.Delete, params);
+  requestClient.post<any>(Api.Delete, params, {responseReturn: 'body'});

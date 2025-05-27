@@ -22,8 +22,8 @@ enum Api {
 }
 
 const options = {
-  errorMessageMode: 'message',
-  successMessageMode: 'message',
+  responseReturn: 'body',
+  // successMessageMode: 'message',
 };
 
 // 全量同步

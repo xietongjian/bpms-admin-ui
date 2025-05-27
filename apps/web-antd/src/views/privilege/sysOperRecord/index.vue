@@ -65,7 +65,7 @@ const formOptions: VbenFormProps = {
   schema: searchFormSchema,
 };
 
-const gridOptions: VxeGridProps<any> = {
+const gridOptions: VxeGridProps = {
   checkboxConfig: {
     highlight: true,
     labelField: 'name',
@@ -100,7 +100,7 @@ function createActions(row: Recordable<any>) {
     {
       tooltip: '详情',
       icon: 'ant-design:file-search-outlined',
-      onClick: handleDetail.bind(null, record),
+      onClick: handleDetail.bind(null, row),
     },
     {
       tooltip: '删除',
@@ -109,7 +109,7 @@ function createActions(row: Recordable<any>) {
       danger: true,
       popConfirm: {
         title: '是否确认删除',
-        confirm: handleDelete.bind(null, record),
+        confirm: handleDelete.bind(null, row),
         placement: 'left',
         okButtonProps: {
           danger: true,

@@ -13,7 +13,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '操作人ID',
     field: 'operationId',
-    width: 100,
+    width: 300,
     align: 'left',
     showHeaderOverflow: true,
   },
@@ -41,7 +41,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '操作时间',
     field: 'operationTime',
-    width: 100,
+    width: 200,
     align: 'left',
     // customRender: ({ text }) => {
     //   return formatToDateTime(text);

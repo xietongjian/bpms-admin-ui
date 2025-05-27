@@ -1,5 +1,19 @@
 <template>
   <Page auto-content-height>
+    <div v-for="(item, index) in configList" :key="index">
+      <div v-if="item.configSn.endsWith(IMG_END_WITH)">
+        图片
+        <BasicForm />
+      </div>
+      {{index}}
+      {{item.id}}
+      {{item.image}}
+      {{item.configSn}}
+      {{item.remark}}
+      {{item.configValue}}
+
+
+    </div>
     <BasicTable @register="registerTable">
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
@@ -41,7 +55,7 @@
   </Page>
 </template>
 <script lang="ts" setup>
-import {nextTick, ref} from 'vue';
+import {nextTick, ref, onMounted} from 'vue';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 
@@ -49,18 +63,44 @@ import {PerEnum} from '#/enums/perEnum';
 // import { BasicTable, useTable, TableAction, TableImg } from '@/components/Table';
 import {getSystemConfigListByPage, deleteByIds, saveOrUpdate} from '#/api/base/systemConfig';
 import {Upload, Tooltip, Space, message, Modal, Button} from 'ant-design-vue';
-import {columns, searchFormSchema} from './systemConfig.data';
+import {columns, formSchema, searchFormSchema} from './systemConfig.data';
 import SystemConfigModal from './SystemConfigModal.vue';
 import {UploadOutlined, DeleteOutlined} from '@ant-design/icons-vue';
 import type {Recordable} from '@vben/types';
 import {TableAction} from '#/components/table-action';
+import {useVbenForm} from "#/adapter/form";
 
 
 import {Page} from "@vben/common-ui";
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
-
+const IMG_END_WITH = "_IMG"
 const PerPrefix = 'SystemConfig:';
 
+const configList = ref([]);
+
+onMounted(async () => {
+  const res = await getSystemConfigListByPage({
+    query: {
+      pageNum: 0,
+      pageSize: 9999,
+    },
+    entity:  {},
+  });
+
+  configList.value = res.rows;
+})
+
+const [BasicForm, formApi] = useVbenForm({
+  commonConfig: {
+    componentProps: {
+      // class: 'w-full',
+    },
+  },
+  showDefaultActions: false,
+  layout: 'horizontal',
+  schema: formSchema,
+  wrapperClass: 'grid-cols-1',
+});
 
 // const [registerModal, { openModal }] = useModal();
 /*const [registerTable, { reload, setLoading }] = useTable({

@@ -62,8 +62,6 @@
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
   import PersonalSelectorModal from '#/components/selector/personal-selector/PersonalSelectorModal.vue';
-
-  // import PersonalSelectorModal from '@/components/Selector/src/FlowModelSelectorModal.vue';
   import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';
   import { getMatrixRoleList } from '#/api/org/role';
   import {
@@ -79,14 +77,8 @@
 
   const {hasAccessByCodes}  = useAccess();
   const PerPrefix = 'DeptMatrixRolePersonal:';
-  const personalSelectorModalRef = ref(), exportMatrixRoleExcelModalRef = ref();
-
-  // 人员选择弹窗
-/*  const [
-    registerPersonalModal,
-    { openModal: openPersonalSelector, setModalProps: setPersonalModalProps },
-  ] = useModal();*/
-  // const { hasPermission } = usePermission();
+  const personalSelectorModalRef = ref(),
+      exportMatrixRoleExcelModalRef = ref();
 
   const currentRole = ref<Recordable<any>>({});
   const currentRow = ref<Recordable<any>>({});

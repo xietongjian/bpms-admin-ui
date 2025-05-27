@@ -23,7 +23,7 @@ export const findHisProcessDefinitionPagerModel = (params: any) => {
 export const activateProcessDefinition = (params: any) =>
   requestClient.post<any>(
     Api.ActivateProcessDefinition + '/' + params.id, {},
-    { isReturnNativeResponse: true },
+    { responseReturn: 'body' },
   );
 
 /**
@@ -32,7 +32,7 @@ export const activateProcessDefinition = (params: any) =>
  */
 export const suspendProcessDefinition = (params: any) =>
   requestClient.post<any>(Api.SuspendProcessDefinition + '/' + params.id, {},
-    { isReturnNativeResponse: true },
+    { responseReturn: 'body' },
   );
 
 /**
