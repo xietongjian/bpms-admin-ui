@@ -37,7 +37,7 @@ export const listColumns: VxeGridProps['columns'] = [
   },
   {
     title: '菜单类型',
-    field: 'component',
+    field: 'componentType',
     width: 100,
     slots: { default: 'componentType'}
   },
