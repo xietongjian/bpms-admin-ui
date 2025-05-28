@@ -1,6 +1,3 @@
-import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import { h } from 'vue';
-import { Tag } from 'ant-design-vue';
 import { OrderNoDefaultEnum } from '#/enums/commonEnum';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { checkEntityExist } from '#/api/org/positionInfo';
@@ -13,7 +10,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '岗位名称',
     field: 'name',
     align: 'left',
-    width: 300,
+    minWidth: 300,
     resizable: true,
   },
   {
@@ -34,13 +31,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '状态',
     field: 'status',
     width: 80,
-    customRender: ({ record }) => {
-      const status = record.status;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '启用' : '停用';
-      return h(Tag, { color: color }, () => text);
-    },
+    slots: {default: 'status'}
   },
   {
     title: '成立日期',
@@ -67,12 +58,6 @@ export const searchFormSchema: FormSchema[] = [
       allowClear: true,
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -89,33 +74,19 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'name',
     label: '岗位名称',
-    // required: true,
-    component: 'Input',
-    show: true,
-   /* rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '岗位名称不能为空！',
-      },
-      {
-        max: 80,
-        message: '字符长度不能大于80！',
-      },
-    ],*/
-    colProps: {
-      span: 24,
-    },
+    rules: z
+        .string({
+          required_error: '岗位名称不能为空',
+        })
+        .trim()
+        .min(1, "岗位名称不能为空")
+        .max(80, "字符长度不能大于80！"),
   },
   {
     fieldName: 'code',
     label: '编码',
     // required: true,
     component: 'Input',
-    show: true,
-    colProps: {
-      span: 24,
-    },
   },
   {
     fieldName: 'positionSeqId',
@@ -140,12 +111,8 @@ export const formSchema: FormSchema[] = [
     fieldName: 'startDate',
     label: '成立日期',
     component: 'DatePicker',
-    show: true,
     componentProps: {
       getPopupContainer: () => document.body,
-    },
-    colProps: {
-      span: 24,
     },
   },
   {
@@ -158,7 +125,6 @@ export const formSchema: FormSchema[] = [
       min: OrderNoDefaultEnum.MIN,
       max: OrderNoDefaultEnum.MAX,
     },
-    show: true,
   },
   {
     fieldName: 'status',
@@ -170,9 +136,6 @@ export const formSchema: FormSchema[] = [
       unCheckedValue: 0,
       checkedChildren: '启用',
       unCheckedChildren: '停用',
-    },
-    colProps: {
-      span: 24,
     },
   },
 ];

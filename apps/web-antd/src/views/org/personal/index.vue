@@ -11,7 +11,7 @@
       content-class="h-full">
     <template #left>
       <div class="h-full bg-card">
-<!--        <OrgTree class="h-full" @select="handleSelect" />-->
+        <OrgTree class="h-full" @select="handleSelect" />
       </div>
     </template>
     <BasicTable class="w-full" >
@@ -178,7 +178,7 @@
     importPersonalExcelByData,
   } from '#/api/org/personal';
   import {ColPage} from '@vben/common-ui';
-  // import OrgTree from '#/views/components/leftTree/OrgTree.vue';
+  import OrgTree from '#/views/components/leftTree/OrgTree.vue';
   import { ManOutlined, ImportOutlined, WomanOutlined, UserOutlined } from '@ant-design/icons-vue';
 
   import PersonalModal from './PersonalModal.vue';

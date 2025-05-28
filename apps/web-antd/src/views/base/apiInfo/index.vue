@@ -17,6 +17,7 @@ import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons-vue"
 import {Button, Row, message, Popconfirm, Tooltip, Tree} from "ant-design-vue";
 import {TableAction} from '#/components/table-action';
 import {listToTree} from "#/utils/helper/treeHelper";
+import { BasicTree } from '#/components/tree';
 
 import ApiCategoryModal from "./api-category-modal.vue";
 import ApiInfoDrawer from "./api-info-drawer.vue";
@@ -266,7 +267,15 @@ function createActions(record: Recordable<any>) {
       content-class="h-full">
     <template #left>
       <div class="h-full bg-card">
-        <Tree
+        <BasicTree
+            :height="280"
+            :show-search="true"
+            :show-toolbar="true"
+            :tree-data="apiCategoryTreeData"
+            class="mb-4"
+            title="支持搜索&工具栏"
+        />
+<!--        <Tree
             v-bind="$attrs"
             v-if="apiCategoryTreeData.length > 0"
             v-model:selected-keys="selectNodeIds"
@@ -289,7 +298,7 @@ function createActions(record: Recordable<any>) {
               </Col>
             </Row>
           </template>
-        </Tree>
+        </Tree>-->
       </div>
     </template>
     <BasicTable >

@@ -63,9 +63,13 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeGridProps = {
-  checkboxConfig: {
-    highlight: true,
-    labelField: 'name',
+  rowConfig: {
+    keyField: 'id',
+  },
+  treeConfig: {
+    parentField: 'pid',
+    rowField: 'id',
+    transform: true,
   },
   columns,
   columnConfig: {resizable: true},
@@ -73,16 +77,14 @@ const gridOptions: VxeGridProps = {
   keepSource: true,
   border: false,
   stripe: true,
+  pagerConfig: {
+    enabled: false,
+  },
   proxyConfig: {
     ajax: {
-      query: async ({page}, formValues) => {
-        return await getJobGrades({
-          query: {
-            pageNum: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          entity: formValues || {},
-        });
+      query: async ({}, formValues) => {
+        formValues.typeId = currentTreeNode.value ? currentTreeNode.value.id : '';
+        return await getJobGrades(formValues || {});
       },
     },
   },
@@ -113,32 +115,8 @@ function createActions (row: Recordable<any>) {
   ];
 }
 
-/*const [registerTable, { reload }] = useTable({
-  title: '列表',
-  api: getJobGrades,
-  immediate: false,
-  columns,
-  formConfig: {
-    labelWidth: 120,
-    schemas: searchFormSchema,
-    showAdvancedButton: false,
-    showResetButton: false,
-    autoSubmitOnEnter: true,
-  },
-  canColDrag: true,
-  useSearchForm: true,
-  bordered: true,
-  pagination: false,
-  showIndexColumn: false,
-  actionColumn: {
-    width: 100,
-    title: '操作',
-    dataIndex: 'action',
-  },
-});*/
-
 function handleCreate() {
-  if (!unref(currentTreeNode).code) {
+  if (!unref(currentTreeNode) || !unref(currentTreeNode).code) {
     message.warning('请选择分类！', 2);
     return;
   }
@@ -171,7 +149,6 @@ function handleSuccess() {
 
 function handleSelect(node: any) {
   currentTreeNode.value = node;
-  let searchInfo = {typeId: node ? node.id : ''};
-  tableApi.reload({searchInfo});
+  tableApi.reload();
 }
 </script>

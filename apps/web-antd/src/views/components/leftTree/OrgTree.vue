@@ -1,35 +1,34 @@
 <template>
-  <div class="bg-card h-full">
+  <div class="bg-card h-full" v-loading="treeLoading">
     <BasicTree
-        :show-search="true"
-        :show-toolbar="true"
-        :tree-data="treeData"
-        class="h-full flex flex-col"
-        size="small"
-        @select="handleSelect"
-        title="公司"
+      :show-search="true"
+      :show-toolbar="true"
+      :tree-data="treeData"
+      class="h-full flex flex-col"
+      size="small"
+      @select="handleSelect"
+      title="组织"
     />
   </div>
 </template>
 <script lang="ts" setup>
   import { onMounted, ref, unref, nextTick, defineEmits } from 'vue';
-  import { findNode } from '#/utils/helper/treeHelper';
-  import {Tree} from "ant-design-vue";
-  import {HomeTwoTone, HomeOutlined, SmileOutlined} from "@ant-design/icons-vue";
   import {BasicTree} from "#/components/tree";
-  import { getJobGradeTypesToTree } from '#/api/org/jobGradeType';
+  import { getOrgTree } from '#/api/org/dept';
+  import { findNode } from '#/utils/helper/treeHelper';
+  import type { Nullable } from '@vben/types';
 
   const emit = defineEmits(['select']);
 
-  const treeData = ref<any[]>([]);
+  const treeData = ref<[]>([]);
   const treeLoading = ref<boolean>(false);
-  const treeRef = ref(null);
+  const basicTreeRef = ref<Nullable<TreeActionType>>(null);
 
   async function fetch() {
     treeLoading.value = true;
-    getJobGradeTypesToTree({})
+    getOrgTree()
       .then((res) => {
-        treeData.value = res||[];
+        treeData.value = res || [];
         nextTick(() => {
           // 加载后展开节层级
           if (unref(treeData).length < 10) {

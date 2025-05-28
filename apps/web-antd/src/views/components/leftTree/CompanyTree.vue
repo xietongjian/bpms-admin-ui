@@ -1,10 +1,26 @@
 <template>
-  <div class="bg-card h-full flex flex-col p-2">
-    <div class="h-[30px] leading-[30px] font-md font-bold">
+  <div class="bg-card h-full">
+    <BasicTree
+        :show-search="true"
+        :show-toolbar="true"
+        :tree-data="treeData"
+        class="h-full flex flex-col"
+        size="small"
+        @select="handleSelect"
+        title="公司"
+    />
+<!--    <div class="h-[30px] leading-[30px] font-md font-bold">
       公司
     </div>
     <div class="flex-1 overflow-auto">
-      <Tree
+      <BasicTree
+          :show-search="true"
+          :show-toolbar="true"
+          :tree-data="treeData"
+          class="mb-4 h-full w-full"
+          title="公司"
+      />
+&lt;!&ndash;      <Tree
           ref="treeRef"
           v-bind="$attrs"
           v-if="treeData.length > 0"
@@ -20,18 +36,33 @@
         <template #icon>
           <HomeOutlined />
         </template>
-      </Tree>
-    </div>
+      </Tree>&ndash;&gt;
+    </div>-->
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, ref, unref, nextTick, defineEmits } from 'vue';
+  import { onMounted, ref, watch, unref, nextTick, defineEmits } from 'vue';
   import { getCompanies } from '#/api/org/company';
   import { findNode } from '#/utils/helper/treeHelper';
   import {Tree} from "ant-design-vue";
   import {HomeTwoTone, HomeOutlined, SmileOutlined} from "@ant-design/icons-vue";
+  import {BasicTree} from "#/components/tree";
+  import { useUserStore } from '@vben/stores';
+
+  const userStore = useUserStore();
 
   const emit = defineEmits(['select']);
+  const selectedKeys = ref<string[]>([]);
+
+  /*watch(
+      selectedKeys,
+      (newValue, oldValue) => {
+        console.log(newValue);
+        // handleSearch();
+        // debugger
+        emit('select', newValue && newValue[0]);
+      },
+  );*/
 
   const treeData = ref<any[]>([]);
   const treeLoading = ref<boolean>(false);
@@ -41,7 +72,7 @@
     treeLoading.value = true;
     getCompanies()
       .then((res) => {
-        treeData.value = res||[];
+        treeData.value = res || [];
         nextTick(() => {
           // 加载后展开节层级
           if (unref(treeData).length < 10) {
@@ -54,12 +85,7 @@
       });
   }
 
-  function handleSelect(keys: string, e) {
-    const node = findNode(treeData.value, (item) => item.id === keys[0], {
-      id: 'id',
-      pid: 'pid',
-      children: 'children',
-    });
+  function handleSelect(node) {
     emit('select', node);
   }
 

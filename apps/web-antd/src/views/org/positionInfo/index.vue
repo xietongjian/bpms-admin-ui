@@ -7,7 +7,7 @@ import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {getPagerModel, deleteById} from '#/api/org/positionInfo';
 
 import PositionInfoModal from './PositionInfoModal.vue';
-import {Button, Popconfirm, message} from 'ant-design-vue';
+import {Button, Popconfirm, message, Tag} from 'ant-design-vue';
 import type {VbenFormProps} from '@vben/common-ui';
 import {ColPage} from '@vben/common-ui';
 import {TableAction} from '#/components/table-action';
@@ -58,10 +58,6 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeGridProps<any> = {
-  checkboxConfig: {
-    highlight: true,
-    labelField: 'name',
-  },
   columns,
   columnConfig: {resizable: true},
   height: 'auto',
@@ -171,14 +167,15 @@ function createActions(record: Recordable<any>) {
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-              :actions="createActions(record)"
-          />
-        </template>
+
+      <template #action="{row}">
+        <TableAction :actions="createActions(row)" />
+      </template>
+      <template #status="{ row }">
+        <Tag v-if="row.status === 1" color="success">启用</Tag>
+        <Tag v-else color="error">停用</Tag>
       </template>
     </BasicTable>
-    <PositionInfoModal ref="persitionInfoModalRef" @success="handleSuccess"/>
+    <PositionInfoModal ref="positionInfoModalRef" @success="handleSuccess"/>
   </ColPage>
 </template>

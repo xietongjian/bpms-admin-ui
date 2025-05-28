@@ -5,7 +5,7 @@ import type {VbenFormProps} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {Recordable} from '@vben/types';
 import {TableAction} from '#/components/table-action';
-import {Button, message} from 'ant-design-vue';
+import {Button, message, Tag} from 'ant-design-vue';
 
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 // import { useModal } from '@/components/Modal';
@@ -51,7 +51,9 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
+  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-2',
   resetButtonOptions: {
     show: false,
   },
@@ -64,6 +66,14 @@ const gridOptions: VxeGridProps<any> = {
     labelField: 'name',
   },
   columns,
+  pagerConfig: {
+    enabled: false,
+  },
+  treeConfig: {
+    parentField: 'pid',
+    rowField: 'id',
+    transform: true,
+  },
   columnConfig: {resizable: true},
   height: 'auto',
   keepSource: true,
@@ -105,8 +115,9 @@ function handleEdit(record: Recordable<any>, e) {
 
 function handleCreateChild(record: Recordable<any>, e) {
   e.stopPropagation();
-  record = {pid: record.id, status: 1};
-  positionSeqModalRef.value.setData(record);
+  debugger;
+  const data = {pid: record.id, status: 1};
+  positionSeqModalRef.value.setData(data);
   positionSeqModalRef.value.setState({
     title: '新增【' + record.name + '】的子序列',
   });
@@ -178,6 +189,10 @@ function createActions(record: Recordable<any>) {
       </template>
       <template #action="{ row }">
         <TableAction :actions="createActions(row)"/>
+      </template>
+      <template #status="{ row }">
+        <Tag v-if="row.status === 1" color="success">启用</Tag>
+        <Tag v-else color="error">停用</Tag>
       </template>
     </BasicTable>
     <PositionSeqModal ref="positionSeqModalRef" @success="handleSuccess"/>

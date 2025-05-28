@@ -8,7 +8,6 @@
   import { saveOrUpdate } from '#/api/org/positionInfo';
   import { formatToDate } from '#/utils/dateUtil';
 
-
   const isUpdate = ref(true);
   const emit = defineEmits(["success"])
 

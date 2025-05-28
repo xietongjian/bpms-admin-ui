@@ -13,6 +13,7 @@ export const columns: VxeGridProps['columns'] = [
     align: 'left',
     minWidth: 300,
     resizable: true,
+    treeNode: true
   },
   {
     title: '编码',
@@ -25,13 +26,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '状态',
     field: 'status',
     width: 80,
-    /*customRender: ({ record }) => {
-      const status = record.status;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '启用' : '停用';
-      return h(Tag, { color: color }, () => text);
-    },*/
+    slots: {default: 'status'}
   },
   {
     title: '排序编号',
@@ -81,24 +76,52 @@ export const formSchema: FormSchema[] = [
     label: '名称',
     // required: true,
     component: 'Input',
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 80,
-        message: '字符长度不能大于80！',
-      },
-    ],*/
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(80, "字符长度不能大于80！")
   },
   {
     fieldName: 'code',
     label: '编码',
     // required: true,
-    rules: 'required',
+    // rules: 'required',
     component: 'Input',
+    dependencies: {
+      rules(values) {
+        const { id, code } = values;
+        return z
+            .string({
+              required_error: "标识不能为空"
+            })
+            .min(1, "标识不能为空")
+            .max(60, '字符长度不能大于60！')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'code',
+                      fieldValue: code,
+                      fieldName: '标识',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '标识已存在',
+                },
+            );
+      },
+      triggerFields: ['code'],
+    },
   },
   {
     fieldName: 'pid',

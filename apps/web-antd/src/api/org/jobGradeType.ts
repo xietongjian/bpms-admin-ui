@@ -14,7 +14,7 @@ export const getJobGradeTypes = (params: any) => {
   return result;
 };
 
-export const getJobGradeTypesToTree = (params?: any) => {
+export const getJobGradeTypesToTree = (params: any) => {
   const result = requestClient.post<any>(Api.GetJobGradeTypes, params);
   return Promise.resolve(result).then((res: any) => {
     res.forEach((item) => {

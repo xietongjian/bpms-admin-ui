@@ -11,6 +11,7 @@ export const columns: VxeGridProps['columns'] = [
     align: 'left',
     minWidth: 300,
     resizable: true,
+    treeNode: true,
   },
   {
     title: '编码',
@@ -23,13 +24,6 @@ export const columns: VxeGridProps['columns'] = [
     field: 'orderNo',
     width: 100,
     align: 'right',
-  },
-  {
-    field: 'action',
-    fixed: 'right',
-    slots: {default: 'action'},
-    title: '操作',
-    width: 120,
   },
   /*{
     title: '创建人',
@@ -54,7 +48,15 @@ export const columns: VxeGridProps['columns'] = [
     field: 'updateTime',
     width: 100,
     align: 'left',
-  }*/
+  },*/
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
+  },
+
 ];
 
 export const searchFormSchema: FormSchema[] = [

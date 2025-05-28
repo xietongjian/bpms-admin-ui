@@ -163,7 +163,9 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  actionWrapperClass: 'col-span-3 col-start-3 text-left ml-4',
+  // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
+  actionWrapperClass: 'col-span-3 col-start-3 text-left ml-2',
   resetButtonOptions: {
     show: false,
   },
