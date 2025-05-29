@@ -1,5 +1,5 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" @ok="handleSubmit">
+  <BasicModal v-bind="$attrs"  @ok="handleSubmit">
     <Row class="text-center">
       <Col span="10">
         <h1 class="mt-0">输入参数</h1>
@@ -16,7 +16,7 @@
             :style="{ display: simulatorInputParams.length > 0 ? 'block' : 'none' }"
             v-loading="simulatorInputParamsLoading"
           >
-            <BasicForm @register="registerSimulatorInputForm" />
+            <BasicForm  />
           </div>
           <Empty v-if="simulatorInputParams.length <= 0" description="无输入参数" />
         </div>

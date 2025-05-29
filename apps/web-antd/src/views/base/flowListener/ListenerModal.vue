@@ -1,6 +1,6 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal >
+    <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
@@ -25,10 +25,13 @@ const emit = defineEmits(['success'])
     onCancel() {
       modalApi.close();
     },
-    onOpenChange(isOpen: boolean) {
+    async onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
+
+          await initFormOptions(values);
+
           formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
@@ -39,6 +42,42 @@ const emit = defineEmits(['success'])
       handleSubmit();
     },
   });
+
+  async function initFormOptions(formData) {
+    const expressionTypes = await getExpressionTypes();
+    const listenerTypes = await getListenerTypes();
+    const expressionTypeMap = {} as any;
+    expressionTypes.forEach((item) => {
+      expressionTypeMap[item.value] = item.label;
+    });
+
+    formApi.updateSchema([
+      {
+        fieldName: 'value',
+        label: expressionTypeMap[formData.type || 'class'],
+      },
+      {
+        fieldName: 'type',
+        componentProps: {
+          options: expressionTypes,
+          onChange: (e) => {
+            formApi.updateSchema([
+              {
+                fieldName: 'value',
+                label: expressionTypeMap[typeof e == 'string' ? e : e.target.value],
+              }
+            ]);
+          },
+        },
+      },
+      {
+        fieldName: 'listenerType',
+        componentProps: {
+          options: listenerTypes,
+        },
+      },
+    ]);
+  }
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {

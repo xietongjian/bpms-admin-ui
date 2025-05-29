@@ -53,7 +53,7 @@ export const checkEntityExist = (params: any) =>
 export const checkParamEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckParamEntityExist, params);
 
-export const deleteById = (id: string) => requestClient.post<any>(Api.Delete + '/' + id);
+export const deleteById = (id: string) => requestClient.post<any>(Api.Delete + '/' + id, {}, {responseReturn: 'body'});
 
 export const deleteParamById = (id: string) =>
-  requestClient.post<any>(Api.DeleteListenerParam + '/' + id);
+  requestClient.post<any>(Api.DeleteListenerParam + '/' + id, {}, {responseReturn: 'body'});

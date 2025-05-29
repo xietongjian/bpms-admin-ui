@@ -18,6 +18,9 @@
       <template #type="{ row }">
         {{ expressionTypeObj[row.type] }}
       </template>
+      <template #name="{ row }">
+        {{ row.name }}
+      </template>
       <template #expandContent="{ row }">
         <div class="expand-wrapper">
           <!--
@@ -37,7 +40,7 @@
               :loading="propertiesTableLoading"
               :dataSource="listenerPropertiesData[row.id]"
           -->
-          <SubBasicTable >
+          <SubBasicTable :data="[{id: 123, name: 111}]">
             <template #option="{row: rec}">
               <TableAction :actions="createSubActions(rec)" />
             </template>
@@ -91,7 +94,7 @@
         </BasicTable>
       </template>-->
     </BasicTable>
-    <ListenerModal ref="listenerModalRef" @register="registerModal" @success="handleSuccess"/>
+    <ListenerModal ref="listenerModalRef" @success="handleSuccess"/>
     <ListenerPropertiesModal ref="listenerPropertiesModalRef"
         @success="handleUpdateSecretKeySuccess"
         :closeFunc="handleCloseFunc"
@@ -187,8 +190,8 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-3',
-  actionWrapperClass: 'col-span-2 col-start-3 text-left ml-4',
+  wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-3 lg:grid-cols-1',
+  actionWrapperClass: 'col-span-3 col-start-3 text-left ml-2',
   resetButtonOptions: {
     show: true,
   },
@@ -210,6 +213,17 @@ const gridOptions: VxeGridProps = {
     labelField: 'name',
     trigger: 'row',
   },
+  expandConfig: {
+    trigger: 'row',
+    // lazy: true,
+    /*loadMethod: ({$table, row}) => {
+      debugger;
+      return getListenerParamList({listenerId: row.id}).then(res => {
+        row.subList = res;
+      })
+      // return new Promise.resolve([]);
+    }*/
+  },
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
@@ -230,9 +244,22 @@ const gridEvents: VxeGridListeners = {
   radioChange: ({row}) => {
     // clickRow(row);
   },
-  toggleRowExpand: ({row, expanded}) => {
+  toggleRowExpand: ({row, rowIndex, expanded}) => {
+    currentListener.value = row;
+    tableApi.grid.reloadRowExpand(row);
+    const records = tableApi.grid.getRowExpandRecords();
+
+    debugger;
+    // setRowExpand
+    //getRowExpandRecords
     if(expanded){
-      currentListener.value = row;
+      /*getListenerParamList({listenerId: row.id}).then(res => {
+        debugger;
+        row.subList = res;
+        subTableApi.grid.setRow(row)
+      });*/
+
+      // subTableApi.reload();
       // subTableApi.reload({listenerId: row.listenerId});
     }
   }
@@ -246,7 +273,7 @@ const subGridOptions: VxeGridProps = {
   height: 'auto',
   maxHeight: '100%',
   border: false,
-  keepSource: true,
+  keepSource: false,
   autoResize: false,
   stripe: true,
   round: false,
@@ -350,13 +377,11 @@ function handleAddProperties(record: Recordable<any>, e) {
 }
 
 function handleEditProperties(record: Recordable<any>) {
-  openPropertiesModal(true, {
-    isUpdate: true,
-    record: record,
-  });
-  setPropertiesModalProps({
+  listenerPropertiesModalRef.value.setData(record);
+  listenerPropertiesModalRef.value.setState({
     title: `修改【${record.name}】的属性`,
   });
+  listenerPropertiesModalRef.value.open();
 }
 
 function createSubActions(record: Recordable<any>) {
@@ -420,39 +445,50 @@ function createActions(record: Recordable<any>) {
 
 function handleEdit(record: Recordable<any>, e) {
   e.stopPropagation();
-  openModal(true, {
-    record,
-    isUpdate: true,
+  listenerModalRef.value.setData(record);
+  listenerModalRef.value.open();
+  listenerModalRef.value.setState({
+    title: `编辑监听`,
   });
 }
 
-function handleDelete(record: Recordable<any>, e) {
+async function handleDelete(record: Recordable<any>, e) {
   e.stopPropagation();
-  deleteById(record.id).then(() => {
-    reload();
-  });
+  try {
+    const {success, msg, data} = await deleteById(record.id);
+    if (success) {
+      tableApi.reload();
+    } else {
+      message.error(msg);
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+
+  }
 }
 
 function handleSuccess() {
-  setTimeout(() => {
-    reload();
-  }, 200);
+  tableApi.reload();
 }
 
 function handleCloseFunc() {
-  setTimeout(() => {
-    reload();
-  }, 200);
+  tableApi.reload();
   return Promise.resolve(true);
 }
 
-function handleDeleteProperty(record: Recordable<any>) {
-  deleteParamById(record.id)
-      .then(() => {
-        reloadListenerProperties(unref(currentListener).id);
-      })
-      .finally(() => {
-      });
+async function handleDeleteProperty(record: Recordable<any>) {
+  try {
+    const {success, msg, data} = await deleteParamById(record.id);
+    if (success) {
+      reloadListenerProperties(unref(currentListener).id);
+      message.success(msg);
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+
+  }
 }
 
 function handleUpdateSecretKeySuccess() {

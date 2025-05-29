@@ -13,18 +13,19 @@ import {getViewportOffset} from '#/utils/domUtils';
 // import { useWindowSizeFn } from '@vben/hooks';
 import {useAccessStore} from '@vben/stores';
 
+
 // import { useDesign } from '@/hooks/web/useDesign';
 // import { getToken } from '@/utils/auth';
 import {getBpmnByModelId} from '#/api/flowable/bpmn/modelInfo';
 // import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
 import {usePreferences} from '@vben/preferences';
 
-
 const {isDark} = usePreferences();
 const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
 
+const accessStore = useAccessStore();
 
-const bpmnModeler = ref<any>();
+const dmnModeler = ref<any>();
 const issuesMap = ref({});
 
 const props = defineProps({
@@ -85,6 +86,7 @@ function fitHeight() {
 
 function init() {
   nextTick(() => {
+    loading.value = true;
     const iframe = unref(frameRef);
     if (!iframe) return;
 
@@ -94,20 +96,25 @@ function init() {
         try {
           emit('onLoadSuccess', _frame);
           handleLoadSuccess(_frame);
+          fitHeight();
         } catch (e) {
           console.warn('未定义加载成功回调函数 - 【onLoadSuccess】');
+        } finally {
+          loading.value = false;
         }
-        fitHeight();
       });
     } else {
       iframe.onload = () => {
         try {
           emit('onLoadSuccess', _frame);
           handleLoadSuccess(iframe);
+          // fitHeight();
         } catch (e) {
+          console.error(e);
           console.warn('未定义加载成功回调函数 - 【onLoadSuccess】');
+        } finally {
+          loading.value = false;
         }
-        fitHeight();
       };
     }
   });
@@ -119,56 +126,47 @@ const initCallback = (modeler) => {
     console.log(issues);
   });
 };
-
-// 将token发送给子iframe窗口
 const handleLoadSuccess = (iframe) => {
   // 发送消息到子窗口
   const iframeContentWindow = iframe.contentWindow;
-  bpmnModeler.value = iframeContentWindow.bpmnModeler;
-  if (!iframeContentWindow.bpmnModeler) {
-    message.error('设计器加载失败，原因：window下面bpmnModeler对象丢失！');
-    return;
-  }
-  const accessStore = useAccessStore();
-
   const msg = {
     type: 'userInfo',
     message: {
-      token: accessStore.accessToken,
+      token: accessStore.accessToken
     },
   };
-  hideSaveBtn(iframe);
-  changeDesignerTheme(iframe);
-  initCallback(bpmnModeler.value);
+
   iframeContentWindow.postMessage(JSON.stringify(msg), '*');
-  // 加载 xml
-  loadModelXml(iframe);
 };
 
 // 加载xml
-const loadModelXml = async () => {
-  if (!props.modelKey) {
-    message.error('modelKey为空，加载失败！');
+const loadModelXml = async (modelXml: string) => {
+  if (!modelXml) {
+    message.error('modelXml为空，加载失败！');
     return;
   }
+  const frameWindow = frameRef.value?.contentWindow;
+  const dmnModeler = frameWindow.dmnModeler;
+  debugger;
   loading.value = true;
   try {
-    const res = await getBpmnByModelId({modelId: props.modelId});
-    if (bpmnModeler.value) {
-      bpmnModeler.value
-          .importXML(res.modelXml)
-          .then(() => {
-            bpmnModeler.value?.get('canvas').zoom('fit-viewport', {});
+    if (dmnModeler) {
+      dmnModeler.importXML(modelXml).then(() => {
+        debugger;
+            dmnModeler?.get('canvas').zoom('fit-viewport', {});
+            debugger;
             loading.value = false;
+            hideViewDrdBtn(frameWindow);
           })
           .catch((e) => {
-            message.error('加载设计器XML失败！', e);
+            debugger;
+            // message.error('加载设计器XML失败！', e);
+            console.error(e);
             loading.value = false;
           });
 
-      updateModelInfo();
     } else {
-      loading.value = false;
+      console.error('未获取到dmnModeler对象');
     }
   } catch (e) {
     console.error(e);
@@ -176,6 +174,18 @@ const loadModelXml = async () => {
     loading.value = false;
   }
 };
+
+function hideViewDrdBtn() {
+  const frameWindow = frameRef.value?.contentWindow;
+
+  const viewDrdBtn = frameWindow.document.querySelector(
+      '.dmn-full-designer .tjs-container .view-drd',
+  );
+  if (!viewDrdBtn) {
+    return;
+  }
+  viewDrdBtn.style.display = 'none';
+}
 
 async function updateModelInfo() {
   await nextTick();
@@ -188,8 +198,10 @@ async function updateModelInfo() {
   iframeContentWindow.updateModelInfo({id: props.modelKey, name: props.modelName});
 }
 
-const getBpmnXml = () => {
-  return bpmnModeler.value.saveXML({format: true});
+const getModelXml = () => {
+  const frameWindow = frameRef.value?.contentWindow;
+  const dmnModeler = frameWindow.dmnModeler;
+  return dmnModeler.saveXML({format: true});
 };
 
 const hideSaveBtn = (iframe) => {
@@ -223,7 +235,6 @@ const getIssuesMap = () => {
 };
 
 onMounted(() => {
-  loading.value = true;
   init();
 });
 
@@ -234,8 +245,10 @@ watch(
 );
 
 defineExpose({
-  getBpmnXml,
+  getModelXml,
+  loadModelXml,
   getIssuesMap,
+  hideViewDrdBtn,
 });
 </script>
 

@@ -100,7 +100,7 @@
           <a-button type="primary" @click="handleSaveData">保存</a-button>
         </div>-->
 <!--        <FramePage ref="dmnDesignerRef" :frameSrc="url" @on-load-success="handleLoadSuccess"/>-->
-        <DmnDesigner @on-load-success="handleLoadSuccess" />
+        <DmnDesigner ref="dmnDesignerRef" @on-load-success="handleLoadSuccess" />
       </div>
     </div>
   </BasicModal>
@@ -110,6 +110,7 @@ import {ref, computed, nextTick, defineExpose, defineEmits, unref} from 'vue';
 import {useVbenModal} from '@vben/common-ui';
 import {useVbenForm} from '#/adapter/form';
 import { useAccessStore, useUserStore } from '@vben/stores';
+import { useClipboard } from '@vueuse/core';
 
 import {
   getByModelId,
@@ -151,6 +152,8 @@ import DmnDesigner from "#/views/components/process/DmnDesigner.vue";
 const PerPrefix = 'Dmn:';
 const {isDark} = usePreferences();
 const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
+
+const {  copy } = useClipboard({ legacy: true });
 
 const Step = Steps.Step;
 
@@ -286,7 +289,9 @@ const [BasicModal, modalApi] = useVbenModal({
     if (isOpen) {
       const values = modalApi.getData<Record<string, any>>();
       if (values) {
-        formApi.setValues(values);
+          dmnMode.value = values.dmnType;
+
+          formApi.setValues(values);
         modalApi.setState({loading: false, confirmLoading: false});
         url.value = '/static/dmn/designer/index.html?modelKey=' + (values.modelId || '');
 
@@ -302,16 +307,16 @@ const [BasicModal, modalApi] = useVbenModal({
 // iframe加载成功回调
 function handleLoadSuccess(frameWindow) {
   changeDesignerTheme(frameWindow);
-  initFormData(frameWindow);
+  initFormData();
 }
 
 const changeDesignerTheme = (iframeWindow) => {
   // 获取当前框架主题
   if (iframeWindow) {
     if (isDark.value) {
-      iframeWindow.document.body.setAttribute('arco-theme', 'dark');
+        iframeWindow.contentDocument.body.setAttribute('arco-theme', 'dark');
     } else {
-      iframeWindow.document.body.removeAttribute('arco-theme');
+      iframeWindow.contentDocument.body.removeAttribute('arco-theme');
     }
   }
 };
@@ -342,10 +347,9 @@ async function handleSaveDmnInfo() {
     try {
       // 获取XML
       // const {xml} = await unref(dmnDesignerRef).frameRef.contentWindow.exportXML();
-      const {xml} = await unref(dmnDesignerRef).frameRef.contentWindow.dmnModeler.saveXML({
-        format: true,
-      });
+      const {xml} = await unref(dmnDesignerRef).getModelXml();
 
+      debugger;
       // 如果决策表中没有hitPolicy="UNIQUE" 则添加该属性，默认为"UNIQUE"
       const resultXml = updateXMLAttribute(xml, 'decisionTable', 'hitPolicy', 'UNIQUE');
 
@@ -372,28 +376,23 @@ async function handleSaveDmnInfo() {
       );
     }
 
-    const result = await saveOrUpdate(values);
+    const {data, msg, success} = await saveOrUpdate(values);
 
-    const resultData = result.data;
-    if (resultData) {
-      const {
-        success,
-        msg,
-        data: {modelId, id, status, statusName},
-      } = resultData;
-      if (success) {
+    if (success && data) {
+      const {modelId, id, status, statusName} = data;
         refreshModelStatus(modelId, status, statusName);
-        await setFieldsValue({
-          modelId: modelId,
-          id: id,
+
+        formApi.setValues({
+            modelId: modelId,
+            id: id,
         });
+
         updateModelKeyValidate(id);
         message.success(msg);
         (await values.modelXml) &&
         unref(dmnDesignerRef).frameRef.contentWindow.dmnModeler.importXML(values.modelXml);
-      } else {
+    } else {
         message.error(msg);
-      }
     }
   } catch (e) {
     console.error('表单验证失败！' + e);
@@ -439,7 +438,7 @@ function handlePublish() {
       });
 }
 
-async function initFormData(frameWindow) {
+async function initFormData() {
   // const {id, modelId, categoryCode} = unref(baseModelInfo);
   const {id, modelId, categoryCode} = await formApi.getValues();
 
@@ -455,11 +454,10 @@ async function initFormData(frameWindow) {
       refreshModelStatus(modelId, res.status, res.statusName);
       // xml渲染
       try {
-        debugger;
         (await res.modelXml) &&
-        unref(dmnDesignerRef).frameRef.contentWindow.dmnModeler.importXML(res.modelXml);
+        unref(dmnDesignerRef).loadModelXml(res.modelXml);
         setTimeout(() => {
-          dmnMode.value == 0 && hideViewDrdBtn(frameWindow);
+          dmnMode.value == 0 && unref(dmnDesignerRef).hideViewDrdBtn();
         });
       } catch (e) {
         console.error(e);
@@ -475,12 +473,10 @@ async function initFormData(frameWindow) {
       const {
         data: {modelXml},
       } = await initDmnDiagram({key: '', name: '', dmnType: dmnMode.value});
-      // unref(dmnDesignerRef).frameRef.contentWindow.importXML(modelXml);
-      (await modelXml) &&
-      unref(dmnDesignerRef).frameRef.contentWindow.dmnModeler.importXML(modelXml);
-      setTimeout(() => {
-        dmnMode.value == 0 && hideViewDrdBtn(frameWindow);
-      });
+        modelXml && unref(dmnDesignerRef).loadModelXml(modelXml);
+        setTimeout(() => {
+          dmnMode.value == 0 && unref(dmnDesignerRef).hideViewDrdBtn();
+        });
     } else {
       Modal.warning({
         title: '提示',
@@ -513,7 +509,12 @@ async function updateModelKeyValidate(id) {
 }
 
 function doCopyContent(content) {
-  copyText(content);
+    try {
+        copy(content);
+        message.success("拷贝成功！")
+    } catch (e) {
+    } finally {
+    }
 }
 
 function handleClose() {

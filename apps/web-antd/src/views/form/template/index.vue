@@ -52,9 +52,9 @@
             okText="确定"
             cancelText="取消"
           >
-            <Switch 
-              :checked="row.status == 1" 
-              :checkedChildren="'已生效'" 
+            <Switch
+              :checked="row.status == 1"
+              :checkedChildren="'已生效'"
               :unCheckedChildren="'未生效'"
               :loading="row.pendingStatus"
             />
@@ -118,7 +118,7 @@
       labelWidth: 60,
     },
     wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-2',
     resetButtonOptions: {
       show: false,
     },

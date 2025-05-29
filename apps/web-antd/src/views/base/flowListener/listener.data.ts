@@ -2,6 +2,9 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { z } from '#/adapter/form';
 import { RemarkDefaultEnum } from '#/enums/commonEnum';
+import {
+  checkEntityExist,
+} from '#/api/base/flowListener';
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -10,6 +13,7 @@ export const columns: VxeGridProps['columns'] = [
     align: 'left',
     type: 'expand',
     slots: {
+      default: 'name',
       content: 'expandContent',
     }
   },
@@ -59,6 +63,7 @@ export const propertiesColumns: VxeGridProps['columns'] = [
     title: '操作',
     field: 'option',
     align: 'center',
+    slots: {default: 'option'},
     width: 100,
   },
   {

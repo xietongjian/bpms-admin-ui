@@ -17,6 +17,10 @@
         <template #toolbar-tools>
           <div class="flex flex-row gap-2">
             <Dropdown v-access:code="PerPrefix+PerEnum.ADD" >
+              <Button type="primary" @click.prevent>
+                新增
+                <DownOutlined/>
+              </Button>
               <template #overlay>
                 <Menu @click="handleCreate">
                   <MenuItem key="0">
@@ -33,48 +37,43 @@
                   </MenuItem>
                 </Menu>
               </template>
-              <Button type="primary">
-                新增
-                <DownOutlined/>
-              </Button>
             </Dropdown>
 
             <Tooltip placement="bottom">
               <template #title>
                 <span>只有状态为【待发布】的数据才能发布</span>
               </template>
-              <span>
-            <Popconfirm
-                :title="`确定要发布决策引擎【${currentModelInfo.name}】吗？`"
-                @confirm="handlePublish"
-                type="primary"
-                :disabled="!showPublishBtn"
-            >
-              <Button type="primary">发布</Button>
-            </Popconfirm>
-          </span>
+              <div>
+                <Popconfirm
+                    :title="`确定要发布决策引擎【${currentModelInfo.name}】吗？`"
+                    @confirm="handlePublish"
+                    type="primary"
+                    :disabled="!showPublishBtn"
+                >
+                  <Button type="primary">发布</Button>
+                </Popconfirm>
+              </div>
             </Tooltip>
             <Tooltip placement="bottom">
               <template #title>
                 <span>只有状态为【待发布/已发布】的数据才能停用</span>
               </template>
-              <span>
-            <Popconfirm
-                :title="`确定要停用决策引擎【${currentModelInfo.name}】吗？`"
-                @confirm="handleStop"
-                color="error"
-                type="danger"
-                :disabled="!showStopBtn"
-            >
-              <Button type="primary" danger>停用</Button>
-            </Popconfirm>
-          </span>
+              <div>
+                <Popconfirm
+                    :title="`确定要停用决策引擎【${currentModelInfo.name}】吗？`"
+                    @confirm="handleStop"
+                    color="error"
+                    type="danger"
+                    :disabled="!showStopBtn"
+                >
+                  <Button type="primary" danger>停用</Button>
+                </Popconfirm>
+              </div>
             </Tooltip>
-
           </div>
         </template>
         <template #action="{row}">
-          <TableAction :stopButtonPropagation="true" :actions="createActions(row, column)"/>
+          <TableAction :stopButtonPropagation="true" :actions="createActions(row)"/>
         </template>
         <template #name="{row}">
           <!-- 0决策表1决策服务 -->
@@ -146,8 +145,8 @@ const dmnDesignerModalRef = ref(),
 
 const MenuItem = Menu.Item;
 
-const currentModelInfo = ref<Recordable>({});
-const currentCategory = ref<Recordable>({});
+const currentModelInfo = ref<Recordable<any>>({});
+const currentCategory = ref<Recordable<any>>({});
 const loadingRef = ref(false);
 const showPublishBtn = ref(false);
 const showStopBtn = ref(false);
