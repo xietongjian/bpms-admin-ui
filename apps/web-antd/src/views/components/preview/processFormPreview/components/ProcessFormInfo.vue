@@ -76,13 +76,13 @@ const showErrorMsg = ref(false);
 const errorMsg = ref();
 const editFormFields = ref([]);
 const requiredFormFields = ref([]);
-/*
 watch(() => props.procInstId, (newVal, oldValue) => {
-  getStartHeadInfoVo();
+  debugger;
+  loadCustomFormAndData();
 });
-*/
 
 onMounted(() => {
+  debugger;
   loadCustomFormAndData();
 });
 /**
@@ -100,9 +100,10 @@ async function loadCustomFormAndData() {
     });
     if (success) {
       const {formDatas, formInfo, itemList, activityFormItems} = data;
-      jsonData.value = JSON.parse(formInfo.formJson);
-      await nextTick();
       debugger;
+      jsonData.value = JSON.parse(formInfo.formJson);
+      debugger;
+      await nextTick();
       generateFormRef.value.refresh();
       generateFormRef.value.setData(formDatas);
       setFormPermission(activityFormItems, itemList);

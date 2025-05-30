@@ -349,7 +349,6 @@ async function handleSaveDmnInfo() {
       // const {xml} = await unref(dmnDesignerRef).frameRef.contentWindow.exportXML();
       const {xml} = await unref(dmnDesignerRef).getModelXml();
 
-      debugger;
       // 如果决策表中没有hitPolicy="UNIQUE" 则添加该属性，默认为"UNIQUE"
       const resultXml = updateXMLAttribute(xml, 'decisionTable', 'hitPolicy', 'UNIQUE');
 
@@ -416,26 +415,25 @@ function refreshModelStatus(modelId, status, statusName) {
   }
 }
 
-function handlePublish() {
-  modalApi.setState({loading: true, confirmLoading: true});
+async function handlePublish() {
+    modalApi.setState({loading: true, confirmLoading: true});
+    // loadingRef.value = true;
+    try {
+        const values = await formApi.getValues();
 
-  // loadingRef.value = true;
-  const {modelId} = unref(baseModelInfo);
-  publishDmn(modelId)
-      .then((res) => {
-        const {data} = res;
-        if (data.success) {
-          message.success(data.msg, 2);
-          refreshModelStatus(modelId, null, null);
+        const {modelId} = values;
+        const {msg, success, data} = await publishDmn(modelId);
+        if (success) {
+            message.success(msg, 2);
+            refreshModelStatus(modelId, null, null);
         } else {
-          message.error(data.msg, 2);
+            message.error(msg, 2);
         }
-      })
-      .finally(() => {
-        // loadingRef.value = false;
+    } catch (e) {
+        console.error(e);
+    } finally {
         modalApi.setState({loading: false, confirmLoading: false});
-
-      });
+    }
 }
 
 async function initFormData() {
@@ -450,6 +448,7 @@ async function initFormData() {
       const res = await getByModelId({modelId});
       res.name = res.modelName;
       baseModelInfo.value.modelKey = res.modelKey;
+      baseModelInfo.value.name = res.name;
       res.id = id;
       refreshModelStatus(modelId, res.status, res.statusName);
       // xml渲染

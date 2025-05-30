@@ -15,28 +15,21 @@
 
     <Collapse size="small" collapsible="header" default-active-key="1">
       <CollapsePanel key="1" header="表单内容">
-        <div style="min-height: 300px" class="p-4">
-          <Skeleton :loading="jsonData === null" active>
+        <div class="p-4 min-h-[300px]">
+          <Skeleton :loading="formContainerLoading" active>
             <GenerateForm
-                class="generate-form"
+                class="generate-form h-full min-h-[300px]"
                 ref="generateFormRef"
                 v-if="jsonData && jsonData !== null"
                 :edit="formIsEdit"
                 :data="jsonData"
                 :print-read="printRead"
-                style="height: 100%; min-height: 300px"
             />
+            <div v-else class="text-center text-2xl text-gray-500">无表单</div>
           </Skeleton>
         </div>
       </CollapsePanel>
     </Collapse>
-<!--
-    <CollapseContainer :canExpand="true" class="generate-form-container mt-2">
-      <template #title>
-        <div class="font-bold">表单内容</div>
-      </template>
-
-    </CollapseContainer>-->
   </div>
 </template>
 <script lang="ts" setup>
@@ -50,7 +43,6 @@
     getCustomFormInfoVoByModelKeyAndBusinessKey,
     startCustomFormProcess,
   } from '#/api/process/process';
-  // import { CollapseContainer } from '@/components/Container';
   import { GenerateForm } from '/public/static/form-making';
   import { updateCustomFormData, getFormItemShowsByTaskId } from '#/api/process/customForm';
   import ProcessApproveHistoryInfo
@@ -95,6 +87,7 @@
   const { currentRoute } = useRouter();
   const jsonData = ref(null);
   const generateFormRef = ref();
+  const formContainerLoading = ref(false);
   // approve/:modelKey/:procInstId/:bizId/:taskId/:showPost
   const { path, params } = unref(currentRoute);
 
@@ -116,22 +109,23 @@
       if (newValue !== -1) {
         // fetch();
       } else {
-        message.error('未定义的表单类型！');
+        // message.error('未定义的表单类型！');
       }
     },
   );
 
   onMounted(() => {
-    if (props.modelKey == 0) {
-      // message.error("流程定义Key【processDefinitionKey】不能为空！");
-      return;
-    }
+    // if (props.modelKey == 0) {
+    //   // message.error("流程定义Key【processDefinitionKey】不能为空！");
+    //   return;
+    // }
     // 加载数据
     // fetch();
   });
 
-  function fetchFormData(params: any) {
+  async function fetchFormData(params: any) {
     // modelKey, bizId, procInstId
+    formContainerLoading.value = true;
     if (params.formType === 1) {
       // 渲染业务表单数据
       getBizInfoVoByModelKey({
@@ -154,9 +148,9 @@
         })
         .finally(() => {
           // unref(framePageRef).hideIframeLoading();
+          formContainerLoading.value = false;
         });
     } else if (params.formType === 0) {
-      debugger;
       // 渲染自定义表单数据
       getCustomFormInfoVoByModelKeyAndBusinessKey({
         modelKey: params.modelKey??'',
@@ -181,13 +175,13 @@
               showBaseFormInfo.value = false;
             }
             jsonData.value = JSON.parse(formInfo.formJson);
-            nextTick(() => {
-              generateFormRef.value.refresh();
-              generateFormRef.value.setData(formDatas);
-              setFormPermission();
+            setTimeout(() => {
+              nextTick(() => {
+                generateFormRef.value.refresh();
+                generateFormRef.value.setData(formDatas);
+                setFormPermission();
+              });
             });
-            // iframe.loadCustomFormData({...result.data, isEdit: formIsEdit});
-            // 加载成功后关闭Loading
           } else {
             message.error(msg);
           }
@@ -196,8 +190,12 @@
           console.error(e);
         })
         .finally(() => {
-          // unref(framePageRef).hideIframeLoading();
+          formContainerLoading.value = false;
         });
+    } else {
+      // message.error('表单类型不匹配！');
+      console.warn('表单类型不匹配！')
+      formContainerLoading.value = false;
     }
   }
 
@@ -253,7 +251,6 @@
   }
 
   function saveFormData() {
-    debugger;
     if (editFormFields.value.length === 0) {
       return Promise.resolve({
         success: true,
@@ -323,12 +320,13 @@
   }
 
   function validEventExists(eventName) {
-    debugger;
     return unref(jsonData).config.eventScript.some((item) => item.name === eventName);
   }
 
   function getFormData(validate) {
-    debugger;
+    if(!unref(generateFormRef)){
+      return null;
+    }
     // 1草稿；2已发起流程
     // const validStatus = status == '2';
     return unref(generateFormRef)
@@ -371,7 +369,6 @@
             formDraftStatus: status,
             modelKey: props.modelKey,
           };
-          debugger;
           return startCustomFormProcess(data);
         })
         .catch((e) => {

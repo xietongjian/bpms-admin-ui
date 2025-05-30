@@ -21,7 +21,7 @@ export async function getFlowCategoryTreeData (params?: any){
   return listToTree(categories);
 }
 
-export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params);
+export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params, {responseReturn: 'body'});
 
 export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);

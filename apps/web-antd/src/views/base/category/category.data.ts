@@ -154,10 +154,11 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'companyId',
     label: '所属公司',
-    component: 'TreeSelect',
+    component: 'OrgSelector',
     componentProps: {
-      treeNodeFilterProp: 'cname',
-      getPopupContainer: () => document.body,
+      allowClear: true,
+      placeholder: '请选择所属公司',
+      selectType: '1',
     },
     rules: 'selectRequired'
   },

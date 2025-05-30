@@ -32,33 +32,7 @@
   import {Tag} from 'ant-design-vue';
 
   const PerPrefix = 'AuthPoint:';
-
-
   const authPointModalRef = ref();
-  // const [registerModal, { openModal }] = useModal();
-
-  /*const [registerTable, { reload }] = useTable({
-    title: '列表',
-    api: getAuthPointListByPage,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: true,
-    showIndexColumn: true,
-    actionColumn: {
-      width: 100,
-      title: '操作',
-      dataIndex: 'action',
-      fixed: false,
-    },
-  });*/
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -67,7 +41,7 @@
       labelWidth: 60,
     },
     wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-2',
     resetButtonOptions: {
       show: false,
     },

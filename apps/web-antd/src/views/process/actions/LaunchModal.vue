@@ -67,72 +67,37 @@
 <script lang="ts" setup>
   import { ref, unref, onMounted, defineExpose, nextTick } from 'vue';
   import { Space, Button, Tag, Row, Col, Modal, Affix, message } from 'ant-design-vue';
-  // import { useUserStore } from '@/store/modules/user';
   import FormContainer from '#/views/process/components/FormContainer.vue';
   // import BpmnSimulatorModal from '#/views/components/preview/bpmnSimulator/index.vue';
 
   // import ActionButtons from '#/views/process/components/ActionButtons.vue';
   import BaseActionButtons from '#/views/process/components/BaseActionButtons.vue';
-
-  // import { useLoading } from '@/components/Loading';
   import {
     getProdModelInfoByModelKeyAndProcInstId,
     startCustomFormProcess,
   } from '#/api/process/process';
   import {useVbenModal} from '@vben/common-ui';
-
-  // import { BasicModal, useModal, useModalInner } from '@/components/Modal';
-  // import { useMessage } from '@/hooks/web/useMessage';
   import ApprovalHistory from '#/views/process/components/ApprovalHistory.vue';
   import {EmpInfo} from '#/views/components/EmpInfo';
   import { useUserStore } from '@vben/stores';
-  import { updateCustomFormData } from '#/api/process/customForm';
   import {changeURLPar} from "#/utils/domUtils";
-  // import { useGo } from '@/hooks/web/usePage';
   const emit = defineEmits(['success'])
   const userStore = useUserStore();
 
-  // const go = useGo();
   const flowBaseInfo = ref({});
   const processBaseInfo = ref({});
   const formContainerRef = ref();
   const launchHeaderAfixed = ref(false);
   const submitLoading = ref(false);
   const actionButtonsRef = ref();
-  // const [openFullLoading, closeFullLoading] = useLoading({
-  //   tip: '提交中...',
-  // });
-  // const { message } = useMessage();
   const approvalHistoryVisible = ref(false);
   // launch/:modelKey/:procInstId/:bizId/:taskId/:formType
   // const userStore = useUserStore();
-  /*const [
-    registerBpmnSimulatorModal,
-    { openModal: openBpmnSimulatorModal, setModalProps: setBpmnSimulatorProps },
-  ] = useModal();*/
 
   function changeSubmitLoading(loading){
     modalApi.setState({loading: loading, confirmLoading: loading});
     submitLoading.value = loading;
   }
-
-  /*const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(async (data) => {
-    processBaseInfo.value = {
-      formType: data.formType,
-      modelKey: data.modelKey,
-      procInstId: data.procInstId,
-      bizId: data.bizId,
-      taskId: data.taskId,
-      viewType: data.viewType || 'view'
-    };
-    approvalHistoryVisible.value = !!data.procInstId;
-    initData();
-
-    setModalProps({
-      confirmLoading: false,
-      title: `发起XXX审批`,
-    });
-  });*/
 
   function changeLaunchUrl(modelKey, businessKey) {
     let newUrl = changeURLPar(window.location.href, 'modelKey', modelKey);
@@ -151,7 +116,7 @@
       changeLaunchUrl('', '');
       modalApi.close();
     },
-    onOpenChange(isOpen: boolean) {
+    async onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
@@ -164,7 +129,7 @@
             viewType: values.viewType || 'view'
           };
           approvalHistoryVisible.value = !!values.procInstId;
-          initData();
+          await initData();
           modalApi.setState({loading: false, confirmLoading: false});
         }
       } else {
@@ -201,7 +166,7 @@
     }
   };
 
-  function initData() {
+  async function initData() {
     const {modelKey, procInstId, bizId} = unref(processBaseInfo);
     getProdModelInfoByModelKeyAndProcInstId({ modelKey, procInstId: procInstId || '' }).then(
       (res) => {
@@ -212,31 +177,34 @@
       },
     );
 
-    // alert(JSON.stringify(userStore.getUserInfo));
-    nextTick(() => {
-      window['currentUser'] = userStore.userInfo;
-      window['procInstId'] = procInstId;
-      window['modelKey'] = modelKey;
-      window['bizId'] = bizId;
-      window['onSubmitSuccess'] = (res) => {
-        countDown(res, () => {
-          closePage();
-          window.close();
-        });
-      };
-      window['onSaveSuccess'] = (res) => {
-        countDown(res, () => {
-          closePage();
-          window.close();
-        });
-      };
-      window['onSubmitFail'] = (res) => {
-        message.error((res && res.msg) || '提交表单失败，请稍后再试！');
-      };
-      window['onSaveFail'] = (res) => {
-        message.error((res && res.msg) || '保存数据失败，请稍后再试！');
-      };
-    });
+    await nextTick();
+    setWindowProperties({modelKey, procInstId, bizId});
+  }
+
+  function setWindowProperties(properties){
+    const {modelKey, procInstId, bizId} = properties;
+    window['currentUser'] = userStore.userInfo;
+    window['procInstId'] = procInstId;
+    window['modelKey'] = modelKey;
+    window['bizId'] = bizId;
+    window['onSubmitSuccess'] = (res) => {
+      countDown(res, () => {
+        closePage();
+        window.close();
+      });
+    };
+    window['onSaveSuccess'] = (res) => {
+      countDown(res, () => {
+        closePage();
+        window.close();
+      });
+    };
+    window['onSubmitFail'] = (res) => {
+      message.error((res && res.msg) || '提交表单失败，请稍后再试！');
+    };
+    window['onSaveFail'] = (res) => {
+      message.error((res && res.msg) || '保存数据失败，请稍后再试！');
+    };
   }
 
   // 自动关闭弹窗
@@ -304,7 +272,15 @@
 
   // 关闭加载状态
   function closeSubmitLoading() {
-    closeFullLoading();
+    modalApi.setState({loading: false, confirmLoading: false});
+  }
+  // 打开加载状态
+  function openFullLoading() {
+    modalApi.setState({loading: true, confirmLoading: true});
+  }
+  // 打开加载状态
+  function closeFullLoading() {
+    modalApi.setState({loading: false, confirmLoading: false});
   }
 
   // 如果有配置流程标题，则根据数据解析流程标题
@@ -334,24 +310,8 @@
       processNameExp: genProcessNameExp(formData),
     };
 
-    // return false;
     // 启动流程
     return startCustomFormProcess(data);
-      /*.then((res) => {
-        if (res.success) {
-          countDown(res, () => {
-            // 发起流程成功后关闭
-            // go("/process/launched");
-            closeSubmitLoading();
-          });
-        } else {
-          message.error(res.msg);
-          closeSubmitLoading();
-        }
-      })
-      .catch((e) => {
-        closeSubmitLoading();
-      });*/
   }
 
   // 提交流程
@@ -371,6 +331,7 @@
         res = await startBizProcess(formData, status);
       } else {
         message.error('未知的表单类型！');
+        return;
       }
       const {success, msg, data} = res;
       if (success) {
@@ -387,7 +348,9 @@
         console.error('表单发起失败，原因：' + msg);
         changeSubmitLoading(false);
       }
-    }catch (e){
+    } catch (e){
+      console.error(e);
+    } finally {
       changeSubmitLoading(false);
     }
   }
@@ -397,7 +360,7 @@
   }
 
   async function doSimulation() {
-    unref(actionButtonsRef).setActionLoading(true);
+    //unref(actionButtonsRef).setActionLoading(true);
     openFullLoading();
     await unref(formContainerRef)
       .getFormData(true)
@@ -421,7 +384,7 @@
       })
       .finally(() => {
         closeFullLoading();
-        unref(actionButtonsRef).setActionLoading(false);
+        //unref(actionButtonsRef).setActionLoading(false);
       });
 
     // 调用子组件内部的方法进行提交
@@ -446,39 +409,7 @@
   }
 
   defineExpose(modalApi)
-  /*
-    export default defineComponent({
-      components: {
-        BasicModal,
-        EmpInfo,
-        FormContainer,
-        // BpmnSimulatorModal,
-        Tag, Row, Col,
-        FramePage,
-        PageWrapper,Affix, Space,
-        ActionButtons,
-        BaseActionButtons,
-        ProcessBackButton,
-        ApprovalHistory
-      },
-      setup() {
 
-        return {
-          launchHeaderAfixed,
-          handleAffixChange,
-          registerBpmnSimulatorModal,
-          formContainerRef,
-          doSimulation: ()=>{ doSimulation() },
-          doLaunch: ()=>{ doSubmit('2') },
-          doSave: ()=>{ doSubmit('1') },
-          flowBaseInfo,
-          approvalHistoryVisible,
-          approvalHistoryRef,
-          actionButtonsRef,
-
-        };
-      },
-    });*/
 </script>
 
 <style lang="scss">

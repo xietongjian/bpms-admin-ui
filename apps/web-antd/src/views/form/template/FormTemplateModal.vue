@@ -89,7 +89,7 @@ const templateInfo = ref(null);
 const saveLoading = ref(false);
 
 function changeLoading(loading: boolean) {
-  modalApi.setState({loading});
+  modalApi.setState({loading, confirmLoading: loading});
 }
 
 const [BasicModal, modalApi] = useVbenModal({
@@ -104,12 +104,12 @@ const [BasicModal, modalApi] = useVbenModal({
     if (!isOpen) {
       return null;
     }
-    modalApi.setState({loading: true, confirmLoading: true});
+    changeLoading(true);
     const values = modalApi.getData();
 
-    loadData(values);
+    await loadData(values);
     templateId.value = values.id;
-    modalApi.setState({loading: false, confirmLoading: false});
+    changeLoading(false);
   },
 });
 
@@ -137,11 +137,12 @@ async function loadData(values: Recordable<any>) {
       saveLoading.value = true;
       const res = await getFormTemplateById(values.id);
       templateInfo.value = res;
-      const {formJson, name, categoryCode} = res;
+      const {formJson, name, categoryCode, id} = res;
       const formJsonData = typeof formJson === 'string' ? JSON.parse(formJson) : formJson;
-      formApi.setValues({
+      await formApi.setValues({
         categoryCode,
         name,
+        id
       });
       unref(makingFormRef).setJSON(formJsonData);
     } catch (e) {
@@ -150,7 +151,7 @@ async function loadData(values: Recordable<any>) {
       saveLoading.value = false;
     }
   } else {
-    formApi.setValues({categoryCode: values.categoryCode});
+    await formApi.setValues({categoryCode: values.categoryCode});
     unref(makingFormRef)?.clear();
   }
 }
@@ -161,7 +162,9 @@ async function handleSubmit() {
     return;
   }
   try {
+    saveLoading.value = true;
     changeLoading(true);
+
     const formJson = unref(makingFormRef).getJSON();
     const formModels = unref(makingFormRef).getFormModels()
     console.log(formModels);
@@ -170,8 +173,7 @@ async function handleSubmit() {
       formJson,
       ...values
     };
-    
-    saveLoading.value = true;
+
     const {success, msg, data} = await saveOrUpdate(params);
     if (success) {
       formApi.setValues({id: data.id});

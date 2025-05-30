@@ -60,10 +60,6 @@ const bpmnPreviewModalRef = ref(),
     processFormPreviewDrawerRef = shallowRef(),
     processFormLaunchModalRef = ref();
 
-// const [AppModal, modalApi] = useVbenModal({
-//   connectedComponent: null,//AppInputModal,
-//   centered: true,
-// });
 const pager = ref({
   pageNum: 1,
   pageSize: 9999,
@@ -255,8 +251,8 @@ function handleLaunch(record: Recordable<any>) {
     businessKey: record.businessKey || '',
     viewType: 'launch',
   });
-  processFormLaunchModalRef.value.open();
   processFormLaunchModalRef.value.setState({title: `查看流程【${record.name}】的表单`});
+  processFormLaunchModalRef.value.open();
 
   changeLaunchUrl(record.modelKey, record.businessKey || '');
 }

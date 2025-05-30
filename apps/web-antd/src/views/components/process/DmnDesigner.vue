@@ -147,23 +147,18 @@ const loadModelXml = async (modelXml: string) => {
   }
   const frameWindow = frameRef.value?.contentWindow;
   const dmnModeler = frameWindow.dmnModeler;
-  debugger;
   loading.value = true;
   try {
     if (dmnModeler) {
       dmnModeler.importXML(modelXml).then(() => {
-        debugger;
-            dmnModeler?.get('canvas').zoom('fit-viewport', {});
-            debugger;
-            loading.value = false;
-            hideViewDrdBtn(frameWindow);
-          })
-          .catch((e) => {
-            debugger;
-            // message.error('加载设计器XML失败！', e);
-            console.error(e);
-            loading.value = false;
-          });
+        dmnModeler?.get('canvas').zoom('fit-viewport', {});
+        loading.value = false;
+        hideViewDrdBtn(frameWindow);
+      }).catch((e) => {
+        // message.error('加载设计器XML失败！', e);
+        console.error(e);
+        loading.value = false;
+      });
 
     } else {
       console.error('未获取到dmnModeler对象');
@@ -179,7 +174,7 @@ function hideViewDrdBtn() {
   const frameWindow = frameRef.value?.contentWindow;
 
   const viewDrdBtn = frameWindow.document.querySelector(
-      '.dmn-full-designer .tjs-container .view-drd',
+    '.dmn-full-designer .tjs-container .view-drd',
   );
   if (!viewDrdBtn) {
     return;
@@ -239,9 +234,9 @@ onMounted(() => {
 });
 
 watch(
-    () => props.modelKey,
-    () => updateModelInfo(),
-    {immediate: true},
+  () => props.modelKey,
+  () => updateModelInfo(),
+  {immediate: true},
 );
 
 defineExpose({
