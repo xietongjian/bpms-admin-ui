@@ -164,6 +164,29 @@ export function filter<T = any>(
   return listFilter(tree);
 }
 
+export function filterTree (tree: any, val: string) {
+  let result = []
+  tree.forEach(item => {
+    if (item.children && item.children.length) {
+      let children = filterTree(item.children, val)
+      let obj = {
+        ...item,
+        children
+      }
+      if (children && children.length) {
+        result.push(obj)
+      } else if (item.title.includes(val)) {
+        result.push({ ...item })
+      }
+    } else {
+      if (item.title.includes(val)) {
+        result.push(item)
+      }
+    }
+  })
+  return result;
+}
+
 export function forEach<T = any>(
   tree: T[],
   func: (n: T) => any,

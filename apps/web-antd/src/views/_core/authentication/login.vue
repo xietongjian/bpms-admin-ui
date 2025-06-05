@@ -3,17 +3,20 @@ import type { VbenFormSchema } from '@vben/common-ui';
 import type { BasicOption } from '@vben/types';
 import { getVerifyCode } from '#/api/core/auth';
 
-import { computed, h, ref, nextTick, markRaw } from 'vue';
+import {computed, h, ref, nextTick, markRaw, useTemplateRef} from 'vue';
+import { message } from 'ant-design-vue';
 
 import { AuthenticationLogin, SliderCaptcha, z } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import { useAuthStore } from '#/store';
+import type { Recordable } from '@vben/types';
 
 defineOptions({ name: 'Login' });
 
 const verifyCodeImgRef = ref();
-
+const loginRef =
+    useTemplateRef<InstanceType<typeof AuthenticationLogin>>('loginRef');
 const reloadVerifyCode = () => {
   getVerifyCode().then(res => {
     verifyCodeImgRef.value.src=res;
@@ -118,10 +121,25 @@ const formSchema = computed((): VbenFormSchema[] => {
     },
   ];
 });
+
+async function onSubmit(params: Recordable<any>) {
+  authStore.authLogin(params).catch((e) => {
+    // 登陆失败，刷新验证码的演示
+    message.error(e);
+    reloadVerifyCode();
+
+    // 使用表单API获取验证码组件实例，并调用其resume方法来重置验证码
+    // loginRef.value
+    //     ?.getFormApi()
+    //     ?.getFieldComponentRef<InstanceType<typeof SliderCaptcha>>('captcha')
+    //     ?.resume();
+  });
+}
 </script>
 
 <template>
   <AuthenticationLogin
+      ref="loginRef"
       :showCodeLogin="false"
       :showForgetPassword="false"
       :showQrcodeLogin="false"
@@ -131,7 +149,7 @@ const formSchema = computed((): VbenFormSchema[] => {
       title="飞流数智化"
     :form-schema="formSchema"
     :loading="authStore.loginLoading"
-    @submit="authStore.authLogin"
+    @submit="onSubmit"
   >
   </AuthenticationLogin>
 </template>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { NotificationItem } from '@vben/layouts';
 
-import { computed, ref, watch } from 'vue';
+import {computed, onMounted, ref, watch} from 'vue';
 
 import { AuthenticationLoginExpiredModal } from '@vben/common-ui';
 import { useWatermark } from '@vben/hooks';
@@ -97,6 +97,11 @@ async function handleLogout() {
 function handleNoticeClear() {
   notifications.value = [];
 }
+
+
+onMounted(() => {
+  debugger;
+});
 
 function handleMakeAll() {
   notifications.value.forEach((item) => (item.isRead = true));

@@ -26,8 +26,8 @@ export const overridesPreferences = defineOverridesPreferences({
   copyright: {
     enable: true,
     companyName: '飞流数智化',
-    companySiteLink: 'https://www.feilu.com',
-    icp: '粤A-88088808',
+    companySiteLink: '',
+    icp: '',
     icpLink: '',
     date: '2025'
   },

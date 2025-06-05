@@ -1,6 +1,6 @@
 <script lang="ts" setup>
   import { PerEnum } from '#/enums/perEnum';
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, nextTick } from 'vue';
   import { Button, Tag, message} from 'ant-design-vue';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import type {VbenFormProps} from '@vben/common-ui';
@@ -9,7 +9,7 @@
   import {Page} from '@vben/common-ui';
   import { TableAction } from '#/components/table-action';
 
-  import { getFlowCategories, deleteByIds } from '#/api/base/category';
+  import {getFlowCategories, deleteByIds, getFlowCategoryTreeData} from '#/api/base/category';
   import { columns, searchFormSchema } from './category.data';
   import CategoryModal from './CategoryModal.vue';
 
@@ -20,6 +20,10 @@
   const categoryModalRef = ref();
 
   const companiesMap = ref([]);
+  const filterText = ref('')
+
+  const treeData = ref([]);
+  const matchedIds = ref(new Set())
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -32,8 +36,118 @@
     resetButtonOptions: {
       show: false,
     },
+    handleSubmit: (values) => {
+      filterText.value = values.keyword;
+
+      if (!values.keyword) {
+        tableApi.grid.loadData(treeData.value);
+      } else {
+        const result = filterNodes(treeData.value, values.keyword.toLowerCase())
+        tableApi.grid.loadData(result);
+        handleFilter();
+      }
+      return Promise.resolve();
+    },
     schema: searchFormSchema,
   };
+
+  // 高亮匹配文本
+  const highlightMatch = (text) => {
+    if (!filterText.value) return text
+    const regex = new RegExp(`(${filterText.value})`, 'gi')
+    return text.replace(regex, '<span class="highlight-text">$1</span>')
+  }
+
+  // 处理过滤
+  const handleFilter = () => {
+    if (!filterText.value) {
+      handleClearFilter()
+      return
+    }
+    // 展开匹配节点
+    nextTick(() => {
+      expandMatchedNodes()
+    })
+  }
+  // 清除过滤
+  const handleClearFilter = () => {
+    filterText.value = ''
+    matchedIds.value.clear()
+    nextTick(() => {
+      tableApi.grid?.clearTreeExpand()
+    })
+  }
+
+  // 展开匹配节点及其父节点
+  const expandMatchedNodes = () => {
+    const table = tableApi.grid
+    if (!table) return
+
+    const nodesToExpand = new Set()
+
+    // 收集需要展开的节点
+    matchedIds.value.forEach(id => {
+      const node = table.getRowById(id)
+      if (node) {
+        // 添加当前节点
+        nodesToExpand.add(node.id)
+
+        // 添加所有父节点
+        let parent = table.getTreeParentRow(node)
+        while (parent) {
+          nodesToExpand.add(parent.id)
+          parent = table.getTreeParentRow(parent)
+        }
+      }
+    })
+
+    // 先收起所有节点
+    table.setAllTreeExpand(false)
+
+    // 展开需要的节点
+    nodesToExpand.forEach(id => {
+      const node = table.getRowById(id)
+      if (node) {
+        table.setTreeExpand(node, true)
+      }
+    })
+  }
+
+  // 行样式
+  const applyRowClass = ({ row }) => {
+    return matchedIds.value.has(row.id) ? 'matched-row' : ''
+  }
+
+  const filterNodes = (nodes, keyword) => {
+    const result = []
+    nodes.forEach(node => {
+      const newNode = { ...node }
+      let isMatched = false
+
+      // 检查当前节点是否匹配
+      if (newNode.name.toLowerCase().includes(keyword)) {
+        isMatched = true
+        matchedIds.value.add(newNode.id)
+      }
+
+      // 处理子节点
+      if (newNode.children && newNode.children.length) {
+        const filteredChildren = filterNodes(newNode.children, keyword)
+        if (filteredChildren.length) {
+          newNode.children = filteredChildren
+          isMatched = true
+        } else {
+          delete newNode.children
+        }
+      }
+
+      if (isMatched) {
+        result.push(newNode)
+      }
+    })
+
+    return result
+  }
 
   const gridOptions: VxeGridProps = {
     checkboxConfig: {
@@ -51,27 +165,24 @@
       isHover: true,
     },
     treeConfig: {
-      parentField: 'pid',
-      rowField: 'id',
-      transform: true,
+      childrenField: 'children'
     },
     height: 'auto',
     keepSource: true,
     border: false,
     stripe: true,
-    proxyConfig: {
-      ajax: {
-        query: async ({page}, formValues) => {
-          return await getFlowCategories({
-            entity: formValues || {},
-          });
-        },
-      },
-    },
   };
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
+  function reloadData() {
+    getFlowCategoryTreeData().then(res => {
+      treeData.value = res;
+      tableApi.grid.loadData(treeData.value);
+    })
+  }
+
+  reloadData();
 
   function createActions(row: Recordable<any>) {
     return [
@@ -173,6 +284,10 @@
       <template #action="{ row }">
         <TableAction :actions="createActions(row)"/>
       </template>
+
+      <template #name="{ row }">
+        <span v-html="highlightMatch(row.name)"></span>
+      </template>
       <template #cName="{ row }">
         {{ companiesMap[row.companyId]?.shortName }}
       </template>
@@ -184,3 +299,10 @@
     <CategoryModal ref="categoryModalRef" @success="handleSuccess" />
   </Page>
 </template>
+
+<style lang="scss">
+.highlight-text {
+  color: #ff4d4f;
+  font-weight: bold;
+}
+</style>

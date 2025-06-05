@@ -1,15 +1,17 @@
 <template>
   <Page auto-content-height>
+<!--    {{configList}}-->
     <div v-for="(item, index) in configList" :key="index">
-      <div v-if="item.configSn.endsWith(IMG_END_WITH)">
+      <BasicForm :schema="dynamicFormSchema(item)" />
+<!--      <div v-if="item.configSn.endsWith(IMG_END_WITH)">
         图片
-        <BasicForm />
-      </div>
-      {{index}}
+
+      </div>-->
+<!--      {{index}}
       {{item.id}}
       {{item.image}}
-      {{item.configSn}}
-      {{item.remark}}
+
+      {{item.remark}}-->
       {{item.configValue}}
 
 
@@ -63,7 +65,7 @@ import {PerEnum} from '#/enums/perEnum';
 // import { BasicTable, useTable, TableAction, TableImg } from '@/components/Table';
 import {getSystemConfigListByPage, deleteByIds, saveOrUpdate} from '#/api/base/systemConfig';
 import {Upload, Tooltip, Space, message, Modal, Button} from 'ant-design-vue';
-import {columns, formSchema, searchFormSchema} from './systemConfig.data';
+import {columns, formSchema, searchFormSchema, textDataFormSchema, imgDataFormSchema, dynamicFormSchema} from './systemConfig.data';
 import SystemConfigModal from './SystemConfigModal.vue';
 import {UploadOutlined, DeleteOutlined} from '@ant-design/icons-vue';
 import type {Recordable} from '@vben/types';
@@ -73,7 +75,6 @@ import {useVbenForm} from "#/adapter/form";
 
 import {Page} from "@vben/common-ui";
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
-const IMG_END_WITH = "_IMG"
 const PerPrefix = 'SystemConfig:';
 
 const configList = ref([]);
@@ -97,8 +98,7 @@ const [BasicForm, formApi] = useVbenForm({
     },
   },
   showDefaultActions: false,
-  layout: 'horizontal',
-  schema: formSchema,
+  layout: 'vertical',
   wrapperClass: 'grid-cols-1',
 });
 

@@ -11,7 +11,8 @@ export const columns: VxeGridProps['columns'] = [
     align: 'left',
     minWidth: 200,
     resizable: true,
-    treeNode: true
+    treeNode: true,
+    slots: {default: 'name'}
   },
   {
     title: '编码',

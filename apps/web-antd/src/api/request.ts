@@ -100,6 +100,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
       if(responseData.code === '401'){
         const authStore = useAuthStore();
         authStore.logout();
+        return;
       }
       const errorMessage = responseData?.error ?? responseData?.message ?? '';
       // 如果没有错误信息，则会根据状态码进行提示
