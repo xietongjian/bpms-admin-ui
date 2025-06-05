@@ -260,6 +260,7 @@ export const dynamicFormSchema: FormSchema[] =  (item) => {
       },
       fieldName: 'files',
       label: item.configName,
+      defaultValue: [{url: item.imageBase64}],
       renderComponentContent: () => {
         return {
           default: () => '点击上传图片',

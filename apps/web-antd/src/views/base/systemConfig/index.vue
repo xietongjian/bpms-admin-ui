@@ -1,8 +1,8 @@
 <template>
-  <Page auto-content-height>
+  <Page auto-content-height class="overflow-y-auto">
 <!--    {{configList}}-->
     <div v-for="(item, index) in configList" :key="index">
-      <BasicForm :schema="dynamicFormSchema(item)" />
+      <BasicForm class="bg-card p-4 mb-4" :schema="dynamicFormSchema(item)" />
 <!--      <div v-if="item.configSn.endsWith(IMG_END_WITH)">
         图片
 
@@ -12,7 +12,7 @@
       {{item.image}}
 
       {{item.remark}}-->
-      {{item.configValue}}
+<!--      {{item.configValue}}-->
 
 
     </div>
@@ -97,9 +97,14 @@ const [BasicForm, formApi] = useVbenForm({
       // class: 'w-full',
     },
   },
-  showDefaultActions: false,
+  showDefaultActions: true,
+  wrapperClass: 'grid-cols-2 md:grid-cols-1 lg:grid-cols-3',
+  actionWrapperClass: 'col-span-4 col-start-0 text-left ml-0',
+  submitButtonOptions: {
+    content: '保存'
+  },
+  resetButtonOptions: {show: false},
   layout: 'vertical',
-  wrapperClass: 'grid-cols-1',
 });
 
 // const [registerModal, { openModal }] = useModal();
