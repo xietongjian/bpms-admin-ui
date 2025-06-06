@@ -14,6 +14,7 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn';
 import { $t, setupI18n } from '#/locales';
 
 import { initComponentAdapter } from './adapter/component';
+import { initSetupVbenForm } from './adapter/form';
 import App from './app.vue';
 import { router } from './router';
 
@@ -27,6 +28,9 @@ import FormMakingV3 from '../public/static/form-making/dist/form-making-v3.es.js
 async function bootstrap(namespace: string) {
   // 初始化组件适配器
   await initComponentAdapter();
+
+  // 初始化表单组件
+  await initSetupVbenForm();
 
   // // 设置弹窗的默认配置
   // setDefaultModalProps({
