@@ -2,7 +2,7 @@
   <Page auto-content-height>
     <BasicTable class="custom-listener-table">
       <template #toolbar-tools>
-        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增 </Button>
       </template>
       <template #action="{ row }">
         <TableAction :actions="createActions(row)" />
@@ -22,77 +22,22 @@
         {{ row.name }}
       </template>
       <template #expandContent="{ row }">
-        <div class="expand-wrapper">
-          <!--
-          title=""
-              size="small"
-              :columns="propertiesColumns"
-              :useSearchForm="false"
-              :immediate="false"
-              :showIndexColumn="true"
-              :showTableSetting="false"
-              :bordered="true"
-              :pagination="false"
-              :emptyDataIsShowTable="false"
-              :inset="true"
-              rowKey="id"
-              :canResize="false"
-              :loading="propertiesTableLoading"
-              :dataSource="listenerPropertiesData[row.id]"
-          -->
-          <SubBasicTable :data="[{id: 123, name: 111}]">
-            <template #option="{row: rec}">
-              <TableAction :actions="createSubActions(rec)" />
-            </template>
-          </SubBasicTable>
-        </div>
-      </template>
-
-<!--      <template #expandedRowRender="{ record, index, indent, expanded }">
         <SubBasicTable
-            title=""
-            size="small"
-            :columns="propertiesColumns"
-            :useSearchForm="false"
-            :immediate="false"
-            :showIndexColumn="true"
-            :showTableSetting="false"
-            :bordered="true"
-            :pagination="false"
-            :emptyDataIsShowTable="false"
-            :inset="true"
-            rowKey="id"
-            :canResize="false"
-            :loading="propertiesTableLoading"
-            :dataSource="listenerPropertiesData[record.id]"
+            height="300"
+            :gridOptions="{
+              size: 'mini',
+              keepSource: true,
+              border: false,
+              stripe: true,
+              pagerConfig: {enabled: false},
+              columns: propertiesColumns,
+              data: row.listenerProperties}"
         >
-          <template #bodyCell="{ column, record: rec }">
-            <template v-if="column.key === 'option'">
-              <TableAction
-                  :actions="[
-                  {
-                    auth: 'FlowListener:' + PerEnum.UPDATE,
-                    icon: 'clarity:note-edit-line',
-                    title: '编辑',
-                    onClick: handleEditProperties.bind(null, rec),
-                  },
-                  {
-                    auth: 'FlowListener:' + PerEnum.DELETE,
-                    icon: 'ant-design:delete-outlined',
-                    danger: true,
-                    title: '删除',
-                    popConfirm: {
-                      title: '是否确认删除',
-                      confirm: handleDeleteProperty.bind(null, rec),
-                      placement: 'left',
-                    },
-                  },
-                ]"
-              />
-            </template>
+          <template #option="{row: rec}">
+            <TableAction :actions="createSubActions(row, rec)" />
           </template>
-        </BasicTable>
-      </template>-->
+        </SubBasicTable>
+      </template>
     </BasicTable>
     <ListenerModal ref="listenerModalRef" @success="handleSuccess"/>
     <ListenerPropertiesModal ref="listenerPropertiesModalRef"
@@ -103,16 +48,12 @@
 </template>
 <script lang="ts" setup>
 import {ref, unref, onMounted} from 'vue';
-
 import {PerEnum} from '#/enums/perEnum';
 import type {Recordable} from '@vben/types';
 import type {VbenFormProps} from '@vben/common-ui';
-import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
-
+import type {VxeGridProps} from '#/adapter/vxe-table';
 import {TableAction} from '#/components/table-action';
-
 import {
-  getAll,
   deleteById,
   getListByPage,
   getExpressionTypes,
@@ -125,64 +66,15 @@ import {columns, searchFormSchema, propertiesColumns} from './listener.data';
 import {Page} from '@vben/common-ui';
 import ListenerModal from './ListenerModal.vue';
 import ListenerPropertiesModal from './ListenerPropertiesModal.vue';
-// import {getCustomPagerModel} from "#/api/form/customForm";
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
 
-
-// const [registerModal, {openModal, setModalProps: setListenerModalProps}] = useModal();
-
-const listenerPropertiesData = ref<object>({});
-
+const PerPrefix = 'FlowListener:';
 const expressionTypeObj = ref({});
 const listenerTypeObj = ref({});
-const propertiesTableLoading = ref(false);
 const expandedRowKeys = ref([]);
 const currentListener = ref<Recordable<any>>({});
-
-const PerPrefix = 'FlowListener:';
-
 const listenerModalRef = ref(),
     listenerPropertiesModalRef = ref();
-
-/*const [
-  registerPropertiesModal,
-  {openModal: openPropertiesModal, setModalProps: setPropertiesModalProps},
-] = useModal();*/
-/*
-const [registerTable, {reload, getForm, setProps}] = useTable({
-  title: '列表',
-  api: getListByPage,
-  columns,
-  formConfig: {
-    labelWidth: 80,
-    schemas: searchFormSchema,
-    showAdvancedButton: false,
-    showResetButton: false,
-    autoSubmitOnEnter: true,
-  },
-  expandedRowKeys: expandedRowKeys,
-  expandRowByClick: true,
-  useSearchForm: true,
-  bordered: true,
-  showIndexColumn: true,
-  showTableSetting: false,
-  rowKey: 'id',
-  canResize: true,
-  onExpand: (expanded, record) => {
-    if (expanded) {
-      expandedRowKeys.value = [record.id];
-      currentListener.value = record;
-      reloadListenerProperties(record.id);
-    } else {
-      expandedRowKeys.value = [];
-    }
-  },
-  actionColumn: {
-    width: 150,
-    title: '操作',
-    dataIndex: 'action',
-  },
-});*/
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -196,6 +88,11 @@ const formOptions: VbenFormProps = {
     show: true,
   },
   schema: searchFormSchema,
+  handleValuesChange: (values, fieldsChanged) => {
+    if(fieldsChanged.includes('listenerType')){
+      tableApi.formApi.submitForm();
+    }
+  }
 };
 
 const gridOptions: VxeGridProps = {
@@ -215,14 +112,22 @@ const gridOptions: VxeGridProps = {
   },
   expandConfig: {
     trigger: 'row',
-    // lazy: true,
-    /*loadMethod: ({$table, row}) => {
-      debugger;
+    lazy: true,
+    loadMethod: ({row}) => {
       return getListenerParamList({listenerId: row.id}).then(res => {
-        row.subList = res;
-      })
-      // return new Promise.resolve([]);
-    }*/
+        row.listenerProperties = res;
+        return Promise.resolve(row);
+      }).catch(e => {
+        console.error(e);
+        return Promise.reject("加载人员失败！");
+      });
+    },
+    toggleMethod: ({row, expanded}) => {
+      if (expanded) {
+        tableApi.grid.reloadRowExpand(row);
+      }
+      return true;
+    }
   },
   proxyConfig: {
     ajax: {
@@ -240,80 +145,9 @@ const gridOptions: VxeGridProps = {
   },
 };
 
-const gridEvents: VxeGridListeners = {
-  radioChange: ({row}) => {
-    // clickRow(row);
-  },
-  toggleRowExpand: ({row, rowIndex, expanded}) => {
-    currentListener.value = row;
-    tableApi.grid.reloadRowExpand(row);
-    const records = tableApi.grid.getRowExpandRecords();
+const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
-    debugger;
-    // setRowExpand
-    //getRowExpandRecords
-    if(expanded){
-      /*getListenerParamList({listenerId: row.id}).then(res => {
-        debugger;
-        row.subList = res;
-        subTableApi.grid.setRow(row)
-      });*/
-
-      // subTableApi.reload();
-      // subTableApi.reload({listenerId: row.listenerId});
-    }
-  }
-};
-
-const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
-
-const subGridOptions: VxeGridProps = {
-  columns: propertiesColumns,
-  columnConfig: {resizable: true},
-  height: 'auto',
-  maxHeight: '100%',
-  border: false,
-  keepSource: false,
-  autoResize: false,
-  stripe: true,
-  round: false,
-  radioConfig: {
-    highlight: true,
-    labelField: 'name',
-    trigger: 'row',
-  },
-  pagerConfig: {
-    enabled: false,
-  },
-  proxyConfig: {
-    autoLoad: true,
-    ajax: {
-      query: async () => {
-        // currentModelInfo.value = {};
-        return await getListenerParamList({listenerId: currentListener.value.id});
-      },
-    },
-  },
-};
-
-const [SubBasicTable, subTableApi] = useVbenVxeGrid({gridOptions: subGridOptions});
-
-
-
-function reloadListenerProperties(listenerId) {
-  propertiesTableLoading.value = true;
-  getListenerParamList({listenerId})
-      .then((res) => {
-        if (res && res.length > 0) {
-          listenerPropertiesData.value[listenerId] = res;
-        } else {
-          listenerPropertiesData.value[listenerId] = [];
-        }
-      })
-      .finally(() => {
-        propertiesTableLoading.value = false;
-      });
-}
+const [SubBasicTable] = useVbenVxeGrid();
 
 async function handleCreate() {
   const formApi = tableApi.formApi;
@@ -341,21 +175,6 @@ onMounted(async () => {
   listenerTypes.forEach((item) => {
     unref(listenerTypeObj)[item.value] = item.label;
   });
-
-  tableApi.formApi.updateSchema([
-    {
-      fieldName: 'listenerType',
-      componentProps: {
-        options: listenerTypes,
-        onChange: async (value) => {
-          // 切换类型时先清空搜索条件
-          const formApi = tableApi.formApi;
-          await formApi.setValues({keyword: ''});
-          tableApi.reload({listenerType: value});
-        },
-      },
-    },
-  ]);
 });
 
 function handleAddProperties(record: Recordable<any>, e) {
@@ -366,31 +185,24 @@ function handleAddProperties(record: Recordable<any>, e) {
   listenerPropertiesModalRef.value.setState({
     title: `添加【${record.name}】的属性`,
   });
-
- /* openPropertiesModal(true, {
-    isUpdate: false,
-    record: {listenerId: record.id, type: 'string'},
-  });
-  setPropertiesModalProps({
-    title: `添加【${record.name}】的属性`,
-  });*/
 }
 
-function handleEditProperties(record: Recordable<any>) {
+function handleEditProperties(mainRecord: Recordable<any>, record: Recordable<any>) {
   listenerPropertiesModalRef.value.setData(record);
   listenerPropertiesModalRef.value.setState({
     title: `修改【${record.name}】的属性`,
   });
   listenerPropertiesModalRef.value.open();
+  currentListener.value = mainRecord;
 }
 
-function createSubActions(record: Recordable<any>) {
+function createSubActions(mainRecord: Recordable<any>, record: Recordable<any>) {
   return [
     {
       auth: [PerPrefix + PerEnum.UPDATE],
       icon: 'clarity:note-edit-line',
       title: '编辑',
-      onClick: handleEditProperties.bind(null, record),
+      onClick: handleEditProperties.bind(null, mainRecord, record),
     },
     {
       auth: [PerPrefix + PerEnum.DELETE],
@@ -399,7 +211,7 @@ function createSubActions(record: Recordable<any>) {
       title: '删除',
       popConfirm: {
         title: '是否确认删除',
-        confirm: handleDeleteProperty.bind(null, record),
+        confirm: handleDeleteProperty.bind(null, mainRecord, record),
         placement: 'left',
         okButtonProps: {
           danger: true
@@ -455,7 +267,7 @@ function handleEdit(record: Recordable<any>, e) {
 async function handleDelete(record: Recordable<any>, e) {
   e.stopPropagation();
   try {
-    const {success, msg, data} = await deleteById(record.id);
+    const {success, msg} = await deleteById(record.id);
     if (success) {
       tableApi.reload();
     } else {
@@ -477,11 +289,11 @@ function handleCloseFunc() {
   return Promise.resolve(true);
 }
 
-async function handleDeleteProperty(record: Recordable<any>) {
+async function handleDeleteProperty(mainRecord: Recordable<any>, record: Recordable<any>) {
   try {
-    const {success, msg, data} = await deleteParamById(record.id);
+    const {success, msg} = await deleteParamById(record.id);
     if (success) {
-      reloadListenerProperties(unref(currentListener).id);
+      await tableApi.grid.reloadRowExpand(mainRecord);
       message.success(msg);
     }
   } catch (e) {
@@ -492,20 +304,6 @@ async function handleDeleteProperty(record: Recordable<any>) {
 }
 
 function handleUpdateSecretKeySuccess() {
-  reloadListenerProperties(unref(currentListener).id);
-  expandedRowKeys.value = [unref(currentListener).id];
+  currentListener.value && tableApi.grid.reloadRowExpand(currentListener.value);
 }
 </script>
-<style lang="scss">
-.custom-listener-table {
-  .ant-table-expanded-row {
-    .ant-table-cell {
-      .vben-basic-table {
-        .ant-table {
-          margin: 0 !important;
-        }
-      }
-    }
-  }
-}
-</style>

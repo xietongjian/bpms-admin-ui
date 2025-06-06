@@ -73,7 +73,8 @@ getSysConfig().then(res => {
         icpLink: 'https://beian.miit.gov.cn',
       },
       logo: {
-        source: res.logoImg
+        source: res.logoImg,
+        enable: false
       }
     });
   }

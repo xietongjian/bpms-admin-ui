@@ -151,7 +151,7 @@ defineExpose(modalApi);
 </script>
 
 <template>
-  <BasicModal class="w-[500px]">
+  <BasicModal class="w-[600px]">
     <BasicForm/>
   </BasicModal>
 </template>

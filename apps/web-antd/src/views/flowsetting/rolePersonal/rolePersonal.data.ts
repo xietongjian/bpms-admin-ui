@@ -7,9 +7,14 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
     field: 'name',
+    type: 'expand',
     align: 'left',
     minWidth: 300,
     resizable: true,
+    slots: {
+      default: 'name',
+      content: 'expandContent'
+    }
   },
   {
     title: '编码',
@@ -42,6 +47,7 @@ export const personalColumns: VxeGridProps['columns'] = [
     title: '操作',
     field: 'action',
     width: 50,
+    slots: {default: 'action'}
   },
   {
     title: '姓名',

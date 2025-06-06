@@ -3,7 +3,7 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { z } from '#/adapter/form';
 import { RemarkDefaultEnum } from '#/enums/commonEnum';
 import {
-  checkEntityExist,
+  checkEntityExist, getListenerTypes,
 } from '#/api/base/flowListener';
 
 export const columns: VxeGridProps['columns'] = [
@@ -105,8 +105,24 @@ export const searchFormSchema: FormSchema[] = [
   {
     fieldName: 'listenerType',
     label: '监听类型',
-    component: 'Select',
+    component: 'ApiSelect',
     labelWidth: 80,
+    componentProps: {
+      // 菜单接口转options格式
+      // afterFetch: (data: { label: string; value: string }[]) => {
+      //   return data.map((item: any) => ({
+      //     label: item.label,
+      //     value: item.value,
+      //   }));
+      // },
+      // 菜单接口
+      api: getListenerTypes,
+      allowClear: true,
+      fieldNames: {
+        value: 'value',
+        label: 'label'
+      },
+    },
   },
   {
     fieldName: 'keyword',
