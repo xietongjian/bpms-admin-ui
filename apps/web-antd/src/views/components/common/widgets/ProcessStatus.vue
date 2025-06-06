@@ -1,12 +1,13 @@
 <template>
   <div v-if="type === 'icon'" class="!w-[120px] !h-[120px] flex items-center justify-center">
-<!--    <Badge :status="statusStyle" :text="statusName" />-->
-    <svg class="opacity-50 w-full h-full" xmlns="http://www.w3.org/2000/svg"
-         width="24"
-         height="24" viewBox="0 0 24 24">
-      <path fill="currentColor" d="M20.39 19.37L16.38 18L15 22l-3.08-6L9 22l-1.38-4l-4.01 1.37l2.92-6A6.97 6.97 0 0 1 5 9a7 7 0 0 1 7-7a7 7 0 0 1 7 7c0 1.65-.57 3.17-1.53 4.37zM7 9l2.69 1.34l-.19 3l2.5-1.66l2.5 1.65l-.17-2.99L17 9l-2.68-1.35l.18-2.98L12 6.31L9.5 4.65l.17 3.01z"/>
-    </svg>
-    <span class="absolute rotate-45 top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 text-[20px]">{{statusName}}</span>
+    <img :alt="statusName"
+         :title="statusName"
+         :src="approveStatusBgSvg"
+         :class="`status_bg_color_${statusStyle}`"
+    />
+    <span class="absolute rotate-[0.258rad] top-[48%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 text-[20px]">
+      {{statusName}}
+    </span>
   </div>
   <div v-else-if="type === 'text'" >
     <Badge :status="statusStyle" :text="statusName" />
@@ -20,7 +21,7 @@
 import { type PropType } from 'vue'
 import {computed, defineProps} from 'vue';
 import {Badge} from 'ant-design-vue';
-
+import approveStatusBgSvg from '#/assets/images/approve-status-bg.svg'
 const props = defineProps({
   status: {
     type: String as PropType<'SPZ' | 'BJ' | 'JQ' | 'ZZ' | 'applying' | 'draft' | 'revoke' | 'end' | 'zz'>,
@@ -51,7 +52,7 @@ function getApproveStatusIcon(){
   } else if (['JQ', 'revoke'].includes(props.status)) {
     // 已驳回
     statusStyle = 'warning';
-  } else if (['ZZ'].includes(props.status)) {
+  } else if (['ZZ', 'zz'].includes(props.status)) {
     // 已终止
     statusStyle = 'error';
   } else {
@@ -62,3 +63,32 @@ function getApproveStatusIcon(){
 }
 
 </script>
+
+<style lang="scss">
+.status_bg_color {
+  &_processing{
+    filter: brightness(73) saturate(80%) invert(62%) sepia(238%) saturate(437%) hue-rotate(168deg) brightness(95%) contrast(221%);
+    &+span {
+      color: #006be6;
+    }
+  }
+  &_error {
+    filter: brightness(73) saturate(80%) invert(62%) sepia(238%) saturate(437%) hue-rotate(290deg) brightness(73%) contrast(221%);
+    &+span {
+      color: red;
+    }
+  }
+  &_success {
+    filter: brightness(26) saturate(24%) invert(62%) sepia(285%) saturate(500%) hue-rotate(107deg) brightness(98%) contrast(167%);
+    &+span {
+      color: #16a652;
+    }
+  }
+  &_default {
+    filter: contrast(0);
+    &+span {
+      color: #888;
+    }
+  }
+}
+</style>

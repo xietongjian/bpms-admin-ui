@@ -16,8 +16,8 @@
           <TabPane key="viewForm" tab="查看表单">
             <ProcessStatus
                 class="text-lg absolute right-0 top-0"
-                :status="'SPZ'"
-                :status-name="'审批中'"
+                :status="procInstInfo.processStatus"
+                :status-name="procInstInfo.processStatusName"
                 type="icon"/>
             <div id="applyInfoId" class="w-full h-full">
               <Collapse size="small" collapsible="header" default-active-key="1" class="mb-2">
