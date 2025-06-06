@@ -13,6 +13,7 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn';
 
 import { $t, setupI18n } from '#/locales';
 
+import FormMakingV3 from '../public/static/form-making/dist/form-making-v3.es.js';
 import { initComponentAdapter } from './adapter/component';
 import { initSetupVbenForm } from './adapter/form';
 import App from './app.vue';
@@ -22,8 +23,6 @@ import 'element-plus/dist/index.css';
 import 'element-plus/theme-chalk/dark/css-vars.css';
 import '../public/static/form-making/dist/index.css';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-
-import FormMakingV3 from '../public/static/form-making/dist/form-making-v3.es.js';
 
 async function bootstrap(namespace: string) {
   // 初始化组件适配器
