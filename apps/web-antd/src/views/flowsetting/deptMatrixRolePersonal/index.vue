@@ -199,8 +199,8 @@
 
       currentRole.value = column.params;
       currentRow.value = row;
-      personalSelectorModalRef.value.open();
       personalSelectorModalRef.value.setData(personals);
+      personalSelectorModalRef.value.open();
     }
   };
 

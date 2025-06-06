@@ -216,6 +216,8 @@ const changeDesignerTheme = (iframe) => {
     } else {
       iframeWindow.document.body.removeAttribute('arco-theme');
     }
+    debugger;
+    iframeWindow.toggleLang('zh_CN');
   }
 };
 
@@ -247,38 +249,4 @@ defineExpose({
     height: 100%;
   }
 }
-</style>
-
-<style lang="scss" scoped>
-/*@prefix-cls: ~'@{namespace}-iframe-page';
-
-.@{prefix-cls} {
-  .ant-spin-nested-loading {
-    position: relative;
-    height: 100%;
-
-    .ant-spin-container {
-      width: 100%;
-      height: 100%;
-      padding: 10px;
-    }
-  }
-
-  &__mask {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  &__main {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: @component-background;
-    border: 0;
-    box-sizing: border-box;
-  }
-}*/
 </style>

@@ -100,7 +100,7 @@ function handleNoticeClear() {
 
 
 onMounted(() => {
-  debugger;
+  console.log('================================布局初始化');
 });
 
 function handleMakeAll() {

@@ -1,7 +1,8 @@
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
+import {FormValidPatternEnum, OrderNoDefaultEnum, RemarkDefaultEnum} from '#/enums/commonEnum';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {z} from "@vben/common-ui";
+import {checkEntityExist} from "#/api/org/role";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -86,6 +87,16 @@ export const searchFormSchema: FormSchema[] = [
     },
     labelWidth: 60,
   },
+  {
+    fieldName: 'companyId',
+    label: 'companyId',
+    component: 'Input',
+    defaultValue: 0,
+    dependencies: {
+      show: false,
+      triggerFields: ['companyId']
+    }
+  },
 ];
 
 export const roleFormSchema: FormSchema[] = [
@@ -102,29 +113,49 @@ export const roleFormSchema: FormSchema[] = [
     fieldName: 'name',
     label: '名称',
     component: 'Input',
-    required: true,
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '编码不能为空！',
-      },
-      {
-        max: 64,
-        message: '字符长度不能大于64！',
-      },
-    ],*/
-    colProps: {
-      span: 24,
-    },
+    rules: z
+        .string({
+          required_error: '名称不能为空',
+        })
+        .trim()
+        .min(1, "名称不能为空")
+        .max(64, "字符长度不能大于64！"),
   },
   {
     fieldName: 'sn',
     label: '编码',
     component: 'Input',
-    required: true,
-    colProps: {
-      span: 24,
+    dependencies: {
+      rules(values) {
+        const { id, sn } = values;
+        return z
+            .string({
+              required_error: "编码不能为空"
+            })
+            .min(1, "编码不能为空")
+            .max(60, '字符长度不能大于60！')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'sn',
+                      fieldValue: sn,
+                      fieldName: '编码',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '编码已存在',
+                },
+            );
+      },
+      triggerFields: ['code'],
     },
   },
   {

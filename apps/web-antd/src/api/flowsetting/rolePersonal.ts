@@ -78,7 +78,7 @@ export const getMatrixPersonal = (params: any) => {
 };
 
 export const saveOrUpdate = (params: any) =>
-  requestClient.post<any>(Api.SaveOrUpdate, params, { isReturnNativeResponse: true });
+  requestClient.post<any>(Api.SaveOrUpdate, params, { responseReturn: 'body' });
 
 export const saveOrUpdateRoleScope = (params: any) =>
   requestClient.post<any>(Api.SaveOrUpdateRoleScope, params,

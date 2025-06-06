@@ -18,6 +18,9 @@ import RoleModal from './RoleModal.vue';
 
 import { columns, searchFormSchema } from './role.data';
 import {getCompanies} from "#/api/org/company";
+import {saveOrUpdateRoleScope} from "#/api/flowsetting/rolePersonal";
+import OrgSelectorModal from "#/components/selector/org-selector/org-selector-modal.vue";
+
 // import { OrgSelectType } from '@/components/Selector/src/types';
 // import SplitPane from '#/views/components/splitPane/index.vue';
 
@@ -25,7 +28,7 @@ import {getCompanies} from "#/api/org/company";
 // 人员选择弹窗
 // const [registerOrgModal, { openModal: openOrgSelector, setModalProps: setOrgModalProps }] =
 //   useModal();
-
+const roleModalRef = ref(), orgSelectorModalRef = ref();
 const currentRole = ref<Recordable<any>>({});
 const currentNode = ref<Recordable<any>>({});
 
@@ -86,7 +89,9 @@ const gridOptions: VxeGridProps<any> = {
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
-
+        // roleType: 0, companyId: node ? node.id : ''
+        const {id} = currentNode.value;
+        formValues.companyId = id;
         return await getRoleListByPage({
           query: {
             pageNum: page.currentPage,
@@ -135,17 +140,42 @@ function createActions(record: Recordable<any>) {
 
 function handleCreate() {
   const companyId = currentNode.value.id;
-  openModal(true, {
-    record: { companyId: companyId },
-    isUpdate: false,
+
+  roleModalRef.value.setData({
+    companyId
   });
+  roleModalRef.value.setState({
+    title: '添加角色'
+  });
+  roleModalRef.value.open();
 }
 
 function handleEdit(record: Recordable<any>) {
-  openModal(true, {
-    record,
-    isUpdate: true,
+  roleModalRef.value.setData(record);
+  roleModalRef.value.setState({
+    title: '编辑'
   });
+  roleModalRef.value.open();
+}
+
+async function handleSettingPersonalSuccess(selectedPersonal) {
+  // tableApi.setLoading(true);
+  const personals = selectedPersonal.map((item) => item.code);
+  const data = {
+    orgId: unref(currentRow).id,
+    orgType: 2,
+    roleVo: {
+      roleId: unref(currentRole).id,
+      personalCodes: personals,
+    },
+  };
+  const {success, msg} = await saveOrUpdateRoleScope(data);
+  if (success) {
+    message.success(msg);
+    // 根据角色ID和组织（部门）ID刷新某个单元格的数据
+    await reloadRolePersonal(unref(currentRole).id, unref(currentRow).id);
+  }
+  //tableApi.setLoading(false);
 }
 
 // 人员选择弹窗
@@ -157,7 +187,15 @@ function handleSettingCompany(record: Recordable<any>) {
       });
   // 加载已选择的数据
   currentRole.value = record;
-  openOrgSelector(true, {
+
+  orgSelectorModalRef.value.setData({
+    selectedList,
+    multiSelect: true,
+    selectType: 'company'
+  });
+  orgSelectorModalRef.value.open();
+
+  /*openOrgSelector(true, {
     selectorProps: {
       multiple: true,
       selectType: OrgSelectType.COMPANY,
@@ -173,23 +211,20 @@ function handleSettingCompany(record: Recordable<any>) {
     height: 450,
     showOkBtn: true,
     showCancelBtn: true,
-  });
+  });*/
 }
 
-function handleDelete(record: Recordable<any>) {
+async function handleDelete(record: Recordable<any>) {
   if (record.children && record.children.length > 0) {
     message.warning('有子节点，不能删除！');
     return;
   }
-  deleteByIds({ id: record.id }).then((res) => {
-    tableApi.reload();
-  });
+  await deleteByIds({ id: record.id });
+  tableApi.reload();
 }
 
 function handleSuccess() {
-  setTimeout(() => {
-    tableApi.reload();
-  }, 200);
+  tableApi.reload();
 }
 
 // 人员选择后回调
@@ -201,14 +236,13 @@ function handleSettingOrgSuccess(items: any[]) {
 
   saveBatch(data).then((res) => {
     tableApi.reload();
+    message.success(res.msg);
   });
 }
 
 function handleSelect(node: any) {
   currentNode.value = node;
-  const searchInfo = { searchInfo: { roleType: 0, companyId: node ? node.id : '' } };
-  // setProps(searchInfo);
-  tableApi.reload(searchInfo);
+  tableApi.reload();
 }
 
 </script>
@@ -264,8 +298,8 @@ function handleSelect(node: any) {
         </template>
       </BasicTable>
     </div>
-    <RoleModal ref="roleModalRef" @register="registerModal" @success="handleSuccess" />
-    <OrgSelectorModal @register="registerOrgModal" @change="handleSettingOrgSuccess" />
+    <RoleModal ref="roleModalRef" @success="handleSuccess" />
+    <OrgSelectorModal ref="orgSelectorModalRef" @change="handleSettingOrgSuccess" />
   </ColPage>
 </template>
 

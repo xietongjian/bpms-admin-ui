@@ -1,13 +1,15 @@
 <template>
-  <div class="bg-card h-full">
+  <div class="bg-card h-full w-full">
     <BasicTree
+        ref="basicTreeRef"
+        title="公司"
         :show-search="true"
         :show-toolbar="true"
         :tree-data="treeData"
         class="h-full flex flex-col"
         size="small"
         @select="handleSelect"
-        title="公司"
+        :height="treeHeight"
     />
 <!--    <div class="h-[30px] leading-[30px] font-md font-bold">
       公司
@@ -41,13 +43,14 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, ref, watch, unref, nextTick, defineEmits } from 'vue';
-  import { getCompanies } from '#/api/org/company';
+  import { onMounted, ref, computed, unref, nextTick, defineEmits } from 'vue';
+  import {getCompanies, getCompanyTreeData} from '#/api/org/company';
   import { findNode } from '#/utils/helper/treeHelper';
   import {Tree} from "ant-design-vue";
   import {HomeTwoTone, HomeOutlined, SmileOutlined} from "@ant-design/icons-vue";
   import {BasicTree} from "#/components/tree";
   import { useUserStore } from '@vben/stores';
+  import {useElementSize} from "@vueuse/core";
 
   const userStore = useUserStore();
 
@@ -66,11 +69,15 @@
 
   const treeData = ref<any[]>([]);
   const treeLoading = ref<boolean>(false);
-  const treeRef = ref(null);
+  const basicTreeRef = ref(null);
+  const { height } = useElementSize(basicTreeRef);
 
+  const treeHeight = computed(() => {
+    return height.value - 70;
+  })
   async function fetch() {
     treeLoading.value = true;
-    getCompanies()
+    getCompanyTreeData()
       .then((res) => {
         treeData.value = res || [];
         nextTick(() => {
@@ -85,7 +92,7 @@
       });
   }
 
-  function handleSelect(node) {
+  function handleSelect(node: any) {
     emit('select', node);
   }
 

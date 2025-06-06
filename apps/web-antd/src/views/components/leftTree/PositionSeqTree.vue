@@ -1,40 +1,38 @@
 <template>
-  <div class="bg-card h-full" v-loading="treeLoading">
+  <div class="bg-card h-full w-full">
     <BasicTree
       ref="basicTreeRef"
+      title="岗位序列"
       :show-search="true"
       :show-toolbar="true"
-      :tree-data="treeData"
       class="h-full flex flex-col"
       size="small"
+      :tree-data="treeData"
       @select="handleSelect"
-      title="组织"
       :height="treeHeight"
-
     />
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, ref, unref, computed, nextTick, defineEmits } from 'vue';
+import {onMounted, ref, unref, nextTick, defineEmits, computed} from 'vue';
   import {BasicTree} from "#/components/tree";
-  import { getOrgTree } from '#/api/org/dept';
-  import { findNode } from '#/utils/helper/treeHelper';
-  import type { Nullable } from '@vben/types';
-  import {useElementSize} from "@vueuse/core";
+  import { getPositionSeqs } from '#/api/org/positionSeq';
+  import { useElementSize } from '@vueuse/core'
 
   const emit = defineEmits(['select']);
 
-  const treeData = ref<[]>([]);
+  const treeData = ref<any[]>([]);
   const treeLoading = ref<boolean>(false);
-  const basicTreeRef = ref<Nullable<any>>(null);
+  const basicTreeRef = ref<any>(null);
   const { height } = useElementSize(basicTreeRef);
 
   const treeHeight = computed(() => {
     return height.value - 70;
   })
+
   async function fetch() {
     treeLoading.value = true;
-    getOrgTree()
+    getPositionSeqs()
       .then((res) => {
         treeData.value = res || [];
         nextTick(() => {
@@ -50,6 +48,11 @@
   }
 
   function handleSelect(node: any) {
+    // const node = findNode(treeData.value, (item) => item.id === keys[0], {
+    //   id: 'id',
+    //   pid: 'pid',
+    //   children: 'children',
+    // });
     emit('select', node);
   }
 

@@ -242,6 +242,7 @@ function handleSettingPersonalSuccess(selectedPersonal) {
       personalCodes: personals,
     },
   };
+
   setTimeout(() => {
     saveOrUpdate(data)
         .then((res) => {
@@ -249,7 +250,7 @@ function handleSettingPersonalSuccess(selectedPersonal) {
           reloadRolePersonal(unref(currentRole).id, searchPersonTxt.value[unref(currentRole).id]);
         })
         .finally(() => {
-          setLoading(false);
+          // setLoading(false);
         });
   }, 500);
 }

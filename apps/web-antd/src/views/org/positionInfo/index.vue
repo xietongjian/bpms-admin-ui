@@ -11,7 +11,7 @@ import {Button, Popconfirm, message, Tag} from 'ant-design-vue';
 import type {VbenFormProps} from '@vben/common-ui';
 import {ColPage} from '@vben/common-ui';
 import {TableAction} from '#/components/table-action';
-
+import PositionSeqTree from '#/views/components/leftTree/PositionSeqTree.vue';
 import {columns, searchFormSchema} from './positionInfo.data';
 import type {Recordable} from '@vben/types';
 
@@ -161,7 +161,7 @@ function createActions(record: Recordable<any>) {
       :auto-content-height="true"
       content-class="h-full">
     <template #left>
-      <PositionSeqTree class="w-1/4 xl:w-1/5" @select="handleSelect"/>
+      <PositionSeqTree @select="handleSelect"/>
     </template>
     <BasicTable>
       <template #toolbar-tools>

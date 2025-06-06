@@ -9,7 +9,7 @@ enum Api {
 }
 
 export const getPositionSeqs = (params?: any) => {
-  const result = requestClient.post<any>(Api.GetPositionSeqs, params );
+  const result = requestClient.post<any>(Api.GetPositionSeqs, params||{} );
   return Promise.resolve(result).then((res: any) => {
     res.forEach((item) => {
       item.key = item.id;

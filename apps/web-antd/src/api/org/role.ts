@@ -110,7 +110,7 @@ export const saveOrUpdate = (params?: any) =>
   requestClient.post<any>(Api.SaveOrUpdate, params, {responseReturn: 'body'});
 
 export const saveBatch = (params: any) =>
-  requestClient.post(Api.SaveBatch, params);
+  requestClient.post(Api.SaveBatch, params, {responseReturn: 'body'});
 
 export const addPersonalRoles = (params: any) =>
   requestClient.post<any>(Api.AddPersonalRoles + '/' + params.roleId, params.personalList);
