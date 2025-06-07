@@ -10,7 +10,7 @@
         </Tooltip>
         <Tooltip placement="top" title="流程图预览">
           <TypographyLink
-            @click="handleBpmnPreview(row.processDefinitionKey, row.processInstanceId)">
+            @click="handleBpmnPreview(row.processDefinitionId.split(':')[0], row.processInstanceId)">
             <PartitionOutlined class="mr-2"/>
           </TypographyLink>
         </Tooltip>
@@ -98,14 +98,14 @@ function handleViewForm(record: Recordable<any>) {
   processFormPreviewDrawerRef.value.setData({
     ...record,
     procInstId: record.processInstanceId,
-    modelKey: record.processDefinitionKey,
-    showOperation: true,
+    modelKey: record.processDefinitionId.split(":")[0],
+    showOperation: false,
   });
   processFormPreviewDrawerRef.value.open();
   processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.title}】的表单`});
 }
 
-function handleBpmnPreview(modelKey, procInstId) {
+function handleBpmnPreview(modelKey: string, procInstId: string) {
   bpmnPreviewModalRef.value.setData({modelKey, procInstId});
   bpmnPreviewModalRef.value.open();
 }

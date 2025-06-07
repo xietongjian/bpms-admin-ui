@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height class="">
-    <div class="flex flex-row w-full h-full">
+    <div class="flex flex-row h-full">
       <DictTypeTree
           @select="handleDictTypeSelect"
           class="w-1/5 mr-2"
@@ -8,11 +8,11 @@
       <DictionaryTable
           ref="dictionaryRef"
           @handle-select="handleDictSelect"
-          class="w-2/5 mr-2"
+          class="w-2/5 flex-1 mr-2"
       />
       <DictionaryItemTable
           ref="dictionaryItemRef"
-          class="w-2/5"
+          class="w-2/5 flex-1"
       />
     </div>
   </Page>
@@ -24,20 +24,19 @@
   import DictionaryTable from './DictionaryTable.vue';
   import DictionaryItemTable from './DictionaryItemTable.vue';
 
-  // const [registerModal, { openModal }] = useModal();
   const dictionaryRef = ref();
   const dictionaryItemRef = ref();
 
-  function handleDictTypeSelect(dictTypeId = '') {
-    if (dictTypeId) {
-      dictionaryRef.value.filterByDictType(dictTypeId);
+  function handleDictTypeSelect(node: any) {
+    if (node) {
+      dictionaryRef.value.filterByDictType(node.id);
       dictionaryItemRef.value.cleanTableData();
     } else {
       dictionaryRef.value.cleanTableData();
     }
   }
 
-  function handleDictSelect(dictId) {
+  function handleDictSelect(dictId: string) {
     if (dictId) {
       dictionaryItemRef.value.filterByDict(dictId);
     } else {

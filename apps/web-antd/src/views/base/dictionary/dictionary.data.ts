@@ -10,6 +10,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '名称',
     field: 'cname',
     align: 'left',
+    type: 'radio'
   },
   /*  {
     title: '英文名称',
@@ -21,6 +22,13 @@ export const columns: VxeGridProps['columns'] = [
     field: 'code',
     width: 120,
     align: 'left',
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 
@@ -169,6 +177,13 @@ export const itemColumns: VxeGridProps['columns'] = [
     field: 'orderNo',
     width: 80,
     align: 'right',
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: {default: 'action'},
+    title: '操作',
+    width: 120,
   },
 ];
 

@@ -1,3 +1,6 @@
 export type CustomComponentType =
-  | 'PersonalSelector';
+  | 'PersonalSelector'
+  | 'FlowModelSelector'
+  | 'OrgSelector'
+    ;
   // | 'ApiTreeSelect';

@@ -67,12 +67,13 @@ const gridOptions: VxeGridProps<any> = {
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
+        formValues.positionSeqId = currentTreeNode.value?.id;
         return await getPagerModel({
           query: {
             pageNum: page.currentPage,
             pageSize: page.pageSize,
           },
-          entity: formValues || {},
+          entity: formValues,
         });
       },
     },
@@ -120,9 +121,7 @@ function handleSuccess() {
 
 function handleSelect(node: any) {
   currentTreeNode.value = node;
-  let searchInfo = {positionSeqId: node ? node.id : ''};
-  // setProps({searchInfo: searchInfo});
-  tableApi.reload({searchInfo});
+  tableApi.reload();
 }
 
 function createActions(record: Recordable<any>) {

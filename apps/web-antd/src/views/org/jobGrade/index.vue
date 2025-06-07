@@ -44,7 +44,6 @@ import { TableAction } from '#/components/table-action';
 
 const PerPrefix = 'JobGrade:';
 
-// const [registerModal, {openModal, setModalProps}] = useModal();
 const currentTreeNode = ref<Recordable<any>>({});
 
 const jobGradeModalRef = ref();
@@ -135,10 +134,14 @@ function handleEdit(record: Recordable<any>) {
   });
 }
 
-function handleDelete(record: Recordable<any>) {
-  deleteById([record.id]).then(() => {
+async function handleDelete(record: Recordable<any>) {
+  const {success, msg} = await deleteById([record.id]);
+  if (success) {
     tableApi.reload();
-  });
+    message.success(msg);
+  } else {
+    message.error(msg);
+  }
 }
 
 function handleSuccess() {

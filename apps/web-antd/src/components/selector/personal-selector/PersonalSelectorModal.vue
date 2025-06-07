@@ -19,8 +19,8 @@
         <a class="p-1 cursor-pointer invisible group-hover:visible "><CloseCircleOutlined /></a>
       </span>
     </div>
-    <div ref="selectorContainerRef" class="flex-1 flex p-0 h-0">
-      <div class="w-[30%] flex flex-col h-full border border-blue-400">
+    <div ref="selectorContainerRef" class="flex-1 flex p-0 h-0 gap-2">
+      <div class="w-[30%] flex flex-col h-full border border-gray-200">
         <div class="h-8 border-b leading-8 pl-2">
           组织
         </div>

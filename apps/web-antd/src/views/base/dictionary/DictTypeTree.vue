@@ -1,34 +1,45 @@
 <template>
-  <div class="bg-card mr-0 overflow-hidden h-full">
-    <Tree
-      title="数据分类"
-      toolbar
-      search
-      treeWrapperClassName="h-[calc(100%-35px)] overflow-auto"
-      :clickRowToExpand="false"
-      :treeData="treeData"
-      @select="handleSelect"
+  <div class="bg-card h-full">
+    <BasicTree
+        ref="basicTreeRef"
+        title="字典分类"
+        :show-search="true"
+        :show-toolbar="true"
+        class="h-full w-full flex flex-col"
+        size="small"
+        :tree-data="treeData"
+        @select="handleSelect"
+        :height="treeHeight"
+        :field-names="{children:'children', title:'name', key:'id' }"
     />
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, ref, defineEmits } from 'vue';
-  import { getDicTypes } from '#/api/base/dicType';
-  import {Tree} from 'ant-design-vue';
+import {onMounted, ref, defineEmits, computed} from 'vue';
+import {getDicTypes} from '#/api/base/dicType';
+import {BasicTree} from "#/components/tree";
+import {useElementSize} from '@vueuse/core'
 
-  const emit = defineEmits(['select']);
+const emit = defineEmits(['select']);
 
-  const treeData = ref<any[]>([]);
+const treeData = ref<any[]>([]);
+const treeLoading = ref<boolean>(false);
+const basicTreeRef = ref<any>(null);
+const {height} = useElementSize(basicTreeRef);
 
-  async function fetch() {
-    treeData.value = (await getDicTypes()) as unknown as any[];
-  }
+const treeHeight = computed(() => {
+  return height.value - 70;
+})
 
-  function handleSelect(keys: string, e) {
-    emit('select', keys[0]);
-  }
+async function fetch() {
+  treeData.value = (await getDicTypes()) as unknown as any[];
+}
 
-  onMounted(() => {
-    fetch();
-  });
+function handleSelect(node: any) {
+  emit('select', node);
+}
+
+onMounted(() => {
+  fetch();
+});
 </script>

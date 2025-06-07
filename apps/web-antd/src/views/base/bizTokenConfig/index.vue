@@ -82,14 +82,19 @@
       labelWidth: 60,
     },
     wrapperClass: 'grid-cols-2 md:grid-cols-1 lg:grid-cols-3',
-    actionWrapperClass: 'col-span-2 col-start-3 text-left ml-4',
+    actionWrapperClass: 'col-span-2 col-start-3 text-left ml-2',
     resetButtonOptions: {
       show: false,
     },
     schema: searchFormSchema,
+    handleValuesChange: (values, fieldsChanged) => {
+      if(fieldsChanged.includes('type')){
+        tableApi.formApi.submitForm();
+      }
+    }
   };
 
-  const gridOptions: VxeGridProps<any> = {
+  const gridOptions: VxeGridProps = {
     columns,
     columnConfig: {resizable: true},
     height: 'auto',

@@ -42,7 +42,7 @@
         <Tag class="text-blue-500" v-if="row.type === 'dingtalk'">钉钉</Tag>
       </template>
     </BasicTable>
-    <PlatformConfigModal ref="platformConfigModalRef" @register="registerModal" @success="handleSuccess"/>
+    <PlatformConfigModal ref="platformConfigModalRef" @success="handleSuccess"/>
   </Page>
 </template>
 <script lang="ts" setup>
@@ -72,7 +72,8 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+  actionWrapperClass: 'col-span-1 col-start-2 text-left ml-2',
   resetButtonOptions: {
     show: false,
   },

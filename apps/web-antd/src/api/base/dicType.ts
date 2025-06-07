@@ -7,7 +7,7 @@ enum Api {
   CheckEntityExist = '/flow/base/dicType/checkEntityExist',
 }
 
-export const getDicTypes = (params?: any) => {
+export const getDicTypes = (params = {}) => {
   const result = requestClient.post<any>(Api.GetDicTypes, params);
   return Promise.resolve(result).then((res) => {
     res.forEach((item) => {

@@ -135,7 +135,7 @@
   watch(
     () => props.historyList, //监听
     () => {
-      const res = props.historyList;
+      const res = props.historyList || [];
       const result = [];
       for (let i = 0; i < res.length; i++) {
         let item = res[i];

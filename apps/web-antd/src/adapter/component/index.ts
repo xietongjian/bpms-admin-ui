@@ -23,7 +23,7 @@ import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
 
-import { OrgSelector, PersonalSelector } from '#/components/selector';
+import { OrgSelector, PersonalSelector, FlowModelSelector } from '#/components/selector';
 
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),
@@ -194,6 +194,7 @@ async function initComponentAdapter() {
       );
     },
     PersonalSelector: withDefaultPlaceholder(PersonalSelector, 'select', {}),
+    FlowModelSelector: withDefaultPlaceholder(FlowModelSelector, 'select', {}),
     /* PersonalSelector: (props, { attrs, slots }) => {
       return h(
         PersonalSelector,

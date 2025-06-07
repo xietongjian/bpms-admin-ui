@@ -121,7 +121,6 @@ const gridOptions: VxeGridProps = {
   columns,
   columnConfig: {resizable: true},
   height: 'auto',
-  maxHeight: '100%',
   border: false,
   keepSource: true,
   autoResize: false,

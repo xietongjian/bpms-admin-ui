@@ -10,6 +10,8 @@
       :tree-data="treeData"
       @select="handleSelect"
       :height="treeHeight"
+      :field-names="{children:'children', title:'name', key:'id' }"
+
     />
   </div>
 </template>
@@ -48,11 +50,6 @@ import {onMounted, ref, unref, nextTick, defineEmits, computed} from 'vue';
   }
 
   function handleSelect(node: any) {
-    // const node = findNode(treeData.value, (item) => item.id === keys[0], {
-    //   id: 'id',
-    //   pid: 'pid',
-    //   children: 'children',
-    // });
     emit('select', node);
   }
 

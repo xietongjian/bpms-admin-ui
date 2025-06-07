@@ -142,7 +142,7 @@
         return;
       }
       const values = await formApi.getValues();
-      const {success, msg} = await saveOrUpdateItem(values);
+      const {success, msg} = await saveOrUpdate(values);
       if(success){
         modalApi.close();
         emit('success');
@@ -150,6 +150,8 @@
       } else {
         message.error(msg);
       }
+    } catch (e){
+      console.error(e);
     } finally {
       modalApi.setState({loading: false, confirmLoading: false});
     }

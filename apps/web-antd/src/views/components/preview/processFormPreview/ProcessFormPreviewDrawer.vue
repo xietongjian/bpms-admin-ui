@@ -232,6 +232,7 @@
   const [BasicDrawer, drawerApi] = useVbenDrawer({
     class: 'w-[1000px]',
     footer: false,
+    destroyOnClose: true,
     footerClass: 'justify-start p-0',
     showCancelButton: false,
     showConfirmButton: false,

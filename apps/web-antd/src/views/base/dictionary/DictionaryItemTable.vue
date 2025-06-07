@@ -1,38 +1,11 @@
 <template>
   <div class="bg-card overflow-hidden dictionary h-full">
-    <BasicTable >
-      <template #toolbar>
-        <Authority :value="'Dictionary:' + PerEnum.ADD">
-          <Button v-if="dictId !== ''" type="primary" @click="handleCreate">新增</Button>
-        </Authority>
+    <BasicTable table-title="字典项" >
+      <template #toolbar-tools>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" :disabled="dictId === ''" type="primary" @click="handleCreate">新增</Button>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction
-            :actions="[
-              {
-                auth: 'Dictionary:' + PerEnum.UPDATE,
-                tooltip: '修改字典项',
-                icon: 'clarity:note-edit-line',
-                onClick: handleEdit.bind(null, record),
-              },
-              {
-                auth: 'Dictionary:' + PerEnum.DELETE,
-                tooltip: '删除',
-                icon: 'ant-design:delete-outlined',
-                danger: true,
-                popConfirm: {
-                  title: '是否确认删除',
-                  confirm: handleDelete.bind(null, record),
-                  placement: 'left',
-                  okButtonProps: {
-                    danger: true
-                  }
-                },
-              },
-            ]"
-          />
-        </template>
+      <template #action="{ row }">
+        <TableAction :actions="createActions(row)" />
       </template>
     </BasicTable>
     <DictionaryItemModal ref="dictionaryItemModalRef" @success="handleSuccess" />
@@ -44,7 +17,7 @@
   import type {VxeGridProps} from '#/adapter/vxe-table';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {Recordable} from '@vben/types';
-  import {TableAction} from '#/components/table-action';
+  import { TableAction } from '#/components/table-action';
   import {useVbenVxeGrid} from "#/adapter/vxe-table";
   import {Button, message} from 'ant-design-vue';
 
@@ -53,33 +26,10 @@
   import { itemColumns, dictionaryItemSearchFormSchema } from './dictionary.data';
   import DictionaryItemModal from './DictionaryItemModal.vue';
 
+  const PerPrefix = 'Dictionary:';
   const dictId = ref<string>('');
 
   const dictionaryItemModalRef = ref();
-
- /* const [registerModal, { openModal, setModalProps }] = useModal();
-  const [registerTable, { reload, setProps, setTableData }] = useTable({
-    title: '字典项列表',
-    api: dictionaryItemPageList,
-    columns: itemColumns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: dictionaryItemSearchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    immediate: false,
-    useSearchForm: true,
-    showIndexColumn: false,
-    showTableSetting: false,
-    bordered: true,
-    actionColumn: {
-      width: 80,
-      title: '操作',
-      dataIndex: 'action',
-    },
-  });*/
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -105,6 +55,7 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
+          formValues.mainId = dictId.value;
           return dictionaryItemPageList({
             query: {
               pageNum: page.currentPage,
@@ -124,36 +75,66 @@
       message.warning('请选择数据字典！', 2);
       return;
     }
-    setModalProps({ title: '新增字典项' });
-    openModal(true, {
-      record: { mainId: dictId.value },
-      isUpdate: false,
+    dictionaryItemModalRef.value.setData({ mainId: dictId.value });
+    dictionaryItemModalRef.value.setState({
+      title: '新增字典项'
     });
+    dictionaryItemModalRef.value.open();
   }
 
   function filterByDict(param) {
     dictId.value = param;
-    setProps({ searchInfo: { mainId: dictId.value } });
-    tableApi.reload({ page: 1 });
+    tableApi.reload();
+  }
+
+  function createActions(record: Recordable<any>) {
+    return [
+      {
+        auth: [PerPrefix + PerEnum.UPDATE],
+        tooltip: '修改字典项',
+        icon: 'clarity:note-edit-line',
+        onClick: handleEdit.bind(null, record),
+      },
+      {
+        auth: [PerPrefix + PerEnum.DELETE],
+        tooltip: '删除',
+        icon: 'ant-design:delete-outlined',
+        danger: true,
+        popConfirm: {
+          title: '是否确认删除',
+          confirm: handleDelete.bind(null, record),
+          placement: 'left',
+          okButtonProps: {
+            danger: true
+          }
+        },
+      },
+    ];
   }
 
   function cleanTableData() {
-    setTableData([]);
+    tableApi.grid.clearData();
     dictId.value = '';
   }
 
   function handleEdit(record: Recordable<any>) {
-    setModalProps({ title: '修改字典项' });
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });
+    dictionaryItemModalRef.value.setData(record);
+    dictionaryItemModalRef.value.setState({ title: '修改字典项' });
+    dictionaryItemModalRef.value.open();
   }
 
-  function handleDelete(record: Recordable<any>) {
-    deleteItemByIds(record.id).then(() => {
-      tableApi.reload();
-    });
+  async function handleDelete(record: Recordable<any>) {
+    try {
+      const {success, msg} = await deleteItemByIds(record.id);
+      if (success) {
+        message.success(msg);
+        tableApi.reload();
+      } else {
+        message.error(msg);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   function handleSuccess() {

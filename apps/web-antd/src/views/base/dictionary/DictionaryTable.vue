@@ -1,16 +1,15 @@
 <template>
   <div class="bg-white overflow-hidden dictionary h-full">
     <BasicTable
+      table-title="数据字典"
       @row-click="clickDictionary"
       @selection-change="changeDictionary"
     >
       <template #toolbar-tools>
-        <Button v-access:code="PerPrefix+PerEnum.ADD" v-if="dictTypeId !== ''" type="primary" @click="handleCreate">新增</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" :disabled="dictTypeId === ''" type="primary" @click="handleCreate">新增</Button>
       </template>
       <template #action="{row}">
-        <TableAction
-            :actions="createActions(row)"
-        />
+        <TableAction :actions="createActions(row)" />
       </template>
     </BasicTable>
     <DictionaryModal ref="dictionaryModalRef" @success="handleSuccess" />
@@ -18,28 +17,23 @@
 </template>
 <script lang="ts" setup>
   import { ref, defineExpose } from 'vue';
-  import type {VxeGridProps} from '#/adapter/vxe-table';
+  import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {Recordable} from '@vben/types';
   import {TableAction} from '#/components/table-action';
-
   import { PerEnum } from '#/enums/perEnum';
   import { dictionaryPageList, deleteByIds } from '#/api/base/dictionary';
-
   import { useAccess } from '@vben/access';
-
   import { columns, searchFormSchema } from './dictionary.data';
-  import {Button, Space, Image, Tag, message} from 'ant-design-vue';
-
+  import {Button, message} from 'ant-design-vue';
   import DictionaryModal from './DictionaryModal.vue';
   import {useVbenVxeGrid} from "#/adapter/vxe-table";
 
-  const PerPrefix = "Group:";
+  const PerPrefix = "Dictionary:";
   const emit = defineEmits(['handleSelect']);
 
   const dictionaryModalRef = ref();
   const dictTypeId = ref<string>('');
-
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -55,16 +49,23 @@
     schema: searchFormSchema,
   };
 
-  const gridOptions: VxeGridProps<any> = {
+  const gridOptions: VxeGridProps = {
     columns,
     columnConfig: {resizable: true},
     height: 'auto',
+    radioConfig: {
+      trigger: 'row',
+      labelField: 'cname',
+      highlight: true,
+      strict: true,
+    },
     keepSource: true,
     border: false,
     stripe: true,
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
+          formValues.dicTypeId = dictTypeId.value;
           return dictionaryPageList({
             query: {
               pageNum: page.currentPage,
@@ -77,19 +78,26 @@
     },
   };
 
-  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+  const gridEvents: VxeGridListeners = {
+    radioChange: ({row}) => {
+      if (row) {
+        emit('handleSelect', row.id);
+      }
+    }
+  };
 
+  const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
 
   function createActions(row: Recordable<any>) {
     return [
       {
-        auth: 'Dictionary:' + PerEnum.UPDATE,
+        auth: [PerPrefix + PerEnum.UPDATE],
         tooltip: '修改',
         icon: 'clarity:note-edit-line',
         onClick: handleEdit.bind(null, row),
       },
       {
-        auth: 'Dictionary:' + PerEnum.DELETE,
+        auth: [PerPrefix + PerEnum.DELETE],
         tooltip: '删除',
         icon: 'ant-design:delete-outlined',
         danger: true,
@@ -105,35 +113,6 @@
     ];
   }
 
-  /*const [registerModal, { openModal, setModalProps }] = useModal();
-
-  const [registerTable, { reload, setProps, setTableData, getSelectRows, setSelectedRowKeys }] =
-    useTable({
-      title: '数据字典列表',
-      api: dictionaryPageList,
-      columns,
-      formConfig: {
-        labelWidth: 120,
-        schemas: searchFormSchema,
-        showAdvancedButton: false,
-        showResetButton: false,
-        autoSubmitOnEnter: true,
-      },
-      immediate: false,
-      clickToRowSelect: true,
-      rowSelection: { type: 'radio', columnWidth: 40 },
-      useSearchForm: true,
-      showIndexColumn: false,
-      showTableSetting: false,
-      bordered: true,
-      rowKey: 'id',
-      actionColumn: {
-        width: 80,
-        title: '操作',
-        dataIndex: 'action',
-      },
-    });*/
-
   function handleCreate() {
     if (dictTypeId.value === '') {
       message.warning('请选择数据类型！', 2);
@@ -146,15 +125,14 @@
     });
   }
 
-  function filterByDictType(typeId) {
+  function filterByDictType(typeId: string) {
     dictTypeId.value = typeId;
-    setProps({ searchInfo: { dicTypeId: typeId } });
-    reload({ page: 1 });
+    tableApi.reload();
   }
 
   function cleanTableData() {
-    setTableData([]);
     dictTypeId.value = '';
+    tableApi.reload();
   }
 
   function handleEdit(record: Recordable<any>, e) {
@@ -171,10 +149,14 @@
     e.stopPropagation();
   }
 
-  function handleDelete(record: Recordable<any>) {
-    deleteByIds(record.id).then(() => {
+  async function handleDelete(record: Recordable<any>) {
+    const {success, msg} = await deleteByIds(record.id);
+    if (success) {
+      message.success(msg);
       tableApi.reload();
-    });
+    } else {
+      message.error(msg);
+    }
   }
 
   function handleSuccess() {

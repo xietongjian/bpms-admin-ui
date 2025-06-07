@@ -18,15 +18,16 @@ export const dictionaryItemPageList = (params: any) => {
   return requestClient.post<any>(Api.DictionaryItemPageList, params);
 };
 
-export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params);
+export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params, {responseReturn: "body"});
 
 export const saveOrUpdateItem = (params: any) =>
-  requestClient.post<any>(Api.SaveOrUpdateItem, params);
+  requestClient.post<any>(Api.SaveOrUpdateItem, params, {responseReturn: 'body'});
 
-export const deleteByIds = (params: string) => requestClient.post<any>(Api.Delete + '/', params);
+export const deleteByIds = (id: string) =>
+  requestClient.post<any>(Api.Delete + '/' + id, {}, {responseReturn: "body"});
 
-export const deleteItemByIds = (params: string) =>
-  requestClient.post<any>(Api.DeleteItem + '/', params);
+export const deleteItemByIds = (id: string) =>
+  requestClient.post<any>(Api.DeleteItem + '/' + id, {}, {responseReturn: 'body'});
 
 export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);

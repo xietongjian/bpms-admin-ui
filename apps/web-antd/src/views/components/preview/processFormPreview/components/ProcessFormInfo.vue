@@ -1,9 +1,8 @@
 <template>
   <div
     v-loading="loading"
-      v-if="modelKey"
-      class="generate-form-container"
-      style="height: auto"
+    v-if="modelKey"
+    class="generate-form-container h-auto"
   >
     <GenerateForm
         class="generateForm min-h-[200px]"
@@ -14,6 +13,9 @@
         :print-read="printRead"
     />
     <div v-if="showErrorMsg" class="show-error-tip">{{ errorMsg }}</div>
+  </div>
+  <div v-else class="text-center text-xl text-red-400">
+    数据异常-暂无表单数据
   </div>
 </template>
 <script lang="ts" setup>
