@@ -1,36 +1,14 @@
 <template>
-  <Page auto-content-height class="overflow-y-auto">
-<!--    {{configList}}-->
-    <div v-for="(item, index) in configList" :key="index">
-      <FaviconSetting option/>
-      <BasicForm class="bg-card p-4 mb-4" :schema="dynamicFormSchema(item)" />
-<!--      <div v-if="item.configSn.endsWith(IMG_END_WITH)">
-        图片
-
-      </div>-->
-<!--      {{index}}
-      {{item.id}}
-      {{item.image}}
-
-      {{item.remark}}-->
-<!--      {{item.configValue}}-->
-
-
-    </div>
-  </Page>
+  <div>
+    FavIcon
+  </div>
 </template>
 <script lang="ts" setup>
 import {nextTick, ref, onMounted} from 'vue';
 import {PerEnum} from '#/enums/perEnum';
-// import { BasicTable, useTable, TableAction, TableImg } from '@/components/Table';
 import {getSystemConfigListByPage, deleteByIds, saveOrUpdate} from '#/api/base/systemConfig';
 import {Upload, Tooltip, Space, message, Modal, Button} from 'ant-design-vue';
-import { dynamicFormSchema} from './systemConfig.data';
 import type {Recordable} from '@vben/types';
-import {useVbenForm} from "#/adapter/form";
-
-import {Page} from "@vben/common-ui";
-import FaviconSetting from "#/views/base/systemConfig/components/FaviconSetting.vue";
 
 const PerPrefix = 'SystemConfig:';
 
@@ -47,22 +25,6 @@ onMounted(async () => {
 
   configList.value = res.rows;
 })
-
-const [BasicForm, formApi] = useVbenForm({
-  commonConfig: {
-    componentProps: {
-      // class: 'w-full',
-    },
-  },
-  showDefaultActions: true,
-  wrapperClass: 'grid-cols-2 md:grid-cols-1 lg:grid-cols-3',
-  actionWrapperClass: 'col-span-4 col-start-0 text-left ml-0',
-  submitButtonOptions: {
-    content: '保存'
-  },
-  resetButtonOptions: {show: false},
-  layout: 'vertical',
-});
 
 const beforeUpload = (record, file) => {
   setLoading(true);
