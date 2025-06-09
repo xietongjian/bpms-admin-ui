@@ -9,14 +9,12 @@
       </template>
     </BasicTable>
 
-    <div style="width: 500px; margin: auto">
+    <div class="w-[500px] m-auto" >
       <Button
           :loading="gridOptions.loading"
           type="dashed"
-          style="width: 100%"
-          @click="handleAddRow"
-      >添加变量</Button
-      >
+          class="w-full"
+          @click="handleAddRow">添加变量</Button>
       <!--      <a-button type="primary" style="width: 100%;" @click="handleSubmit">保存</a-button>-->
     </div>
     <div class="h-3"></div>
