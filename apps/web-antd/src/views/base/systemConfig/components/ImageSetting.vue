@@ -1,44 +1,23 @@
 <template>
-  <Page auto-content-height class="overflow-y-auto">
-
-    <div v-for="(item, index) in configList" :key="index">
-<!--      <FaviconSetting v-if="item.configSn === 'SYS_FAVICON_IMG'" :data-item="item"/>-->
-      <TextSetting
-          v-if="['SYS_WATERMARK_RULE', 'SYS_BEI_AN_NO', 'SYS_COMPANY_NAME', 'SYS_APP_NAME'].includes(item.configSn)"
-          :data-item="item"
-      />
-<!--      <BasicForm class="bg-card p-4 mb-4" :schema="dynamicFormSchema(item)" />-->
-<!--      <div v-if="item.configSn.endsWith(IMG_END_WITH)">
-        图片
-
-      </div>-->
-<!--      {{index}}
-      {{item.id}}
-      {{item.image}}
-
-      {{item.remark}}-->
-<!--      {{item.configValue}}-->
-
-
-    </div>
-    {{configList}}
-  </Page>
+  <div>
+    {{dataItem}}
+    <img :src="dataItem.imageBase64" class="w-20 h-20" :alt="dataItem.configName" />
+    <Button >保存</Button>
+  </div>
 </template>
 <script lang="ts" setup>
-import {nextTick, ref, onMounted} from 'vue';
-import {PerEnum} from '#/enums/perEnum';
-// import { BasicTable, useTable, TableAction, TableImg } from '@/components/Table';
+import {nextTick, ref, onMounted, defineProps} from 'vue';
 import {getSystemConfigListByPage, deleteByIds, saveOrUpdate} from '#/api/base/systemConfig';
 import {Upload, Tooltip, Space, message, Modal, Button} from 'ant-design-vue';
-import { dynamicFormSchema} from './systemConfig.data';
 import type {Recordable} from '@vben/types';
-import {useVbenForm} from "#/adapter/form";
-
-import {Page} from "@vben/common-ui";
-import FaviconSetting from "./components/ImageSetting.vue";
-import TextSetting from "./components/TextSetting.vue";
 
 const PerPrefix = 'SystemConfig:';
+const props = defineProps({
+  dataItem: {
+    type: Array,
+    default: () => [],
+  },
+})
 
 const configList = ref([]);
 
@@ -53,22 +32,6 @@ onMounted(async () => {
 
   configList.value = res.rows;
 })
-
-const [BasicForm, formApi] = useVbenForm({
-  commonConfig: {
-    componentProps: {
-      // class: 'w-full',
-    },
-  },
-  showDefaultActions: true,
-  wrapperClass: 'grid-cols-2 md:grid-cols-1 lg:grid-cols-3',
-  actionWrapperClass: 'col-span-4 col-start-0 text-left ml-0',
-  submitButtonOptions: {
-    content: '保存'
-  },
-  resetButtonOptions: {show: false},
-  layout: 'vertical',
-});
 
 const beforeUpload = (record, file) => {
   setLoading(true);

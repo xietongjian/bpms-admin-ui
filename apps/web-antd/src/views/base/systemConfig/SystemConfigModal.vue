@@ -4,18 +4,14 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { defineEmits, defineExpose, ref, computed, unref } from 'vue';
+  import { defineEmits, defineExpose} from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from "#/adapter/form";
   import {message} from 'ant-design-vue';
   import { formSchema } from './systemConfig.data';
   import { saveOrUpdate} from '#/api/base/systemConfig';
-  // import { CheckExistParams } from '#/api/model/baseModel';
-  // import { FormValidPatternEnum } from '#/enums/commonEnum';
-  // import {roleFormSchema} from "#/views/org/matrixRole/role.data";
 
   const emit = defineEmits(['success']);
-  const isUpdate = ref(true);
 
   /*const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
@@ -164,9 +160,6 @@
     wrapperClass: 'grid-cols-1',
   });
 
-
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
-
   async function handleSubmit() {
     try {
       modalApi.setState({loading: true, confirmLoading: true});
@@ -178,7 +171,7 @@
       const {success, msg} = await saveOrUpdate(values);
       if(success){
         modalApi.close()
-        message.seccess(msg);
+        message.success(msg);
         emit('success');
       }else{
         message.error(msg);
