@@ -1,6 +1,6 @@
 <template>
-  <div class="w-full h-full">
-    <BasicTable :loading="true" ref="tableRef" class="variable-table !py-1 !px-0" v-bind="gridOptions">
+  <div class="w-full h-auto flex flex-col">
+    <BasicTable ref="tableRef" class="flex-1">
       <template #action="{ row }">
         <TableAction outside :actions="createActions(row)" />
       </template>
@@ -9,27 +9,23 @@
       </template>
     </BasicTable>
 
-    <div class="w-[500px] m-auto" >
+    <div class="w-[500px] m-auto mt-2" >
       <Button
           :loading="gridOptions.loading"
           type="dashed"
           class="w-full"
           @click="handleAddRow">添加变量</Button>
       <!--      <a-button type="primary" style="width: 100%;" @click="handleSubmit">保存</a-button>-->
-    </div>
-    <div class="h-3"></div>
-  </div>
+    </div>  </div>
 </template>
 <script lang="ts" setup>
-import { defineComponent, reactive, ref, unref, watch, onMounted, computed, nextTick } from 'vue';
+import { defineEmits, reactive, ref, unref, watch, onMounted, computed, nextTick } from 'vue';
 import { vxeFlowVariableTableColumns } from './apiInfo.data';
 import {Tag, Button, message, Switch} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {TableAction} from '#/components/table-action';
 
-defineComponent({
-  name: 'ApiVariableSetting',
-});
+const emit = defineEmits(['rowCountChange'])
 
 const props = defineProps({
   variables: {
@@ -41,8 +37,6 @@ const props = defineProps({
     default: 'query',
   }
 });
-
-const loadingRef = ref(false);
 
 const tableRef = ref<any>();
 
@@ -63,13 +57,12 @@ vxeFlowVariableTableColumns.forEach(item => {
 
 const gridOptions = reactive<any>({
   id: 'VxeTable-' + (new Date().getTime()),
-  minHeight: 200,
   maxHeight: 500,
   size: 'small',
   keepSource: true,
   border: false,
-  showOverflow: true,
-  showFooter: true,
+  showOverflow: false,
+  showFooter: false,
   stripe: true,
   loading: false,
   // editConfig: { trigger: 'click', mode: 'cell', showStatus: true },
@@ -89,6 +82,16 @@ const gridOptions = reactive<any>({
     mode: 'row',
     drag: true,
   },
+  footerCellConfig: {
+    height: 0,
+    padding: false,
+  },
+  footerHeight: 0,
+  footerTableData: [],
+  customConfig: {
+    enabled: true,
+    slots: {footer: 'footerOption'}
+  },
   validConfig: {
     autoPos: true,
     showMessage: true,
@@ -100,7 +103,7 @@ const gridOptions = reactive<any>({
       { pattern: '^[a-zA-Z_$][a-zA-Z\\d_$]*$', message: '格式不正确' },
       {
         validator({ cellValue }) {
-          const { fullData } = tableRef.value?.getTableData();
+          const { fullData } = tableApi.grid?.getTableData();
           // 判断是否有重复的key
           const keyMap = {};
           for (let item of fullData) {
@@ -130,16 +133,16 @@ onMounted(async () => {
 });
 
 async function loadData() {
-  // debugger;
-  tableRef.value?.remove();
+  tableApi.grid.remove();
+  // tableRef.value?.remove();
   if (!props.variables) {
     return;
   }
-  const variablesData = JSON.parse(props.variables);
+  const variablesData = props.variables;
   gridOptions.loading = true;
   if (variablesData) {
     variablesData.forEach((item) => {
-      tableRef.value?.insertAt(item, -1);
+      tableApi.grid?.insertAt(item, -1);
     });
   }
   gridOptions.loading = false;
@@ -184,38 +187,43 @@ watch(
 
 async function handleSubmit() {
   gridOptions.loading = true;
-  const $table = tableRef.value;
-  if ($table) {
-    const errMap = await $table.validate();
-    if (errMap) {
-      gridOptions.loading = false;
-    } else {
-      const { fullData } = tableRef.value?.getTableData();
-      // 判断是否有重复的key
-      const keyMap = {};
-      for (let item of fullData) {
-        if (keyMap[item.field]) {
-          message.error({ content: '存在重复的变量标识', style: { marginTop: '40px' } });
-          gridOptions.loading = false;
 
-          return Promise.reject('存在重复的变量标识');
-        }
-        keyMap[item.field] = true;
+  const errMap = await tableApi.grid.validate();
+  if (errMap) {
+    gridOptions.loading = false;
+  } else {
+    const { fullData } = tableApi.grid?.getTableData();
+    // 判断是否有重复的key
+    const keyMap = {};
+    for (let item of fullData) {
+      if (keyMap[item.field]) {
+        message.error({ content: '存在重复的变量标识', style: { marginTop: '40px' } });
+        gridOptions.loading = false;
+
+        throw Error('存在重复的变量标识');
+        return Promise.reject('存在重复的变量标识');
       }
-      const resultData = fullData.map((item) => {
-        return {
-          field: item.field,
-          label: item.label,
-          required: item.required,
-          helpMessage: item.helpMessage,
-          defaultValue: item.defaultValue,
-        };
-      });
-      gridOptions.loading = false;
-      return Promise.resolve(resultData);
+      keyMap[item.field] = true;
     }
+    const resultData = fullData.map((item) => {
+      return {
+        field: item.field,
+        label: item.label,
+        required: item.required,
+        helpMessage: item.helpMessage,
+        defaultValue: item.defaultValue,
+      };
+    });
+    gridOptions.loading = false;
+    return Promise.resolve(resultData);
+  }
+
+  debugger;
+  if (errMap) {
+    debugger;
   } else {
     gridOptions.loading = false;
+    throw Error('存在重复的变量标识');
     return Promise.reject(false);
   }
 }

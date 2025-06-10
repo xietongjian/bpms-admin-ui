@@ -215,7 +215,7 @@ export const apiInfoFormSchema: FormSchema[] = [
     rules: 'required'
   },*/
   {
-    fieldName: 'url',
+    fieldName: 'requestMethodUrl',
     label: '请求地址',
     component: markRaw(RequestUrl),
     disabledOnChangeListener: false,
@@ -242,20 +242,9 @@ export const apiInfoFormSchema: FormSchema[] = [
         }),
   },
   {
-    fieldName: 'headers',
+    fieldName: 'requestParamList',
     label: '请求头参数',
-    slot: 'headersSlot',
-  },
-  {
-    fieldName: 'pathVariables',
-    label: '路径参数',
-    slot: 'pathVariablesSlot',
-  },
-  {
-    fieldName: 'queryVariables',
-    label: '查询参数',
-    slot: 'queryVariablesSlot',
-    component: 'Input',
+    component: 'Input'
   },
   {
     fieldName: 'requestBody',
