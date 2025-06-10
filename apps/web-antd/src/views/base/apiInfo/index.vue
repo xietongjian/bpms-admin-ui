@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {h, ref, unref} from 'vue';
+import {h, ref, unref,computed} from 'vue';
 import type {Recordable} from '@vben/types';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
@@ -22,10 +22,16 @@ import { BasicTree } from '#/components/tree';
 import ApiCategoryModal from "./api-category-modal.vue";
 import ApiInfoDrawer from "./api-info-drawer.vue";
 import {columns, searchFormSchema} from "./apiInfo.data";
+import {useElementSize} from "@vueuse/core";
+const basicTreeRef = ref(null);
 
 const selectNodeIds = ref([]);
 const treeLoading = ref(true);
+const { height } = useElementSize(basicTreeRef);
 
+const treeHeight = computed(() => {
+  return height.value - 70;
+})
 const PerPrefix = "ApiInfo:";
 
 const formOptions: VbenFormProps = {
@@ -34,7 +40,8 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+  actionWrapperClass: 'col-span-1 col-start-2 text-left ml-2',
   resetButtonOptions: {
     show: false,
   },
@@ -61,6 +68,7 @@ const gridOptions: VxeGridProps<any> = {
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
+        formValues.categoryId = currentNode.value.id;
         return await getApiInfoListByPage({
           query: {
             pageNum: page.currentPage,
@@ -217,17 +225,13 @@ function handleCategorySuccess() {
   initApiCategoryTree();
 }
 
-async function handleSelect(node: any, e: any) {
-  const selectedNode = e.selectedNodes[0];
-  if (selectedNode) {
-    currentNode.value = selectedNode;
-    // const {getFieldsValue} = getForm();
-    // const values = getFieldsValue();
-    await tableApi.reload({searchInfo: {categoryId: selectedNode.id}});
+async function handleSelect(node: any) {
+  if (node) {
+    currentNode.value = node;
   } else {
     currentNode.value = undefined;
-    await tableApi.reload();
   }
+  await tableApi.reload();
 }
 
 function createActions(record: Recordable<any>) {
@@ -268,13 +272,28 @@ function createActions(record: Recordable<any>) {
     <template #left>
       <div class="h-full bg-card">
         <BasicTree
-            :height="280"
+            ref="basicTreeRef"
+            title="接口"
             :show-search="true"
-            :show-toolbar="true"
+            class="h-full flex flex-col"
+            size="small"
+            @select="handleSelect"
+            :height="treeHeight"
+            :field-names="{children:'children', title:'name', key:'id' }"
             :tree-data="apiCategoryTreeData"
-            class="mb-4"
-            title="支持搜索&工具栏"
-        />
+        >
+          <template #headerTitle>
+            <Row align="middle" class="w-full">
+              <Col span="12">
+                接口分类
+              </Col>
+              <Col span="12" class="text-right">
+                <Button size="small" @click="handleCreateCategory" type="primary">新增分类</Button>
+              </Col>
+            </Row>
+          </template>
+        </BasicTree>
+
 <!--        <Tree
             v-bind="$attrs"
             v-if="apiCategoryTreeData.length > 0"
