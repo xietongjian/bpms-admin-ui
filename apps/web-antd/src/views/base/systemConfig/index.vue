@@ -7,6 +7,17 @@
           v-if="['SYS_WATERMARK_RULE', 'SYS_BEI_AN_NO', 'SYS_COMPANY_NAME', 'SYS_APP_NAME'].includes(item.configSn)"
           :data-item="item"
       />
+
+      <ImageSetting
+          v-if="['SYS_LOGIN_BG_IMG', 'SYS_LOGO_IMG', 'SYS_FAVICON_IMG'].includes(item.configSn)"
+          :data-item="item"
+      />
+
+      <SwitchSetting
+          v-if="['SYS_WATERMARK_SWITCH'].includes(item.configSn)"
+          :data-item="item"
+          @change="handleChange"
+      />
 <!--      <BasicForm class="bg-card p-4 mb-4" :schema="dynamicFormSchema(item)" />-->
 <!--      <div v-if="item.configSn.endsWith(IMG_END_WITH)">
         图片
@@ -37,6 +48,8 @@ import {useVbenForm} from "#/adapter/form";
 import {Page} from "@vben/common-ui";
 import FaviconSetting from "./components/ImageSetting.vue";
 import TextSetting from "./components/TextSetting.vue";
+import ImageSetting from "./components/ImageSetting.vue";
+import SwitchSetting from "#/views/base/systemConfig/components/SwitchSetting.vue";
 
 const PerPrefix = 'SystemConfig:';
 

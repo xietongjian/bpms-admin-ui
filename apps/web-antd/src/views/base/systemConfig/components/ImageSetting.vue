@@ -1,94 +1,100 @@
 <template>
-  <div>
-    {{dataItem}}
-    <img :src="dataItem.imageBase64" class="w-20 h-20" :alt="dataItem.configName" />
-    <Button >保存</Button>
+  <div class="">
+    <BasicForm class="bg-card p-4 mb-4" :schema="dynamicFormSchema"/>
   </div>
 </template>
 <script lang="ts" setup>
-import {nextTick, ref, onMounted, defineProps} from 'vue';
-import {getSystemConfigListByPage, deleteByIds, saveOrUpdate} from '#/api/base/systemConfig';
-import {Upload, Tooltip, Space, message, Modal, Button} from 'ant-design-vue';
-import type {Recordable} from '@vben/types';
+import {defineProps} from 'vue';
+import {useVbenForm, z} from "#/adapter/form";
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {saveOrUpdate} from "#/api/base/systemConfig";
+import {message} from "ant-design-vue";
 
-const PerPrefix = 'SystemConfig:';
 const props = defineProps({
   dataItem: {
     type: Array,
     default: () => [],
   },
 })
-
-const configList = ref([]);
-
-onMounted(async () => {
-  const res = await getSystemConfigListByPage({
-    query: {
-      pageNum: 0,
-      pageSize: 9999,
-    },
-    entity:  {},
-  });
-
-  configList.value = res.rows;
-})
-
-const beforeUpload = (record, file) => {
-  setLoading(true);
-  const reader = new FileReader();
-  reader.readAsArrayBuffer(file);
-  // 文件读取成功完成后的处理
-  reader.onload = function (ev) {
-    const array = new Uint8Array(ev.target.result);
-    const fileByteArray = [];
-
-    for (let i = 0; i < array.length; i++) {
-      fileByteArray.push(array[i]);
+const dynamicFormSchema: FormSchema[] = [
+  {
+    fieldName: 'id',
+    label: 'ID',
+    component: 'Input',
+    defaultValue: props.dataItem.id,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
     }
-
-    saveOrUpdate({id: record.id, image: fileByteArray})
-        .then((res) => {
-          createMessage.success('上传成功，按Ctrl+F5强制刷新页面才能生效');
-          handleSuccess();
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-  };
-  return false;
-};
-
-const handleRemoveImg = (record) => {
-  createConfirm({
-    iconType: 'warning',
-    content: '确定要删除图片吗？',
-    onOk() {
-      saveOrUpdate({id: record.id, image: []})
-          .then((res) => {
-            createMessage.success('删除成功，按Ctrl+F5强制刷新页面才能生效');
-            handleSuccess();
-          })
-          .finally(() => {
-            setLoading(false);
-          });
+  },
+  {
+    component: 'Upload',
+    componentProps: {
+      // 更多属性见：https://ant.design/components/upload-cn
+      accept: '.png,.jpg,.jpeg',
+      // 自动携带认证信息
+      // customRequest: upload_file,
+      disabled: false,
+      maxCount: 1,
+      multiple: false,
+      showUploadList: true,
+      // 上传列表的内建样式，支持四种基本样式 text, picture, picture-card 和 picture-circle
+      listType: 'picture-card',
     },
-    okButtonProps: {
-      danger: true,
+    fieldName: 'configName',
+    label: props.dataItem.configName,
+    defaultValue: [{url: props.dataItem.imageBase64}],
+    renderComponentContent: () => {
+      return {
+        default: () => '点击上传图片',
+      };
     },
-  });
-};
-
-const getAccepts = (record) => {
-  if (record.configSn === 'SYS_FAVICON_IMG') {
-    return '.ico';
+    rules: 'required',
   }
-  return '.png';
-};
+];
 
 
-function handleUpload(record: Recordable<any>) {
+const PerPrefix = 'SystemConfig:';
+
+
+const [BasicForm, formApi] = useVbenForm({
+  commonConfig: {
+    componentProps: {
+      // class: 'w-full',
+    },
+    hideRequiredMark: true,
+    labelClass: 'text-md !font-bold'
+  },
+  showDefaultActions: true,
+  wrapperClass: 'grid-cols-1 md:grid-cols-1 lg:grid-cols-1',
+  actionWrapperClass: 'mt-[26px] col-span-2 col-start-2 text-left ml-0',
+  submitButtonOptions: {
+    content: '保存'
+  },
+  resetButtonOptions: {show: false},
+  layout: 'vertical',
+  handleSubmit
+});
+
+
+async function handleSubmit() {
+  try {
+    // modalApi.setState({loading: true, confirmLoading: true});
+    const {valid} = await formApi.validate();
+    if (!valid) {
+      return;
+    }
+    const values = await formApi.getValues();
+    const {success, msg} = await saveOrUpdate(values);
+    if (success) {
+      message.success(msg);
+    } else {
+      message.error(msg);
+    }
+  } finally {
+    // modalApi.setState({loading: false, confirmLoading: false});
+  }
 }
-
 </script>
 <style lang="scss" scoped>
 </style>
