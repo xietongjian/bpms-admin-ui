@@ -71,6 +71,7 @@ const dynamicFormSchema: FormSchema[] = [
     description: props.ruleDataItem.remark,
     defaultValue: props.ruleDataItem.configValue,
     wrapperClass: 'flex-col items-start',
+    formItemClass: 'items-start',
     rules: z
         .string({
           required_error: '名称不能为空',

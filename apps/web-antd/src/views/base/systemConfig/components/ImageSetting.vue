@@ -8,12 +8,12 @@ import {defineProps} from 'vue';
 import {useVbenForm, z} from "#/adapter/form";
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {saveOrUpdate} from "#/api/base/systemConfig";
-import {message} from "ant-design-vue";
+import {message, Modal} from "ant-design-vue";
 
 const props = defineProps({
   dataItem: {
-    type: Array,
-    default: () => [],
+    type: Object,
+    default: () => {},
   },
 })
 const dynamicFormSchema: FormSchema[] = [
@@ -30,14 +30,10 @@ const dynamicFormSchema: FormSchema[] = [
   {
     component: 'Upload',
     componentProps: {
-      beforeUpload: file => {
-        // fileList.value = [...(fileList.value || []), file];
+      beforeUpload: () => {
         return false;
       },
-      // 更多属性见：https://ant.design/components/upload-cn
-      accept: '.png,.jpg,.jpeg',
-      // 自动携带认证信息
-      // customRequest: upload_file,
+      accept: getAccepts(),
       disabled: false,
       maxCount: 1,
       multiple: false,
@@ -47,24 +43,28 @@ const dynamicFormSchema: FormSchema[] = [
       class: 'w-full xxxxxxxxxxxxxx'
     },
     wrapperClass: 'w-full aaaaaaaaaaa',
-    formItemClass: 'w-full bbbbbbbbbb',
-
+    labelClass: 'w-full wwwwwwwwwwwwwwww [&_+div].w-full',
+    formItemClass: 'w-full ![&_>div]:w-full ![&_>label]:text-2xl',
     fieldName: 'imageValue',
     label: props.dataItem.configName,
-    defaultValue: [{url: props.dataItem.imageBase64}],
+    defaultValue: props.dataItem.imageBase64 ? [{url: props.dataItem.imageBase64}] : [],
     description: props.dataItem.remark,
     renderComponentContent: () => {
       return {
         default: () => '点击上传图片',
       };
     },
-    rules: 'required',
   }
 ];
 
-
 const PerPrefix = 'SystemConfig:';
 
+function getAccepts () {
+  if (props.dataItem.configSn === 'SYS_FAVICON_IMG') {
+    return '.ico';
+  }
+  return '.png';
+};
 
 const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
@@ -88,12 +88,6 @@ const [BasicForm, formApi] = useVbenForm({
   handleSubmit
 });
 
-function getBase64(img: Blob, callback: (base64Url: any) => void) {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader as any));
-  reader.readAsBinaryString(img);
-}
-
 async function handleSubmit() {
   try {
     // modalApi.setState({loading: true, confirmLoading: true});
@@ -102,28 +96,72 @@ async function handleSubmit() {
       return;
     }
     const {id, imageValue} = await formApi.getValues();
-
-    debugger;
-    getBase64(imageValue[0].originFileObj, async (base64Url: any) => {
-      debugger;
-      const params = {
-        id,
-        image: base64Url
-      }
-
-      console.log(params);
-      const {success, msg} = await saveOrUpdate(params);
-      if (success) {
-        message.success(msg);
-      } else {
-        message.error(msg);
-      }
-
+    if(imageValue.length > 0){
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(imageValue[0].originFileObj);
+      // 文件读取成功完成后的处理
+      reader.onload = async function (ev) {
+        const array = new Uint8Array(ev.target.result);
+        const fileByteArray = [];
+        formApi.setState({
+          submitButtonOptions: { loading: true },
+        });
+        for (let i = 0; i < array.length; i++) {
+          fileByteArray.push(array[i]);
+        }
+        const params = {
+          id,
+          image: fileByteArray
+        }
+        const {success, msg} = await saveOrUpdate(params);
+        formApi.setState({
+          submitButtonOptions: { loading: false },
+        });
+        if (success) {
+          message.success(msg);
+        } else {
+          message.error(msg);
+        }
+      };
+    } else {
+      handleRemoveImg({id});
+    }
+  } catch (e) {
+    formApi.setState({
+      submitButtonOptions: { loading: false },
     });
-  } finally {
-    // modalApi.setState({loading: false, confirmLoading: false});
   }
 }
+
+const handleRemoveImg = (record: any) => {
+  Modal.confirm({
+    iconType: 'warning',
+    content: '确定要删除图片吗？',
+    async onOk() {
+      try {
+        formApi.setState({
+          submitButtonOptions: { loading: true },
+        });
+        const {success, msg} = await saveOrUpdate({id: record.id, image: []});
+        if(success){
+          message.success('删除成功，按Ctrl+F5强制刷新页面才能生效');
+        } else {
+          message.error(msg);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        formApi.setState({
+          submitButtonOptions: { loading: false },
+        });
+      }
+    },
+    okButtonProps: {
+      danger: true,
+    },
+  });
+};
 </script>
+
 <style lang="scss" scoped>
 </style>
