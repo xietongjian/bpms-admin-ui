@@ -10,7 +10,6 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {saveOrUpdate} from "#/api/base/systemConfig";
 import {message} from "ant-design-vue";
 
-const emit = defineEmits(['change'])
 
 const props = defineProps({
   dataItem: {
@@ -79,7 +78,7 @@ async function handleSubmit() {
       console.warn(props.dataItem)
       message.success(msg);
       debugger;
-      emit('change', values);
+      // emit('change', values);
     } else {
       message.error(msg);
     }

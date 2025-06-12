@@ -9,14 +9,14 @@
       />
 
       <ImageSetting
-          v-if="['SYS_LOGIN_BG_IMG', 'SYS_LOGO_IMG', 'SYS_FAVICON_IMG'].includes(item.configSn)"
+          v-if="item.configSn.endsWith(END_WITH_IMG)"
           :data-item="item"
       />
 
-      <SwitchSetting
+      <WatermarkSetting
           v-if="['SYS_WATERMARK_SWITCH'].includes(item.configSn)"
-          :data-item="item"
-          @change="handleChange"
+          :switch-data-item="watermarkSwitchDataItem"
+          :rule-data-item="watermarkRuleDataItem"
       />
 <!--      <BasicForm class="bg-card p-4 mb-4" :schema="dynamicFormSchema(item)" />-->
 <!--      <div v-if="item.configSn.endsWith(IMG_END_WITH)">
@@ -36,10 +36,10 @@
   </Page>
 </template>
 <script lang="ts" setup>
-import {nextTick, ref, onMounted} from 'vue';
+import {nextTick, ref, onMounted, computed} from 'vue';
 import {PerEnum} from '#/enums/perEnum';
 // import { BasicTable, useTable, TableAction, TableImg } from '@/components/Table';
-import {getSystemConfigListByPage, deleteByIds, saveOrUpdate} from '#/api/base/systemConfig';
+import {getSystemConfigListByPage, getAll, deleteByIds, saveOrUpdate} from '#/api/base/systemConfig';
 import {Upload, Tooltip, Space, message, Modal, Button} from 'ant-design-vue';
 import { dynamicFormSchema} from './systemConfig.data';
 import type {Recordable} from '@vben/types';
@@ -50,21 +50,28 @@ import FaviconSetting from "./components/ImageSetting.vue";
 import TextSetting from "./components/TextSetting.vue";
 import ImageSetting from "./components/ImageSetting.vue";
 import SwitchSetting from "#/views/base/systemConfig/components/SwitchSetting.vue";
+import WatermarkSetting from "#/views/base/systemConfig/components/WatermarkSetting.vue";
 
 const PerPrefix = 'SystemConfig:';
+const END_WITH_IMG = "_IMG"
 
 const configList = ref([]);
 
-onMounted(async () => {
-  const res = await getSystemConfigListByPage({
-    query: {
-      pageNum: 0,
-      pageSize: 9999,
-    },
-    entity:  {},
-  });
+const watermarkSwitchDataItem = computed(() => {
+    return configList.value.find(item => {
+        return ['SYS_WATERMARK_SWITCH'].includes(item.configSn)
+    });
+})
+const watermarkRuleDataItem = computed(() => {
+    return configList.value.find(item => {
+        return ['SYS_WATERMARK_RULE'].includes(item.configSn)
+    });
+})
 
-  configList.value = res.rows;
+onMounted(async () => {
+  const res = await getAll();
+
+  configList.value = res;
 })
 
 const [BasicForm, formApi] = useVbenForm({
