@@ -55,7 +55,7 @@ const watermarkRuleDataItem = computed(() => {
 onMounted(async () => {
   const res = await getAll();
 
-  configList.value = res;
+  configList.value = res as any[];
 })
 </script>
 <style lang="scss" scoped>

@@ -40,11 +40,9 @@ const dynamicFormSchema: FormSchema[] = [
       showUploadList: true,
       // 上传列表的内建样式，支持四种基本样式 text, picture, picture-card 和 picture-circle
       listType: 'picture-card',
-      class: 'w-full xxxxxxxxxxxxxx'
     },
-    wrapperClass: 'w-full aaaaaaaaaaa',
-    labelClass: 'w-full wwwwwwwwwwwwwwww [&_+div].w-full',
-    formItemClass: 'w-full ![&_>div]:w-full ![&_>label]:text-2xl',
+    wrapperClass: 'aaaaaaaaaa [&_>p]:w-full w-full flex flex-col justify-start',
+    // formItemClass: 'w-full ![&_>div]:w-full ![&_>label]:text-2xl',
     fieldName: 'imageValue',
     label: props.dataItem.configName,
     defaultValue: props.dataItem.imageBase64 ? [{url: props.dataItem.imageBase64}] : [],
@@ -72,9 +70,7 @@ const [BasicForm, formApi] = useVbenForm({
       class: 'w-full',
     },
     hideRequiredMark: true,
-    labelClass: 'text-md w-full justify-start text-md !font-bold xxxx',
-    formItemClass: 'w-full flex-col justify-start wwww',
-    wrapperClass: 'w-full flex-col justify-start eeee'
+    labelClass: 'text-md !font-bold',
   },
   compact: true,
   showDefaultActions: true,
@@ -84,7 +80,7 @@ const [BasicForm, formApi] = useVbenForm({
     content: '保存'
   },
   resetButtonOptions: {show: false},
-  layout: 'horizontal',
+  layout: 'vertical',
   handleSubmit
 });
 
