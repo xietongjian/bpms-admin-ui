@@ -5,7 +5,7 @@ import {secretKeyFormSchema} from './app.data';
 import {useVbenForm} from '#/adapter/form';
 import {refreshSecretKey} from '#/api/base/app';
 import {QuestionMarkCircleOutline} from '@vben/icons';
-import {ref, unref, defineExpose} from "vue";
+import {ref, unref, defineExpose, defineEmits} from "vue";
 import {useClipboard} from '@vueuse/core';
 
 const emit = defineEmits<{

@@ -257,15 +257,6 @@ export const dmnBaseFormSchema: FormSchema[] = [
     },
     rules: 'selectRequired'
   },
-  /*{
-    fieldName: 'image',
-    label: '附件上传',
-    component: 'Upload',
-    componentProps: {
-    },
-    required: true,
-    colProps: {lg:{span: 6, offset:0}, md:{span: 8, offset:0}, sm:{span: 12, offset: 0}, xs:{span: 12, offset: 0}},
-  },*/
 ];
 
 export const dmnSimulatorInputFormSchema: FormSchema[] = [];

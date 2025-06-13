@@ -231,26 +231,6 @@ function handleCreate({key}) {
   dmnDesignerModalRef.value.setState({
     title: `新建决策`,
   });
-
-  /*openDmnDesignerModal(true, {
-    isUpdate: false,
-    record: {categoryCode: unref(currentCategory).code, dmnType: key},
-  });
-
-  setDmnDesignerModalProps({
-    title: `新建决策`,
-    bodyStyle: {padding: '0px', margin: '0px'},
-    defaultFullscreen: true,
-    maskClosable: false,
-    centered: true,
-    keyboard: false,
-    showOkBtn: false,
-    showCancelBtn: false,
-    draggable: false,
-    canFullscreen: false,
-    closable: false,
-    destroyOnClose: true,
-  });*/
 }
 
 async function handleViewXml(record: Recordable<any>, e) {

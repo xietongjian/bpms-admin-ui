@@ -8,56 +8,25 @@
         <TableAction :actions="createActions(row)"/>
       </template>
     </BasicTable>
-    <DicTypeModal ref="dicTypeModalRef" @register="registerModal" @success="handleSuccess" />
+    <DicTypeModal ref="dicTypeModalRef" @success="handleSuccess" />
   </Page>
 </template>
 <script lang="ts" setup>
   import { PerEnum } from '#/enums/perEnum';
-
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import type {VbenFormProps} from '@vben/common-ui';
   import type { Recordable } from '@vben/types';
   import type {VxeGridProps} from '#/adapter/vxe-table';
   import {Page} from '@vben/common-ui';
   import { TableAction } from '#/components/table-action';
-  import {useAccess} from "@vben/access";
   import {Button, message, Tag} from "ant-design-vue";
-
   import { getDicTypes, deleteByIds } from '#/api/base/dicType';
-
   import { columns, searchFormSchema } from './dicType.data';
   import {ref} from "vue";
   import DicTypeModal from './DicTypeModal.vue';
 
   const PerPrefix = 'DicType:';
   const dicTypeModalRef = ref();
-
-
-  /*const [registerModal, { openModal, setModalProps }] = useModal();
-  const [registerTable, { reload }] = useTable({
-    title: '列表',
-    api: getDicTypes,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    canColDrag: true,
-    pagination: false,
-    expandRowByClick: true,
-    useSearchForm: true,
-    bordered: true,
-    showIndexColumn: false,
-    actionColumn: {
-      width: 120,
-      title: '操作',
-      dataIndex: 'action',
-      fixed: false,
-    },
-  });*/
 
 
   const formOptions: VbenFormProps = {
@@ -173,10 +142,6 @@
     deleteByIds([record.id]).then((res) => {
       tableApi.reload();
     });
-  }
-
-  function doSearch() {
-    tableApi.reload();
   }
 
   function handleSuccess() {

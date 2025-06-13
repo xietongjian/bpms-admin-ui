@@ -23,7 +23,6 @@ import {useElementSize} from '@vueuse/core'
 const emit = defineEmits(['select']);
 
 const treeData = ref<any[]>([]);
-const treeLoading = ref<boolean>(false);
 const basicTreeRef = ref<any>(null);
 const {height} = useElementSize(basicTreeRef);
 

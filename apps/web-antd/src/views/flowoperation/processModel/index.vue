@@ -12,14 +12,12 @@
       </template>
     </BasicTable>
 
-    <BpmnPreviewModal @register="registerBpmnPreviewModal" @success="handleSuccess" />
+    <BpmnPreviewModal @success="handleSuccess" />
   </Page>
 </template>
 <script lang="ts" setup>
   import { ref, unref, nextTick } from 'vue';
 
-  import { BasicTable, useTable, TableAction, BasicColumn, ActionItem } from '@/components/Table';
-  import { PerEnum } from '#/enums/perEnum';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
@@ -38,18 +36,12 @@
   // import { PageWrapper } from '@/components/Page';
   import FlowCategoryTree from '#/views/components/leftTree/FlowCategoryTree.vue';
 
-  // import { useModal } from '@/components/Modal';
-  import BpmnPreviewModal from '#/views/components/preview/bpmnPreview/index.vue';
+  import {BpmnPreviewModal} from '#/views/components/preview';
   import { getAll } from '#/api/base/app';
   import { columns, searchFormSchema } from './modelInfo.data';
   import {Button, message} from 'ant-design-vue'
 
-/*  const [
-    registerBpmnPreviewModal,
-    { openModal: openBpmnPreviewModal, setModalProps: ssetBpmnPreviewProps },
-  ] = useModal();*/
-
-  const currentCategory = ref<Recordable>({});
+  const currentCategory = ref<Recordable<any>>({});
   const loadingRef = ref(false);
 
   const [registerTable, { getForm, reload }] = useTable({

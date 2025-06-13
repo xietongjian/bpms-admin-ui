@@ -157,7 +157,6 @@ export const accountFormSchema: FormSchema[] = [
               username: currentPersonal.value,
               userNo: currentPersonal.value,
           });
-          debugger;
         }
       },
     }

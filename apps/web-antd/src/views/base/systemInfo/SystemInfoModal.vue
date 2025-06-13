@@ -13,8 +13,6 @@
 
   const emit = defineEmits(['success', 'register']);
 
-  const isUpdate = ref(true);
-
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
     onCancel() {
@@ -46,23 +44,6 @@
     schema: formSchema,
     wrapperClass: 'grid-cols-1',
   });
-  /*const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
-    labelWidth: 100,
-    schemas: formSchema,
-    showActionButtonGroup: false,
-  });
-
-  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
-    await resetFields();
-    setModalProps({ confirmLoading: false });
-    isUpdate.value = !!data?.isUpdate;
-
-    if (unref(isUpdate)) {
-      setFieldsValue({
-        ...data.record,
-      });
-    }
-  });*/
 
   async function handleSubmit() {
     try {

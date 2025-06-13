@@ -10,23 +10,27 @@
       <template #requestParamList="slotProps">
         <div class="w-full min-h-[400px] p-b-10">
           <Tabs v-model:activeKey="activeTab" size="small">
-            <TabPane key="1" >
+            <TabPane key="1">
               <template #tab>
-                Headers<span class="ml-1" v-if="slotProps.field.value?.headers?.length>0">({{slotProps.field.value?.headers?.length}})</span>
+                Headers<span class="ml-1"
+                             v-if="slotProps.field.value?.headers?.length>0">({{ slotProps.field.value?.headers?.length }})</span>
               </template>
               <ApiInfoVariables ref="headersRef" type="header" :variables="slotProps.field.value?.headers"/>
             </TabPane>
-            <TabPane key="2" >
+            <TabPane key="2">
               <template #tab>
-                Query Params<span class="ml-1" v-if="slotProps.field.value?.pathVariables?.length>0">({{slotProps.field.value?.pathVariables?.length}})</span>
+                Query Params<span class="ml-1"
+                                  v-if="slotProps.field.value?.pathVariables?.length>0">({{ slotProps.field.value?.pathVariables?.length }})</span>
               </template>
               <ApiInfoVariables ref="pathVariablesRef" type="path" :variables="slotProps.field.value?.pathVariables"/>
             </TabPane>
-            <TabPane key="3" >
+            <TabPane key="3">
               <template #tab>
-                Path Variables<span class="ml-1" v-if="slotProps.field.value?.queryVariables?.length>0">({{slotProps.field.value?.queryVariables?.length}})</span>
+                Path Variables<span class="ml-1"
+                                    v-if="slotProps.field.value?.queryVariables?.length>0">({{ slotProps.field.value?.queryVariables?.length }})</span>
               </template>
-              <ApiInfoVariables ref="queryVariablesRef" type="query" :variables="slotProps.field.value?.queryVariables"/>
+              <ApiInfoVariables ref="queryVariablesRef" type="query"
+                                :variables="slotProps.field.value?.queryVariables"/>
             </TabPane>
           </Tabs>
         </div>
@@ -40,8 +44,8 @@ import {useVbenDrawer} from '@vben/common-ui';
 import {useVbenForm} from '#/adapter/form';
 
 import {apiInfoFormSchema} from './apiInfo.data';
-import {FormItem, FormItemRest, message, Tabs, Input, Select} from "ant-design-vue";
-import {getApiCategoryListData, getApiCategoryTreeData, saveOrUpdateApiInfo} from '#/api/base/apiInfo';
+import {message, Tabs} from "ant-design-vue";
+import {saveOrUpdateApiInfo} from '#/api/base/apiInfo';
 
 import ApiInfoVariables from "#/views/base/apiInfo/ApiInfoVariables.vue";
 
@@ -91,40 +95,10 @@ const [BasicForm, formApi] = useVbenForm({
   schema: apiInfoFormSchema,
   wrapperClass: 'grid-cols-1',
 });
-/*
-const [
-  registerForm,
-  {resetFields, updateSchema, getFieldsValue, scrollToField, setFieldsValue, validate},
-] = useForm({
-  labelWidth: 100,
-  schemas: apiInfoFormSchema,
-  showActionButtonGroup: false,
-});
-
-const [registerDrawer, {setDrawerProps, closeDrawer}] = useDrawerInner(async (data) => {
-  try {
-    setDrawerProps({loading: true, confirmLoading: true});
-    await resetFields();
-    isUpdate.value = !!data?.isUpdate;
-    let formData = data.record;
-
-    const categoryTreeData = await getApiCategoryTreeData();
-    await updateSchema([
-      {
-        field: 'categoryId',
-        componentProps: {treeData: categoryTreeData, fieldNames: {value: 'id', label: 'name'}},
-      },
-    ]);
-    await setFieldsValue(formData);
-    scrollToField('categoryId', {behavior: 'smooth'});
-  } finally {
-    setDrawerProps({loading: false, confirmLoading: false});
-  }
-});*/
 
 async function handleSubmit() {
   try {
-    const { valid } = await formApi.validate();
+    const {valid} = await formApi.validate();
     if (!valid) return;
 
     const values = await formApi.getValues();
@@ -143,17 +117,18 @@ async function handleSubmit() {
     values.method = values.requestMethodUrl[0];
     values.url = values.requestMethodUrl[1];
     const {success, msg} = await saveOrUpdateApiInfo(values);
-    if(success){
+    if (success) {
       emit('success');
       message.success(msg);
       drawerApi.close();
-    } else{
+    } else {
       message.error(msg);
     }
   } finally {
     drawerApi.setState({loading: false, confirmLoading: false});
   }
 }
+
 defineExpose(drawerApi)
 </script>
 <style lang="scss">

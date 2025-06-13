@@ -45,7 +45,7 @@ export const getApiInfoListByPage = (params: any) => {
   return requestClient.post(Api.ApiInfoPageList, params);
 };
 
-export const getApiInfoTreeData = async (params: any) => {
+export const getApiInfoTreeData = async (params?: any) => {
   const apiCategoryList= await getApiCategoryListData();
   const apiInfoList = await getApiInfoListData();
 

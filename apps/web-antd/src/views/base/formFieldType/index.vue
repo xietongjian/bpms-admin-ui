@@ -19,7 +19,7 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {Recordable} from '@vben/types';
 import { TableAction } from '#/components/table-action';
 import {message, Button} from 'ant-design-vue';
-import {ColPage, Page} from '@vben/common-ui';
+import { Page} from '@vben/common-ui';
 
   import { getListByPage } from '#/api/base/formFieldType';
   import { columns, searchFormSchema } from './formFieldType.data';
@@ -28,30 +28,6 @@ import {useVbenVxeGrid} from "#/adapter/vxe-table";
 
 const formFieldTypeModalRef = ref();
 const PerPrefix = 'FormFieldType:';
-
-  /*const [registerTable, { reload }] = useTable({
-    title: '列表',
-    titleHelpMessage: '自定义表单控件存储在数据库对应的数据类型',
-    api: getListByPage,
-    columns,
-    formConfig: {
-      labelWidth: 100,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: true,
-    showIndexColumn: true,
-    actionColumn: {
-      width: 100,
-      title: '操作',
-      dataIndex: 'action',
-    },
-  });*/
-
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,

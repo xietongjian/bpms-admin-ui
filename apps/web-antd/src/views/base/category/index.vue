@@ -9,7 +9,7 @@
   import {Page} from '@vben/common-ui';
   import { TableAction } from '#/components/table-action';
 
-  import {getFlowCategories, deleteByIds, getFlowCategoryTreeData} from '#/api/base/category';
+  import {deleteByIds, getFlowCategoryTreeData} from '#/api/base/category';
   import { columns, searchFormSchema } from './category.data';
   import CategoryModal from './CategoryModal.vue';
 

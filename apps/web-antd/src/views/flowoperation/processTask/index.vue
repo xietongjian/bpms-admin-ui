@@ -92,6 +92,7 @@
 
   defineOptions({ name: 'ProcessTask' });
   const PerPrefix = 'ProcessTask:';
+  const currentTask = ref();
   const bpmnPreviewModalRef = ref(),
     personalSelectorModalRef = ref(),
     flowPropertiesModalRef = ref(),
@@ -131,7 +132,6 @@
     },
   });*/
 
-
   const formOptions: VbenFormProps = {
     showCollapseButton: true,
     collapsed: true,
@@ -139,6 +139,7 @@
     commonConfig: {
       labelWidth: 80,
     },
+    // fieldMappingTime: [['pickerVal', ['startTime', 'endTime'], 'YYYY-MM-DD']],
     collapsedRows: 1,
     resetButtonOptions: {
       show: true,
@@ -160,6 +161,9 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
+          if (formValues.userCode && formValues.userCode.length > 0) {
+            formValues.userCode = formValues.userCode[0].key;
+          }
           return await getPagerModelRunTasks({
             query: {
               pageNum: page.currentPage,
@@ -175,26 +179,21 @@
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
   // 人员选择后回调
-  function handleSettingPersonalSuccess(selectedPersonal) {
+  async function handleSettingPersonalSuccess(selectedPersonal: Array<any>) {
     if (selectedPersonal.length === 0) {
       message.warning('请选择变更人员！');
       return;
     }
-    // openFullLoading();
-    const personals = selectedPersonal.map((item) => item.code);
-    updateAssignee({ userId: personals[0], taskId: unref(currentTask).taskId })
-      .then((res) => {
-        const { data } = res;
-        if (data.success) {
-          message.success(data.msg, 2);
-        } else {
-          message.error(data.msg, 2);
-        }
-      })
-      .finally(() => {
-        // closeFullLoading();
-        tableApi.reload();
-      });
+    const {success, msg} = await updateAssignee({ userId: selectedPersonal[0].code, taskId: unref(currentTask).taskId });
+    if (success) {
+      message.success(msg, 2);
+      // tableApi.reload();
+      currentTask.value.assignee = selectedPersonal[0].code;
+      currentTask.value.assigneeName = selectedPersonal[0].name;
+      tableApi.grid.reloadRow(currentTask.value)
+    } else {
+      message.error(msg, 2);
+    }
   }
 
   async function handleExe(record: Recordable<any>) {
@@ -276,20 +275,6 @@
       title: `变更任务【${record.formName} - ${record.name || '未知节点名'}】的当前审批人`,
     });
     personalSelectorModalRef.value.open();
-    /*openPersonalSelector(true, {
-      selectorProps: {
-        multiple: false,
-        selectedList: [],
-      },
-    });
-
-    setPersonalModalProps({
-      title: `变更任务【${record.formName} - ${record.name || '未知节点名'}】的当前审批人`,
-      bodyStyle: { padding: '0px', margin: '0px' },
-      width: 850,
-      showOkBtn: true,
-      showCancelBtn: true,
-    });*/
   }
 
   function createActions (row: Recordable<any>) {
@@ -352,17 +337,8 @@
     tableApi.reload();
   }
 
-  function handleCloseFunc() {
-    tableApi.reload();
-    return Promise.resolve(true);
-  }
-
-  function doCopyContent(content) {
+  function doCopyContent(content: string) {
     copy(content);
     message.success('已拷贝到剪切板！');
-  }
-
-  function handleProcessFormVisibleChange() {
-    tableApi.reload();
   }
 </script>

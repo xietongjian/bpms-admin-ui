@@ -256,7 +256,6 @@ async function initApiTestingInfo() {
   const {setState: resetPathVariableSchema } = pathVariableFormApi;
   const {setState: resetQueryVariableSchema } = queryVariableFormApi;
   if (apiInfo) {
-    debugger;
     if (apiInfo.headers && apiInfo.headers.length > 0) {
       apiInfo.headers.forEach(item => {
         item.component = 'Input';
@@ -307,8 +306,6 @@ async function handleTesting() {
     apiTestingErrorMsg.value = '';
     const currentApi = unref(currentNode);
     let url = currentApi.url;
-
-    debugger;
 
     let headerFieldsValue = undefined;
     if (currentApi.headers && currentApi.headers.length > 0) {

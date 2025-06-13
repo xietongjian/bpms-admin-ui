@@ -18,14 +18,6 @@
       </template>
     </Alert>
 
-    <!--    <Collapse >
-          <CollapsePanel key="1" header="通过业务表单Key清理">
-            <p>
-
-            </p>
-          </CollapsePanel>
-        </Collapse>-->
-
     <Card class="mt-4" title="通过业务表单Key清理">
       <BizKeyForm/>
       <div class="p-4 pl-[150px] pt-0">
@@ -115,23 +107,12 @@ import {PerEnum} from '#/enums/perEnum';
 
 const PerPrefix = 'DataClean:';
 
-
-const CollapsePanel = Collapse.Panel;
-
 const cleanByBizKeyLoading = ref<boolean>(false);
 const cleanByProcInstIdLoading = ref<boolean>(false);
 const cleanByModelKeyLoading = ref<boolean>(false);
 const deleteModelByModelKeyLoading = ref<boolean>(false);
 const bpmnModelSyncLoading = ref<boolean>(false);
 const dmnModelSyncLoading = ref<boolean>(false);
-
-/*
-  const [registerBizKeyForm, { validate: validateBizKeyForm, setProps }] = useForm({
-    labelWidth: 150,
-    schemas: bizKeyFormSchema,
-    showActionButtonGroup: false,
-  });
-*/
 
 
 const [BizKeyForm, bizKeyFormApi] = useVbenForm({
@@ -147,13 +128,6 @@ const [BizKeyForm, bizKeyFormApi] = useVbenForm({
   wrapperClass: 'grid-cols-1',
 });
 
-
-/*  const [registerProcInstIdForm, { validate: validateProcInstIdForm }] = useForm({
-    labelWidth: 150,
-    schemas: procInstIdFormSchema,
-    showActionButtonGroup: false,
-  });*/
-
 const [ProcInstIdForm, procInstIdFormApi] = useVbenForm({
   commonConfig: {
     componentProps: {
@@ -167,13 +141,6 @@ const [ProcInstIdForm, procInstIdFormApi] = useVbenForm({
   wrapperClass: 'grid-cols-1',
 });
 
-/*
-  const [registerModelKeyForm, { validate: validateModelKeyForm }] = useForm({
-    labelWidth: 150,
-    schemas: modelKeyFormSchema,
-    showActionButtonGroup: false,
-  });*/
-
 const [ModelKeyForm, modelKeyFormApi] = useVbenForm({
   commonConfig: {
     componentProps: {
@@ -186,13 +153,6 @@ const [ModelKeyForm, modelKeyFormApi] = useVbenForm({
   schema: modelKeyFormSchema,
   wrapperClass: 'grid-cols-1',
 });
-
-/*  const [registerDeleteModelByModelKeyForm, { validate: validateDeleteModelByModelKeyForm }] = useForm({
-    labelWidth: 150,
-    schemas: deleteModelByModelKeyFormSchema,
-    showActionButtonGroup: false,
-  });*/
-
 
 const [DeleteModelByModelKeyForm, deleteModelByModelKeyFormApi] = useVbenForm({
   commonConfig: {
@@ -214,9 +174,6 @@ onMounted(() => {
 });
 
 async function handleCleanByBizKey() {
-  // setProps({
-  //   loading: true,
-  // });
   const {valid} = await bizKeyFormApi.validate();
   if (!valid) {
     return;
@@ -387,9 +344,3 @@ async function handleDmnModelSync() {
   });
 }
 </script>
-
-<style lang="scss" scoped>
-.center-align {
-  text-align: center;
-}
-</style>

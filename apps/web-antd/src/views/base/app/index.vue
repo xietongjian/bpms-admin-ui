@@ -35,7 +35,7 @@ const formOptions: VbenFormProps = {
   schema: searchFormSchema,
 };
 
-const gridOptions: VxeGridProps<any> = {
+const gridOptions: VxeGridProps = {
   checkboxConfig: {
     highlight: true,
     labelField: 'name',

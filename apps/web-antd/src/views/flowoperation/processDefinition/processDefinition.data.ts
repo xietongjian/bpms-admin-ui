@@ -3,7 +3,7 @@ import { Tag } from 'ant-design-vue';
 import { h } from 'vue';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {FormValidPatternEnum} from "#/enums/commonEnum";
-import { z } from '#/adapter/form';
+
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {getAll} from '#/api/base/app';
 export const columns: VxeGridProps['columns'] = [
@@ -12,6 +12,11 @@ export const columns: VxeGridProps['columns'] = [
     field: 'name',
     minWidth: 200,
     align: 'left',
+    type: 'expand',
+    slots: {
+      default: 'name',
+      content: 'expandContent'
+    }
   },
   {
     title: 'KEY',
@@ -36,7 +41,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'statusName',
     width: 70,
     align: 'center',
-    customRender: ({ record }) => {
+/*    customRender: ({ record }) => {
       const { status, statusName } = record;
       let color = '';
       if (~~status === 2) {
@@ -49,7 +54,7 @@ export const columns: VxeGridProps['columns'] = [
         color = 'gray';
       }
       return h(Tag, { color: color }, () => statusName);
-    },
+    },*/
   },
   {
     title: '更新时间',
@@ -98,6 +103,7 @@ export const hisDefinitionColumns: VxeGridProps['columns'] = [
     title: '操作',
     field: 'action',
     width: 120,
+    slots: {default: 'action'},
     align: 'center',
   },
   {
@@ -121,7 +127,7 @@ export const hisDefinitionColumns: VxeGridProps['columns'] = [
     field: 'statusName',
     width: 70,
     align: 'center',
-    customRender: ({ record }) => {
+    /*customRender: ({ record }) => {
       const { suspensionState } = record;
       let statusName = '未知';
       let color = '';
@@ -135,15 +141,15 @@ export const hisDefinitionColumns: VxeGridProps['columns'] = [
         color = 'gray';
       }
       return h(Tag, { color: color }, () => statusName);
-    },
+    },*/
   },
-  {
+/*  {
     field: 'action',
     fixed: 'right',
     slots: {default: 'action'},
     title: '操作',
     width: 120,
-  },
+  },*/
 ];
 
 export const modelInfoFormSchema: FormSchema[] = [

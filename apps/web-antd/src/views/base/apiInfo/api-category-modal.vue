@@ -5,16 +5,12 @@ import {useVbenModal} from '@vben/common-ui';
 import {useVbenForm} from '#/adapter/form';
 
 import {
-  getApiCategoryTreeData,
   saveOrUpdateApiCategory,
 } from '#/api/base/apiInfo';
 
 import { apiCategoryFormSchema } from './apiInfo.data';
 
 const emit = defineEmits(['success']);
-
-const isUpdate = ref(true);
-
 
 const [BasicModal, modalApi] = useVbenModal({
   draggable: true,
@@ -47,40 +43,6 @@ const [BasicForm, formApi] = useVbenForm({
   schema: apiCategoryFormSchema,
   wrapperClass: 'grid-cols-1',
 });
-/*
-const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] =
-  useForm({
-    labelWidth: 100,
-    schemas: apiCategoryFormSchema,
-    showActionButtonGroup: false,
-  });
-
-const [registerModal, { setModalProps, closeModal }] = useModalInner(
-  async (data) => {
-    await resetFields();
-    setModalProps({ confirmLoading: true, loading: true });
-    isUpdate.value = !!data?.isUpdate;
-    const formData = data.record;
-    const categoryTreeData = await getApiCategoryTreeData();
-
-    await updateSchema([
-      {
-        field: 'pid',
-        componentProps: {
-          treeData: categoryTreeData,
-          fieldNames: { value: 'id', label: 'name' },
-        },
-      },
-    ]);
-
-    await setFieldsValue({
-      ...formData,
-    });
-    setModalProps({ confirmLoading: false, loading: false });
-  },
-);*/
-
-const getTitle = computed(() => (unref(isUpdate) ? '修改' : '新增'));
 
 async function handleSubmit() {
   try {

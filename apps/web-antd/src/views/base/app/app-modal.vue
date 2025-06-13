@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {defineExpose} from 'vue';
+import {defineExpose, defineEmits} from 'vue';
 import {message} from 'ant-design-vue';
 
 import {useVbenModal} from '@vben/common-ui';

@@ -15,7 +15,6 @@
           type="dashed"
           class="w-full"
           @click="handleAddRow">添加变量</Button>
-      <!--      <a-button type="primary" style="width: 100%;" @click="handleSubmit">保存</a-button>-->
     </div>  </div>
 </template>
 <script lang="ts" setup>

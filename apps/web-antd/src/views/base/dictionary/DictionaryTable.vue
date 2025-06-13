@@ -2,8 +2,6 @@
   <div class="bg-white overflow-hidden dictionary h-full">
     <BasicTable
       table-title="数据字典"
-      @row-click="clickDictionary"
-      @selection-change="changeDictionary"
     >
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.ADD" :disabled="dictTypeId === ''" type="primary" @click="handleCreate">新增</Button>
@@ -23,7 +21,6 @@
   import {TableAction} from '#/components/table-action';
   import { PerEnum } from '#/enums/perEnum';
   import { dictionaryPageList, deleteByIds } from '#/api/base/dictionary';
-  import { useAccess } from '@vben/access';
   import { columns, searchFormSchema } from './dictionary.data';
   import {Button, message} from 'ant-design-vue';
   import DictionaryModal from './DictionaryModal.vue';
@@ -163,17 +160,6 @@
     setTimeout(() => {
       tableApi.reload();
     }, 200);
-  }
-
-  function clickDictionary(e) {
-    const selectedRows = getSelectRows();
-    emit('handleSelect', selectedRows[0]?.id);
-  }
-
-  function changeDictionary({ keys, rows }) {
-    if (rows && rows.length > 0) {
-      emit('handleSelect', rows[0].id);
-    }
   }
 
   defineExpose({

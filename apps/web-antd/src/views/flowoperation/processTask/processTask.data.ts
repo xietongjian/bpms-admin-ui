@@ -139,6 +139,7 @@ export const searchFormSchema: FormSchema[] = [
     component: 'PersonalSelector',
     componentProps: {
       placeholder: '请选择待办人',
+      multiple: false,
     },
   },
   {

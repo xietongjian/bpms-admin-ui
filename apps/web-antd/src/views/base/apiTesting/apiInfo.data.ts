@@ -148,24 +148,6 @@ export const apiTestingFormSchema: FormSchema[] = [
         .min(1, "名称不能为空")
         .max(40, "字符长度不能大于40！")
         .regex(new RegExp('[a-zA-z]+://[^\\s]*'), '请输入正确的URL地址！')
-    /*
-    rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '系统URL不能为空！',
-      },
-      {
-        pattern: ,
-        type: 'string',
-        message: ,
-      },
-      {
-        max: 40,
-        message: '字符长度不能大于40！',
-      },
-    ],*/
-    // colProps,
   },
   {
     fieldName: 'indexUrl',
@@ -180,23 +162,6 @@ export const apiTestingFormSchema: FormSchema[] = [
         .min(1, "首页URL不能为空！")
         .max(128, "字符长度不能大于128！")
         .regex(new RegExp('^\\/(\\w+\\/?)+(\\.?\\w+)?$'),'请输入正确的URL地址！')
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '！',
-      },
-      {
-        pattern:
-        type: 'string',
-        message: ,
-      },
-      {
-        max: 128,
-        message: '字符长度不能大于128！',
-      },
-    ],
-    colProps,*/
   },
   {
     fieldName: 'image',

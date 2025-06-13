@@ -4,37 +4,14 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-import {ref, computed, unref, defineEmits, defineExpose} from 'vue';
+import {defineEmits, defineExpose} from 'vue';
 import {useVbenModal} from '@vben/common-ui';
 import {useVbenForm} from '#/adapter/form';
 import {message} from 'ant-design-vue';
-
 import {formSchema} from './formFieldType.data';
 import {saveOrUpdate} from '#/api/base/formFieldType';
 
 const emit = defineEmits(['success', 'register']);
-
-const isUpdate = ref(true);
-
-/*const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
-  labelWidth: 100,
-  schemas: formSchema,
-  showActionButtonGroup: false,
-});
-
-const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
-  await resetFields();
-  setModalProps({ confirmLoading: false });
-  isUpdate.value = !!data?.isUpdate;
-  let formData = data.record;
-
-  if (unref(isUpdate)) {
-    setFieldsValue({
-      ...formData,
-    });
-  }
-});*/
-
 
 const [BasicModal, modalApi] = useVbenModal({
   draggable: true,

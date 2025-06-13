@@ -86,7 +86,6 @@
   }
 
   function intAnalysis() {
-    debugger;
     renderEcharts(
       {
         tooltip: {
@@ -144,12 +143,22 @@
             barWidth: 10,
             itemStyle: {
               borderRadius: 5,
-              color: ['#5ab1ef', '#b6a2de', '#67e0e3', '#2ec7c9'],
-
-              /*color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: '#14c8d4' },
-                { offset: 1, color: '#43eec6' },
-              ]),*/
+              // color: '#14C8D4',
+              color: {
+                type: 'linear', 					// 线性渐变
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0, color: '#0D7D85' 		// 0% 处的颜色
+                  },
+                  {
+                    offset: 1, color: '#0D7D85' 		// 100% 处的颜色
+                  }
+                ]
+              }
             },
             data: unref(instCounts),
           },
@@ -159,13 +168,23 @@
             barGap: '-100%',
             barWidth: 10,
             itemStyle: {
-              color: ['#5ab1ef', '#b6a2de', '#67e0e3', '#2ec7c9'],
-
-              /*color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: 'rgba(20,200,212,0.5)' },
-                { offset: 0.2, color: 'rgba(20,200,212,0.2)' },
-                { offset: 1, color: 'rgba(20,200,212,0)' },
-              ]),*/
+              borderRadius: 2,
+              // color: '#5ab1ef',
+              color: {
+                type: 'linear', 					// 线性渐变
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0, color: '#0D7D85' 		// 0% 处的颜色
+                  },
+                  {
+                    offset: 1, color: '#14C8D4' 		// 100% 处的颜色
+                  }
+                ]
+              }
             },
             z: -12,
             data: unref(taskCounts),

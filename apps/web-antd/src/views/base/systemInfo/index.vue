@@ -113,31 +113,6 @@ function createActions(record: Recordable<any>) {
     },
   ];
 }
-/*
-const [registerModal, {openModal}] = useModal();
-
-const [registerTable, {reload}] = useTable({
-  title: '列表',
-  api: getPagerModel,
-  columns,
-  formConfig: {
-    labelWidth: 120,
-    schemas: searchFormSchema,
-    showAdvancedButton: false,
-    showResetButton: false,
-    autoSubmitOnEnter: true,
-  },
-  canColDrag: true,
-  useSearchForm: true,
-  bordered: true,
-  showIndexColumn: false,
-  rowSelection: false,
-  actionColumn: {
-    width: 160,
-    title: '操作',
-    dataIndex: 'action',
-  },
-});*/
 
 function handleCreate() {
   systemInfoModalRef.value.setData();

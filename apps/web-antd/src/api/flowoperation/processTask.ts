@@ -91,7 +91,7 @@ export const completeBackStage = (params: any) => {
  * @param params
  */
 export const updateAssignee = (params: any) => {
-  return requestClient.post<any>(Api.UpdateAssignee, params, { isReturnNativeResponse: true });
+  return requestClient.post<any>(Api.UpdateAssignee, params, { responseReturn: 'body' });
 };
 
 /**

@@ -79,12 +79,10 @@ const errorMsg = ref();
 const editFormFields = ref([]);
 const requiredFormFields = ref([]);
 watch(() => props.procInstId, (newVal, oldValue) => {
-  debugger;
   loadCustomFormAndData();
 });
 
 onMounted(() => {
-  debugger;
   loadCustomFormAndData();
 });
 /**
@@ -102,9 +100,7 @@ async function loadCustomFormAndData() {
     });
     if (success) {
       const {formDatas, formInfo, itemList, activityFormItems} = data;
-      debugger;
       jsonData.value = JSON.parse(formInfo.formJson);
-      debugger;
       await nextTick();
       generateFormRef.value.refresh();
       generateFormRef.value.setData(formDatas);

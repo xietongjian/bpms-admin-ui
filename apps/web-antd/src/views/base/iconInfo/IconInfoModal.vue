@@ -32,25 +32,16 @@
 <script lang="ts" setup>
   import { ref, unref, defineExpose } from 'vue';
   import { iconInfoFormSchema } from './iconInfo.data';
-  import { FormItem, FormItemRest, Input, Select, message } from 'ant-design-vue';
-  import { getIconCategoryTreeData, saveOrUpdateIconInfo } from '#/api/base/iconInfo';
-
+  import { Input, message } from 'ant-design-vue';
+  import { saveOrUpdateIconInfo } from '#/api/base/iconInfo';
   import { Upload } from 'ant-design-vue';
   import { PlusOutlined } from '@ant-design/icons-vue';
-
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
-  import {formSchema} from "#/views/base/app/app.data";
 
-
-  const headersRef = ref(null);
-  const pathVariablesRef = ref(null);
-  const queryVariablesRef = ref(null);
   const imageUrl = ref<string>('');
 
-  const isUpdate = ref(true);
   const emit = defineEmits(['success']);
-
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
@@ -85,40 +76,6 @@
     wrapperClass: 'grid-cols-1',
   });
 
-  /*const [
-    registerForm,
-    { resetFields, updateSchema, scrollToField, setFieldsValue, validate }
-  ] = useForm({
-    labelWidth: 100,
-    schemas: iconInfoFormSchema,
-    showActionButtonGroup: false,
-  });*/
-
-  /*const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
-    try {
-      setDrawerProps({ loading: true, confirmLoading: true });
-      await resetFields();
-      isUpdate.value = !!data?.isUpdate;
-      let formData = data.record;
-
-      const categoryTreeData = await getIconCategoryTreeData();
-      await updateSchema([
-        {
-          field: 'categoryId',
-          componentProps: {
-            treeData: categoryTreeData,
-            fieldNames: { value: 'id', label: 'name' },
-          },
-        },
-      ]);
-      await setFieldsValue(formData);
-      imageUrl.value = formData?.icon || '';
-
-      scrollToField('categoryId', { behavior: 'smooth' });
-    } finally {
-      setDrawerProps({ loading: false, confirmLoading: false });
-    }
-  });*/
   const beforeUpload = (file) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/svg+xml';
     if (!isJpgOrPng) {
@@ -151,14 +108,13 @@
       const values = await formApi.getValues();
       modalApi.setState({loading: true, confirmLoading: true});
 
-      debugger;
       values.icon = imageUrl.value;
 
       const { success, msg } = await saveOrUpdateIconInfo(values);
       if (success) {
         emit('success');
         message.success(msg);
-        modalApi.close()();
+        modalApi.close();
       } else {
         message.error(msg);
       }

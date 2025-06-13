@@ -204,16 +204,6 @@ export const apiInfoFormSchema: FormSchema[] = [
       },
     },
   },
-  /*{
-    fieldName: 'method',
-    label: '请求地址',
-    defaultValue: 'GET',
-    // fields: ['url'],
-    // defaultValueObj: { method: 'GET', url: ''},
-    component: 'Input',
-    // slot: 'urlSlot',
-    rules: 'required'
-  },*/
   {
     fieldName: 'requestMethodUrl',
     label: '请求地址',

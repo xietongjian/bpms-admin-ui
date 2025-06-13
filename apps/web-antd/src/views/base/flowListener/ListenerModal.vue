@@ -190,8 +190,6 @@ const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data
   });
 });*/
 
-const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
-
 async function handleSubmit() {
   try {
     modalApi.setState({loading: true, confirmLoading: true});

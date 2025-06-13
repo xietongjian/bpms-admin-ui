@@ -250,12 +250,12 @@ function navTo(nav: WorkbenchProjectItem | WorkbenchQuickNavItem) {
       </template>
       <template #description> 今日晴，20℃ - 32℃！ </template>
     </WorkbenchHeader>-->
-    <div class="flex flex-col lg:flex-row">
-      <div class="mr-4 lg:w-1/3">
+    <div class="flex gap-4 flex-col lg:flex-row">
+      <div class="lg:w-1/3">
         <GrowCard />
         <TodoCenter class="!mb-4 enter-y" />
       </div>
-      <div class="mr-4 lg:w-1/3">
+      <div class="lg:w-1/3">
         <QuickNav class="enter-y mb-4" />
         <CommonSystem class="enter-y" />
       </div>

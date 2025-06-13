@@ -316,27 +316,6 @@ onMounted(async () => {
 });
 
 const currentNode = ref(undefined);
-/*const [registerTable, {reload, getForm}] = useTable({
-  title: '列表',
-  api: getIconInfoListByPage,
-  columns,
-  formConfig: {
-    labelWidth: 100,
-    schemas: searchFormSchema,
-    showAdvancedButton: false,
-    showResetButton: false,
-    autoSubmitOnEnter: true,
-  },
-  canColDrag: true,
-  useSearchForm: true,
-  bordered: true,
-  showIndexColumn: true,
-  actionColumn: {
-    width: 140,
-    title: '操作',
-    dataIndex: 'action',
-  },
-});*/
 
 initIconCategoryTree();
 

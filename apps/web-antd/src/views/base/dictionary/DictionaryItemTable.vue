@@ -20,9 +20,7 @@
   import { TableAction } from '#/components/table-action';
   import {useVbenVxeGrid} from "#/adapter/vxe-table";
   import {Button, message} from 'ant-design-vue';
-
   import { dictionaryItemPageList, deleteItemByIds } from '#/api/base/dictionary';
-
   import { itemColumns, dictionaryItemSearchFormSchema } from './dictionary.data';
   import DictionaryItemModal from './DictionaryItemModal.vue';
 
@@ -45,7 +43,7 @@
     schema: dictionaryItemSearchFormSchema,
   };
 
-  const gridOptions: VxeGridProps<any> = {
+  const gridOptions: VxeGridProps = {
     columns: itemColumns,
     columnConfig: {resizable: true},
     height: 'auto',

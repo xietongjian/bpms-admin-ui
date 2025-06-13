@@ -144,10 +144,6 @@
     ];
   }
 
-  onMounted(() => {
-    // const {updateSchema, getFieldsValue} = getForm();
-  });
-
   async function handleCreate() {
     const { getValues } = tableApi.formApi;
     const value = await getValues();

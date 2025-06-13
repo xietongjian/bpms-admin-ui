@@ -126,7 +126,7 @@ export const saveOrUpdate = (params: any) =>
 
 export const publishBpmn = (params: any) => requestClient.post( Api.PublishBpmn + '/' + params);
 
-export const stopBpmn = (params: any) => requestClient.post( Api.StopBpmn + '/' + params);
+export const stopBpmn = (params: any) => requestClient.post( Api.StopBpmn + '/' + params, {}, {responseReturn: 'body'});
 
 export const getById = (params: any) => requestClient.get( Api.GetById + '/' + params );
 

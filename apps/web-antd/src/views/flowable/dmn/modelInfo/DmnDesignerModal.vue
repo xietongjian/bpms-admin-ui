@@ -109,7 +109,6 @@
 import {ref, computed, nextTick, defineExpose, defineEmits, unref} from 'vue';
 import {useVbenModal} from '@vben/common-ui';
 import {useVbenForm} from '#/adapter/form';
-import { useAccessStore, useUserStore } from '@vben/stores';
 import { useClipboard } from '@vueuse/core';
 
 import {
@@ -121,7 +120,6 @@ import {
 import {checkEntityExist} from '#/api/flowable/bpmn/modelInfo';
 
 import {dmnBaseFormSchema} from './modelInfo.data';
-import FramePage from '#/views/components/iframe/index.vue';
 import {
   Modal,
   Row,
@@ -139,20 +137,12 @@ import {
   Popconfirm,
 } from 'ant-design-vue';
 import {PerEnum} from '#/enums/perEnum';
-
-// import { copyText } from '@/utils/copyTextToClipboard';
-// import { Authority } from '@/components/Authority';
-// import { PerEnum } from '@/enums/perEnum';
 import {updateXMLAttribute} from '#/utils/domUtils';
-import {apiCategoryFormSchema} from "#/views/base/apiInfo/apiInfo.data";
-// import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
 import {usePreferences} from '@vben/preferences';
 import DmnDesigner from "#/views/components/process/DmnDesigner.vue";
 
 const PerPrefix = 'Dmn:';
 const {isDark} = usePreferences();
-const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
-
 const {  copy } = useClipboard({ legacy: true });
 
 const Step = Steps.Step;
@@ -171,15 +161,6 @@ const designerStatus = ref({
   finallyStatus: 0,
   finallyStatusName: '',
 });
-/*
-const [registerForm, { setFieldsValue, updateSchema, resetFields, validate, setProps }] = useForm(
-  {
-    labelWidth: 100,
-    schemas: dmnBaseFormSchema,
-    showActionButtonGroup: false,
-    submitFunc: handleSaveDmnInfo,
-  },
-);*/
 
 const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
@@ -197,35 +178,6 @@ const publishBtnVisibility = computed(() => {
   const {finallyStatus} = unref(designerStatus);
   return finallyStatus === 2;
 });
-const getBaseDynamicRules = (params: any) => {
-  return [
-    {
-      trigger: 'blur',
-      validator: (_, value) => {
-        if (value) {
-          return checkEntityExist({
-            id: params.id,
-            field: params.field,
-            fieldValue: value,
-            fieldName: params.fieldName,
-          })
-              .then((res) => {
-                if (res) {
-                  return Promise.resolve();
-                } else {
-                  return Promise.reject(params.fieldName + '已存在，请修改！');
-                }
-              })
-              .catch((res) => {
-                return Promise.reject(res);
-              });
-        } else {
-          return Promise.resolve();
-        }
-      },
-    },
-  ] as Rule[];
-};
 
 const finallyStatusStyle = computed(() => {
   const {finallyStatus, finallyStatusName} = unref(designerStatus);
@@ -256,27 +208,6 @@ function handleStepChange(current) {
     // stepsDisabled.value.settingInfo = false;
   }
 }
-
-/*const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
-  async (data) => {
-    resetFields();
-    const { modelId, name, modelKey, categoryCode, id, dmnType } = data.record;
-    // 0 决策表；1 决策服务
-    dmnMode.value = dmnType;
-    baseModelInfo.value = { modelId, name, modelKey, categoryCode, id };
-
-    setModalProps({ confirmLoading: false });
-    isUpdate.value = !!data?.isUpdate;
-
-    // modelId, categoryCode, id
-
-    url.value = '/static/dmn/designer/index.html?modelKey=' + (modelId || '');
-
-    setFieldsValue({
-      ...data.record,
-    });
-  },
-);*/
 
 const [BasicModal, modalApi] = useVbenModal({
   fullscreen: true,
@@ -529,32 +460,3 @@ function handleClose() {
 defineExpose(modalApi);
 </script>
 
-<style lang="scss">
-.admn-designer-container {
-  > .ant-modal {
-    > .ant-modal-content {
-      > .ant-modal-header {
-        cursor: default !important;
-      }
-    }
-  }
-
-  .ant-modal-content {
-    .ant-modal-header {
-      margin-bottom: 0;
-
-      .designer-steps {
-        .ant-steps-item-title {
-          overflow: visible;
-        }
-      }
-    }
-
-    .ant-modal-body {
-      .scroll-container {
-        padding-top: 0;
-      }
-    }
-  }
-}
-</style>
