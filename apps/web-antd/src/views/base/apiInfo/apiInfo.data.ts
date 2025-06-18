@@ -234,46 +234,47 @@ export const apiInfoFormSchema: FormSchema[] = [
   {
     fieldName: 'requestParamList',
     label: '请求头参数',
-    component: 'Input'
+    component: 'Input',
+    formItemClass: 'items-start',
+    labelClass: '!pt-2',
   },
   {
     fieldName: 'requestBody',
-    label: '请求体',
-    // slot: 'requestBodySlot',
-    component: 'Input',
-    render: ({ model, field }) => {
-      return h(CodeEditor, {
-        style: "border: 1px solid rgb(217, 217, 217);",
-        value: model[field],
-        mode: MODE.JSON,
-        onChange: (value: string) => {
-          model[field] = value;
-        },
-        config: {
-          tabSize: 10,
-        },
-      });
+    label: '请求参数',
+    wrapperClass: 'border',
+    component: markRaw(CodeEditor),
+    componentProps: {
+      type: 'json',
+      class: 'w-full',
+      codeStyle: {
+        width: '100%', minHeight: '100px'
+      },
+      placeholder: '请输入有效的JSON对象数据格式：如{"a": "123"}',
     },
-    colProps,
+    formItemClass: 'items-start',
+    help: '请输入有效的JSON对象数据格式：如{"a": "123"}',
+    rules: z.string().refine((v) => {
+      try {
+        JSON.parse(v);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }, '请输入正确的参数格式，如{"a": "123"}').optional(),
   },
   {
     fieldName: 'responseBodyCase',
     label: '响应示例',
-    component: 'Input',
-    render: ({ model, field }) => {
-      return h(CodeEditor, {
-        style: "border: 1px solid rgb(217, 217, 217);",
-        value: model[field],
-        mode: MODE.JSON,
-        onChange: (value: string) => {
-          model[field] = value;
-        },
-        config: {
-          tabSize: 10,
-        },
-      });
+    component: markRaw(CodeEditor),
+    wrapperClass: 'border',
+    componentProps: {
+      type: 'json',
+      class: 'w-full',
+      codeStyle: {
+        width: '100%', minHeight: '100px'
+      },
+      placeholder: '请输入有效的JSON对象数据格式：如{"a": "123"}',
     },
-    colProps,
   },
 ];
 

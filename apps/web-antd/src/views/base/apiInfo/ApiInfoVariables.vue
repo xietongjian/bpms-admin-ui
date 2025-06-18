@@ -28,7 +28,7 @@ const emit = defineEmits(['rowCountChange'])
 
 const props = defineProps({
   variables: {
-    type: String,
+    type: Array<any>,
     default: '',
   },
   type: {

@@ -68,9 +68,9 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
       const values = drawerApi.getData<Record<string, any>>();
       if (values) {
         values.requestParamList = {
-          headers: JSON.parse(values.headers),
-          pathVariables: JSON.parse(values.pathVariables),
-          queryVariables: JSON.parse(values.queryVariables),
+          headers: JSON.parse(values.headers||'[]'),
+          pathVariables: JSON.parse(values.pathVariables||'[]'),
+          queryVariables: JSON.parse(values.queryVariables||'[]'),
         };
         values.requestMethodUrl = [values.method, values.url];
         formApi.setValues(values);

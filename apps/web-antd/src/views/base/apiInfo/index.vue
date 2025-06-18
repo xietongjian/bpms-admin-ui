@@ -181,11 +181,12 @@ async function handleDeleteCategory(node: any) {
 }
 
 function handleCreate() {
+  debugger;
   apiInfoDrawerRef.value.setData({categoryId: unref(currentNode)?.id});
-  apiInfoDrawerRef.value.open();
   apiInfoDrawerRef.value.setState({
     title: "新增接口",
   });
+  apiInfoDrawerRef.value.open();
 }
 
 function handleEdit(record: Recordable<any>) {
