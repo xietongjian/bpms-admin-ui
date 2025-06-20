@@ -2,7 +2,7 @@
 import type { VNode } from 'vue';
 import { computed, ref, unref, useAttrs, watch, watchEffect } from 'vue';
 import { usePagination } from '@vben/hooks';
-import {Popover, Input, Segmented, Button, Pagination} from 'ant-design-vue';
+import {Popover, Empty, Input, Segmented, Button, Pagination} from 'ant-design-vue';
 import {getIconInfoListByPage, getIconCategoryListData} from "#/api/base/iconInfo";
 import { objectOmit, refDebounced, watchDebounced } from '@vueuse/core';
 // import { fetchIconsData } from './icons';
@@ -60,7 +60,7 @@ const searchText = ref('');
 
 const categoryId = ref('');
 
-const categories = ref([]);
+const categories = ref<any[]>([]);
 function fetchSysIconListByCategory(e) {
   loadData();
 }
@@ -127,6 +127,13 @@ watch(
   },
 );
 
+watch(
+  () => keywordDebounce.value,
+  (v) => {
+    loadData();
+  },
+);
+
 const handleClick = (iconObj: any) => {
   currentSelect.value = iconObj.icon;
   modelValue.value = iconObj.icon;
@@ -177,21 +184,27 @@ function loadCategories() {
   });
 }
 
-function loadData() {
-  const params = {
-    entity: {
-      keyword: keyword.value,
-      categoryId: categoryId.value
-    },
-    query: {
-      pageNum: unref(pagination).current,
-      pageSize: unref(pagination).pageSize,
-    }
-  };
-  getIconInfoListByPage(params).then(res => {
+async function loadData() {
+  try {
+    loading.value = true;
+    const params = {
+      entity: {
+        keyword: keywordDebounce.value,
+        categoryId: categoryId.value
+      },
+      query: {
+        pageNum: unref(pagination).current,
+        pageSize: unref(pagination).pageSize,
+      }
+    };
+    const res = await getIconInfoListByPage(params);
     currentList.value = res.rows;
     pagination.value.total = res.total;
-  });
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
 }
 
 function close() {
@@ -205,6 +218,7 @@ function onKeywordChange(v: string) {
 const searchInputProps = computed(() => {
   return {
     placeholder: '请输入关键字',
+    allowClear: true,
     [props.modelValueProp]: keyword.value,
     [`onUpdate:${props.modelValueProp}`]: onKeywordChange,
     class: 'mx-2',
@@ -231,11 +245,9 @@ defineExpose({ toggleOpenState, open, close });
     @openChange="handleOpenChange"
     trigger="click"
     v-model:open="visible"
-    :content-props="{ align: 'end', alignOffset: -11, sideOffset: 8 }"
-    content-class="p-0 pt-3 w-full"
-    trigger-class="w-full"
+    overlayClassName="max-w-[700px]"
   >
-    <div class="group relative w-20 h-20 border border-dotted rounded flex justify-center items-center cursor-pointer">
+    <div class="group bg-card relative w-20 h-20 border border-dotted rounded flex justify-center items-center cursor-pointer">
       <img v-if="!!currentSelect" :src="currentSelect" class="w-16 h-16 object-cover margin-auto"/>
       <PictureOutlined v-else class="text-4xl opacity-30" />
       <div v-if="!!currentSelect" @click="handleClear" class="group-hover:visible invisible rounded-full p-[1px] bg-primary/10 hover:bg-primary/20 absolute top-0 right-0 text-primary">
@@ -257,7 +269,7 @@ defineExpose({ toggleOpenState, open, close });
               v-model="keyword"
           />
         </div>
-        <div>
+        <div class="overflow-x-auto">
           <Segmented
               v-model:value="categoryId"
               :options="categories"
@@ -268,14 +280,14 @@ defineExpose({ toggleOpenState, open, close });
             </template>
           </Segmented>
         </div>
-        <div class="max-h-96 p-2 overflow-y-auto min-h-40" v-if="currentList.length > 0">
+        <div v-loading="loading" v-if="currentList.length > 0" class="max-h-96 p-2 overflow-y-auto min-h-40 min-w-200">
           <div class="grid w-full grid-cols-10 gap-2 justify-items-center">
             <div
-                class="cursor-pointer rounded hover:ring hover:ring-2 hover:ring-primary hover:ring-primary/90 p-1"
+                class="bg-card cursor-pointer rounded hover:ring hover:ring-2 hover:ring-primary hover:ring-primary/90 p-1"
                 :class="{'ring-2 ring-primary ring-primary/40': currentSelect === item.icon}"
                 v-for="(item, index) in currentList"
                 :key="index"
-                :tooltip="item.name"
+                :title="item.name"
                 @click="handleClick(item)"
             >
               <img :alt="item.name" :src="item.icon" class="w-12 h-12 object-cover" />
@@ -284,9 +296,8 @@ defineExpose({ toggleOpenState, open, close });
         </div>
 
         <template v-else>
-          <div class="flex-col-center text-muted-foreground min-h-[150px] w-full">
-            <!--          <EmptyIcon class="size-10" />-->
-            <div class="mt-1 text-sm">暂无数据！</div>
+          <div class="flex-col-center text-muted-foreground border w-full min-w-[600px] p-4">
+            <Empty/>
           </div>
         </template>
         <div
