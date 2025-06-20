@@ -325,14 +325,17 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
   {
     fieldName: 'modelIcon',
     label: '图标',
-    component: 'SysIconPicker',
+    component: 'SysIconSelector',
     componentProps: {
       mode: 'svg',
     },
   },
   {
     fieldName: 'privilegeTitle',
-    slot: 'privilegeTitle',
+    hideLabel: true,
+    component: 'Input',
+    // slot: 'basicTitle',
+    formItemClass: 'm-0 p-0',
   },
 
   {
