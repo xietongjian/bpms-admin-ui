@@ -29,7 +29,7 @@ const formOptions: VbenFormProps = {
     labelWidth: 60,
   },
   wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
-  actionWrapperClass: 'col-span-2 col-start-3 text-left ml-4',
+  actionWrapperClass: 'col-span-2 col-start-3 text-left ml-2',
   resetButtonOptions: {
     show: false,
   },

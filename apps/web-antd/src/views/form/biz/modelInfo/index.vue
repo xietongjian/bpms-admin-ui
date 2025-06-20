@@ -3,8 +3,8 @@
       :left-max-width="50"
       :left-min-width="10"
       :left-width="15"
-      :split-handle="true"
-      :split-line="true"
+      :split-handle="false"
+      :split-line="false"
       :resizable="true"
       :left-collapsible="true"
       :auto-content-height="true"
@@ -12,7 +12,7 @@
     <template #left >
       <FlowCategoryTree @select="handleSelect" />
     </template>
-    <div class="bg-card h-full">
+    <div class="ml-2 h-full">
       <BasicTable >
         <template #toolbar-tools >
           <div class="flex flex-row gap-2">
@@ -185,7 +185,7 @@
     },
     // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个
     wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-    actionWrapperClass: 'col-span-2 col-start-3 text-left ml-4',
+    actionWrapperClass: 'col-span-2 col-start-3 text-left ml-2',
     resetButtonOptions: {
       show: false,
     },

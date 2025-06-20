@@ -3,8 +3,8 @@
       :left-max-width="50"
       :left-min-width="10"
       :left-width="15"
-      :split-handle="true"
-      :split-line="true"
+      :split-handle="false"
+      :split-line="false"
       :resizable="true"
       :left-collapsible="true"
       :auto-content-height="true"
@@ -12,7 +12,7 @@
     <template #left >
       <FlowCategoryTree @select="handleSelect" />
     </template>
-    <div class="bg-card h-full">
+    <div class="ml-2 h-full">
       <BasicTable >
         <template #toolbar-tools >
           <div class="flex flex-row gap-2">
@@ -105,18 +105,6 @@ import {columns, searchFormSchema} from './modelInfo.data';
   const bpmnDesignerModalRef = ref(),
       copyModelInfoModalRef = ref(),
       bpmnPreviewModalRef = ref();
-  // const [registerCopyModal, { openModal: openCopyModal, setModalProps: setCopyModalProps }] =
-  //   useModal();
-  // const [
-  //   registerBpmnPreviewModal,
-  //   { openModal: openBpmnPreviewModal, setModalProps: setBpmnPreviewProps },
-  // ] = useModal();
-  // const [registerTaskFormModal, { openModal: openTaskFormModal, setModalProps: setTaskFormProps }] =
-  //   useModal();
-  // const [
-  //   registerBpmnDesignerModal,
-  //   { openModal: openBpmnDesignerModal, setModalProps: setBpmnDesignerModalProps },
-  // ] = useModal();
 
   const formTableLoading = ref(false);
   const taskFormData = ref<object>({});
@@ -169,7 +157,7 @@ import {columns, searchFormSchema} from './modelInfo.data';
       labelWidth: 60,
     },
     wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+    actionWrapperClass: 'col-span-2 col-start-2 text-left ml-2',
     resetButtonOptions: {
       show: false,
     },

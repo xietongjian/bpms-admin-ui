@@ -54,7 +54,7 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-4',
+  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-2',
   resetButtonOptions: {
     show: false,
   },
