@@ -54,7 +54,7 @@
   </Page>
 </template>
 <script lang="ts" setup>
-  import { onMounted, ref } from 'vue';
+  import { ref } from 'vue';
   import { PerEnum } from '#/enums/perEnum';
 
   import type {VxeGridProps} from '#/adapter/vxe-table';
@@ -103,6 +103,10 @@
     stripe: true,
     pagerConfig: {
       enabled: false,
+    },
+    rowConfig: {
+      useKey: true,
+      keyField: 'id',
     },
     expandConfig: {
       padding: false,
@@ -176,10 +180,11 @@
     }
   }
 
-  function handleSuccess() {
-    tableApi.reload();
-    setTimeout(() => {
-      tableApi.grid.setRowExpand(expandedRows.value, true);
-    }, 100);
+  async function handleSuccess() {
+    await tableApi.reload();
+    if(expandedRows.value && expandedRows.value.length>0){
+      await tableApi.grid.setRowExpand(expandedRows.value, true);
+
+    }
   }
 </script>

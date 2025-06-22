@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 h-full">
+  <div class="p-4 h-full bg-primary/50">
     <div
       class="p-2 position-relative analysis-container h-full rounded overflow-y-auto"
       :class="{ 'bg-[var(--sider-dark-bg-color)] [&_.top-task-analysis_*]:!color-white': !isDark }"

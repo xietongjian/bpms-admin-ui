@@ -3,16 +3,16 @@
       :left-max-width="50"
       :left-min-width="10"
       :left-width="15"
-      :split-handle="true"
-      :split-line="true"
+      :split-handle="false"
+      :split-line="false"
       :resizable="true"
-      :left-collapsible="true"
+      :left-collapsible="false"
       :auto-content-height="true"
       content-class="h-full">
     <template #left>
       <FlowCategoryTree @select="handleSelect"/>
     </template>
-    <div class="bg-card h-full">
+    <div class="bg-card h-full ml-2">
       <BasicTable >
         <template #toolbar-tools>
           <div class="flex flex-row gap-2">

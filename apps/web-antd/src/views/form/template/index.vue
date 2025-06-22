@@ -3,38 +3,66 @@
       :left-max-width="50"
       :left-min-width="10"
       :left-width="15"
-      :split-handle="true"
-      :split-line="true"
+      :split-handle="false"
+      :split-line="false"
       :resizable="true"
-      :left-collapsible="true"
+      :left-collapsible="false"
       :auto-content-height="true"
       content-class="h-full">
     <template #left class="h-full bg-card">
-      <Tree
-        class="h-full"
-          :loading="treeLoading"
-          treeWrapperClassName="h-[calc(100%-35px)] overflow-auto h-full"
-          :clickRowToExpand="false"
-          :treeData="formCategoryTreeData"
-          @select="handleSelect"
-          ref="basicTreeRef"
-          block-node
-          :field-names="{title: 'name'}"
-          :actionList="treeActionList"
-      >
-        <template #headerTitle >
-          <Row align="middle" class="w-full">
-            <Col span="12">
-              表单分类
-            </Col>
-            <Col span="12" class="text-right">
-              <Button size="small" @click="handleCreateCategory" type="primary">新增分类</Button>
-            </Col>
-          </Row>
-        </template>
-      </Tree>
+      <div class="flex flex-col bg-card h-full p-2">
+        <div class="h-10 flex flex-row justify-between border border-solid border-b-px border-x-0 border-t-0">
+          <span>模板分类</span>
+          <Button v-access:code="PerPrefix+PerEnum.ADD"
+                  size="small"
+                  @click="handleCreateCategory"
+                  type="primary">
+            新增
+          </Button>
+        </div>
+        <div>
+          <Tree
+            :loading="treeLoading"
+            title="模板分类"
+            treeWrapperClassName="h-[calc(100%-35px)] overflow-auto h-full"
+            :clickRowToExpand="false"
+            :treeData="formCategoryTreeData"
+            @select="handleSelect"
+            ref="basicTreeRef"
+            block-node
+            :field-names="{ title: 'name' }"
+            :actionList="treeActionList"
+          >
+            <template #title="node">
+              <div class="w-full flex flex-row justify-between group">
+                <span>{{ node.name }}</span>
+                <span class="group-hover:block hidden text-right">
+                      <Button @click.stop
+                              size="small"
+                              type="link"
+                              :icon="h(EditOutlined)"
+                              @click="handleUpdateCategory(node)"/>
+                      <Popconfirm
+                        title="确定要删除吗？"
+                        ok-text="确认"
+                        cancel-text="取消"
+                        @confirm="handleDeleteCategory(node)"
+                        :okButtonProps="{danger: true}"
+                      >
+                        <Button @click.stop
+                                size="small"
+                                type="link"
+                                :icon="h(DeleteOutlined)"
+                                danger/>
+                      </Popconfirm>
+                    </span>
+              </div>
+            </template>
+          </Tree>
+        </div>
+      </div>
     </template>
-    <div class="bg-card h-full">
+    <div class="bg-card h-full ml-2">
       <BasicTable >
         <template #toolbar-tools >
           <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleAddFormTemplate"> 新增</Button>

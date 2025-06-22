@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <BasicForm class="bg-card p-4 mb-4" :schema="dynamicFormSchema" />
+    <BasicForm class="bg-card p-4" :schema="dynamicFormSchema" />
   </div>
 </template>
 <script lang="ts" setup>

@@ -9,6 +9,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '名称',
     field: 'name',
     align: 'left',
+    treeNode: true
   },
   {
     title: '编码',

@@ -20,7 +20,7 @@
   import {Page} from '@vben/common-ui';
   import { TableAction } from '#/components/table-action';
   import {Button, message, Tag} from "ant-design-vue";
-  import { getDicTypes, deleteByIds } from '#/api/base/dicType';
+  import {getDicTypes, deleteByIds, getDicTypeList} from '#/api/base/dicType';
   import { columns, searchFormSchema } from './dicType.data';
   import {ref} from "vue";
   import DicTypeModal from './DicTypeModal.vue';
@@ -70,9 +70,7 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
-          return await getDicTypes({
-            entity: formValues || {},
-          });
+          return await getDicTypeList(formValues);
         },
       },
     },

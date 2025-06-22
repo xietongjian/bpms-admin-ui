@@ -6,7 +6,7 @@
       :split-handle="false"
       :split-line="false"
       :resizable="true"
-      :left-collapsible="true"
+      :left-collapsible="false"
       :auto-content-height="true"
       content-class="h-full">
     <template #left >

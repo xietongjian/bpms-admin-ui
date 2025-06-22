@@ -9,7 +9,7 @@ enum Api {
   SaveOrUpdateIconCategory = '/flow/privilege/iconCategory/saveOrUpdate',
   DeleteIconCategoryById = '/flow/privilege/iconCategory/delete',
   DeleteIconInfoById = '/flow/privilege/iconInfo/delete',
-  CheckEntityExist = '/flow/base/app/checkEntityExist',
+  CheckEntityExist = '/flow/privilege/iconInfo/checkEntityExist',
 }
 
 export const getIconInfoListByPage = (params: any) => {

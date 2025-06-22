@@ -101,20 +101,20 @@
   };
   async function handleSubmit() {
     try {
-      const isValid = await formApi.validate();
-      if(!isValid){
+      modalApi.setState({loading: true, confirmLoading: true});
+      const {valid} = await formApi.validate();
+      if (!valid) {
         return;
       }
       const values = await formApi.getValues();
-      modalApi.setState({loading: true, confirmLoading: true});
 
       values.icon = imageUrl.value;
 
       const { success, msg } = await saveOrUpdateIconInfo(values);
       if (success) {
-        emit('success');
         message.success(msg);
-        modalApi.close();
+        await modalApi.close();
+        emit('success');
       } else {
         message.error(msg);
       }

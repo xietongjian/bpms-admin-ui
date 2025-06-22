@@ -3,10 +3,10 @@
     :left-max-width="50"
     :left-min-width="10"
     :left-width="15"
-    :split-handle="true"
-    :split-line="true"
+    :split-handle="false"
+    :split-line="false"
     :resizable="true"
-    :left-collapsible="true"
+    :left-collapsible="false"
     :auto-content-height="true"
     content-class="h-full">
     <template #left>
@@ -62,7 +62,7 @@
         </div>
       </div>
     </template>
-    <div class="h-full flex flex-col ml-2 !bg-card p-0 p-2" min-size="20" size="80">
+    <div class="h-full flex flex-col ml-2 !bg-card p-0 p-2" >
       <div class="h-12 flex flex-row justify-between items-center">
         <InputSearch class="w-[50%]"
                      v-model:value="searchTxt"
@@ -82,7 +82,7 @@
             <div v-if="listData && listData.length > 0" v-for="item in listData"
                  class="group relative flex flex-col items-center w-[80px] h-[100px] p-1">
               <div
-                class="rounded-md hover:outline-rounded hover:outline hover:outline-solid hover:outline-blue-500 h-[60px] w-[60px] p-1">
+                class="rounded-md hover:outline-rounded hover:outline hover:outline-solid hover:outline-primary h-[60px] w-[60px] p-1">
                 <Avatar
                   :src="item.icon"
                   shape="square"
@@ -97,16 +97,21 @@
               <div class="text-center w-full">
                 <div
                   class="text-sm w-full overflow-ellipsis overflow-hidden whitespace-nowrap overflow-hidden whitespace-nowrap text-overflow-ellipsis"
-                  :title="item.name">{{ item.name }}
+                  :title="item.name">
+                  {{ item.name }}
                 </div>
-                <div class="text-xs text-gray-400">{{ item.sn }}</div>
+                <div
+                    class="text-xs text-gray-400 overflow-ellipsis overflow-hidden whitespace-nowrap"
+                    :title="item.sn">
+                  {{ item.sn }}
+                </div>
               </div>
               <!-- v-if="hasAccessByCodes([PerPrefix + PerEnum.UPDATE, PerPrefix + PerEnum.DELETE])" -->
               <div
                   v-access:code="[PerPrefix + PerEnum.UPDATE, PerPrefix + PerEnum.DELETE]"
                 class="group-hover:block hidden absolute top-1 right-3 cursor-pointer">
                 <Dropdown>
-                  <a class="w-[20px] h-[20px] bg-blue-500/80 rounded-full flex items-center justify-center"
+                  <a class="w-[20px] h-[20px] bg-primary-500/80 rounded-full flex items-center justify-center"
                      @click.prevent>
                     <EllipsisOutlined style="color: white;"/>
                   </a>
@@ -361,7 +366,8 @@ async function handleDeleteCategory(node: any) {
 }
 
 function handleCreate() {
-  iconInfoModalRef.value.setData({});
+
+  iconInfoModalRef.value.setData({categoryId: currentNode.value?.id});
   iconInfoModalRef.value.open();
   iconInfoModalRef.value.setState({
     title: '新建图标'

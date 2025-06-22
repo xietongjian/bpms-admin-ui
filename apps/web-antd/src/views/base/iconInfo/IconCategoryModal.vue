@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {computed, defineEmits, defineExpose, ref, unref} from 'vue';
+import { defineEmits, defineExpose} from 'vue';
 import {useVbenModal} from '@vben/common-ui';
 import {useVbenForm} from '#/adapter/form';
 
@@ -8,8 +8,6 @@ import {saveOrUpdateIconCategory} from '#/api/base/iconInfo';
 import {message} from 'ant-design-vue';
 
 const emit = defineEmits(['success']);
-
-const isUpdate = ref(true);
 
 const [BasicModal, modalApi] = useVbenModal({
   draggable: true,
@@ -42,9 +40,6 @@ const [BasicForm, formApi] = useVbenForm({
   schema: iconCategoryFormSchema,
   wrapperClass: 'grid-cols-1',
 });
-
-
-const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 
 async function handleSubmit() {
   try {

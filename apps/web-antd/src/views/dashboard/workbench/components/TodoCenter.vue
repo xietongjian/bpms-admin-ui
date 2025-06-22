@@ -50,7 +50,7 @@
                   <Badge v-else-if="item.processStatus === 'revoke'" status="warning" />
                   <Badge v-else-if="item.processStatus === 'zz'" status="error" />
                   <Badge v-else status="default" />
-                  {{ item.formName }}
+                  {{ item.formName || '-' }}
                 </TypographyLink>
               </template>
             </ListItemMeta>
@@ -76,13 +76,13 @@
                 </Space>
               </template>
               <template #title>
-                <TypographyLink @click="handleViewForm(item)">
+                <TypographyLink :title="item.formName" @click="handleViewForm(item)">
                   <Badge v-if="item.processStatus === 'end'" status="success" />
                   <Badge v-else-if="item.processStatus === 'applying'" status="processing" />
                   <Badge v-else-if="item.processStatus === 'revoke'" status="warning" />
                   <Badge v-else-if="item.processStatus === 'zz'" status="error" />
                   <Badge v-else status="default" />
-                  {{ item.formName }}
+                  {{ item.formName || '-' }}
                 </TypographyLink>
               </template>
             </ListItemMeta>
@@ -116,13 +116,13 @@
                 <div>发起时间：{{ item.startTime }}</div>
               </template>
               <template #title>
-                <TypographyLink @click="handleViewForm(item)">
+                <TypographyLink :title="item.formName" @click="handleViewForm(item)">
                   <Badge v-if="item.processStatus === 'end'" status="success"/>
                   <Badge v-else-if="item.processStatus === 'applying'" status="processing"/>
                   <Badge v-else-if="item.processStatus === 'revoke'" status="warning"/>
                   <Badge v-else-if="item.processStatus === 'zz'" status="error"/>
                   <Badge v-else status="default"/>
-                  {{ item.formName }}
+                  {{ item.formName||'-' }}
                 </TypographyLink>
               </template>
             </ListItemMeta>
@@ -326,7 +326,7 @@ const onTabChange = (value: string) => {
     fetchHaveDownData();
   }
   if (value === 'launch') {
-    go({name: 'Launch'});
+    router.push({name: 'Launch'});
     return;
   }
   activeKey.value = value;

@@ -62,6 +62,7 @@ const categoryId = ref('');
 
 const categories = ref<any[]>([]);
 function fetchSysIconListByCategory(e) {
+  pagination.value.current = 1;
   loadData();
 }
 
@@ -221,7 +222,7 @@ const searchInputProps = computed(() => {
     allowClear: true,
     [props.modelValueProp]: keyword.value,
     [`onUpdate:${props.modelValueProp}`]: onKeywordChange,
-    class: 'mx-2',
+    class: '',
   };
 });
 
@@ -247,7 +248,7 @@ defineExpose({ toggleOpenState, open, close });
     v-model:open="visible"
     overlayClassName="max-w-[700px]"
   >
-    <div class="group bg-card relative w-20 h-20 border border-dotted rounded flex justify-center items-center cursor-pointer">
+    <div class="group bg-card relative w-20 h-20 border border-dotted hover:border-primary rounded flex justify-center items-center cursor-pointer">
       <img v-if="!!currentSelect" :src="currentSelect" class="w-16 h-16 object-cover margin-auto"/>
       <PictureOutlined v-else class="text-4xl opacity-30" />
       <div v-if="!!currentSelect" @click="handleClear" class="group-hover:visible invisible rounded-full p-[1px] bg-primary/10 hover:bg-primary/20 absolute top-0 right-0 text-primary">
@@ -264,7 +265,7 @@ defineExpose({ toggleOpenState, open, close });
           />
           <Input
               v-else
-              class="mx-2 h-8 w-full"
+              class="h-8 w-full"
               :placeholder="'请选择图标'"
               v-model="keyword"
           />
@@ -280,23 +281,23 @@ defineExpose({ toggleOpenState, open, close });
             </template>
           </Segmented>
         </div>
-        <div v-loading="loading" v-if="currentList.length > 0" class="max-h-96 p-2 overflow-y-auto min-h-40 min-w-200">
+        <div v-loading="loading" v-if="currentList.length > 0" class="max-h-[258px] p-2 overflow-y-auto min-h-40 min-w-200">
           <div class="grid w-full grid-cols-10 gap-2 justify-items-center">
             <div
-                class="bg-card cursor-pointer rounded hover:ring hover:ring-2 hover:ring-primary hover:ring-primary/90 p-1"
-                :class="{'ring-2 ring-primary ring-primary/40': currentSelect === item.icon}"
+                class="bg-card cursor-pointer rounded hover:ring hover:ring-2 hover:ring-primary hover:ring-primary/90 p-[1px]"
+                :class="{'ring-2 ring-primary ring-primary/60': currentSelect === item.icon}"
                 v-for="(item, index) in currentList"
                 :key="index"
                 :title="item.name"
                 @click="handleClick(item)"
             >
-              <img :alt="item.name" :src="item.icon" class="w-12 h-12 object-cover" />
+              <img :alt="item.name" :src="item.icon" class="w-10 h-10 object-cover" />
             </div>
           </div>
         </div>
 
         <template v-else>
-          <div class="flex-col-center text-muted-foreground border w-full min-w-[600px] p-4">
+          <div class="flex-col-center text-muted-foreground border w-full min-w-[517px] p-4">
             <Empty/>
           </div>
         </template>

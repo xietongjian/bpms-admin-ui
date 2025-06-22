@@ -113,6 +113,7 @@ export const iconInfoFormSchema: FormSchema[] = [
     rules: "required",
     component: 'ApiTreeSelect',
     componentProps: {
+      class: 'w-full',
       api: getIconCategoryTreeData,
       fieldNames: {
         label: 'name',

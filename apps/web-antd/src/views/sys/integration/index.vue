@@ -1,8 +1,8 @@
 <template>
   <Page auto-content-height>
-    <div class="w-full">
+    <div class="w-full ">
 <!--      <MarkdownViewer :value="docContent" />-->
-      <div v-html="docContentHtml" class="markdown-content"></div>
+      <div v-html="docContentHtml" class="markdown-body markdown-content"></div>
 
 <!--      <Markdown
           html
@@ -27,18 +27,19 @@
   import {getIntegrationDoc} from "#/api/sys/integration";
   import { useRouter } from 'vue-router';
   import {Page} from '@vben/common-ui';
-  import Markdown from 'vue3-markdown-it';
+  // import Markdown from 'vue3-markdown-it';
   import hljs from 'highlight.js';
   import 'highlight.js/styles/dark.css';
   import 'highlight.js/styles/github.css';
 
   import { Marked } from 'marked'
   import { markedHighlight } from "marked-highlight";
-  import { VMarkdownView } from 'vue3-markdown'
+  // import { VMarkdownView } from 'vue3-markdown'
+  import 'highlight.js/styles/atom-one-dark.css'
 
   import { usePreferences } from '@vben/preferences';
 
-  import 'vue3-markdown/dist/style.css'
+  // import 'vue3-markdown/dist/vue3-markdown.css'
 
   const markdownOptions = {
     highlight: true,
@@ -65,8 +66,17 @@
     await nextTick();
     await loadDocContent();
   });
-  const marked = new Marked(
+  const marked=new Marked(
       markedHighlight({
+        langPrefix: 'hljs language-',
+        highlight(code, lang) {
+          const language = hljs.getLanguage(lang) ? lang : 'shell'
+          return hljs.highlight(code, { language }).value
+        }
+      })
+  )
+  /*
+  * markedHighlight({
         emptyLangClass: 'hljs',
         langPrefix: 'hljs language-',
         highlight(code, lang, info) {
@@ -74,7 +84,13 @@
           return hljs.highlight(code, { language }).value;
         }
       })
-  );
+  * */
+  marked.use({
+    highlight: (code) => {
+      return hljs.highlightAuto(code).value;
+    }
+  });
+
   const docContentHtml = computed(() => {
         return marked.parse(docContent.value);
       }
@@ -114,8 +130,22 @@
   }
 </script>
 
-<style>
+<style scoped lang="css">
+@import 'github-markdown-css/github-markdown.css';
+@import 'github-markdown-css/github-markdown-dark.css';
+@import 'github-markdown-css/github-markdown-light.css';
+.markdown-body {
+  box-sizing: border-box;
+  min-width: 200px;
+  margin: 0 auto;
+  padding: 45px;
+}
 
+@media (max-width: 767px) {
+  .markdown-body {
+    padding: 15px;
+  }
+}
 /*
 .markdown-content table {
   width: 100%;
