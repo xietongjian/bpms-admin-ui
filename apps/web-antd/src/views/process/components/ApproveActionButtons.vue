@@ -81,7 +81,7 @@
     claimTask, holdTask, getCustomApproveSettings,
   } from "#/api/process/process";
   import { useRouter } from 'vue-router';
-  import {approveMsgSchemas} from "#/views/process/components/action.data";
+  // import {approveMsgSchemas} from "#/views/process/components/action.data";
   import {useVbenForm} from "#/adapter/form";
   import {formCategoryFormSchema} from "#/views/form/template/formTemplate.data";
 
@@ -104,7 +104,7 @@
     },
     showDefaultActions: false,
     layout: 'horizontal',
-    schema: approveMsgSchemas,
+    schema: [], //approveMsgSchemas,
     wrapperClass: 'grid-cols-1',
   });
 /*  const [registerApproveMsgForm, { getFieldsValue, validateFields }] = useForm({

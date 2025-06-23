@@ -39,6 +39,11 @@ const gridOptions: VxeGridProps<any> = {
       },
     },
   },
+  // toolbarConfig: {
+  //   custom: true,
+  //   refresh: { code: 'query' },
+  //   zoom: true,
+  // },
 };
 
 const [BasicTable, tableApi] = useVbenVxeGrid({gridOptions});
@@ -93,7 +98,7 @@ function createActions(record: Recordable<any>) {
 
 <template>
   <Page auto-content-height>
-    <BasicTable >
+    <BasicTable table-title="数据列表" >
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增 </Button>
       </template>

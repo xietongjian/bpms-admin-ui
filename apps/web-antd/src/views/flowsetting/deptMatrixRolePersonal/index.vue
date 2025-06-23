@@ -24,7 +24,7 @@
         </Tooltip>
       </template>
       <template #customColumn="{row, column}">
-        <div class="personal-items" :roleid="column.id" :rolename="column.name">
+        <div class="personal-items" :roleid="column.params.id" :rolename="column.name">
           <Space v-if="row[column.params.id] && row[column.params.id].length > 0">
             <Tag v-for="item in row[column.params.id]"
                 :personalname="item.personalName"
@@ -84,41 +84,13 @@
   const currentRow = ref<Recordable<any>>({});
   const currentNode = ref<Recordable<any>>({});
 
-  const columns = ref([...baseColumns]);
+  const columns = ref([]);
 
   onMounted(() => {
     nextTick(() => {
       loadMatrixColumn();
     });
   });
-
-  /*const [
-    registerTable,
-    { reload, setProps, setTableData, setColumns, setLoading, updateTableDataRecord },
-  ] = useTable({
-    title: '',
-    size: 'small',
-    api: getDeptMatrixList,
-    columns: baseColumns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    immediate: false,
-    expandRowByClick: false,
-    useSearchForm: true,
-    showIndexColumn: false,
-    showTableSetting: false,
-    bordered: true,
-    pagination: false,
-    rowKey: 'id',
-    canResize: true,
-    resizeHeightOffset: -12,
-  });*/
-
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -133,7 +105,7 @@
     schema: searchFormSchema,
   };
 
-  const gridOptions: VxeGridProps<any> = {
+  const gridOptions: VxeGridProps = {
     showHeaderOverflow: true,
     showOverflow: false,
     checkboxConfig: {
@@ -195,24 +167,21 @@
         return;
       }
 
-      const personals = row[column.field]
+      const personals = row[column.field.replace('customColumn_', '')]
 
       currentRole.value = column.params;
       currentRow.value = row;
-      personalSelectorModalRef.value.setData(personals);
+      personalSelectorModalRef.value.setData({
+        multiple: true,
+        selectedList: personals&&personals.map(item => {
+          return {value: item.personalCode, label: item.personalName};
+        })
+      });
       personalSelectorModalRef.value.open();
     }
   };
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
-
-  function resetColumns(cols: any) {
-    debugger;
-    columns.value = [
-      ...columns.value,
-      ...cols,
-    ];
-  }
 
   // 人员选择后回调
   async function handleSettingPersonalSuccess(selectedPersonal) {
