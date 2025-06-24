@@ -1,5 +1,4 @@
-import {FormValidPatternEnum} from "#/enums/commonEnum";
-import { z } from '#/adapter/form';
+import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 
 export const baseColumns: VxeGridProps['columns'] = [
@@ -27,134 +26,62 @@ export const baseColumns: VxeGridProps['columns'] = [
 ];
 
 export const searchFormSchema: FormSchema[] = [
-  /*{
-    fieldName: 'keyword',
-    label: '关键字',
+  {
+    fieldName: 'title',
+    label: '流程标题',
     component: 'Input',
     componentProps: {
-      placeholder: '请输入名称/编码',
+      placeholder: '请输入标题',
     },
-    labelWidth: 60,
-    colProps: {span: 6, lg:{span: 6, offset:0}, sm:{span: 10, offset: 0}, xs:{span: 16, offset: 0}},
-  },*/
+  },
+  {
+    fieldName: 'launchCompanyIdSelector',
+    label: '发起人公司',
+    component: 'OrgSelector',
+    componentProps: {
+      multiple: false,
+      selectType: '1',
+      placeholder: '请选择公司',
+    },
+  },
+  {
+    fieldName: 'superDepartmentIdSelector',
+    label: '上级部门',
+    component: 'OrgSelector',
+    componentProps: {
+      multiple: false,
+      selectType: '2',
+      placeholder: '请选择部门',
+    },
+  },
+  {
+    fieldName: 'launchDepartmentIdSelector',
+    label: '提交人部门',
+    component: 'OrgSelector',
+    componentProps: {
+      multiple: false,
+      selectType: '2',
+      placeholder: '请选择部门',
+    },
+  },
+  {
+    fieldName: 'uidSelector',
+    label: '提交人',
+    component: 'PersonalSelector',
+    componentProps: {
+      placeholder: '请选择提交人',
+    },
+  },
   {
     fieldName: 'dateRange',
     label: '时间范围',
     component: 'RangePicker',
-    labelWidth: 70,
-    colProps: {
-      span: 8,
-      lg: { span: 8, offset: 0 },
-      sm: { span: 8, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
-  },
-];
-
-export const modelInfoFormSchema: FormSchema[] = [
-  {
-    fieldName: 'id',
-    label: 'ID',
-    component: 'Input',
-    dependencies: {
-      show: false,
-      triggerFields: ['id']
-    }
-  },
-  {
-    fieldName: 'categoryCode',
-    label: 'ID',
-    component: 'Input',
-    dependencies: {
-      show: false,
-      triggerFields: ['categoryCode']
-    }
-  },
-  {
-    fieldName: 'name',
-    label: '名称',
-    component: 'Input',
-    required: true,
-    rules: z
-        .string({
-          required_error: '名称不能为空',
-        })
-        .trim()
-        .min(1, "名称不能为空")
-        .max(200, "字符长度不能大于200！")
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 200,
-        message: '字符长度不能大于200！',
-      },
-    ],*/
-  },
-  {
-    fieldName: 'modelKey',
-    label: '标识',
-    component: 'Input',
-    required: true,
-  },
-  {
-    fieldName: 'appSn',
-    label: '所属系统',
-    component: 'Select',
+    labelWidth: 80,
     componentProps: {
-      getPopupContainer: () => document.body,
-    },
-    required: true,
-  },
-];
-
-export const copyModelInfoFormSchema: FormSchema[] = [
-  {
-    fieldName: 'fromModelKey',
-    label: '来源ModelKey',
-    component: 'Input',
-    show: false,
-  },
-  {
-    fieldName: 'newModelName',
-    label: '新表单名称',
-    component: 'Input',
-    required: true,
-    rules: z
-        .string({
-          required_error: '名称不能为空',
-        })
-        .trim()
-        .min(1, "名称不能为空")
-        .max(200, "字符长度不能大于200！")
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 200,
-        message: '字符长度不能大于200！',
-      },
-    ],*/
-  },
-  {
-    fieldName: 'newCategoryCode',
-    label: '新分类',
-    required: true,
-    component: 'TreeSelect',
-    componentProps: {
-      treeNodeFilterProp: 'name',
-      replaceFields: {
-        title: 'name',
-        key: 'code',
-        value: 'code',
-      },
-      getPopupContainer: () => document.body,
-    },
+      placeholder: ['开始时间', '结束时间'],
+      allowClear: true,
+      format: 'YYYY-MM-DD HH:mm:ss',
+      showTime: true,
+    }
   },
 ];

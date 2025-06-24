@@ -211,7 +211,7 @@ function createSubActions(mainRecord: Recordable<any>, record: Recordable<any>) 
       popConfirm: {
         title: '是否确认删除',
         confirm: handleDeleteProperty.bind(null, mainRecord, record),
-        placement: 'left',
+        placement: 'right',
         okButtonProps: {
           danger: true
         }

@@ -3,15 +3,26 @@
       :left-max-width="50"
       :left-min-width="10"
       :left-width="15"
-      :split-handle="true"
-      :split-line="true"
+      :split-handle="false"
+      :split-line="false"
       :resizable="true"
-      :left-collapsible="true"
+      :left-collapsible="false"
       :auto-content-height="true"
       content-class="h-full">
     <template #left>
       <div class="h-full bg-card overflow-y-auto">
-        <Tree
+        <BasicTree
+          ref="basicTreeRef"
+          title="流程模板"
+          :show-search="true"
+          :show-toolbar="true"
+          :tree-data="treeData"
+          class="h-full flex flex-col"
+          size="small"
+          @select="handleSelect"
+          :height="treeHeight"
+        />
+<!--        <BasicTree
             title="表单分类"
             toolbar
             search
@@ -23,18 +34,14 @@
             @select="handleSelect"
         >
           <template #title="{ name, sourceType }">
-            <!-- 如果是分类则不可点击 -->
+            &lt;!&ndash; 如果是分类则不可点击 &ndash;&gt;
             <span v-if="sourceType === '1'" style="color: gray">{{ name }}</span>
             <span v-else style="color: #1890ff">{{ name }}</span>
           </template>
-        </Tree>
+        </BasicTree>-->
       </div>
     </template>
-    <BasicTable
-        @row-click="clickRow"
-        @selection-change="changeSelection"
-        @fetch-success="fetchSuccess"
-    >
+    <BasicTable class="ml-2">
       <template #toolbar-tools>
         <Button type="primary" @click="handleExport"> 导出Excel</Button>
       </template>
@@ -48,14 +55,16 @@
   </ColPage>
 </template>
 <script lang="ts" setup>
-import {ref, unref, watch, nextTick, onMounted} from 'vue';
+import {ref, unref, watch, nextTick, onMounted, computed} from 'vue';
 import {TableAction} from '#/components/table-action';
 import type {Recordable} from '@vben/types';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {PerEnum} from "#/enums/perEnum";
+import {BasicTree} from "#/components/tree";
 
 import {ColPage, Page} from '@vben/common-ui';
+import {useElementSize} from "@vueuse/core";
 
 import {baseColumns, searchFormSchema} from './formCount.data';
 import {
@@ -70,84 +79,41 @@ import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {Button, Image, Tag, message, Tree} from 'ant-design-vue';
 
 import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
+const basicTreeRef = ref<any>(null);
 
 // import {downloadBlob} from "#/utils/file/download";
+const { height } = useElementSize(basicTreeRef);
 
+const treeHeight = computed(() => {
+  return height.value - 70;
+})
 
-/*  const [openFullLoading, closeFullLoading] = useLoading({
-    tip: '下载中...',
-  });
-  const [
-    registerProcessFormModal,
-    { openModal: openProcessFormModal, setModalProps: setProcessFormModalProps },
-  ] = useModal();
-  const [
-    registerBpmnPreviewModal,
-    { openModal: openBpmnPreviewModal, setModalProps: setBpmnPreviewProps },
-  ] = useModal();*/
 const bpmnPreviewModalRef = ref(),
     processFormPreviewDrawerRef = ref();
 const treeData = ref<any[]>([]);
 const treeLoading = ref<boolean>(false);
-const basicTreeRef = ref<any>(null);
 const currentModelInfo = ref<Recordable<any>>({});
 const currentNode = ref<Recordable<any>>({});
 const showPublishBtn = ref(false);
 const showStopBtn = ref(false);
 
-/*const [
-  registerTable,
-  {
-    getForm,
-    reload,
-    setProps,
-    setTableData,
-    setColumns,
-    setLoading,
-    getSelectRows,
-    setSelectedRowKeys,
-    clearSelectedRowKeys,
-  },
-] = useTable({
-  title: '列表',
-  api: getPagerModelCustomData,
-  immediate: false,
-  columns: baseColumns,
-  formConfig: {
-    labelWidth: 120,
-    schemas: searchFormSchema,
-    showAdvancedButton: false,
-    showResetButton: false,
-    autoSubmitOnEnter: true,
-    submitFunc: doSearchFunc,
-    fieldMapToTime: [['dateRange', ['startTime', 'endTime'], 'YYYY-MM-DD']],
-  },
-  useSearchForm: true,
-  showIndexColumn: true,
-  bordered: true,
-  rowKey: 'id',
-  actionColumn: {
-    width: 120,
-    title: '操作',
-    dataIndex: 'action',
-  },
-});*/
-
-
 const formOptions: VbenFormProps = {
-  showCollapseButton: false,
+  showCollapseButton: true,
+  collapsedRows: 1,
+  compact: true,
+  collapsed: true,
   submitOnEnter: true,
   commonConfig: {
-    labelWidth: 60,
+    labelWidth: 80,
   },
-  actionWrapperClass: 'col-span-2 col-start-2 text-left ml-2',
   resetButtonOptions: {
-    show: false,
+    show: true,
   },
   schema: searchFormSchema,
+  fieldMappingTime: [['dateRange', ['startTime', 'endTime'], 'YYYY-MM-DD HH:mm:ss']],
 };
 
-const gridOptions: VxeGridProps<any> = {
+const gridOptions: VxeGridProps = {
   checkboxConfig: {
     highlight: true,
     labelField: 'name',
@@ -161,6 +127,12 @@ const gridOptions: VxeGridProps<any> = {
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
+        formValues.formId = unref(currentNode).id;
+
+        if(!formValues.formId){
+          // message.warn('请先选择左侧表单！')
+          return null;
+        }
         return await getPagerModelCustomData({
           query: {
             pageNum: page.currentPage,
@@ -174,7 +146,6 @@ const gridOptions: VxeGridProps<any> = {
 };
 
 const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
-
 
 function createActions(row: Recordable<any>) {
   return [
@@ -192,61 +163,30 @@ function createActions(row: Recordable<any>) {
   ];
 }
 
-/**
- *  自定义搜索功能
- **/
-async function doSearchFunc() {
-  const {setProps} = getForm();
-  if (!unref(currentNode).id) {
-    message.warning('请选择表单！');
-    return;
-  }
-  try {
-    await setProps({
-      submitButtonOptions: {
-        loading: true,
-      },
-    });
-    getFormData();
-  } catch (error) {
-  } finally {
-    setProps({
-      submitButtonOptions: {
-        loading: false,
-      },
-    });
-  }
-}
-
-function fetch() {
+async function fetch() {
   treeLoading.value = true;
-  debugger;
-  getFormTree()
-      .then((res) => {
-        treeData.value = res as unknown as TreeItem[];
-        // 设置展开的树形节点，将所有非表单的节点全部展开
-        nextTick(() => {
-          let categoryKeys = [];
-          res &&
-          forEach(
-              res,
-              (node) => {
-                // 此设置是为了跟人员的code属性保持一致，作为已选择项的唯一判定标准
-                if (node.sourceType === '1') {
-                  categoryKeys.push(node.id);
-                }
-              },
-              {id: 'id', children: 'children', pid: 'pid'},
-          );
-          // 加载后展开节层级
-          if (categoryKeys) {
-            // unref(basicTreeRef).setExpandedKeys(categoryKeys);
+  const res = await getFormTree();
+
+  treeData.value = res as unknown as any[];
+  // 设置展开的树形节点，将所有非表单的节点全部展开
+  nextTick(() => {
+    let categoryKeys = [];
+    res &&
+    forEach(
+        res,
+        (node) => {
+          // 此设置是为了跟人员的code属性保持一致，作为已选择项的唯一判定标准
+          if (node.sourceType === '1') {
+            categoryKeys.push(node.id);
           }
-        });
-      })
-      .finally(() => {
-        treeLoading.value = false;
-      });
+        },
+        {id: 'id', children: 'children', pid: 'pid'},
+    );
+    // 加载后展开节层级
+    if (categoryKeys) {
+      // unref(basicTreeRef).setExpandedKeys(categoryKeys);
+    }
+  });
 }
 
 onMounted(() => {
@@ -263,9 +203,9 @@ watch(
 );
 
 function handleViewForm(record: Recordable<any>) {
-  record.processInstanceId = record.proc_inst_id;
+  record.procInstId = record.proc_inst_id;
   record.businessKey = record.code;
-  record.processDefinitionKey = record.model_key;
+  record.modelKey = record.model_key;
 
   processFormPreviewDrawerRef.value.setData(record);
   processFormPreviewDrawerRef.value.setState({
@@ -351,48 +291,41 @@ function changeSelection({keys, rows}) {
   changePublishStopBtnShow(rows[0].status);
 }
 
-function handleSelect(node: any, e) {
-  if (!e.selectedNodes[0]) {
+async function handleSelect(node: any, e) {
+  if (!node) {
     return;
   }
-  const selectedNode = e.selectedNodes[0];
-  if (selectedNode.sourceType === '1') {
+  if (node.sourceType === '1') {
     message.warning('请选择表单');
     return;
   }
-  setLoading(true);
+  currentNode.value = node;
+
   // 查询表单的列数据
-  getCustomColumnsByFormId({formId: selectedNode.id})
-      .then((res) => {
-        let columns = res.map((item) => {
-          return {
-            title: item.column_comment,
-            dataIndex: item.column_name,
-            minWidth: 200,
-            width: 200,
-            resizable: true,
-            align: 'left',
-          };
-        });
-        setColumns(columns);
-        getFormData();
-        setLoading(false);
-      })
-      .catch((e) => {
-        setColumns([]);
-        setLoading(false);
-      });
-  currentNode.value = selectedNode;
+  const res = await getCustomColumnsByFormId({formId: node.id});
+  if(res){
+    let columns = res.map((item) => {
+      return {
+        title: item.column_comment,
+        field: item.column_name,
+        minWidth: 200,
+        width: 200,
+        resizable: true,
+        align: 'left',
+      };
+    });
+    columns.push(  {
+      field: 'action',
+      fixed: 'right',
+      slots: {default: 'action'},
+      title: '操作',
+      width: 120,
+    });
+    await tableApi.grid.reloadColumn(columns);
+    tableApi.reload();
+  }
 }
 
-function getFormData() {
-  const {validate} = getForm();
-  const values = validate();
-  values.formId = unref(currentNode).id;
-  setProps({searchInfo: values});
-  tableApi.reload();
-  return;
-}
 </script>
 
 <style lang="scss" scoped>
