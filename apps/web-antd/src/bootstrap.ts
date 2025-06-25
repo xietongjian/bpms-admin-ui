@@ -85,6 +85,11 @@ async function bootstrap(namespace: string) {
     kindEditorUrl: '/static/form-making/dist/lib/kindeditor',
     aceurl: '/static/form-making/dist/lib/ace',
   });
+
+  // 获取系统配置
+  // 检查版本号
+  import('./init-system-config')
+
   app.mount('#app');
 }
 

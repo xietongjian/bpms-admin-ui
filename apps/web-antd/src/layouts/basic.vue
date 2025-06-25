@@ -98,11 +98,6 @@ function handleNoticeClear() {
   notifications.value = [];
 }
 
-
-onMounted(() => {
-  console.log('================================布局初始化');
-});
-
 function handleMakeAll() {
   notifications.value.forEach((item) => (item.isRead = true));
 }

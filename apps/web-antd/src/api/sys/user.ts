@@ -9,6 +9,7 @@ enum Api {
   GetPermissions = '/flow/main/getPermissions',
   TestRetry = '/testRetry',
   GetSysConfig = '/flow/base/systemConfig/getSysConfig',
+  GetSysConfigVersion = '/flow/base/systemConfig/getSysConfigVersion',
   GetVerifyCode = '/flow/verify/getVerifyCode',
   RestSetPassword = '/flow/main/restSetPassword',
 }
@@ -24,7 +25,14 @@ export function restSetPassword(params: any) {
  * @description: getSysConfig
  */
 export function getSysConfig() {
-  return requestClient.get<any>(Api.GetSysConfig);
+  return requestClient.post<any>(Api.GetSysConfig, []);
+}
+
+/**
+ * @description: getSysConfig
+ */
+export function getSysConfigVersion() {
+  return requestClient.get<any>(Api.GetSysConfigVersion, {responseReturn: "body"});
 }
 
 /**
