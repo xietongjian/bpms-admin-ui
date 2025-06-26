@@ -1,16 +1,11 @@
-import {initPreferences, updatePreferences} from '@vben/preferences';
-import { unmountGlobalLoading } from '@vben/utils';
+import {initPreferences, updatePreferences, preferences} from '@vben/preferences';
+import { unmountGlobalLoading, diff } from '@vben/utils';
 
 import { overridesPreferences } from './preferences';
 import {getSysConfig, getSysConfigVersion} from "#/api/sys/user";
 
 const DRAGON_SYS_CONFIG_KEY = "DRAGON_SYS_CONFIG";
 
-async function getSystemConfig() {
-  const res = await getSysConfig();
-  debugger;
-  return res;
-}
 /**
  * 应用初始化完成之后再进行页面加载渲染
  */
@@ -24,31 +19,23 @@ async function initSystemConfig() {
     // 数据结构 {version: 'xxxxxx', config: {a: 1, b: 2, c: 3}}
     const sysConfigStr = localStorage.getItem(DRAGON_SYS_CONFIG_KEY);
 
+    // 在什么情况下加载服务器的配置
+    // 哪些配置需要强制更改
+    // 哪些配置可以用户自定义
+
+    // 获取缓存的数据不为空
     if(sysConfigStr){
       const {version, config} = JSON.parse(sysConfigStr)
-      // 获取缓存的数据不为空
-      if (version === data && config) {
-        loadSystemConfig(config);
-      } else {
-        console.warn('系统配置有更新...')
-        const res = await getSystemConfig();
-        const dragonSysConfig = {
-          version: data,
-          config: res
+      // 对比服务器配置版本与缓存是否一致 - 如果一致则不做操作
+      if (version === data) {
+        if(!config){
+          await loadSystemConfig(data);
         }
-        localStorage.setItem(DRAGON_SYS_CONFIG_KEY, JSON.stringify(dragonSysConfig));
-        loadSystemConfig(res);
+      } else {
+        await loadSystemConfig(data, config);
       }
     } else {
-      console.warn('初次进入系统...')
-      const res = await getSystemConfig();
-      const dragonSysConfig = {
-        version: data,
-        config: res
-      }
-
-      localStorage.setItem(DRAGON_SYS_CONFIG_KEY, JSON.stringify(dragonSysConfig));
-      loadSystemConfig(res);
+      await loadSystemConfig(data);
     }
 
     // 如果相同则获取缓存的配置信息
@@ -60,8 +47,31 @@ async function initSystemConfig() {
   }
 }
 
+/**
+ * 更新缓存
+ * @param version
+ */
+async function loadSystemConfig(version: string, config?: any){
+  console.warn('系统配置有更新...')
+  // 获取最新配置
+  const res = await getSysConfig();
+  const dragonSysConfig = {
+    version,
+    config: res
+  }
+  debugger;
+  const diffSysConfig = diff(res, config);
+  // 重置缓存
+  localStorage.setItem(DRAGON_SYS_CONFIG_KEY, JSON.stringify(dragonSysConfig));
+  // 更新配置
+  refreshSystemConfig(diffSysConfig);
+}
 
-function loadSystemConfig(config: any) {
+/**
+ * 刷新系统配置
+ * @param config
+ */
+function refreshSystemConfig(config: any) {
   console.log(config);
   if(config){
     const {
@@ -109,7 +119,9 @@ function loadSystemConfig(config: any) {
       link.rel = 'icon';
       link.href = SYS_FAVICON_IMG;
     }
+    debugger;
 
+    console.log(preferences);
     updatePreferences({
       app: {
         name: SYS_APP_NAME,
@@ -162,6 +174,7 @@ function loadSystemConfig(config: any) {
       transition: {},
       widget: {},
     });
+    console.log('更新配置成功！');
   }
 }
 
