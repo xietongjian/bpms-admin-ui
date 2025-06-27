@@ -116,13 +116,21 @@ watchEffect(() => {
 
 function handleChange(items: any[]) {
   const selectedItems = JSON.parse(JSON.stringify(items));
-  debugger;
   const result = selectedItems.map(item => {
     return {
       label: item.name || item.label,
       value: item.code || item.value,
       key: item.code,
       id: item.id,
+      code: item.code,
+      companyId: item.companyId,
+      companyName: item.companyName,
+      deptId: item.deptId,
+      deptName: item.deptName,
+      disabled: item.disabled,
+      leaderCode: item.leaderCode,
+      leaderName: item.leaderName,
+      name: item.name,
     }
   });
   modelValue.value = result;

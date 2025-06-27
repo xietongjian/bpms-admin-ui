@@ -513,7 +513,7 @@ const gridEvents: VxeGridListeners = {
     word-break: break-all;
     overflow-wrap: break-word;
     .ant-space {
-      gap: 2px 6px !important;
+      gap: 2px 0px !important;
     }
     .ant-space-align-center {
       flex-flow: wrap;

@@ -9,9 +9,12 @@ enum Api {
   CheckEntityExist = '/flow/org/department/checkEntityExist',
 }
 
+export const getDeptListData = (params: any) => {
+  return requestClient.post<any>(Api.DeptList, params);
+};
+
 export const getDepts = (params: any) => {
-  const result = requestClient.post<any>(Api.DeptList, params);
-  return Promise.resolve(result).then((res: any) => {
+  return getDeptListData(params).then(res => {
     res.forEach((item) => {
       item.key = item.id;
       item.value = item.id;
@@ -19,13 +22,13 @@ export const getDepts = (params: any) => {
     });
     const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
     forEach(
-      treeData,
-      (node) => {
-        if (node.children.length === 0) {
-          delete node.children;
-        }
-      },
-      { id: 'id', children: 'children', pid: 'pid' },
+        treeData,
+        (node) => {
+          if (node.children.length === 0) {
+            delete node.children;
+          }
+        },
+        { id: 'id', children: 'children', pid: 'pid' },
     );
     return treeData;
   });

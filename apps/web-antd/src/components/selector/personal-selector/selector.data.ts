@@ -1,5 +1,4 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import type {VxeGridProps} from '#/adapter/vxe-table';
 import {h} from 'vue'
 import {Tag, Tree, Table, Input, Checkbox, Radio} from 'ant-design-vue';
 
@@ -34,11 +33,13 @@ export const columns = [
     title: '公司',
     dataIndex: 'companyName',
     align: 'left',
+    ellipsis: true,
   },
   {
     title: '部门',
     dataIndex: 'deptName',
     align: 'left',
+    ellipsis: true,
   },
 ];
 

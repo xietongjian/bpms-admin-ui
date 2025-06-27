@@ -97,6 +97,7 @@ export const deptFormSchema: FormSchema[] = [
         .string({required_error: '名称不能为空！'})
         .min(1, {message: '名称不能为空！'})
         .max(100, {message: '字符长度不能大于100！'}),
+    formItemClass: 'col-span-2 items-baseline',
   },
   {
     fieldName: 'code',
@@ -132,6 +133,7 @@ export const deptFormSchema: FormSchema[] = [
       },
       triggerFields: [''],
     },
+    formItemClass: 'col-span-1 items-baseline',
   },
   {
     fieldName: 'leaderPersonal',
@@ -140,15 +142,7 @@ export const deptFormSchema: FormSchema[] = [
     componentProps: {
       multiple: false,
     },
-  },
-  {
-    fieldName: 'leaderName',
-    label: '部门领导',
-    component: 'Input',
-    dependencies: {
-      show: false,
-      triggerFields: ['']
-    }
+    formItemClass: 'col-start-1 col-span-1 items-baseline',
   },
   {
     fieldName: 'superiorPersonal',
@@ -157,15 +151,6 @@ export const deptFormSchema: FormSchema[] = [
     componentProps: {
       multiple: false,
     },
-  },
-  {
-    fieldName: 'superiorName',
-    label: '分管领导',
-    component: 'Input',
-    dependencies: {
-      show: false,
-      triggerFields: ['']
-    }
   },
   {
     fieldName: 'companyId',
@@ -180,7 +165,8 @@ export const deptFormSchema: FormSchema[] = [
       allowClear: true,
       getPopupContainer: () => document.body,
     },
-    rules: 'selectRequired'
+    rules: 'selectRequired',
+    formItemClass: 'col-span-2 items-baseline',
   },
   {
     fieldName: 'orderNo',
@@ -192,6 +178,7 @@ export const deptFormSchema: FormSchema[] = [
       min: OrderNoDefaultEnum.MIN,
       max: OrderNoDefaultEnum.MAX,
     },
+    formItemClass: 'col-span-1 items-baseline',
   },
   {
     label: '备注',
@@ -208,5 +195,6 @@ export const deptFormSchema: FormSchema[] = [
         .max(500, "字符长度不能大于500！")
         .nullish()
         .optional(),
+    formItemClass: 'col-span-2 items-baseline',
   },
 ];

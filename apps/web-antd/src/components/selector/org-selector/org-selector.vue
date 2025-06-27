@@ -182,18 +182,46 @@ const api = computed(() => {
 
 function handleChange(items) {
   const selectedItems = JSON.parse(JSON.stringify(items));
+  debugger;
   const result = selectedItems.map(item => {
     return {
       label: item.name || item.label || item.shortName,
       value: item.code || item.value,
       key: item.code,
-      id: item.id
+      id: item.id,
+      code: item.code,
+      companyId: item.companyId,
+      companyName: item.companyName,
+      disabled: item.disabled,
+      leaderCode: item.leaderCode,
+      leaderName: item.leaderName,
+      name: item.name,
+      pid: item.pid,
+      shortName: item.shortName,
+      sourceType: item.sourceType,
     }
   });
   modelValue.value = result;
   currentSelect.value = result;
 }
-
+function treeNodes2SelectedList(selectedNodes) {
+  return selectedNodes.map((item) => {
+    return {
+      code: item.code,
+      companyId: item.companyId,
+      companyName: item.companyName,
+      disabled: item.disabled,
+      id: item.id,
+      key: item.key,
+      leaderCode: item.leaderCode,
+      leaderName: item.leaderName,
+      name: item.name,
+      pid: item.pid,
+      shortName: item.shortName,
+      sourceType: item.sourceType,
+    };
+  });
+}
 
 </script>
 <template>

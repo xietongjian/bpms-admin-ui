@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
+  import { defineEmits, defineExpose } from 'vue';
   import { deptFormSchema } from './dept.data';
   import { saveOrUpdate } from '#/api/org/dept';
   import {useVbenForm} from "#/adapter/form";
@@ -8,10 +8,9 @@
 
   const emit = defineEmits(['success', 'register']);
 
-  const isUpdate = ref(true);
-
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
+      labelWidth: 80,
       componentProps: {
         class: 'w-full',
       },
@@ -19,7 +18,7 @@
     showDefaultActions: false,
     layout: 'horizontal',
     schema: deptFormSchema,
-    wrapperClass: 'grid-cols-1',
+    wrapperClass: 'grid-cols-2',
   });
 
   const [BasicModal, modalApi] = useVbenModal({
@@ -31,6 +30,23 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
+          if (values.leaderCode && values.leaderName) {
+            values.leaderPersonal = [
+              {
+                label: values.leaderName,
+                value: values.leaderCode,
+              },
+            ];
+          }
+          if (values.superiorCode && values.superiorName) {
+            values.superiorPersonal = [
+              {
+                label: values.superiorName,
+                value: values.superiorCode,
+              },
+            ];
+          }
+
           formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
@@ -40,84 +56,6 @@
       handleSubmit();
     },
   });
-
-  /*const [registerModal, { setModalProps, closeModal, changeLoading }] = useModalInner(
-    async (data) => {
-      await resetFields();
-      setModalProps({ confirmLoading: true });
-      changeLoading(true);
-      isUpdate.value = !!data?.isUpdate;
-      const treeData = await getCompanies();
-      setModalProps({ confirmLoading: false });
-      changeLoading(false);
-      let formData = data.record;
-
-      if (formData.leaderCode && formData.leaderName) {
-        formData.leaderPersonal = [
-          {
-            name: formData.leaderName,
-            code: formData.leaderCode,
-          },
-        ];
-      }
-      if (formData.superiorCode && formData.superiorName) {
-        formData.superiorPersonal = [
-          {
-            name: formData.superiorName,
-            code: formData.superiorCode,
-          },
-        ];
-      }
-
-      await updateSchema([
-        {
-          field: 'companyId',
-          componentProps: { treeData },
-        },
-        {
-          field: 'code',
-          dynamicRules: () => {
-            return [
-              {
-                required: true,
-                whitespace: true,
-                message: '编码不能为空！',
-              },
-              {
-                pattern: new RegExp(FormValidPatternEnum.SN),
-                type: 'string',
-                message: '请输入英文或数字！',
-              },
-              {
-                max: 64,
-                message: '字符长度不能大于64！',
-              },
-              ...getBaseDynamicRules({
-                id: (unref(isUpdate) && formData && formData.id) || '',
-                field: 'code',
-                fieldValue: '',
-                fieldName: '编码',
-              }),
-            ];
-          },
-        },
-      ]);
-
-      if (unref(isUpdate)) {
-        setFieldsValue({
-          ...data.record,
-        });
-      } else {
-        if (formData.companyId) {
-          setFieldsValue({
-            companyId: formData.companyId,
-          });
-        }
-      }
-    },
-  );*/
-
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增部门' : '修改部门'));
 
   async function handleSubmit() {
     try {
@@ -144,8 +82,8 @@
       const {success, msg} = await saveOrUpdate(values);
       if(success){
         message.success(msg);
-        modalApi.close();
         emit('success');
+        modalApi.close();
       } else{
         message.error(msg);
       }
@@ -156,7 +94,7 @@
   defineExpose(modalApi);
 </script>
 <template>
-  <BasicModal >
+  <BasicModal class="w-[600px]" >
     <BasicForm />
   </BasicModal>
 </template>

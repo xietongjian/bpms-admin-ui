@@ -154,7 +154,7 @@
     />
     <PersonalModal ref="personalModalRef" @success="handleSuccess" />
     <!--    <PersonalSelector @register="registerPersonalModal" @success="handleSettingLeaderSuccess" />-->
-    <PersonalSelectorModal @change="handleSettingLeaderSuccess" />
+    <PersonalSelectorModal ref="personalSelectorModalRef" @change="handleSettingLeaderSuccess" />
   </ColPage>
 </template>
 <script lang="ts" setup>
@@ -182,7 +182,7 @@
   import { ManOutlined, ImportOutlined, WomanOutlined, UserOutlined } from '@ant-design/icons-vue';
 
   import PersonalModal from './PersonalModal.vue';
-  // import PersonalSelectorModal from '#/components/Selector/src/FlowModelSelectorModal.vue';
+  import PersonalSelectorModal from '#/components/selector/personal-selector/PersonalSelectorModal.vue';
   import {
     Tag,
     Popover,
@@ -206,7 +206,7 @@
 
   const PerPrefix = 'Personal:';
 
-  const personalModalRef = ref();
+  const personalModalRef = ref(), personalSelectorModalRef = ref();
 
 
   // const [registerModal, { openModal: openEditModal, setModalProps: setEditModalProps }] =

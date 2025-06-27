@@ -1,9 +1,8 @@
 <template>
-  <BasicModal v-bind="$attrs" :title="getTitle" @ok="handleSubmit">
+  <BasicModal class="w-[800px]">
     <BasicForm class="personalForm">
       <template #headImg="{ model, field }">
         <Upload
-          style="margin: auto"
           name="avatar"
           list-type="picture-card"
           class="avatar-uploader"
@@ -35,14 +34,6 @@
   const isUpdate = ref(true);
   const imageUrl = ref<string>('');
 
-/*  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
-    labelWidth: 100,
-    schemas: personalFormSchema,
-    showActionButtonGroup: false,
-    actionColOptions: {
-      span: 23,
-    },
-  });*/
 /*
 
   const getBaseDynamicRules = (params: CheckExistParams) => {
@@ -99,14 +90,16 @@
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
+      labelWidth: 80,
       componentProps: {
-        // class: 'w-full',
+        class: 'w-full',
       },
     },
     showDefaultActions: false,
     layout: 'horizontal',
     schema: personalFormSchema,
-    wrapperClass: 'grid-cols-1',
+    wrapperClass: 'grid-cols-5',
+
   });
 
 

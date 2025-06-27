@@ -3,9 +3,12 @@ import { checkEntityExist } from '#/api/org/personal';
 
 import type {VxeGridProps} from '#/adapter/vxe-table';
 
-// import { formatToDate, formatToDateTime } from '#/utils/dateUtil';
 import { RemarkDefaultEnum,FormValidPatternEnum } from '#/enums/commonEnum';
 import {z} from "@vben/common-ui";
+import {getCompanies, getCompaniesListData} from "#/api/org/company";
+import {getDeptListData, getDepts} from "#/api/org/dept";
+import {getJobGradeTree} from "#/api/org/jobGrade";
+import {getPositionInfoTree} from "#/api/org/positionInfo";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -45,14 +48,14 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '部门',
     field: 'deptName',
-    width: 120,
+    minWidth: 120,
     align: 'left',
     resizable: true,
   },
   {
     title: '公司',
     field: 'companyName',
-    width: 120,
+    minWidth: 120,
     align: 'left',
     resizable: true,
   },
@@ -66,7 +69,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '角色',
     field: 'roles',
-    width: 120,
+    minWidth: 120,
     align: 'left',
     slots: {default: 'roles'},
   },
@@ -122,19 +125,23 @@ export const personalFormSchema: FormSchema[] = [
     fieldName: 'name',
     label: '姓名',
     component: 'Input',
-    // required: true,
+    formItemClass: 'col-span-2 items-baseline',
     rules: z
         .string({
           required_error: '姓名不能为空',
         })
         .trim()
         .min(1, "名称不能为空")
-        .max(20, "字符长度不能大于20")
+        .max(20, "字符长度不能大于20"),
   },
   {
     fieldName: 'code',
     label: '工号',
     component: 'Input',
+    formItemClass: 'col-span-2 items-baseline',
+    componentProps: {
+      class: 'w-full'
+    },
     dependencies: {
       rules(values) {
         const { id, code } = values;
@@ -172,12 +179,14 @@ export const personalFormSchema: FormSchema[] = [
     fieldName: 'headImg',
     label: '',
     component: 'Input',
-    // slot: 'headImg',
+    hideLabel: true,
+    wrapperClass: 'absolute [&_.ant-upload-wrapper]:flex [&_.ant-upload-wrapper]:flex [&_.ant-upload-wrapper]:justify-center',
+    formItemClass: 'col-span-1 [&_>div]:relative [&_>div]:overflow-visible ',
   },
   {
     fieldName: 'sex',
     label: '性别',
-    component: 'RadioButtonGroup',
+    component: 'RadioGroup',
     defaultValue: 1,
     componentProps: {
       options: [
@@ -185,49 +194,96 @@ export const personalFormSchema: FormSchema[] = [
         { label: '女', value: 2 },
       ],
     },
-  },
-  {
-    fieldName: 'jobGradeCode',
-    label: '职级',
-    component: 'TreeSelect',
-    componentProps: {
-      treeNodeFilterProp: 'showName',
-      getPopupContainer: () => document.body,
-    },
-  },
-  {
-    fieldName: 'positionCode',
-    label: '岗位',
-    component: 'TreeSelect',
-    componentProps: {
-      treeNodeFilterProp: 'showName',
-      getPopupContainer: () => document.body,
-    },
+    formItemClass: 'col-span-4 items-baseline',
   },
   {
     fieldName: 'companyId',
     label: '所属公司',
-    component: 'TreeSelect',
+    component: 'ApiTreeSelect',
     componentProps: {
-      treeNodeFilterProp: 'cname',
+      class: 'w-full',
+      api: getCompanies,
+      childrenField: 'children',
+      treeDataSimpleMode: { id: "id", pId: "pid", rootPId: null },
+      labelField: 'cname',
+      valueField: 'id',
+      allowClear: true,
       getPopupContainer: () => document.body,
+      onChange: (e: string) => {
+        debugger;
+      },
     },
-    // required: true,
+    rules: 'selectRequired',
+    formItemClass: 'col-span-2 items-baseline',
   },
   {
     fieldName: 'deptId',
     label: '所属部门',
-    component: 'TreeSelect',
+    component: 'ApiTreeSelect',
+    dependencies: {
+      trigger(values, form) {
+        debugger;
+        form.setFieldValue('field2', values.field1);
+      },
+      // 只有指定的字段改变时，才会触发
+      triggerFields: ['companyId'],
+    },
     componentProps: {
-      treeNodeFilterProp: 'name',
+      class: 'w-full',
+      api: getDepts,
+      immediate: false,
+      childrenField: 'children',
+      beforeFetch: (params) => {
+
+        debugger;
+      },
+      treeDataSimpleMode: { id: "id", pId: "pid", rootPId: null },
+      labelField: 'title',
+      valueField: 'id',
+      allowClear: true,
       getPopupContainer: () => document.body,
     },
-    // required: true,
+    rules: 'selectRequired',
+    formItemClass: 'col-span-2 items-baseline',
   },
+  {
+    fieldName: 'jobGradeCode',
+    label: '职级',
+    component: 'ApiTreeSelect',
+    componentProps: {
+      class: 'w-full',
+      api: getJobGradeTree,
+      childrenField: 'children',
+      treeDataSimpleMode: { id: "id", pId: "pid", rootPId: null },
+      labelField: 'title',
+      valueField: 'id',
+      allowClear: true,
+      getPopupContainer: () => document.body,
+    },
+    formItemClass: 'col-span-2 items-baseline',
+  },
+  {
+    fieldName: 'positionCode',
+    label: '岗位',
+    component: 'ApiTreeSelect',
+    componentProps: {
+      class: 'w-full',
+      api: getPositionInfoTree,
+      childrenField: 'children',
+      treeDataSimpleMode: { id: "id", pId: "pid", rootPId: null },
+      labelField: 'title',
+      valueField: 'id',
+      allowClear: true,
+      getPopupContainer: () => document.body,
+    },
+    formItemClass: 'col-span-2 items-baseline',
+  },
+
   {
     label: '手机',
     fieldName: 'mobile',
     component: 'Input',
+    formItemClass: 'col-span-2 items-baseline',
     rules: z
         .string({
           required_error: '手机号不能为空',
@@ -240,6 +296,7 @@ export const personalFormSchema: FormSchema[] = [
     label: '邮箱',
     fieldName: 'email',
     component: 'Input',
+    formItemClass: 'col-span-2 items-baseline',
     rules: z
         .string({
           required_error: '邮箱不能为空',
@@ -251,8 +308,9 @@ export const personalFormSchema: FormSchema[] = [
   {
     fieldName: 'status',
     label: '在职状态',
-    component: 'RadioButtonGroup',
+    component: 'RadioGroup',
     defaultValue: 1,
+    formItemClass: 'col-span-4 items-baseline',
     componentProps: {
       options: [
         { label: '在职', value: 1 },
@@ -264,6 +322,7 @@ export const personalFormSchema: FormSchema[] = [
     label: '地址',
     fieldName: 'address',
     component: 'Textarea',
+    formItemClass: 'col-span-5 items-baseline',
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,

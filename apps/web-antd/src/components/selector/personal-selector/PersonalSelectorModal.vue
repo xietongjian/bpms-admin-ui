@@ -1,7 +1,7 @@
 <template>
   <BasicModal class="w-[1000px] h-[80%]">
-    <div class="group border border-blue-200 !border-dashed mb-2 flex justify-between">
-      <div class="flex flex-wrap gap-y-2 p-2">
+    <div class="group border border-primary !border-dotted mb-2 flex justify-between">
+      <div class="flex flex-wrap gap-y-2 p-1">
         <template
           v-if="selectedRowsList && selectedRowsList.length > 0"
           v-for="(item, index) in selectedRowsList"
@@ -51,18 +51,19 @@
 
         <div ref="tableContainerRef" class="bg-card border flex-1">
           <Table
-              size="small"
-              :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)"
-              class="mt-2 ant-table-striped"
-              :row-selection="rowSelection"
-              :columns="columns"
-              :dataSource="tableData"
-              :pagination="pagination"
-              :resizable="true"
-              :scroll="{ y: tableHeight }"
-              :loading="personalTableLoading"
-              rowKey="code"
-              :customRow="customRow"
+            :bordered="false"
+            size="small"
+            :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)"
+            class="ant-table-striped"
+            :row-selection="rowSelection"
+            :columns="columns"
+            :dataSource="tableData"
+            :pagination="pagination"
+            :resizable="true"
+            :scroll="{ y: tableHeight }"
+            :loading="personalTableLoading"
+            rowKey="code"
+            :customRow="customRow"
           />
         </div>
       </div>
@@ -412,3 +413,12 @@ function handleSelect(keys, e) {
 defineExpose(modalApi);
 </script>
 
+<style scoped lang="scss">
+[data-vxe-ui-theme='light'] .ant-table-striped :deep(.table-striped) td {
+  background-color: #fafafa;
+}
+
+[data-vxe-ui-theme='dark'] .ant-table-striped :deep(.table-striped) td {
+  background-color: rgb(29, 29, 29);
+}
+</style>

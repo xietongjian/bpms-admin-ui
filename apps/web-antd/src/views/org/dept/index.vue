@@ -12,7 +12,7 @@ import {TableAction} from '#/components/table-action';
 
 import {Button, message} from 'ant-design-vue';
 
-import {deleteByIds, getDepts} from '#/api/org/dept';
+import {deleteByIds, getDeptListData, getDepts} from '#/api/org/dept';
 import CompanyTree from '#/views/components/leftTree/CompanyTree.vue';
 import DeptModal from './DeptModal.vue';
 import {columns, searchFormSchema} from './dept.data';
@@ -60,7 +60,10 @@ const gridOptions: VxeGridProps<any> = {
     ajax: {
       query: async ({page}, formValues) => {
         formValues.companyId = unref(currentNode)?.id;
-        return await getDepts(formValues || {});
+        if(!formValues.companyId){
+          return [];
+        }
+        return await getDeptListData(formValues || {});
       },
     },
   },
@@ -86,12 +89,11 @@ function handleEdit(record: Recordable<any>) {
 }
 
 function handleCreateChild(record: Recordable<any>) {
-  record = {companyId: unref(currentNode)?.id, pid: record.id};
-  deptModalRef.value.setData(record);
-  deptModalRef.value.open();
+  deptModalRef.value.setData({companyId: unref(currentNode)?.id, pid: record.id});
   deptModalRef.value.setState({
     title: '新增【' + record.name + '】的子部门'
   });
+  deptModalRef.value.open();
 }
 
 async function handleDelete(record: Recordable<any>) {

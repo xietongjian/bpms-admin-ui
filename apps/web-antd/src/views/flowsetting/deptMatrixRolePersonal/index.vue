@@ -278,7 +278,7 @@
     overflow: hidden;
     text-indent: 2px;
     .ant-space {
-      gap: 2px 6px !important;
+      gap: 2px 0px !important;
     }
     .ant-space-align-center {
       flex-flow: wrap;
