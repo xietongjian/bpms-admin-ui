@@ -153,16 +153,16 @@ function createActions(record: Recordable<any>) {
       :left-max-width="50"
       :left-min-width="10"
       :left-width="15"
-      :split-handle="true"
-      :split-line="true"
+      :split-handle="false"
+      :split-line="false"
       :resizable="true"
-      :left-collapsible="true"
+      :left-collapsible="false"
       :auto-content-height="true"
       content-class="h-full">
     <template #left>
       <PositionSeqTree @select="handleSelect"/>
     </template>
-    <BasicTable>
+    <BasicTable class="ml-2">
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>

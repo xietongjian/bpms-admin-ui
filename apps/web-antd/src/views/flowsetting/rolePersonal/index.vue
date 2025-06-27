@@ -3,10 +3,10 @@
       :left-max-width="50"
       :left-min-width="10"
       :left-width="15"
-      :split-handle="true"
-      :split-line="true"
+      :split-handle="false"
+      :split-line="false"
       :resizable="true"
-      :left-collapsible="true"
+      :left-collapsible="false"
       :auto-content-height="true"
       content-class="h-full">
     <template #left>
@@ -14,7 +14,7 @@
         <CompanyTree @select="handleSelect" class="h-full"/>
       </div>
     </template>
-    <BasicTable>
+    <BasicTable class="ml-2">
       <template #action="{row}">
         <TableAction :actions="createMainActions(row)"/>
       </template>
@@ -215,9 +215,11 @@ function handleAddPersonal(record: Recordable<any>, e) {
   }
   currentRole.value = record;
 
-  personalSelectorModalRef.value.setData([]);
+  personalSelectorModalRef.value.setData({
+    multiple: true,
+  });
   personalSelectorModalRef.value.setState({
-    title: `设置角色【${record.name}】下的人员`
+    title: `设置角色【${record.name}】下的人员`,
   });
   personalSelectorModalRef.value.open();
 }

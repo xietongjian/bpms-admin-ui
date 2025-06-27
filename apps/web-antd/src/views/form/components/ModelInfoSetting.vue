@@ -492,7 +492,7 @@
       // 适用单位（公司）
       if (values.applyCompanies && values.applyCompanies.length > 0) {
         let applyCompanies = values.applyCompanies.map((item) => {
-          return { id: item.id, name: item.shortName };
+          return { id: item.value, name: item.label };
         });
         values.applyCompanies = JSON.stringify(applyCompanies);
       } else {

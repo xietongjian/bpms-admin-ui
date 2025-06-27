@@ -4,7 +4,7 @@ import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { checkEntityExist } from '#/api/org/dept';
 
-import { getCompaniesListData } from '#/api/org/company';
+import {getCompanies} from '#/api/org/company';
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -157,7 +157,7 @@ export const deptFormSchema: FormSchema[] = [
     label: '所属公司',
     component: 'ApiTreeSelect',
     componentProps: {
-      api: getCompaniesListData,
+      api: getCompanies,
       // childrenField: 'children',
       treeDataSimpleMode: { id: "id", pId: "pid", rootPId: null },
       labelField: 'cname',

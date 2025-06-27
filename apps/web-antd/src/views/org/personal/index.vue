@@ -3,10 +3,10 @@
       :left-max-width="50"
       :left-min-width="10"
       :left-width="15"
-      :split-handle="true"
-      :split-line="true"
+      :split-handle="false"
+      :split-line="false"
       :resizable="true"
-      :left-collapsible="true"
+      :left-collapsible="false"
       :auto-content-height="true"
       content-class="h-full">
     <template #left>
@@ -14,7 +14,7 @@
         <OrgTree class="h-full" @select="handleSelect" />
       </div>
     </template>
-    <BasicTable class="w-full" >
+    <BasicTable class="w-full ml-2" >
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="link" @click="handleExportTemplate">导出模板</Button>
 <!--        <ImpExcel v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" @success="loadDataSuccess" dateFormat="xlsx">
@@ -287,6 +287,11 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
+          if (currentNode.value?.sourceType === '1') {
+            formValues.companyId = unref(currentNode).id;
+          } else if (currentNode.value?.sourceType === '2') {
+            formValues.deptId = unref(currentNode).id;
+          }
           return await getPersonalPageList({
             query: {
               pageNum: page.currentPage,
@@ -300,7 +305,6 @@
   };
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
-
 
   function handleCreate() {
     let record = {};
@@ -526,16 +530,11 @@
   }
 
   function reloadTable() {
-    let searchInfo = {};
-    if (currentNode.value?.sourceType === '1') {
-      searchInfo = { companyId: unref(currentNode).id };
-    } else if (currentNode.value?.sourceType === '2') {
-      searchInfo = { deptId: unref(currentNode).id };
-    }
-    tableApi.reload({ searchInfo });
+    tableApi.reload();
   }
 
   function handleSelect(node: any) {
+      debugger;
     currentNode.value = node;
     reloadTable();
   }

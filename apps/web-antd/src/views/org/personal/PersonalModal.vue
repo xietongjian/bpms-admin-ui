@@ -1,5 +1,5 @@
 <template>
-  <BasicModal class="w-[800px]">
+  <BasicModal class="w-[1000px]">
     <BasicForm class="personalForm">
       <template #headImg="{ model, field }">
         <Upload
@@ -10,7 +10,7 @@
           :before-upload="beforeUpload"
           :multiple="false"
         >
-          <img v-if="imageUrl" :src="imageUrl" alt="avatar" style="width: 150px; height: 150px" />
+          <img v-if="imageUrl" :src="imageUrl" alt="avatar" class="object-fill w-full" />
           <div v-else>
             <PlusOutlined />
             <div class="ant-upload-text">上传头像</div>
@@ -25,59 +25,31 @@
 
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
+  import { filterTree } from '@vben/utils';
 
   import { personalFormSchema } from './personal.data';
   import { saveOrUpdate } from '#/api/org/personal';
   import { message, Upload } from 'ant-design-vue';
   import {PlusOutlined} from '@ant-design/icons-vue';
+  import {getDepts} from "#/api/org/dept";
   const emit = defineEmits(['success']);
-  const isUpdate = ref(true);
+  const firstLoaded = ref(false);
   const imageUrl = ref<string>('');
-
-/*
-
-  const getBaseDynamicRules = (params: CheckExistParams) => {
-    return [
-      {
-        trigger: 'blur',
-        validator: (_, value) => {
-          if (value) {
-            return checkEntityExist({
-              id: params.id,
-              field: params.field,
-              fieldValue: value,
-              fieldName: params.fieldName,
-            })
-              .then((res) => {
-                if (res) {
-                  return Promise.resolve();
-                } else {
-                  return Promise.reject(params.fieldName + '已存在，请修改！');
-                }
-              })
-              .catch((res) => {
-                return Promise.reject(res);
-              });
-          } else {
-            return Promise.resolve();
-          }
-        },
-      },
-    ] as Rule[];
-  };
-*/
-
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
+    destroyOnClose: true,
     onCancel() {
       modalApi.close();
     },
-    onOpenChange(isOpen: boolean) {
+    async onOpenChange(isOpen: boolean) {
       if (isOpen) {
+        firstLoaded.value = false;
         const values = modalApi.getData<Record<string, any>>();
+        imageUrl.value = values.headImg;
         if (values) {
-          formApi.setValues(values);
+          await formApi.setValues(values);
+          firstLoaded.value = true;
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -99,7 +71,31 @@
     layout: 'horizontal',
     schema: personalFormSchema,
     wrapperClass: 'grid-cols-5',
-
+    handleValuesChange: (values, fieldsChanged) => {
+        if(fieldsChanged.includes('companyId')){
+            debugger;
+            formApi.updateSchema([
+                {
+                    fieldName: 'deptId',
+                    componentProps: {
+                        class: 'w-full',
+                        immediate: !!values.companyId,
+                        params: {companyId: values.companyId},
+                        afterFetch: (treeData) => {
+                            debugger;
+                            // 如果没有则设置成空
+                            const filtered = filterTree(treeData, (v) => {
+                                return v.id === values.deptId
+                            })
+                            if(filtered.length <= 0){
+                                formApi.setFieldValue('deptId', null, false);
+                            }
+                        }
+                    },
+                }
+            ])
+        }
+    }
   });
 
 
@@ -215,9 +211,6 @@
       changeLoading(false);
     },
   );*/
-
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '编辑'));
-
   // 解析为base64位
   const getBase64 = (img, callback) => {
     const reader = new FileReader();
@@ -252,9 +245,14 @@
       }
       const values = await formApi.getValues();
       values.headImg = imageUrl.value;
-      await saveOrUpdate(values);
-      modalApi.close();
-      emit('success');
+      const {success, msg} = await saveOrUpdate(values);
+      if(success){
+        modalApi.close();
+        emit('success');
+        message.success(msg);
+      } else {
+        message.error(msg);
+      }
     } finally {
       modalApi.setState({loading: false, confirmLoading: false});
     }

@@ -209,9 +209,6 @@ export const personalFormSchema: FormSchema[] = [
       valueField: 'id',
       allowClear: true,
       getPopupContainer: () => document.body,
-      onChange: (e: string) => {
-        debugger;
-      },
     },
     rules: 'selectRequired',
     formItemClass: 'col-span-2 items-baseline',
@@ -221,22 +218,24 @@ export const personalFormSchema: FormSchema[] = [
     label: '所属部门',
     component: 'ApiTreeSelect',
     dependencies: {
-      trigger(values, form) {
-        debugger;
-        form.setFieldValue('field2', values.field1);
-      },
-      // 只有指定的字段改变时，才会触发
       triggerFields: ['companyId'],
+      componentProps: (values, schema) => {
+        if(values.companyId){
+          return {
+            immediate: true,
+            params: {companyId: values.companyId}
+          }
+        } else {
+          return {
+            immediate: false,
+          }
+        }
+      },
     },
     componentProps: {
       class: 'w-full',
       api: getDepts,
-      immediate: false,
       childrenField: 'children',
-      beforeFetch: (params) => {
-
-        debugger;
-      },
       treeDataSimpleMode: { id: "id", pId: "pid", rootPId: null },
       labelField: 'title',
       valueField: 'id',
@@ -278,7 +277,6 @@ export const personalFormSchema: FormSchema[] = [
     },
     formItemClass: 'col-span-2 items-baseline',
   },
-
   {
     label: '手机',
     fieldName: 'mobile',

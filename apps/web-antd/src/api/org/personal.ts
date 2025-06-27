@@ -32,7 +32,7 @@ export const getPersonalPageList = (params: any) => {
   return requestClient.post<any>(url, params);
 };
 
-export const saveOrUpdate = (params?: any) => requestClient.post({ url: Api.SaveOrUpdate, params });
+export const saveOrUpdate = (params?: any) => requestClient.post(Api.SaveOrUpdate, params, {responseReturn: 'body'} );
 
 export const importPersonalExcelByData = (params: any) =>
   requestClient.post(Api.ImportPersonalExcelByData, params );

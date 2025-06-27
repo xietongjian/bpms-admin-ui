@@ -354,8 +354,9 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     fieldName: 'applyCompanies',
     label: '适用单位',
     component: 'OrgSelector',
-    required: true,
+    rules: 'selectRequired',
     componentProps: {
+      type: 'company',
       labelInValue: true,
       multiple: true,
       selectType: '1',
