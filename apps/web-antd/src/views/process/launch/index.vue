@@ -287,10 +287,10 @@ function handleLaunchSuccess() {
     :left-max-width="50"
     :left-min-width="10"
     :left-width="15"
-    :split-handle="true"
-    :split-line="true"
+    :split-handle="false"
+    :split-line="false"
     :resizable="true"
-    :left-collapsible="true"
+    :left-collapsible="false"
     :auto-content-height="true"
     content-class="h-full">
     <template #left>
@@ -326,8 +326,8 @@ function handleLaunchSuccess() {
       </div>
     </template>
 
-    <div class="flex h-full w-full flex-col gap-4 p-0">
-      <div class="flex-center bg-card flex h-[50px] w-full flex-row p-4">
+    <div class="flex h-full w-full flex-col p-0 pl-2">
+      <div class="flex-center bg-card flex h-[50px] w-full flex-row p-4 mb-2">
         <div class="w-[300px]">
           <h1 style="font-size: 16px">流程名称（共{{ pager.total }}条）</h1>
         </div>
@@ -341,43 +341,39 @@ function handleLaunchSuccess() {
           />
         </div>
       </div>
-      <div class="bg-card m flex-1 overflow-y-auto overflow-x-hidden !p-4">
-        <Spin v-if="showModel" :spinning="dataListLoading">
-          <div class="m-h-[500px]">
-            <template v-if="modelList && Object.keys(modelList).length > 0">
-              <div v-for="(values, key) of modelList" :key="key">
-                <Divider orientation="left" orientation-margin="0px">
-                  <h1 style="font-size: 16px; font-weight: bold">
-                    {{ allCategoryMap[key]?.name }}
-                  </h1>
-                </Divider>
-                <Row :gutter="[16, 8]" align="top">
-                  <Col v-for="item in values" :span="8">
-                    <Space>
-                      <Avatar :src="item.modelIcon" class="model-icon">
-                        <template #icon>
-                          <PictureFilled />
-                        </template>
-                      </Avatar>
-                      <Tooltip placement="top" title="流程图预览">
-                        <PartitionOutlined
-                          class="flow-diagram-icon"
-                          @click="handleBpmnPreview(item.modelKey, '')"
-                        />
-                      </Tooltip>
-                      <TypographyLink @click="handleLaunch(item)">
-                        {{ item.name }}
-                      </TypographyLink>
-                    </Space>
-                  </Col>
-                </Row>
+      <div v-loading="dataListLoading" class="w-full overflow-y-auto bg-card flex-1 p-4">
+        <div v-if="showModel" class="m-h-[500px] h-full">
+          <div v-if="modelList && Object.keys(modelList).length > 0">
+            <div v-for="(values, key) of modelList" :key="key">
+              <Divider orientation="left" orientation-margin="0px">
+                <h1 class="text-sm font-bold">
+                  {{ allCategoryMap[key]?.name }}
+                </h1>
+              </Divider>
+              <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-4">
+                <div v-for="item in values" class="hover:bg-primary/10 rounded-sm hover:shadow-sm p-1 gap-1 flex items-center text-nowrap overflow-hidden text-ellipsis">
+                  <Avatar :src="item.modelIcon" class="model-icon bg-primary/20">
+                    <template #icon>
+                      <PictureFilled />
+                    </template>
+                  </Avatar>
+                  <Tooltip placement="top" title="流程图预览">
+                    <PartitionOutlined
+                      class="flow-diagram-icon text-primary"
+                      @click="handleBpmnPreview(item.modelKey, '')"
+                    />
+                  </Tooltip>
+                  <TypographyLink class="flex-1" @click="handleLaunch(item)">
+                    {{ item.name }}
+                  </TypographyLink>
+                </div>
               </div>
-            </template>
-            <div v-else>
-              <Empty v-if="!dataListLoading" description="暂无流程模板" />
             </div>
           </div>
-        </Spin>
+          <div v-else>
+            <Empty v-if="!dataListLoading" description="暂无流程模板" />
+          </div>
+        </div>
 
         <List
           v-else

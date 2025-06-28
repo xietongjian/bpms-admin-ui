@@ -11,12 +11,11 @@
       />
     </div>
     <div
-      v-loading="loadingRef"
       id="modelInfoSettingScrollId"
       ref="modelInfoSettingScrollRef"
       class="right h-full overflow-y-auto overflow-x-hidden"
     >
-      <BasicForm>
+      <BasicForm v-loading="loadingRef">
         <template #basicTitle>
 <!--          <BasicTitle style="font-size: 18px" :span="true" class="mt-4 mb-0"> 基础信息 </BasicTitle>-->
           <Divider orientation="left" orientation-margin="0px" class="mt-1 mb-0 !font-bold !size-18">

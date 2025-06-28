@@ -4,7 +4,6 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import {FormValidPatternEnum, OrderNoDefaultEnum, RemarkDefaultEnum} from '#/enums/commonEnum';
 import { checkEntityExist } from '#/api/flowauth/authPoint';
 
-
 export const columns: VxeGridProps['columns'] = [
   {
     title: '功能点名',
@@ -84,6 +83,9 @@ export const formSchema: FormSchema[] = [
     label: '标识',
     component: 'Input',
     dependencies: {
+      disabled(values){
+        return !!values.id;
+      },
       rules(values) {
         const { id, sn } = values;
         return z

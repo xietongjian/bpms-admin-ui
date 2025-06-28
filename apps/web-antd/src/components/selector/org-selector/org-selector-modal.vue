@@ -2,8 +2,6 @@
   <BasicModal
     class="w-[800px] min-h-[400px] overflow-y-hidden"
     contentClass="overflow-y-hidden flex flex-col flex-1 w-full"
-    centered
-    :title="getTitle"
   >
     <div class="min-h-[30px] !border-1">
 <!--      {{selectedList}}-->
@@ -379,6 +377,7 @@
   const treeListData = ref([]);
 
   async function initData(values) {
+    debugger;
     if (values.selectType === 'company') {
       const list = await getCompanies();
 
@@ -400,10 +399,22 @@
         // getTree()?.setExpandedKeys(unref(treeData).map((item) => item.id));
       }, 100);
     } else {
+      const res = await getOrgListData();
+      debugger;
+      treeData.value = res;
+      const expandKeys = [];
+      // 如果只能选择部门，则将公司的数据设置禁用
+      if (values.selectType === OrgSelectType.DEPT) {
+        forEach(res, (item) => {
+          // 只能选部门
+          item.disabled = item.sourceType === OrgSelectType.COMPANY; // 部门选择器，禁用公司的选项
+          item.sourceType === OrgSelectType.COMPANY && expandKeys.push(item.id); // 如果只能选择部门，需要将公司全部展开
+        });
+      }
       // 部门和公司树（组织树）
-      const list = await getOrgListData();
-      treeData.value = listToTree(list);
-      treeListData.value = listToTree(list);
+      debugger;
+      treeData.value = listToTree(res);
+      // treeListData.value = listToTree(list);
     }
   }
 

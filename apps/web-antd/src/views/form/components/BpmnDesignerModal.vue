@@ -5,6 +5,7 @@
         <Row>
           <Col span="8" class="flex items-center">
             <span v-if="!modelBaseInfo.name">新建流程</span>
+
             <Tooltip :zIndex="10000" v-else placement="buttom">
               <template #title>
                 {{ modelBaseInfo.name }}
@@ -327,12 +328,14 @@
       try {
         const res = await getByModelId(params.modelId);
         modelBaseInfo.value = res;
+        console.log(modelBaseInfo.value);
         processModelName.value = res.name;
       } catch (e) {
         console.error('通过ModelId查询modelInfo失败！');
       }
+    } else{
+      modelBaseInfo.value = {};
     }
-    modelBaseInfo.value = {};
   }
 
   const [BasicModal, modalApi] = useVbenModal({

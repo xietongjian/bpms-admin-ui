@@ -1,5 +1,5 @@
 <template>
-  <Card class="[&_.ant-list-item]:bg-secondary [&_.ant-list-item]:p-1" size="small"
+  <Card class="hover:[&_.ant-list-item]:bg-secondary [&_.ant-list-item]:p-1" size="small"
         v-bind="$attrs"
         :tab-list="tabList"
         :active-tab-key="activeKey"

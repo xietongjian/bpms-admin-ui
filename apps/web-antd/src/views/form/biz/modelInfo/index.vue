@@ -210,6 +210,7 @@
       ajax: {
         query: async ({page}, formValues) => {
           currentModelInfo.value = {};
+          formValues.categoryCode = currentCategory.value?.code;
           return await getPagerModel({
             query: {
               pageNum: page.currentPage,
@@ -479,7 +480,7 @@
 
   async function handleSelect(node: any) {
     currentCategory.value = node;
-    tableApi.reload({categoryCode: node?.code});
+    tableApi.reload();
   }
 
   function handleBpmnDesignerModalSuccess() {

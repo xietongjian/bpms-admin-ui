@@ -153,9 +153,14 @@ async function initData() {
 }
 
 function openSelectorModal() {
+  debugger;
+  console.log(props);
   orgSelectorModalRef.value.setData({
     values: modelValue.value,
-    selectType: props.type
+    selectType: props.selectType,
+  });
+  orgSelectorModalRef.value.setState({
+    title: props.title || '选择组织'
   });
   orgSelectorModalRef.value.open();
 }

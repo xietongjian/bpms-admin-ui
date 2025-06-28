@@ -271,6 +271,8 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     componentProps: {
       class: 'w-full',
       multiple: false,
+      selectOnModal: true,
+      closeOnSelect: true,
       selectType: '2',
       placeholder: '请选择流程归属部门',
     },
@@ -576,6 +578,9 @@ export const vxeFlowVariableTableColumns: VxeGridProps['columns']  = [
     editRender: {
       name: 'input',
       placeholder: '请点击输入',
+      attrs: {
+        style: 'padding-left: 4px;padding-right: 4px;',
+      }
     },
   },
   {
@@ -585,6 +590,9 @@ export const vxeFlowVariableTableColumns: VxeGridProps['columns']  = [
     editRender: {
       name: 'input',
       placeholder: '请点击输入',
+      attrs: {
+        style: 'padding-left: 4px;padding-right: 4px;',
+      }
     },
   },
   /*  {

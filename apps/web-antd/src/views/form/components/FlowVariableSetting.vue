@@ -14,11 +14,11 @@
       </template>
     </BasicTable>
 
-    <div style="width: 500px; margin: auto">
+    <div class="w-[500px] m-auto">
       <Button
         :loading="gridOptions.loading"
         type="dashed"
-        style="width: 100%"
+        class="w-full"
         @click="handleAddRow"
         >添加流程变量</Button
       >
@@ -89,6 +89,9 @@
     loading: false,
     // editConfig: { trigger: 'click', mode: 'cell', showStatus: true },
     columns: vxeFlowVariableTableColumns,
+    pagerConfig: {
+      enabled: false,
+    },
     toolbarConfig: {
       enabled: false,
       buttons: [

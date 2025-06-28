@@ -380,8 +380,9 @@
       } catch (e) {
         console.error('通过ModelId查询modelInfo失败！');
       }
+    } else {
+      modelBaseInfo.value = {};
     }
-    modelBaseInfo.value = {};
   }
 
   const [BasicModal, modalApi] = useVbenModal({
