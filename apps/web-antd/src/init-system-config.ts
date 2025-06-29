@@ -59,8 +59,7 @@ async function loadSystemConfig(version: string, config?: any){
     version,
     config: res
   }
-  debugger;
-  const diffSysConfig = diff(res, config);
+  const diffSysConfig = diff(config, res);
   // 重置缓存
   localStorage.setItem(DRAGON_SYS_CONFIG_KEY, JSON.stringify(dragonSysConfig));
   // 更新配置

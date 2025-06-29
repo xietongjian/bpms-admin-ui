@@ -157,7 +157,7 @@ function openSelectorModal() {
   console.log(props);
   orgSelectorModalRef.value.setData({
     values: modelValue.value,
-    selectType: props.selectType,
+    ...props,
   });
   orgSelectorModalRef.value.setState({
     title: props.title || '选择组织'
