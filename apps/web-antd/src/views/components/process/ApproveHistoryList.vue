@@ -1,5 +1,5 @@
 <template>
-  <List :loading="approvalHistoryLoading" class="[&_.ant-list-item]:px-0" item-layout="horizontal" :dataSource="historyList">
+  <List class="[&_.ant-list-item]:px-0" item-layout="horizontal" :dataSource="historyList">
     <template #renderItem="{ item }">
       <ListItem v-if="item.type !== 'SPJS'">
         <ListItemMeta>

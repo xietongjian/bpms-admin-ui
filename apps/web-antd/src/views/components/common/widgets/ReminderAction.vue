@@ -4,6 +4,7 @@
     cancel-text="关闭"
     @confirm="handleReminder"
     placement ="bottomRight"
+    @openChange="handleOpenChange"
   >
     <template #title>
       <div class="!text-md font-thin w-full flex flex-row gap-1">
@@ -18,6 +19,7 @@
     </template>
     <template #description>
       <Textarea
+        :status="reminderMsgStatus"
         v-model:value="reminderMsg"
         :autosize="{ minRows: 2, maxRows: 6 }"
         class="w-80"
@@ -33,12 +35,13 @@
   </Popconfirm>
 </template>
 <script lang="ts" setup>
-import {ref, defineProps} from 'vue';
+import {ref, defineProps, watch} from 'vue';
 import {Popconfirm, message, Button, Textarea} from 'ant-design-vue';
 import {EmpInfo} from '#/views/components/EmpInfo';
 import {reminderTask} from "#/api/process/process";
 
 const reminderMsg = ref('');
+const reminderMsgStatus = ref('');
 
 export type SendToPersonalList = {
   code: string;
@@ -54,8 +57,26 @@ const props = defineProps({
   },
 });
 
+function handleOpenChange(open) {
+  if(open){
+    reminderMsgStatus.value = '';
+  }
+}
+
+watch(reminderMsg, (value, oldValue, onCleanup) => {
+  if(value){
+    reminderMsgStatus.value = '';
+  } else {
+    reminderMsgStatus.value = 'error';
+  }
+});
+
 // 催办
 async function handleReminder() {
+  if(!reminderMsg.value){
+    reminderMsgStatus.value = 'error';
+    return Promise.reject(false);
+  }
   const {success, msg} = await reminderTask({
     processInstanceId: props.procInstId,
     message: reminderMsg.value,

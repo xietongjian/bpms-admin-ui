@@ -1,6 +1,6 @@
 <template>
-  <div class="w-full">
-    <ApproveHistoryList :historyList="historyList" :loading="loading" />
+  <div class="w-full" v-loading="loading">
+    <ApproveHistoryList :historyList="historyList" />
   </div>
 </template>
 <script lang="ts" setup>
