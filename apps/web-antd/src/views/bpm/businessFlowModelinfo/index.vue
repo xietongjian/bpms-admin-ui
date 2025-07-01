@@ -102,7 +102,7 @@
   import {Page} from '@vben/common-ui';
   // import { useModal } from '@/components/Modal';
   // import ModelInfoSelectorModal from '#/components/Selector/src/ModelInfoSelectorModal.vue';
-  import FlowModelSelectorModal from '#/components/selector/flow-model-selector/FlowModelSelectorModal.vue';
+  import FlowModelSelectorModal from '#/components/selector/flow-model-selector/SelectorModal.vue';
 
   import { message, Empty, Modal, Spin, Tooltip } from 'ant-design-vue';
   import {

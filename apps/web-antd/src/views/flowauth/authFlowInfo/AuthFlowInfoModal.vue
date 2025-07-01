@@ -11,6 +11,7 @@
   import { formSchema } from './authFlowInfo.data';
   import { saveOrUpdate } from '#/api/flowauth/authFlowInfo';
   const emit = defineEmits(['success', 'register']);
+  import dayjs, { Dayjs } from 'dayjs';
 
   /*const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
@@ -79,6 +80,8 @@
     layout: 'horizontal',
     schema: formSchema,
     wrapperClass: 'grid-cols-1',
+    fieldMappingTime: [['dateRange', ['startTime', 'endTime'], 'YYYY-MM-DD']],
+
   });
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
@@ -89,6 +92,8 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
+          values.dateRange = [dayjs(values.startTime), dayjs(values.endTime)];
+          values.authFlowKeys = values.authFlowKeys ? JSON.parse(values.authFlowKeys) : [];
           formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
@@ -109,11 +114,13 @@
       if(!valid){
         return;
       }
-      const values = await formApi.validate();
+      const values = await formApi.getValues();
 
+      // 授权给xx用户
       if (values.authUser) {
         values.authUser = values.authUser[0].code;
       }
+      // 当前用户
       if (values.currUser) {
         values.currUser = values.currUser[0].code;
       }

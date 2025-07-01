@@ -119,9 +119,9 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'authType',
     label: '授权范围',
-    component: 'RadioButtonGroup',
+    component: 'RadioGroup',
     defaultValue: '1',
-    componentProps: ({ formActionType }) => {
+    componentProps: ({ value, actions }) => {
       return {
         options: [
           { label: '所有模板', value: '1' },
@@ -133,13 +133,16 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'authFlowKeys',
     label: '流程模板',
-    required: ({ values }) => {
-      return values.authType === '0';
+    dependencies: {
+      triggerFields: ['authType'],
+      show(values) {
+        return values.authType === '0';
+      },
+      required(values) {
+        return values.authType === '0';
+      },
     },
-    component: 'ModelInfoSelector',
-    show: ({ values }) => {
-      return values.authType === '0';
-    },
+    component: 'FlowModelSelector',
     componentProps: {
       multiple: true,
       title: '选择流程模板',

@@ -75,7 +75,7 @@ import {useAccess} from "@vben/access";
   import { Button, Tag, Space, Popconfirm, Tooltip, message } from 'ant-design-vue';
   import { ImportOutlined, CloseOutlined, DownloadOutlined } from '@ant-design/icons-vue';
 
-  // import PersonalSelectorModal from '#/components/Selector/src/FlowModelSelectorModal.vue';
+  // import PersonalSelectorModal from '#/components/Selector/src/SelectorModal.vue';
   import ExportMatrixRoleExcelModal from '#/views/flowsetting/components/ExportMatrixRoleExcelModal.vue';
 import {Page} from '@vben/common-ui';
 import {getMatrixRoleList, getRoleListByPage} from '#/api/org/role';

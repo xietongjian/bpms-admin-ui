@@ -67,7 +67,7 @@
   import { ApartmentOutlined } from '@ant-design/icons-vue';
   import { Space, Affix, Button, message, Spin } from 'ant-design-vue';
   // import { useModal } from '@/components/Modal';
-  import PersonalSelectorModal from '#/components/Selector/src/FlowModelSelectorModal.vue';
+  import PersonalSelectorModal from '#/components/Selector/src/SelectorModal.vue';
   import ApproveSelectorPersonalModal from './ApproveSelectorPersonalModal.vue';
   import ApproveCustomApproveSettingModal from './ApproveCustomApproveSettingModal.vue';
   import ApproveBackToStepModal from './ApproveBackToStepModal.vue';

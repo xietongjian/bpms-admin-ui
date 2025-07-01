@@ -6,39 +6,47 @@ import {Tag, Tree, Table, Input, Checkbox, Radio} from 'ant-design-vue';
 
 export const columns = [
   {
-    title: '姓名',
+    title: '名称',
     dataIndex: 'name',
-    width: 100,
     align: 'left',
   },
   {
-    title: '工号',
-    dataIndex: 'code',
-    width: 100,
+    title: '标识',
+    dataIndex: 'modelKey',
+    width: 120,
     align: 'left',
   },
   {
-    title: '性别',
-    dataIndex: 'sex',
-    width: 50,
-    slots: {default: 'sex'},
+    title: '发布状态',
+    dataIndex: 'statusName',
+    width: 80,
+    align: 'center',
     customRender: ({ record }) => {
-      const status = record.sex;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '男' : '女';
-      return h(Tag, { color: color }, () => text);
+      const { status, statusName } = record;
+      let color = '';
+      if (~~status === 2) {
+        color = 'warning';
+      } else if (~~status === 3) {
+        color = 'success';
+      } else if (~~status === 4) {
+        color = 'error';
+      } else {
+        color = 'gray';
+      }
+      return h(Tag, { color: color }, () => statusName);
     },
   },
   {
-    title: '公司',
-    dataIndex: 'companyName',
+    title: '系统',
+    dataIndex: 'appName',
+    width: 120,
     align: 'left',
   },
   {
-    title: '部门',
-    dataIndex: 'deptName',
-    align: 'left',
+    title: '预览',
+    dataIndex: 'opt',
+    width: 80,
+    align: 'center',
   },
 ];
 
