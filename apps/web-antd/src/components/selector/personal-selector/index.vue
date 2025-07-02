@@ -99,7 +99,7 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: '请选择人员'
 });
 
-const selectMode = ref<string>('tags');
+const selectMode = ref<string>('multiple');
 
 watch(
     () => modelValue.value,

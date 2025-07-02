@@ -1,10 +1,10 @@
 <template>
   <div class="w-full">
-    {{modelValue}}
     <Select
         v-bind="$attrs"
-        :value="modelValue"
+        v-model:value="modelValue"
         :open="false"
+        :options="[]"
         :mode="selectMode"
         :allowClear="true"
         :placeholder="placeholder"
@@ -12,9 +12,10 @@
         maxTagPlaceholder=""
         @click="openSelectorModal"
         :showArrow="true"
+        :showSearch="true"
         class="w-full [&_.ant-select-selection-overflow]:gap-1 "
     >
-      <template #tagRender="{ value: val, label, closable, onClose, option }">
+      <template #tagRender="{ value, label, closable, onClose }">
         <Tag class="personal-multiple-tag leading-6 text-sm me-0"
              color="processing"
              :closable="closable"
@@ -24,9 +25,9 @@
                         <UserOutlined/>
                       </template>-->
           <template #closeIcon>
-            <CloseOutlined class="!cursor-pointer" style="color: #ed6f6f"/>
+            <CloseOutlined class="!cursor-pointer text-red-600"/>
           </template>
-          <span style="">{{ label }}</span>
+          <span>{{ label }}</span>
         </Tag>
       </template>
       <template #clearIcon>
@@ -45,7 +46,6 @@ import { defineEmits, defineProps, ref, watch, watchEffect} from 'vue';
 import SelectorModal from './SelectorModal.vue';
 import {Select, Tag} from 'ant-design-vue';
 import {CloseCircleOutlined, CloseOutlined, SearchOutlined, UserOutlined,} from '@ant-design/icons-vue';
-import {EmpInfo} from '#/views/components/EmpInfo';
 
 interface Props {
   /**
@@ -98,18 +98,26 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: '请选择流程模板'
 });
 
-const selectMode = ref<string>('tags');
+const selectMode = ref<string>('multiple');
 
 watch(
     () => modelValue.value,
     (v) => {
-      emit('change', v);
+        const val = v.map(item => {
+            return {
+                ...item,
+                value: item.modelKey,
+                label: item.modelName
+            }
+        })
+      emit('change', val);
       if (typeof props.change === 'function') {
-        props.change(v);
+        props.change(val);
       }
     },
 );
 watchEffect(() => {
+    debugger;
   currentSelect.value = modelValue.value;
 });
 

@@ -4,14 +4,16 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { defineEmits, defineExpose } from 'vue';
+  import { defineEmits, defineExpose, ref } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import {message} from 'ant-design-vue';
   import {useVbenForm} from '#/adapter/form';
   import { formSchema } from './authFlowInfo.data';
   import { saveOrUpdate } from '#/api/flowauth/authFlowInfo';
-  const emit = defineEmits(['success', 'register']);
   import dayjs, { Dayjs } from 'dayjs';
+  import { cloneDeep } from '@vben/utils';
+
+  const emit = defineEmits(['success', 'register']);
 
   /*const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
@@ -67,7 +69,6 @@
     },
   );*/
 
-
   const [BasicForm, formApi] = useVbenForm({
     // 所有表单项共用，可单独在表单内覆盖
     commonConfig: {
@@ -90,10 +91,31 @@
     },
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
-        const values = modalApi.getData<Record<string, any>>();
-        if (values) {
+        const dt = modalApi.getData<Record<string, any>>();
+        if (dt) {
+          const values = cloneDeep(dt);
+          values.authUser = values.authUser ? [{ value: values.authUser, label: values.authUserName }] : [];
+          values.currUser = values.currUser? [{ value: values.currUser, label: values.currUserName }]: [];
+
           values.dateRange = [dayjs(values.startTime), dayjs(values.endTime)];
-          values.authFlowKeys = values.authFlowKeys ? JSON.parse(values.authFlowKeys) : [];
+          if (values.authType === '1') {
+            values.authFlowKeys = [];
+          } else {
+            if (values.authFlowKeys) {
+              const modelInfos =
+                  typeof values.authFlowKeys === 'string'
+                      ? JSON.parse(values.authFlowKeys)
+                      : values.authFlowKeys;
+              const tempModelInfos = modelInfos
+                  ? modelInfos.map((item) => {
+                    return {modelKey: item.modelKey, name: item.modelName, value: item.modelKey, label: item.modelName};
+                  })
+                  : [];
+              values.authFlowKeys = tempModelInfos;
+            } else {
+              values.authFlowKeys = [];
+            }
+          }
           formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
@@ -103,9 +125,6 @@
       handleSubmit();
     },
   });
-
-
-  // const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 
   async function handleSubmit() {
     try {

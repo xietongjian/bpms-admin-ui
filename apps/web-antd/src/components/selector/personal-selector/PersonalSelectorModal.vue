@@ -122,6 +122,7 @@ const [BasicModal, modalApi] = useVbenModal({
     if (isOpen) {
       const {selectedList, multiple} = modalApi.getData<Record<string, any>>();
       if(selectedList){
+          debugger;
         selectedRowsList.value = JSON.parse(JSON.stringify(selectedList));
         selectedRowsList.value.forEach(item => {
           item['code'] = item.value;

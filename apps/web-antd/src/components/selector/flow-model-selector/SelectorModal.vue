@@ -2,13 +2,14 @@
   <BasicModal class="w-[1000px] h-[80%]">
     <div class="group border border-primary !border-dotted mb-2 flex justify-between">
       <div class="flex flex-wrap gap-y-2 p-1">
+        {{selectedRowsList}}
         <template
             v-if="selectedRowsList && selectedRowsList.length > 0"
             v-for="(item, index) in selectedRowsList"
             :key="index"
         >
-          <Tag color="processing" closable @close="removeSelectedItem(item.code)">
-            {{ item.name }}
+          <Tag color="processing" closable @close="removeSelectedItem(item.value)">
+            {{ item.label }}
           </Tag>
         </template>
         <span class="text-sm" v-else>
@@ -60,7 +61,7 @@
               :resizable="true"
               :scroll="{ y: tableHeight }"
               :loading="personalTableLoading"
-              rowKey="code"
+              rowKey="id"
               :customRow="customRow"
           >
             <template #bodyCell="{ column, record }">
@@ -158,7 +159,7 @@ const [BasicModal, modalApi] = useVbenModal({
           item['code'] = item.value;
           item['name'] = item.label;
         });
-        selectedRowKeyList.value = selectedRowsList.value.map((item : any) => item.code).filter((item: any) => !!item);
+        selectedRowKeyList.value = selectedRowsList.value.map((item : any) => item.value).filter((item: any) => !!item);
       } else {
         selectedRowsList.value = [];
         selectedRowKeyList.value = [];
@@ -349,7 +350,7 @@ function doSearchFilter(e) {
 const removeSelectedItem = (code) => {
   selectedRowKeyList.value = selectedRowKeyList.value.filter((tag) => tag !== code);
 
-  const idx = selectedRowsList.value.findIndex((item) => item.code === code);
+  const idx = selectedRowsList.value.findIndex((item) => item.value === code);
 
   selectedRowsList.value.splice(idx, 1);
 
