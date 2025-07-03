@@ -103,13 +103,11 @@ const selectMode = ref<string>('multiple');
 watch(
     () => modelValue.value,
     (v) => {
-        const val = v.map(item => {
-            return {
-                ...item,
-                value: item.modelKey,
-                label: item.modelName
-            }
-        })
+      const val = v.map(item => {
+        return {
+          ...item
+        }
+      })
       emit('change', val);
       if (typeof props.change === 'function') {
         props.change(val);
@@ -117,7 +115,6 @@ watch(
     },
 );
 watchEffect(() => {
-    debugger;
   currentSelect.value = modelValue.value;
 });
 
@@ -125,19 +122,8 @@ function handleChange(items: any[]) {
   const selectedItems = JSON.parse(JSON.stringify(items));
   const result = selectedItems.map(item => {
     return {
-      label: item.name || item.label,
-      value: item.code || item.value,
-      key: item.code,
-      id: item.id,
-      code: item.code,
-      companyId: item.companyId,
-      companyName: item.companyName,
-      deptId: item.deptId,
-      deptName: item.deptName,
-      disabled: item.disabled,
-      leaderCode: item.leaderCode,
-      leaderName: item.leaderName,
-      name: item.name,
+      label: item.modelName,
+      value: item.modelKey,
     }
   });
   modelValue.value = result;

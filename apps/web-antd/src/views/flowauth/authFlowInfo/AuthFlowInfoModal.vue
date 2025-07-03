@@ -108,7 +108,7 @@
                       : values.authFlowKeys;
               const tempModelInfos = modelInfos
                   ? modelInfos.map((item) => {
-                    return {modelKey: item.modelKey, name: item.modelName, value: item.modelKey, label: item.modelName};
+                    return {value: item.modelKey, label: item.modelName};
                   })
                   : [];
               values.authFlowKeys = tempModelInfos;
@@ -151,7 +151,7 @@
         const authFlow = values.authFlowKeys;
         if (authFlow && authFlow.length > 0) {
           let authFlowKeys = authFlow.map((item) => {
-            return { modelKey: item.modelKey, modelName: item.name };
+            return { modelKey: item.value, modelName: item.label };
           });
           values.authFlowKeys = JSON.stringify(authFlowKeys);
         }

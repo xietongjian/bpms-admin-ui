@@ -15,7 +15,7 @@
           请选择人员
         </span>
       </div>
-      <span class="h-full flex items-center">
+      <span class="h-full flex items-center" @click="handleRemove">
         <a class="p-1 cursor-pointer invisible group-hover:visible "><CloseCircleOutlined /></a>
       </span>
     </div>

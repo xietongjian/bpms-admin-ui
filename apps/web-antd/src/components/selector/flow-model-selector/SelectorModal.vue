@@ -1,27 +1,26 @@
 <template>
   <BasicModal class="w-[1000px] h-[80%]">
-    <div class="group border border-primary !border-dotted mb-2 flex justify-between">
-      <div class="flex flex-wrap gap-y-2 p-1">
-        {{selectedRowsList}}
+    <div class="group outline outline-1 outline-primary/80 !outline-dotted mb-2 relative">
+      <div class="flex flex-wrap gap-y-2 p-1 pr-5 max-h-24 overflow-y-auto">
         <template
             v-if="selectedRowsList && selectedRowsList.length > 0"
             v-for="(item, index) in selectedRowsList"
             :key="index"
         >
-          <Tag color="processing" closable @close="removeSelectedItem(item.value)">
-            {{ item.label }}
+          <Tag color="processing" closable @close="removeSelectedItem(item.modelKey)">
+            {{ item.modelName }}
           </Tag>
         </template>
-        <span class="text-sm" v-else>
+        <span class="text-sm text-foreground/50 p-px" v-else>
           请选择人员
         </span>
       </div>
-      <span class="h-full flex items-center">
-        <a class="p-1 cursor-pointer invisible group-hover:visible "><CloseCircleOutlined /></a>
+      <span class="h-full flex items-center absolute right-2 top-0">
+        <a class="p-1 cursor-pointer invisible group-hover:visible " @click="clearSelectedItems()"><CloseCircleOutlined /></a>
       </span>
     </div>
     <div ref="selectorContainerRef" class="flex-1 flex p-0 h-0 gap-2">
-      <div class="w-[30%] flex flex-col h-full border border-gray-200">
+      <div class="w-[30%] flex flex-col h-full outline outline-1 outline-gray-200/20">
         <div class="h-8 border-b leading-8 pl-2">
           模板分类
         </div>
@@ -60,8 +59,8 @@
               :pagination="pagination"
               :resizable="true"
               :scroll="{ y: tableHeight }"
-              :loading="personalTableLoading"
-              rowKey="id"
+              :loading="tableLoading"
+              rowKey="modelKey"
               :customRow="customRow"
           >
             <template #bodyCell="{ column, record }">
@@ -104,10 +103,6 @@
 import {
   defineExpose,
   computed,
-  useTemplateRef,
-  reactive,
-  onMounted,
-  toRefs,
   ref,
   defineEmits,
   unref,
@@ -115,14 +110,12 @@ import {
   watch
 } from 'vue';
 
-import {ColPage, useVbenModal} from '@vben/common-ui';
+import {useVbenModal} from '@vben/common-ui';
 
-import {getPersonalPageList} from '#/api/org/personal';
-import {Tag, Tree, Table, Input, Checkbox, Popover, Spin} from 'ant-design-vue';
-import {getOrgTree} from '#/api/org/dept';
-import {getFlowCategories, getFlowCategoryTreeData} from '#/api/base/category';
+import {Tag, Tree, Table, Input, Popover, Spin} from 'ant-design-vue';
+import {getFlowCategoryTreeData} from '#/api/base/category';
 import {getModelInfoPageList} from '#/api/flowable/bpmn/modelInfo';
-import {columns, searchFormSchema} from './selector.data';
+import {columns} from './selector.data';
 import { useElementSize } from '@vueuse/core'
 import {CloseCircleOutlined, PictureOutlined} from '@ant-design/icons-vue'
 
@@ -131,8 +124,7 @@ const {Search} = Input;
 const tableHeight = ref(250);
 
 const emit = defineEmits(['change'])
-// 保存被选中的行的id列表
-const selectedRowKeyList = ref([])
+
 //保存被选中的行的完整数据
 const selectedRowsList = ref([])
 
@@ -144,7 +136,7 @@ watch(height, () => {
 })
 
 const [BasicModal, modalApi] = useVbenModal({
-  title: '选择人员',
+  title: '选择流程模板',
   draggable: true,
   contentClass: 'flex flex-col min-h-[200px] h-full',
   onCancel() {
@@ -154,58 +146,71 @@ const [BasicModal, modalApi] = useVbenModal({
     if (isOpen) {
       const {selectedList, multiple} = modalApi.getData<Record<string, any>>();
       if(selectedList){
-        selectedRowsList.value = JSON.parse(JSON.stringify(selectedList));
-        selectedRowsList.value.forEach(item => {
-          item['code'] = item.value;
-          item['name'] = item.label;
-        });
-        selectedRowKeyList.value = selectedRowsList.value.map((item : any) => item.value).filter((item: any) => !!item);
+        let temp = JSON.parse(JSON.stringify(selectedList));
+        temp = temp.map(item => {
+          return {modelKey: item.value, modelName: item.label};
+        })
+        selectedRowsList.value = temp;
       } else {
         selectedRowsList.value = [];
-        selectedRowKeyList.value = [];
       }
 
-      // debugger;
       multiSelect.value = multiple;
 
       await fetchTreeData();
       fetchPageList({keyword: ''});
-      // await initData(values);
-      // baseFormApi.setValues(values);
+
       modalApi.setState({loading: false, confirmLoading: false});
     }
   },
   onConfirm() {
-    // await baseFormApi.submitForm();
     handleSubmit();
   },
 });
 
-
 const multiSelect = ref<boolean>(false);
-const personalTableLoading = ref<boolean>(false);
+const tableLoading = ref<boolean>(false);
 const treeData = ref<any[]>([]);
 const tableData = ref([]);
 const searchTxt = ref('');
 const currentNode = ref({});
-// const userStore = useUserStore();
 const treeRef = ref<any>(null);
-
+// 保存被选中的行的id列表
+const selectedRowKeyList = computed(() => {
+  return selectedRowsList.value.map(item => item.modelKey)
+})
 const rowSelection = computed(() => {
   return {
     preserveSelectedRowKeys: true,
     type: multiSelect.value ? 'checkbox' : 'radio',
     selectedRowKeys: selectedRowKeyList,
-    onChange: onSelectChange,
+    onSelect: onSelectChange,
+    onSelectAll: handleSelectAll
   }
 });
-
-function getTree() {
-  const tree = unref(treeRef);
-  if (!tree) {
-    throw new Error('tree is null!');
+function handleSelectAll(selected, selectedRows) {
+  if(selected){
+    if(selectedRows){
+      selectedRows.forEach(item => {
+        if(!item){
+          return;
+        }
+        let itemObj = selectedRowsList.value.find(itm => itm.modelKey === item.modelKey)
+        if (!itemObj) {
+          selectedRowsList.value.push(genSelectedData(item));
+        }
+      });
+    }
+  } else {
+    if(tableData.value){
+      tableData.value.forEach(item => {
+        let idx = selectedRowsList.value.findIndex(itm => itm.modelKey === item.modelKey)
+        if(idx !== -1){
+          selectedRowsList.value.splice(idx, 1);
+        }
+      })
+    }
   }
-  return tree;
 }
 
 const queryParam = ref({
@@ -243,11 +248,6 @@ const pagination = ref({
   onShowSizeChange: showSizeChange,
 });
 
-const state = reactive({
-  selectedList: [],
-  selectedRowKeys: [],
-});
-
 async function fetchTreeData() {
   const data = await getFlowCategoryTreeData();
   treeData.value = data;
@@ -260,17 +260,11 @@ async function fetchTreeData() {
 
 async function fetchPageList(params) {
   try {
-    let org = {};
+    let category = {};
     if (unref(currentNode)) {
-      if (unref(currentNode) && unref(currentNode).sourceType === '1') {
-        // 组织类型代表公司
-        org = {companyId: unref(currentNode).id};
-      } else if (unref(currentNode) && unref(currentNode).sourceType === '2') {
-        // 组织类型代表部门
-        org = {deptId: unref(currentNode).id};
-      }
+        category = {categoryCode: unref(currentNode).code};
     }
-    personalTableLoading.value = true;
+    tableLoading.value = true;
     const searchInfo = {
       query: {
         pageSize: unref(queryParam).pageSize,
@@ -278,7 +272,7 @@ async function fetchPageList(params) {
       },
       entity: {
         ...params,
-        ...org,
+        ...category,
       },
     };
     const {rows, total} = await getModelInfoPageList(searchInfo);
@@ -291,7 +285,7 @@ async function fetchPageList(params) {
     unref(pagination).current = 1;
     tableData.value = [];
   } finally {
-    personalTableLoading.value = false;
+    tableLoading.value = false;
   }
 }
 
@@ -348,71 +342,43 @@ function doSearchFilter(e) {
 }
 
 const removeSelectedItem = (code) => {
-  selectedRowKeyList.value = selectedRowKeyList.value.filter((tag) => tag !== code);
-
-  const idx = selectedRowsList.value.findIndex((item) => item.value === code);
-
+  const idx = selectedRowsList.value.findIndex((item) => item.modelKey === code);
   selectedRowsList.value.splice(idx, 1);
+};
 
+const clearSelectedItems = () => {
+  selectedRowsList.value = [];
 };
 
 // 选择多选框选中行
-function onSelectChange(selectedKeys: Array<object>, selectedRecords: Array<object>) {
-  selectedRowsList.value = selectedRecords;
-  selectedRowKeyList.value = selectedKeys;
-  debugger;
-  console.log(selectedKeys, '####====================');
-  return;
-  // , ...state.selectedRowKeys
-  // FIXME 这里有个问题：点击行的时候可以进行分页选择，当点击复选框后会把其他页选中的都清掉
-  let selectedRowKeys = [...selectedKeys];
-  let selectedList = selectedRecords.map((item) => {
-    return {id: item.id, code: item.code, name: item.name};
-  });
-  let temp = [...state.selectedList, ...selectedList];
-  let result = selectedKeys.map((item) => {
-    const arr = temp.filter((itm) => {
-      return itm.code === item;
-    });
-    return arr[0];
-  });
-
-  selectedRowKeyList.value = selectedRowKeys;
-
-  Object.assign(state, {
-    selectedRowKeys,
-    selectedList: [...result],
-  });
+// function onSelectChange(selectedKeys: Array<object>, selectedRecords: Array<object>) {
+function onSelectChange(record, selected, selectedRows, nativeEvent) {
+  if(selected){
+    rowClick(record);
+  } else {
+    let idx = selectedRowsList.value.findIndex(item => item.modelKey === record.modelKey)
+    selectedRowsList.value.splice(idx, 1);
+  }
 }
 
 // 行点击
 function rowClick(record: any) {
-  let selectedRowKeys = JSON.parse(JSON.stringify(selectedRowKeyList.value));
   let selectedList = JSON.parse(JSON.stringify(selectedRowsList.value));
-
-  let code = record.code;
+  let code = record.modelKey;
   if (multiSelect.value) {
-    if (selectedRowKeys.length > 0) {
-      const haveKeyIdx = selectedRowKeys.indexOf(code);
-      if (haveKeyIdx != -1) {
-        selectedRowKeys.splice(haveKeyIdx, 1);
-        const idx = selectedList.findIndex((item) => item.code === code);
-        if (idx !== -1) {
-          selectedList.splice(haveKeyIdx, 1);
-        }
+    if (selectedList.length > 0) {
+      const idx = selectedList.findIndex((item) => item.modelKey === code);
+      if (idx !== -1) {
+        selectedList.splice(idx, 1);
       } else {
-        selectedRowKeys.push(code);
-        selectedList.push(record);
+        selectedList.push(genSelectedData(record));
       }
     } else {
-      selectedRowKeys.push(code);
-      selectedList.push(record);
+      selectedList.push(genSelectedData(record));
     }
     selectedRowsList.value = selectedList;
-    selectedRowKeyList.value = selectedRowKeys;
   } else {
-    selectedRowsList.value = [record];
-    selectedRowKeyList.value = [code];
+    selectedRowsList.value = [genSelectedData(record)];
   }
 }
 
@@ -421,13 +387,8 @@ function handleSubmit() {
   modalApi.close();
 }
 
-function genPersonalData (record) {
-  return {
-    label: record.name,
-    key: record.code,
-    sex: record.sex,
-    mobile: record.mobile,
-  };
+function genSelectedData (record: any) {
+  return {modelKey: record.modelKey, modelName: record.name};
 }
 
 // 选择树
