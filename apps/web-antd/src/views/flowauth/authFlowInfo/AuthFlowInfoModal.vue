@@ -74,7 +74,7 @@
     commonConfig: {
       // 所有表单项
       componentProps: {
-        // class: 'w-full',
+        class: 'w-full',
       },
     },
     showDefaultActions: false,
@@ -97,7 +97,9 @@
           values.authUser = values.authUser ? [{ value: values.authUser, label: values.authUserName }] : [];
           values.currUser = values.currUser? [{ value: values.currUser, label: values.currUserName }]: [];
 
-          values.dateRange = [dayjs(values.startTime), dayjs(values.endTime)];
+          if(values.startTime){
+            values.dateRange = [dayjs(values.startTime), dayjs(values.endTime)];
+          }
           if (values.authType === '1') {
             values.authFlowKeys = [];
           } else {
@@ -165,8 +167,10 @@
       } else {
         message.error(msg);
       }
+    } catch (e){
+      console.error(e);
     } finally {
-      modalApi.setState({loading: true, confirmLoading: true});
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
 

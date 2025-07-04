@@ -16,49 +16,45 @@
       <template #authFlowKeys="{ row }">
         <div v-if="row.authType === '1'"> 所有流程</div>
         <div v-else>
-          <div>
-            <Space>
-              <Tag
-                  class="tag-item"
-                  color="processing"
-                  v-for="item in row.authFlowItems.slice(0, 2)"
-              >
-                {{ item.modelName }}
-              </Tag>
-              <Popover
-                  v-if="row.authFlowItems.slice(2).length > 0"
-                  title="授权模板"
-                  placement="left"
-                  class=""
-              >
-                <template #content>
-                  <div
-                      class="popover-details"
-                      style="width: 300px; max-height: 400px; overflow: auto"
-                  >
-                    <div class="mb-2" v-if="row.authFlowItems.length > 0">
-                      <Divider
-                          style="height: 1px; background-color: #7cb305; margin: 0"
-                          orientation="left"
-                      />
-                      <Space>
-                        <Tag
-                            class="tag-item"
-                            color="processing"
-                            v-if="row.authFlowItems && row.authFlowItems.length > 0"
-                            v-for="item in row.authFlowItems"
-                        >
-                          {{ item.modelName }}
-                        </Tag>
-                      </Space>
+          <div class="flex">
+            <Tag
+              class=""
+              color="processing"
+              v-for="item in row.authFlowItems.slice(0, 2)"
+            >
+              {{ item.modelName }}
+            </Tag>
+            <Popover
+              v-if="row.authFlowItems.slice(2).length > 0"
+              placement="right"
+              class=""
+            >
+              <template #title>
+                授权模板-({{row.authFlowItems.length}})
+                <Divider class="h-[1px] bg-primary m-0 mt-2" orientation="left" />
+              </template>
+              <template #content>
+                <div
+                  class="popover-details max-w-[400px] max-h-[300px] overflow-y-auto"
+                >
+                  <div class="mb-2" v-if="row.authFlowItems.length > 0">
+                    <div class="mt-1 gap-y-1 flex flex-wrap">
+                      <Tag
+                        class="tag-item"
+                        color="processing"
+                        v-if="row.authFlowItems && row.authFlowItems.length > 0"
+                        v-for="item in row.authFlowItems"
+                      >
+                        {{ item.modelName }}
+                      </Tag>
                     </div>
                   </div>
-                </template>
-                <div>
-                  <Tag color="warning">+{{ row.authFlowItems.slice(2).length }}</Tag>
                 </div>
-              </Popover>
-            </Space>
+              </template>
+              <div>
+                <Tag color="#F50" class="cursor-pointer">+{{ row.authFlowItems.slice(2).length }}</Tag>
+              </div>
+            </Popover>
           </div>
         </div>
       </template>
@@ -206,10 +202,6 @@ function handleSuccess() {
 .popover-details {
   .ant-space-align-center {
     flex-flow: wrap;
-
-    .tag-item {
-      margin: 2px 0;
-    }
   }
 }
 </style>

@@ -99,7 +99,9 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       multiple: false,
     },
-    rules: 'selectRequired'
+    rules: 'selectRequired',
+    formItemClass: 'col-span-2',
+    wrapperClass: 'w-1/2'
   },
   {
     fieldName: 'authUser',
@@ -108,13 +110,17 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       multiple: false,
     },
-    rules: 'selectRequired'
+    rules: 'selectRequired',
+    formItemClass: 'col-span-2',
+    wrapperClass: 'w-1/2'
   },
   {
     fieldName: 'dateRange',
     label: '授权时间',
     component: 'RangePicker',
-    rules: 'selectRequired'
+    rules: 'selectRequired',
+    formItemClass: 'col-span-2',
+    wrapperClass: 'w-1/2'
   },
   {
     fieldName: 'authType',
@@ -129,6 +135,7 @@ export const formSchema: FormSchema[] = [
         ],
       };
     },
+    formItemClass: 'col-span-2',
   },
   {
     fieldName: 'authFlowKeys',
@@ -147,5 +154,6 @@ export const formSchema: FormSchema[] = [
       multiple: true,
       title: '选择流程模板',
     },
+    formItemClass: 'col-span-2',
   },
 ];
