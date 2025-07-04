@@ -139,6 +139,7 @@ function refreshSystemConfig(config: any) {
         dynamicTitle: COM_APP_dynamicTitle,
         enablePreferences: COM_APP_enablePreferences,
         layout: COM_APP_layout,
+        enableCheckUpdates: false,
       },
       theme: {
         builtinType: COM_THME_builtinType,
@@ -160,7 +161,7 @@ function refreshSystemConfig(config: any) {
       },
       logo: {
         source: SYS_LOGO_IMG,
-        enable: COM_LOGO_enable,
+        enable: COM_LOGO_enable === '1',
         fit: COM_LOGO_fit,
       },
       breadcrumb: {},

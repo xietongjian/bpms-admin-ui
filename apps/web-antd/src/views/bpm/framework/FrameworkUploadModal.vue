@@ -87,6 +87,10 @@ const handleUpload = async () => {
   //   });
 };
 
+function closeModal() {
+  modalApi.close();
+}
+
 defineExpose(modalApi);
 </script>
 

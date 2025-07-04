@@ -64,7 +64,7 @@
       </div>
 
       <div
-          class="w-1/3 bg-white ml-4 p-2 base-info-box overflow-y-auto"
+          class="w-1/3 bg-card ml-4 p-2 base-info-box overflow-y-auto"
           :class="{ 'base-info-box-collapse': collapseBaseInfo }"
           style="padding-top: 10px; height: 100%; overflow-y: scroll"
           v-loading="formLoading"
@@ -87,7 +87,7 @@
 </template>
 
 <script lang="ts" setup>
-import {defineEmits, nextTick, ref, shallowRef, unref} from 'vue';
+import {defineEmits, defineExpose, nextTick, ref, shallowRef, unref} from 'vue';
 import type {ComponentInstance} from 'vue';
 // import { BasicModal, useModalInner } from '@/components/Modal';
 import {useVbenModal} from '@vben/common-ui';
@@ -132,7 +132,7 @@ const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
     labelWidth: 100,
   },
-  // schema: formSchemaBusiness,
+  schema: formSchemaBusiness,
   showDefaultActions: false,
 });
 
@@ -234,7 +234,11 @@ async function loadBaseInfo(id, type, pid) {
 
 const [BasicModal, modalApi] = useVbenModal({
   title: '-',
-  draggable: true,
+  fullscreen: true,
+  fullscreenButton: false,
+  draggable: false,
+  closable: false,
+  footer: false,
   onCancel() {
     modalApi.close();
   },
@@ -315,11 +319,13 @@ function handleClose() {
   modalApi.close();
   emit('success', unref(modelBaseInfo));
 }
+
+defineExpose(modalApi);
 </script>
 
 <style lang="less">
-//@import '@/assets/logicflow/style.css';
-//@import '@/assets/hilight-js/index.css';
+@import '#/assets/logicflow/style.css';
+@import '#/assets/hilight-js/index.css';
 .base-info-box {
   width: 600px;
   transition: width 0.25s;

@@ -1,39 +1,37 @@
 <template>
-  <div class="company-tree bg-white m-4 mr-0 overflow-hidden" v-loading="treeLoading">
+  <div class="bg-card overflow-hidden" v-loading="treeLoading">
     <div class="h-full n-naive-framework-tree">
-      <TreeHeader title="流程体系/架构" toolbar :search="false" :expandAll="expandAll">
-        <template #append>
-          <slot name="header"></slot>
-        </template>
-      </TreeHeader>
-      <Spin
+      <div title="流程体系/架构" toolbar :search="false" :expandAll="expandAll">
+        <slot name="header"></slot>
+      </div>
+      <div
           wrapperClassName="h-[calc(100%-56px)] overflow-y-auto"
           :spinning="treeLoading"
           tip="加载中..."
       >
-        <n-config-provider abstract preflight-style-disabled :theme="treeTheme">
-          <n-tree
-              v-model:expanded-keys="expandedKeys"
-              v-model:selected-keys="selectedKeys"
-              :data="treeData"
-              :on-load="asyncLoadData"
-              :draggable="draggable"
-              :node-props="nodeProps"
-              :render-prefix="renderIcon"
-              :render-suffix="renderActions"
-              :allow-drop="allowDrop"
-              block-line
-              key-field="id"
-              label-field="name"
-              @dragstart="$emit('dragstart', $event)"
-              @drop="$emit('drop', $event)"
-          >
-            <template #empty>
-              <Empty :image="Empty.PRESENTED_IMAGE_SIMPLE" class="!mt-4"/>
-            </template>
-          </n-tree>
-        </n-config-provider>
-      </Spin>
+        <Tree
+            block-node
+            :expandedKeys="expandedKeys"
+            :selectedKeys="selectedKeys"
+            :treeData="treeData"
+            @select="handleClick"
+            :on-load="asyncLoadData"
+            :draggable="draggable"
+            :node-props="nodeProps"
+            :render-prefix="renderIcon"
+            :render-suffix="renderActions"
+            :allow-drop="allowDrop"
+            block-line
+            key-field="id"
+            label-field="name"
+            @dragstart="$emit('dragstart', $event)"
+            @drop="$emit('drop', $event)"
+        >
+<!--          <template #empty>
+            <Empty :image="Empty.PRESENTED_IMAGE_SIMPLE" class="!mt-4"/>
+          </template>-->
+        </Tree>
+      </div>
     </div>
   </div>
 </template>
@@ -41,7 +39,7 @@
 <script setup lang="ts">
 import {computed, defineEmits, onMounted, ref, h} from 'vue';
 import type {PropType} from 'vue';
-import {Empty, Spin} from 'ant-design-vue';
+import {Empty, Spin, Tree} from 'ant-design-vue';
 // import { createTheme, NConfigProvider, NTree, treeDark } from 'naive-ui';
 // import TreeHeader from '@/components/Tree/src/components/TreeHeader.vue';
 import {findNode, getAllParentKeys} from '#/utils/helper/treeHelper';
@@ -101,6 +99,16 @@ const clearClickTimer = () => {
   clearTimeout(lastClickTimer);
   lastClickTimer = null;
 };
+
+function handleClick(selectedKeys, e) {
+  // selectedKeys, e:{selected: bool, selectedNodes, node, event}
+  clearClickTimer();
+  lastClickTimer = setTimeout(() => {
+    clearClickTimer();
+    emit('select', e.node);
+  }, 200);
+}
+
 const nodeProps = ({option}) => {
   return {
     onClick() {

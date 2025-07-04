@@ -1,116 +1,136 @@
 <template>
-  <Page auto-content-height dense contentFullHeight fixed-height contentClass="flex">
-    <BpmFrameWorkTree
-      ref="basicTreeRef"
-      class="w-3/10 xl:3/10"
-      draggable
-      :max-level="2"
-      @select="handleSelect"
-      @dragstart="validateDrag"
-      @drop="handleDrop"
-    >
-      <template #header>
-        <Authority :value="'ProcessFramework:' + PerEnum.ADD">
-          <Tooltip title="新增公司架构">
-            <Button type="primary" size="small" @click="handleCreateSystem">
-              <PlusOutlined />
-            </Button>
-          </Tooltip>
-        </Authority>
-        <Authority :value="'ProcessFramework:' + PerEnum.ADD">
-          <Tooltip title="下载架构导入模板">
-            <Button class="ml-2" type="primary" size="small" @click="handleDownloadTemplate">
-              <DownloadOutlined />
-            </Button>
-          </Tooltip>
-        </Authority>
-      </template>
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="false"
+      :split-line="false"
+      :resizable="true"
+      :left-collapsible="false"
+      :auto-content-height="true"
+      content-class="h-full">
+    <template #left >
+      <BpmFrameWorkTree
+          ref="basicTreeRef"
+          draggable
+          :max-level="2"
+          @select="handleSelect"
+          @dragstart="validateDrag"
+          @drop="handleDrop"
+      >
+        <template #header>
+          <Authority :value="'ProcessFramework:' + PerEnum.ADD">
+            <Tooltip title="新增公司架构">
+              <Button type="primary" size="small" @click="handleCreateSystem">
+                <PlusOutlined />
+              </Button>
+            </Tooltip>
+          </Authority>
+          <Authority :value="'ProcessFramework:' + PerEnum.ADD">
+            <Tooltip title="下载架构导入模板">
+              <Button class="ml-2" type="primary" size="small" @click="handleDownloadTemplate">
+                <DownloadOutlined />
+              </Button>
+            </Tooltip>
+          </Authority>
+        </template>
 
-      <template #actions="{ node }">
-        <Authority :value="'ProcessFramework:' + PerEnum.ADD">
-          <Tooltip :title="node.extra.type === '1' ? '新增架构' : '新增子架构'">
-            <PlusOutlined
-              class="mr-2"
-              style="color: #536dfe; cursor: pointer"
-              @click.stop="handleCreateChild(node)"
-            />
-          </Tooltip>
-        </Authority>
-        <Dropdown trigger="hover" v-if="validatePermission(node)">
-          <Button type="link" size="small">
-            <MoreOutlined class="icon-more" />
-          </Button>
-          <template #overlay>
-            <Menu>
-              <Authority v-if="node.extra.type === '1'" :value="'ProcessFramework:' + PerEnum.ADD">
-                <MenuItem>
-                  <span @click.stop="handleUploadFramework(node)">
-                    <PlusOutlined class="mr-2" style="color: #536dfe; cursor: pointer" />
-                    <span>批量导入</span>
-                  </span>
-                </MenuItem>
-              </Authority>
-              <Authority :value="'ProcessFramework:' + PerEnum.UPDATE">
-                <MenuItem>
-                  <span @click.stop="handleEditFramework(node)">
-                    <FormOutlined class="mr-2" style="color: #536dfe; cursor: pointer" />
-                    <span>编辑</span>
-                  </span>
-                </MenuItem>
-              </Authority>
-              <Authority :value="'ProcessFramework:' + PerEnum.DELETE">
-                <MenuItem>
-                  <span @click="handleDeleteFramework(node)">
-                    <DeleteOutlined class="mr-2" style="color: #ed6f6f; cursor: pointer" />
-                    <span>删除</span>
-                  </span>
-                </MenuItem>
-              </Authority>
-            </Menu>
-          </template>
-        </Dropdown>
-      </template>
-    </BpmFrameWorkTree>
-
-    <div class="w-7/10 xl:w-7/10 m-4 ml-2 shrink-0" v-loading="previewLoading">
-      <div v-if="!frameworkInfo.id" class="p-4 h-full bg-white">
-        <Empty description="请选择左侧体系/架构进行预览！" />
-      </div>
-      <div v-if="frameworkInfo.id" class="flex h-full">
-        <div class="content-container w-full bg-white">
-          <IntegralDesigner
-            ref="framePageRef"
-            translate-prefix="logicflow.base."
-            :editable="false"
-            :theme="isDark ? 'dark' : 'light'"
-          />
-          <div style="line-height: 200px; text-align: center">
-            <Spin tip="加载中..." />
-          </div>
+        <template #actions="{ node }">
+          <Authority :value="'ProcessFramework:' + PerEnum.ADD">
+            <Tooltip :title="node.extra.type === '1' ? '新增架构' : '新增子架构'">
+              <PlusOutlined
+                  class="mr-2"
+                  style="color: #536dfe; cursor: pointer"
+                  @click.stop="handleCreateChild(node)"
+              />
+            </Tooltip>
+          </Authority>
+          <Dropdown trigger="hover" v-if="validatePermission(node)">
+            <Button type="link" size="small">
+              <MoreOutlined class="icon-more" />
+            </Button>
+            <template #overlay>
+              <Menu>
+                <Authority v-if="node.extra.type === '1'" :value="'ProcessFramework:' + PerEnum.ADD">
+                  <MenuItem>
+                    <span @click.stop="handleUploadFramework(node)">
+                      <PlusOutlined class="mr-2" style="color: #536dfe; cursor: pointer" />
+                      <span>批量导入</span>
+                    </span>
+                  </MenuItem>
+                </Authority>
+                <Authority :value="'ProcessFramework:' + PerEnum.UPDATE">
+                  <MenuItem>
+                    <span @click.stop="handleEditFramework(node)">
+                      <FormOutlined class="mr-2" style="color: #536dfe; cursor: pointer" />
+                      <span>编辑</span>
+                    </span>
+                  </MenuItem>
+                </Authority>
+                <Authority :value="'ProcessFramework:' + PerEnum.DELETE">
+                  <MenuItem>
+                    <span @click="handleDeleteFramework(node)">
+                      <DeleteOutlined class="mr-2" style="color: #ed6f6f; cursor: pointer" />
+                      <span>删除</span>
+                    </span>
+                  </MenuItem>
+                </Authority>
+              </Menu>
+            </template>
+          </Dropdown>
+        </template>
+      </BpmFrameWorkTree>
+    </template>
+    <div class="ml-2 h-full">
+      <div class="shrink-0 h-full" v-loading="previewLoading">
+        <div v-if="!frameworkInfo.id" class="p-4 h-full bg-card">
+          <Empty description="请选择左侧体系/架构进行预览！" />
         </div>
+        <div v-if="frameworkInfo.id" class="flex h-full">
+          <div class="content-container w-full bg-card">
+            <IntegralDesigner
+                ref="framePageRef"
+                translate-prefix="logicflow.base."
+                :editable="false"
+                :theme="isDark ? 'dark' : 'light'"
+            />
+            <div style="line-height: 200px; text-align: center">
+              <Spin tip="加载中..." />
+            </div>
+          </div>
 
-        <div
-          class="bg-white ml-2 p-2 base-info-box overflow-y-auto"
-          :class="{ 'base-info-box-collapse': collapseBaseInfo }"
-          style="padding-top: 10px; overflow-y: scroll"
-        >
-          <Tooltip :title="collapseBaseInfo ? '展开' : '收起'" @click="handleCollapseBaseInfo">
+          <div
+              class="bg-card ml-2 p-2 base-info-box overflow-y-auto"
+              :class="{ 'base-info-box-collapse': collapseBaseInfo }"
+              style="padding-top: 10px; overflow-y: scroll"
+          >
+            <Tooltip :title="collapseBaseInfo ? '展开' : '收起'" @click="handleCollapseBaseInfo">
             <span style="cursor: pointer" class="font-bold text-md">
               <MenuFoldOutlined v-show="collapseBaseInfo" /><!-- 左箭头 -->
               <MenuUnfoldOutlined v-show="!collapseBaseInfo" /><!-- 右箭头 -->
               基本信息
             </span>
-          </Tooltip>
+            </Tooltip>
 
-          <Description
-            class="mt-2 p-4"
-            v-if="!collapseBaseInfo"
-            size="middle"
-            :bordered="false"
-            :column="1"
-            :data="frameworkInfo"
-            :schema="frameworkInfo.type === '1' ? detailSystemViewSchema : detailViewSchema"
-          />
+            <Descriptions
+                class="mt-2 p-4"
+                v-if="!collapseBaseInfo"
+                size="middle"
+                :bordered="false"
+                :column="1"
+                :data="frameworkInfo"
+                :schema="frameworkInfo.type === '1' ? detailSystemViewSchema : detailViewSchema"
+            >
+              <DescriptionsItem
+                  v-if="frameworkInfo.type === '1'"
+                  v-for="item in detailSystemViewSchema"
+                  :label="item.label">{{ frameworkInfo[item.fieldName] }}</DescriptionsItem>
+              <DescriptionsItem
+                  v-else
+                  v-for="item in detailViewSchema"
+                  :label="item.label">{{ frameworkInfo[item.fieldName] }}</DescriptionsItem>
+            </Descriptions>
+          </div>
         </div>
       </div>
     </div>
@@ -124,13 +144,13 @@
         ref="frameworkUploadModalRef"
         @success="reloadFrameworkTree"
     />
-  </Page>
+  </ColPage>
 </template>
 
 <script lang="ts" setup>
   // import { Authority } from '@/components/Authority';
   import { createVNode, nextTick, ref, shallowRef, unref } from 'vue';
-  import { Button, Dropdown, Empty, Menu, message, MenuItem, Modal, Spin, Tooltip } from 'ant-design-vue';
+  import { Button, Descriptions, Dropdown, Empty, Menu, message, MenuItem, Modal, Spin, Tooltip } from 'ant-design-vue';
   import type { Recordable } from '@vben/types';
   import type {ComponentInstance} from 'vue';
 
@@ -150,36 +170,35 @@
     getById,
     moveFramework,
   } from '#/api/bpm/framework';
-  import {Page} from '@vben/common-ui';
+  import {ColPage} from '@vben/common-ui';
 
   // import { Description } from '@/components/Description';
   import { detailSystemViewSchema, detailViewSchema } from './framework.data';
-  // import { ResultEnum } from '@/enums/httpEnum';
   import { PerEnum } from '#/enums/perEnum';
-  // import { useMessage } from '@/hooks/web/useMessage';
-  // import { usePermission } from '@/hooks/web/usePermission';
-  // import { useModal } from '@/components/Modal';
   import { downloadByUrl } from '#/utils/file/download';
   import FrameworkDesignerModal from '#/views/bpm/framework/FrameworkDesignerModal.vue';
   import { IntegralDesigner } from '#/assets/logicflow/lf-designer';
   import BpmFrameWorkTree from '#/views/bpm/components/BpmFrameWorkTree.vue';
   import FrameworkUploadModal from '#/views/bpm/framework/FrameworkUploadModal.vue';
-  // import { useDarkModeTheme } from '#/hooks/setting/useDarkModeTheme';
   import { usePreferences } from '@vben/preferences';
   import {useAccess} from "@vben/access";
 
   const { isDark } = usePreferences();
 
+  const DescriptionsItem = Descriptions.Item;
   const PerPrefix = 'ProcessFramework:';
+
+  const frameworkDesignerModalRef = ref(),
+  frameworkUploadModalRef = ref();
+
   const {hasAccessByCodes}  = useAccess();
-  // const { createMessage } = useMessage();
   const frameworkInfo = ref<Record<string, any>>({});
   const treeLoading = ref<boolean>(false);
   const collapseBaseInfo = ref(false);
   const previewLoading = ref(false);
 
-  const selectedNode = ref<Recordable>({});
-  const currentNode = shallowRef<Recordable>();
+  const selectedNode = ref<Recordable<any>>({});
+  const currentNode = shallowRef<Recordable<any>>();
   const basicTreeRef = shallowRef<ComponentInstance<typeof BpmFrameWorkTree>>();
   const framePageRef = shallowRef<ComponentInstance<typeof IntegralDesigner>>();
 
@@ -199,7 +218,9 @@
   }
   // 创建体系
   function handleCreateSystem() {
-    openFrameworkDesignerModal(true, { type: 'system' });
+    // openFrameworkDesignerModal(true, { type: 'system' });
+
+    frameworkDesignerModalRef.value.setData({ type: 'system' }).open();
     setModalBaseProps();
   }
   // 模板下载
@@ -213,19 +234,19 @@
   }
 
   function setModalBaseProps() {
-    setFrameworkDesignerModalProps({
-      title: `创建体系`,
-      bodyStyle: { padding: '0px', margin: '0px' },
-      defaultFullscreen: true,
-      maskClosable: false,
-      centered: true,
-      showOkBtn: false,
-      showCancelBtn: false,
-      draggable: false,
-      canFullscreen: false,
-      closable: false,
-      destroyOnClose: true,
-    });
+    // setFrameworkDesignerModalProps({
+    //   title: `创建体系`,
+    //   bodyStyle: { padding: '0px', margin: '0px' },
+    //   defaultFullscreen: true,
+    //   maskClosable: false,
+    //   centered: true,
+    //   showOkBtn: false,
+    //   showCancelBtn: false,
+    //   draggable: false,
+    //   canFullscreen: false,
+    //   closable: false,
+    //   destroyOnClose: true,
+    // });
   }
 
   function validatePermission(node) {
@@ -242,12 +263,14 @@
       return;
     }
     const type = record.type === '1' ? 'system' : 'framework';
-    openFrameworkDesignerModal(true, { type, id: record.id });
+    // openFrameworkDesignerModal(true, { type, id: record.id });
+    frameworkDesignerModalRef.value.setData({ type, id: record.id }).open();
     setModalBaseProps();
   }
 
   function handleUploadFramework(node) {
-    openFrameworkUploadModal(true, node);
+    // openFrameworkUploadModal(true, node);
+    frameworkUploadModalRef.value.setData(node).open();
   }
 
   function handleCreateChild(record: Recordable) {
@@ -255,7 +278,9 @@
       message.warn('无操作权限，请联系管理员！');
       return;
     }
-    openFrameworkDesignerModal(true, { type: 'framework', pid: record.id });
+    // openFrameworkDesignerModal(true, { type: 'framework', pid: record.id });
+    frameworkDesignerModalRef.value.setData({ type: 'framework', pid: record.id }).open();
+
     setModalBaseProps();
   }
 
@@ -288,6 +313,7 @@
   }
 
   function handleSelect(node) {
+    debugger;
     if (selectedNode.value.id === node.id) {
       return;
     }
@@ -335,6 +361,7 @@
 
   function doPreview() {
     previewLoading.value = true;
+    debugger;
     getById({ id: currentNode.value?.id })
       .then((res) => {
         frameworkInfo.value = res;
