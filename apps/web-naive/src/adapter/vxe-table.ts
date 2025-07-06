@@ -2,14 +2,9 @@ import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
 
 import { h } from 'vue';
 
-import { globalShareState } from '@vben/common-ui';
 import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
-import VxeUIPluginExportXLSX from '@vxe-ui/plugin-export-xlsx'
 
-import { Button, Image } from 'ant-design-vue';
-
-// import { componentMap } from '#/components/view/component-map';
-import { omit } from '#/utils';
+import { NButton, NImage } from 'naive-ui';
 
 import { useVbenForm } from './form';
 
@@ -22,18 +17,17 @@ setupVbenVxeTable({
         columnConfig: {
           resizable: true,
         },
-
+        minHeight: 180,
         formConfig: {
           // 全局禁用vxe-table的表单配置，使用formOptions
           enabled: false,
         },
-        minHeight: 180,
         proxyConfig: {
           autoLoad: true,
           response: {
-            result: 'rows',
+            result: 'items',
             total: 'total',
-            // list: 'items',
+            list: 'items',
           },
           showActiveMsg: true,
           showResponseMsg: false,
@@ -48,7 +42,7 @@ setupVbenVxeTable({
     vxeUI.renderer.add('CellImage', {
       renderTableDefault(_renderOpts, params) {
         const { column, row } = params;
-        return h(Image, { src: row[column.field] });
+        return h(NImage, { src: row[column.field] });
       },
     });
 
@@ -57,40 +51,15 @@ setupVbenVxeTable({
       renderTableDefault(renderOpts) {
         const { props } = renderOpts;
         return h(
-          Button,
-          { size: 'small', type: 'link' },
+          NButton,
+          { size: 'small', type: 'primary', quaternary: true },
           { default: () => props?.text },
         );
       },
     });
-    vxeUI.use(VxeUIPluginExportXLSX);
 
     // 这里可以自行扩展 vxe-table 的全局配置，比如自定义格式化
     // vxeUI.formats.add
-    // 增加编辑组件
-    const modelPropNameMap: any = {
-      Checkbox: 'checked',
-      Radio: 'checked',
-      Switch: 'checked',
-      // Upload: 'fileList',
-    };
-    const components = globalShareState.getComponents();
-    Object.keys(components).forEach((key: any) => {
-      const comp = components[key];
-      const modelPropName = modelPropNameMap[key] || 'value';
-      vxeUI.renderer.add(key, {
-        renderTableEdit(renderOpts, params) {
-          const { row, column } = params;
-          return h(comp, {
-            ...omit(renderOpts.props, ['onChange']),
-            [modelPropName]: row[column.field],
-            [`onUpdate:${modelPropName}`]: (value: any) => {
-              renderOpts.props.onChange?.(value, params);
-            },
-          });
-        },
-      });
-    });
   },
   useVbenForm,
 });

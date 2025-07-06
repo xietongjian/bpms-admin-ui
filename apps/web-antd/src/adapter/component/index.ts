@@ -86,16 +86,15 @@ const withDefaultPlaceholder = <T extends Component>(
         $t(`ui.placeholder.${type}`);
       // 透传组件暴露的方法
       const innerRef = ref();
-      const publicApi: Recordable<any> = {};
-      expose(publicApi);
-      const instance = getCurrentInstance();
-      instance?.proxy?.$nextTick(() => {
-        for (const key in innerRef.value) {
-          if (typeof innerRef.value[key] === 'function') {
-            publicApi[key] = innerRef.value[key];
-          }
-        }
-      });
+      expose(
+        new Proxy(
+          {},
+          {
+            get: (_target, key) => innerRef.value?.[key],
+            has: (_target, key) => key in (innerRef.value || {}),
+          },
+        ),
+      );
       return () =>
         h(
           component,
