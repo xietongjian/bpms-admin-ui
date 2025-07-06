@@ -10,20 +10,19 @@ import type { Recordable } from '@vben/types';
 
 import type { CustomComponentType } from '#/components/form/types';
 
-import {
-  defineAsyncComponent,
-  defineComponent,
-  getCurrentInstance,
-  h,
-  ref,
-} from 'vue';
+import { defineAsyncComponent, defineComponent, h, ref } from 'vue';
 
 import { ApiComponent, globalShareState, IconPicker } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
 
-import { OrgSelector, PersonalSelector, FlowModelSelector, SysIconSelector } from '#/components/selector';
+import {
+  FlowModelSelector,
+  OrgSelector,
+  PersonalSelector,
+  SysIconSelector,
+} from '#/components/selector';
 
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),

@@ -12,38 +12,44 @@ const DRAGON_SYS_CONFIG_KEY = "DRAGON_SYS_CONFIG";
 async function initSystemConfig() {
   console.log('==================初始化系统配置========================');
 
-  const {success, data, msg} = await getSysConfigVersion();
-  if(success){
-    // 获取版本成功，与缓存的版本进行对比
-    // 获取缓存的版本号
-    // 数据结构 {version: 'xxxxxx', config: {a: 1, b: 2, c: 3}}
-    const sysConfigStr = localStorage.getItem(DRAGON_SYS_CONFIG_KEY);
+  try {
+    const {success, data, msg} = await getSysConfigVersion();
+    if (success) {
+      // 获取版本成功，与缓存的版本进行对比
+      // 获取缓存的版本号
+      // 数据结构 {version: 'xxxxxx', config: {a: 1, b: 2, c: 3}}
+      const sysConfigStr = localStorage.getItem(DRAGON_SYS_CONFIG_KEY);
 
-    // 在什么情况下加载服务器的配置
-    // 哪些配置需要强制更改
-    // 哪些配置可以用户自定义
+      // 在什么情况下加载服务器的配置
+      // 哪些配置需要强制更改
+      // 哪些配置可以用户自定义
 
-    // 获取缓存的数据不为空
-    if(sysConfigStr){
-      const {version, config} = JSON.parse(sysConfigStr)
-      // 对比服务器配置版本与缓存是否一致 - 如果一致则不做操作
-      if (version === data) {
-        if(!config){
-          await loadSystemConfig(data);
+      // 获取缓存的数据不为空
+      if (sysConfigStr) {
+        const {version, config} = JSON.parse(sysConfigStr)
+        // 对比服务器配置版本与缓存是否一致 - 如果一致则不做操作
+        if (version === data) {
+          if (!config) {
+            await loadSystemConfig(data);
+          }
+        } else {
+          await loadSystemConfig(data, config);
         }
       } else {
-        await loadSystemConfig(data, config);
+        await loadSystemConfig(data);
       }
+
+      // 如果相同则获取缓存的配置信息
+
+      // 如果不同则从服务器获取配置信息
+
     } else {
-      await loadSystemConfig(data);
+      console.error(msg);
     }
+  } catch (e) {
+    console.error('加载失败', e);
+  } finally {
 
-    // 如果相同则获取缓存的配置信息
-
-    // 如果不同则从服务器获取配置信息
-
-  } else {
-    console.error(msg);
   }
 }
 

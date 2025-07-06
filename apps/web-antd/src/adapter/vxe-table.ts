@@ -4,8 +4,8 @@ import { h } from 'vue';
 
 import { globalShareState } from '@vben/common-ui';
 import { setupVbenVxeTable, useVbenVxeGrid } from '@vben/plugins/vxe-table';
-import VxeUIPluginExportXLSX from '@vxe-ui/plugin-export-xlsx'
 
+import VxeUIPluginExportXLSX from '@vxe-ui/plugin-export-xlsx';
 import { Button, Image } from 'ant-design-vue';
 
 // import { componentMap } from '#/components/view/component-map';
