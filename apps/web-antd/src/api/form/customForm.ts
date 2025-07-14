@@ -36,6 +36,7 @@ export const saveFormInfo = (params: any) => {
   // 将html/xml内容进行转成Base64编码传入后端 - 避免xss防攻击拦截
   params.content = Base64.encode(params.content);
   params.formJson = Base64.encode(params.formJson);
+  params.formModels = Base64.encode(params.formModels);
   return requestClient.post(Api.SaveFormInfo, params);
 };
 
