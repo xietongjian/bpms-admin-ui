@@ -380,6 +380,8 @@
   async function handleSave() {
     const jsonStr = makingFormRef.value.getJSON();
     const html = makingFormRef.value.getHtml();
+    const formModels = makingFormRef.value.getFormModels();
+
     const {valid, errors} = await formApi.validate();
     if(!valid){
       return Promise.reject(errors);
@@ -387,9 +389,7 @@
 
     const values = await formApi.getValues();
 
-    const jsonObj = JSON.parse(jsonStr);
-
-    if (!jsonObj.list || jsonObj.list.length === 0) {
+    if (formModels.length === 0) {
       message.warning({ content: '请添加表单字段！', style: { marginTop: '40px' } });
       return;
     }
@@ -403,6 +403,7 @@
       formStatus: 1,
       version: '1.0',
       formJson: jsonStr,
+      formModels: JSON.stringify(formModels),
       flowLevelFlag: 0,
     };
 
@@ -443,19 +444,21 @@
           loading.value = false;
         });
     } else if (props.formType === 'customTask') {
-      saveData.modelKey = props.modelKey;
-      return saveTaskFormInfo(saveData)
-        .then((res) => {
-          setFieldsValue({
-            id: res,
-          });
-          message.success('保存成功！');
-          // emit('onSave', res);
-        })
-        .finally(() => {
-          loading.value = false;
-        });
+      message.warning('未开放')
+      // saveData.modelKey = props.modelKey;
+      // return saveTaskFormInfo(saveData)
+      //   .then((res) => {
+      //     setFieldsValue({
+      //       id: res,
+      //     });
+      //     message.success('保存成功！');
+      //     // emit('onSave', res);
+      //   })
+      //   .finally(() => {
+      //     loading.value = false;
+      //   });
     } else if (props.formType === 'templateForm') {
+
     }
   }
 
