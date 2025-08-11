@@ -106,7 +106,7 @@
       timerJobEditModalRef = ref();
 
   const formOptions: VbenFormProps = {
-    showCollapseButton: true,
+    showCollapseButton: false,
     collapsed: true,
     submitOnEnter: true,
     commonConfig: {
@@ -117,6 +117,10 @@
       show: true,
     },
     schema: searchFormSchema,
+    wrapperClass: 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
+    actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
+    actionPosition: 'left',
+    actionLayout: 'inline',
   };
 
   const gridOptions: VxeGridProps = {

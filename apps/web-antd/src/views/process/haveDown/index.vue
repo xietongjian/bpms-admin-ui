@@ -30,7 +30,6 @@
   </Page>
 </template>
 <script lang="ts" setup>
-
 import {ref, watch} from 'vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import type {VxeGridProps} from '#/adapter/vxe-table';
@@ -46,46 +45,6 @@ import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/pre
   import {EmpInfo} from '#/views/components/EmpInfo';
 import {ProcessStatus} from "#/views/components/common";
   import {timeDurationFormatter} from "#/utils";
-  // import { useProcessStore } from '@/store/modules/process';
-  // import { useRequest } from '@vben/hooks';
-
-  // const processStore = useProcessStore();
-
-  // const [registerBpmnPreviewModal, { openModal: openBpmnPreviewModal, setModalProps: setBpmnPreviewProps }] = useModal();
-/*  const [
-    registerProcessFormModal,
-    { openModal: openProcessFormModal, setModalProps: setProcessFormModalProps },
-  ] = useModal();*/
-  /*const [registerHaveDownTable, {reload, getForm }] = useTable({
-    api: getApplyedTasksPagerModel,
-    title: '',
-    columns: haveDownTableColumns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    useSearchForm: true,
-    showIndexColumn: true,
-    immediate: false,
-  });*/
-
-/*  useRequest(()=>{
-    reload();
-    return Promise.resolve({});
-  }, {
-    refreshOnWindowFocus: true,
-  });
-
-  getApps().then(res=>{
-    const {updateSchema} = getForm();
-    updateSchema({
-      field: 'appSn',
-      componentProps: { options: res },
-    })
-  })*/
 
 const bpmnPreviewModalRef = ref(),
     processFormPreviewDrawerRef = ref();
@@ -97,14 +56,17 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+  wrapperClass: 'grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+  actionWrapperClass: 'pl-2',
+  actionPosition: 'left',
+  actionLayout: 'inline',
   resetButtonOptions: {
     show: true,
   },
   schema: searchFormSchema,
 };
 
-const gridOptions: VxeGridProps<any> = {
+const gridOptions: VxeGridProps = {
   checkboxConfig: {
     highlight: true,
     labelField: 'name',

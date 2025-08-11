@@ -184,8 +184,10 @@
       labelWidth: 60,
     },
     // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个
-    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-    actionWrapperClass: 'col-span-2 col-start-3 text-left ml-2',
+    wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
+    actionPosition: 'left',
+    actionLayout: 'inline',
     resetButtonOptions: {
       show: false,
     },

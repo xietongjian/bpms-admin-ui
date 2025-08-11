@@ -157,7 +157,7 @@ export const approveActionFormSchema: FormSchema[] = [
     disabledOnChangeListener: false,
     component: markRaw(Upload),
     wrapperClass: 'approve-attachment-wrapper ![&_.ant-upload-select]:bottom-10',
-    formItemClass: 'approve-attachment-form-item pb-2 [&_.ant-upload-select]:!bottom-8'
+    formItemClass: 'approve-attachment-form-item pb-2 [&_.ant-upload-select]:!bottom-[25px]'
   },
   {
     fieldName: 'signImg',
@@ -283,7 +283,7 @@ export const approveBackToStepFormSchema: FormSchema[] = [
       disabledOnChangeListener: false,
       component: markRaw(Upload),
       wrapperClass: 'approve-attachment-wrapper ![&_.ant-upload-select]:bottom-10',
-      formItemClass: 'approve-attachment-form-item pb-2 [&_.ant-upload-select]:!bottom-8'
+      formItemClass: 'approve-attachment-form-item pb-2 [&_.ant-upload-select]:!bottom-[25px]'
   },
   {
       fieldName: 'signImg',

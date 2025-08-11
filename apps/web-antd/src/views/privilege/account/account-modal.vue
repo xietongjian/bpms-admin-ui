@@ -46,7 +46,7 @@ const [BasicForm, baseFormApi] = useVbenForm({
   },
   showDefaultActions: false,
   layout: 'horizontal',
-  wrapperClass: 'grid-cols-5',
+  wrapperClass: 'grid grid-cols-5',
   schema: accountFormSchema,
 });
 

@@ -387,7 +387,7 @@ defineExpose({resetApproveMsg, getFormValues: formApi.getValues, setFormValues: 
   .ant-upload-select {
     position: absolute;
     right: 12px;
-    bottom: 48px;
+    bottom: 47px;
     z-index: 10;
 
   }

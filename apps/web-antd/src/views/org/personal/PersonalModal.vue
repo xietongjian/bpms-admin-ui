@@ -70,31 +70,29 @@
     showDefaultActions: false,
     layout: 'horizontal',
     schema: personalFormSchema,
-    wrapperClass: 'grid-cols-5',
+    wrapperClass: 'grid grid-cols-5',
     handleValuesChange: (values, fieldsChanged) => {
-        if(fieldsChanged.includes('companyId')){
-            debugger;
-            formApi.updateSchema([
-                {
-                    fieldName: 'deptId',
-                    componentProps: {
-                        class: 'w-full',
-                        immediate: !!values.companyId,
-                        params: {companyId: values.companyId},
-                        afterFetch: (treeData) => {
-                            debugger;
-                            // 如果没有则设置成空
-                            const filtered = filterTree(treeData, (v) => {
-                                return v.id === values.deptId
-                            })
-                            if(filtered.length <= 0){
-                                formApi.setFieldValue('deptId', null, false);
-                            }
-                        }
-                    },
+      if (fieldsChanged.includes('companyId')) {
+        formApi.updateSchema([
+          {
+            fieldName: 'deptId',
+            componentProps: {
+              class: 'w-full',
+              immediate: !!values.companyId,
+              params: {companyId: values.companyId},
+              afterFetch: (treeData) => {
+                // 如果没有则设置成空
+                const filtered = filterTree(treeData, (v) => {
+                  return v.id === values.deptId
+                })
+                if (filtered.length <= 0) {
+                  formApi.setFieldValue('deptId', null, false);
                 }
-            ])
-        }
+              }
+            },
+          }
+        ])
+      }
     }
   });
 

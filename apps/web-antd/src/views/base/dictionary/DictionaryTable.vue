@@ -38,8 +38,10 @@
     commonConfig: {
       labelWidth: 60,
     },
-    wrapperClass: 'grid-cols-2',
-    actionWrapperClass: 'col-start-2 text-left ml-4',
+    wrapperClass: 'grid grid-cols-1 md:grid-cols-2',
+    actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
+    actionPosition: 'left',
+    actionLayout: 'inline',
     resetButtonOptions: {
       show: false,
     },

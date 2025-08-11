@@ -129,8 +129,10 @@ const formOptions: VbenFormProps = {
     labelWidth: 60,
   },
   fieldMappingTime: [['dateRange', ['startTime', 'endTime'], 'YYYY-MM-DD']],
-  wrapperClass: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
-  actionWrapperClass: 'col-span-2 col-start-4 text-left ml-2',
+  wrapperClass: 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
+  actionWrapperClass: 'pl-2',
+  actionPosition: 'left',
+  actionLayout: 'inline',
   resetButtonOptions: {
     show: true,
   },

@@ -33,9 +33,11 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  actionWrapperClass: 'col-span-1 col-start-2 text-left ml-2',
   schema: InstitutionalClassificationSearchForm,
-  wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+  wrapperClass: 'grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+  actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
+  actionPosition: 'left',
+  actionLayout: 'inline',
 };
 
 const gridOptions: VxeGridProps = {
