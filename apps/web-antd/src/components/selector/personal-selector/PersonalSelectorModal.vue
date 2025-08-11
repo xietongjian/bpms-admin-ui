@@ -1,59 +1,65 @@
 <template>
-  <BasicModal class="w-[1000px] h-[80%]">
-    <div class="group border border-primary !border-dotted mb-2 flex justify-between">
+  <BasicModal class="h-[80%] w-[1000px]">
+    <div
+      class="border-primary group mb-2 flex justify-between border !border-dotted"
+    >
       <div class="flex flex-wrap gap-y-2 p-1">
         <template
           v-if="selectedRowsList && selectedRowsList.length > 0"
           v-for="(item, index) in selectedRowsList"
           :key="index"
         >
-          <Tag color="processing" closable @close="removeSelectedItem(item.code)">
+          <Tag
+            color="processing"
+            closable
+            @close="removeSelectedItem(item.code)"
+          >
             {{ item.name }}
           </Tag>
         </template>
-        <span class="text-sm" v-else>
-          请选择人员
-        </span>
+        <span class="text-sm" v-else> 请选择人员 </span>
       </div>
-      <span class="h-full flex items-center" @click="handleRemove">
-        <a class="p-1 cursor-pointer invisible group-hover:visible "><CloseCircleOutlined /></a>
+      <span class="flex h-full items-center" @click="handleRemove">
+        <a class="invisible cursor-pointer p-1 group-hover:visible"
+          ><CloseCircleOutlined
+        /></a>
       </span>
     </div>
-    <div ref="selectorContainerRef" class="flex-1 flex p-0 h-0 gap-2">
-      <div class="w-[30%] flex flex-col h-full border border-gray-200">
-        <div class="h-8 border-b leading-8 pl-2">
-          组织
-        </div>
-        <div class="flex-1 p-1 overflow-y-auto">
+    <div ref="selectorContainerRef" class="flex h-0 flex-1 gap-2 p-0">
+      <div class="border-primary-500/50 flex h-full w-[30%] flex-col border">
+        <div class="h-8 border-b pl-2 leading-8">组织</div>
+        <div class="flex-1 overflow-y-auto p-1">
           <Tree
-              class=""
-              title="组织"
-              toolbar
-              search
-              :clickRowToExpand="false"
-              :treeData="treeData"
-              @select="handleSelect"
-              ref="treeRef"
+            class=""
+            title="组织"
+            toolbar
+            search
+            :clickRowToExpand="false"
+            :treeData="treeData"
+            @select="handleSelect"
+            ref="treeRef"
           />
         </div>
       </div>
-      <div class="w-[70%] h-full flex flex-col">
+      <div class="flex h-full w-[70%] flex-col">
         <div class="h-10">
           <Search
-              class="w-full"
-              v-model:value="searchTxt"
-              placeholder="请输入姓名/工号/手机/邮箱"
-              @search="doSearchFilter"
-              @press-enter="doSearchFilter"
-              :allowClear="true"
+            class="w-full"
+            v-model:value="searchTxt"
+            placeholder="请输入姓名/工号/手机/邮箱"
+            @search="doSearchFilter"
+            @press-enter="doSearchFilter"
+            :allowClear="true"
           />
         </div>
 
-        <div ref="tableContainerRef" class="bg-card border flex-1">
+        <div ref="tableContainerRef" class="bg-card flex-1 border">
           <Table
             :bordered="false"
             size="small"
-            :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)"
+            :rowClassName="
+              (record, index) => (index % 2 === 1 ? 'table-striped' : null)
+            "
             class="ant-table-striped"
             :row-selection="rowSelection"
             :columns="columns"
@@ -82,34 +88,34 @@ import {
   defineEmits,
   unref,
   nextTick,
-  watch
+  watch,
 } from 'vue';
 
-import {ColPage, useVbenModal} from '@vben/common-ui';
+import { ColPage, useVbenModal } from '@vben/common-ui';
 
-import {getPersonalPageList} from '#/api/org/personal';
-import {Tag, Tree, Table, Input, Checkbox, Radio} from 'ant-design-vue';
-import {getOrgTree} from '#/api/org/dept';
-import {columns, searchFormSchema} from './selector.data';
-import { useElementSize } from '@vueuse/core'
-import {CloseCircleOutlined} from '@ant-design/icons-vue'
+import { getPersonalPageList } from '#/api/org/personal';
+import { Tag, Tree, Table, Input, Checkbox, Radio } from 'ant-design-vue';
+import { getOrgTree } from '#/api/org/dept';
+import { columns, searchFormSchema } from './selector.data';
+import { useElementSize } from '@vueuse/core';
+import { CloseCircleOutlined } from '@ant-design/icons-vue';
 
-const {Search} = Input;
+const { Search } = Input;
 
 const tableHeight = ref(250);
 
-const emit = defineEmits(['change'])
+const emit = defineEmits(['change']);
 // 保存被选中的行的id列表
-const selectedRowKeyList = ref([])
+const selectedRowKeyList = ref([]);
 //保存被选中的行的完整数据
-const selectedRowsList = ref([])
+const selectedRowsList = ref([]);
 
 const selectorContainerRef = ref();
 
-const { width, height } = useElementSize(selectorContainerRef)
+const { width, height } = useElementSize(selectorContainerRef);
 watch(height, () => {
-  tableHeight.value = height.value-150;
-})
+  tableHeight.value = height.value - 150;
+});
 
 const [BasicModal, modalApi] = useVbenModal({
   title: '选择人员',
@@ -120,15 +126,18 @@ const [BasicModal, modalApi] = useVbenModal({
   },
   async onOpenChange(isOpen: boolean) {
     if (isOpen) {
-      const {selectedList, multiple} = modalApi.getData<Record<string, any>>();
-      if(selectedList){
-          debugger;
+      const { selectedList, multiple } =
+        modalApi.getData<Record<string, any>>();
+      if (selectedList) {
+        debugger;
         selectedRowsList.value = JSON.parse(JSON.stringify(selectedList));
-        selectedRowsList.value.forEach(item => {
+        selectedRowsList.value.forEach((item) => {
           item['code'] = item.value;
           item['name'] = item.label;
         });
-        selectedRowKeyList.value = selectedRowsList.value.map((item : any) => item.code).filter((item: any) => !!item);
+        selectedRowKeyList.value = selectedRowsList.value
+          .map((item: any) => item.code)
+          .filter((item: any) => !!item);
       } else {
         selectedRowsList.value = [];
         selectedRowKeyList.value = [];
@@ -138,10 +147,10 @@ const [BasicModal, modalApi] = useVbenModal({
       multiSelect.value = multiple;
 
       await fetchTreeData();
-      fetchPageList({keyword: ''});
+      fetchPageList({ keyword: '' });
       // await initData(values);
       // baseFormApi.setValues(values);
-      modalApi.setState({loading: false, confirmLoading: false});
+      modalApi.setState({ loading: false, confirmLoading: false });
     }
   },
   onConfirm() {
@@ -149,7 +158,6 @@ const [BasicModal, modalApi] = useVbenModal({
     handleSubmit();
   },
 });
-
 
 const multiSelect = ref<boolean>(false);
 const personalTableLoading = ref<boolean>(false);
@@ -166,7 +174,7 @@ const rowSelection = computed(() => {
     type: multiSelect.value ? 'checkbox' : 'radio',
     selectedRowKeys: selectedRowKeyList,
     onChange: onSelectChange,
-  }
+  };
 });
 
 function getTree() {
@@ -185,13 +193,13 @@ const queryParam = ref({
 const changePage = (page, pageSize) => {
   queryParam.value.pageSize = pageSize;
   queryParam.value.pageNum = page;
-  fetchPageList({keyword: unref(searchTxt)});
+  fetchPageList({ keyword: unref(searchTxt) });
 };
 
 const showSizeChange = (current, pageSize) => {
   queryParam.value.pageSize = pageSize;
   queryParam.value.pageNum = current;
-  fetchPageList({keyword: unref(searchTxt)});
+  fetchPageList({ keyword: unref(searchTxt) });
 };
 
 const customRow = (record) => {
@@ -233,24 +241,24 @@ async function fetchPageList(params) {
     if (unref(currentNode)) {
       if (unref(currentNode) && unref(currentNode).sourceType === '1') {
         // 组织类型代表公司
-        org = {companyId: unref(currentNode).id};
+        org = { companyId: unref(currentNode).id };
       } else if (unref(currentNode) && unref(currentNode).sourceType === '2') {
         // 组织类型代表部门
-        org = {deptId: unref(currentNode).id};
+        org = { deptId: unref(currentNode).id };
       }
     }
     personalTableLoading.value = true;
     const searchInfo = {
       query: {
         pageSize: unref(queryParam).pageSize,
-        pageNum: unref(queryParam).pageNum
+        pageNum: unref(queryParam).pageNum,
       },
       entity: {
         ...params,
         ...org,
       },
     };
-    const {rows, total} = await getPersonalPageList(searchInfo);
+    const { rows, total } = await getPersonalPageList(searchInfo);
     tableData.value = rows;
     unref(pagination).current = unref(queryParam).pageNum;
     unref(pagination).pageSize = unref(queryParam).pageSize;
@@ -313,20 +321,24 @@ const [registerModal, {setModalProps, closeModal, changeLoading}] = useModalInne
 
 function doSearchFilter(e) {
   queryParam.value.pageNum = 1;
-  fetchPageList({keyword: e, pageNum: 1});
+  fetchPageList({ keyword: e, pageNum: 1 });
 }
 
 const removeSelectedItem = (code) => {
-  selectedRowKeyList.value = selectedRowKeyList.value.filter((tag) => tag !== code);
+  selectedRowKeyList.value = selectedRowKeyList.value.filter(
+    (tag) => tag !== code,
+  );
 
   const idx = selectedRowsList.value.findIndex((item) => item.code === code);
 
   selectedRowsList.value.splice(idx, 1);
-
 };
 
 // 选择多选框选中行
-function onSelectChange(selectedKeys: Array<object>, selectedRecords: Array<object>) {
+function onSelectChange(
+  selectedKeys: Array<object>,
+  selectedRecords: Array<object>,
+) {
   selectedRowsList.value = selectedRecords;
   selectedRowKeyList.value = selectedKeys;
   debugger;
@@ -336,7 +348,7 @@ function onSelectChange(selectedKeys: Array<object>, selectedRecords: Array<obje
   // FIXME 这里有个问题：点击行的时候可以进行分页选择，当点击复选框后会把其他页选中的都清掉
   let selectedRowKeys = [...selectedKeys];
   let selectedList = selectedRecords.map((item) => {
-    return {id: item.id, code: item.code, name: item.name};
+    return { id: item.id, code: item.code, name: item.name };
   });
   let temp = [...state.selectedList, ...selectedList];
   let result = selectedKeys.map((item) => {
@@ -346,7 +358,7 @@ function onSelectChange(selectedKeys: Array<object>, selectedRecords: Array<obje
     return arr[0];
   });
 
-    selectedRowKeyList.value = selectedRowKeys;
+  selectedRowKeyList.value = selectedRowKeys;
 
   Object.assign(state, {
     selectedRowKeys,
@@ -390,7 +402,7 @@ function handleSubmit() {
   modalApi.close();
 }
 
-function genPersonalData (record) {
+function genPersonalData(record) {
   return {
     label: record.name,
     key: record.code,
@@ -420,6 +432,6 @@ defineExpose(modalApi);
 }
 
 [data-vxe-ui-theme='dark'] .ant-table-striped :deep(.table-striped) td {
-  background-color: rgb(29, 29, 29);
+  background-color: rgb(29 29 29);
 }
 </style>

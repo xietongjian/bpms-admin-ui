@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import { ref, watch, unref, defineProps,useAttrs, onMounted, computed, watchEffect } from 'vue';
+import {
+  ref,
+  watch,
+  unref,
+  defineProps,
+  useAttrs,
+  onMounted,
+  computed,
+  watchEffect,
+} from 'vue';
 import { SearchOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
 import OrgSelectorModal from './org-selector-modal.vue';
 import { ApiComponent } from '@vben/common-ui';
 
-import {
-  Select,
-  TreeSelect,
-  Tooltip,
-  Tag,
-  Popover,
-} from 'ant-design-vue';
+import { Select, TreeSelect, Tooltip, Tag, Popover } from 'ant-design-vue';
 
-import {getCompaniesListData, getCompanyTreeData} from "#/api/org/company";
-import {getOrgListData, getOrgTree} from "#/api/org/dept";
-import {forEach} from "#/utils/helper/treeHelper";
-import {objectOmit} from "@vueuse/core";
+import { getCompaniesListData, getCompanyTreeData } from '#/api/org/company';
+import { getOrgListData, getOrgTree } from '#/api/org/dept';
+import { forEach } from '#/utils/helper/treeHelper';
+import { objectOmit } from '@vueuse/core';
 
 interface Props {
   multiple?: boolean;
@@ -23,12 +26,12 @@ interface Props {
   /**
    * 是否弹窗选择数据
    */
-  selectOnModal?: boolean,
-  placeholder?: string,
+  selectOnModal?: boolean;
+  placeholder?: string;
   // 仅在multipart=false单选时有效
-  closeOnSelect?: boolean,
+  closeOnSelect?: boolean;
   // modelValue?: Array<any>,
-  selectType?: string
+  selectType?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -53,18 +56,18 @@ const emit = defineEmits<{
   change: [string];
 }>();
 
-const modelValue = defineModel({default: [], type: Array});
+const modelValue = defineModel({ default: [], type: Array });
 
 const currentSelect = ref(undefined);
 
 function handleDropdownVisibleChange(open) {
   // 展开时默认展开并滚动到选中的树节点
-  if(open){
+  if (open) {
     // console.log(props.modelValue);
   }
 }
 
-function handleFilterTreeNode (searchValue: string, treeNode: any) {
+function handleFilterTreeNode(searchValue: string, treeNode: any) {
   if (!searchValue) return false;
   return treeNode?.title?.indexOf(searchValue) > -1;
 }
@@ -83,14 +86,14 @@ watch(
 );*/
 
 watch(
-    () => modelValue.value,
-    (v) => {
-      debugger;
-      // emit('change', v);
-      // if (typeof props.change === 'function') {
-      //   props.change(v);
-      // }
-    },
+  () => modelValue.value,
+  (v) => {
+    debugger;
+    emit('change', v);
+    if (typeof props.change === 'function') {
+      props.change(v);
+    }
+  },
 );
 
 enum OrgSelectType {
@@ -102,7 +105,7 @@ enum OrgSelectType {
 async function initData() {
   if (props.type === 'company') {
     const res = await getCompaniesListData();
-    debugger;
+    // debugger;
     treeData.value = res;
     if (unref(props.multiple)) {
       setTimeout(() => {
@@ -121,7 +124,7 @@ async function initData() {
   } else {
     // 部门和公司树（组织树）
     const res = await getOrgListData();
-    debugger;
+    // debugger;
     treeData.value = res;
     const expandKeys = [];
     // 如果只能选择部门，则将公司的数据设置禁用
@@ -153,14 +156,14 @@ async function initData() {
 }
 
 function openSelectorModal() {
-  debugger;
+  // debugger;
   console.log(props);
   orgSelectorModalRef.value.setData({
     values: modelValue.value,
     ...props,
   });
   orgSelectorModalRef.value.setState({
-    title: props.title || '选择组织'
+    title: props.title || '选择组织',
   });
   orgSelectorModalRef.value.open();
 }
@@ -173,7 +176,7 @@ const bindProps = computed(() => {
 });
 
 const api = computed(() => {
-  switch (props.type){
+  switch (props.type) {
     case 'company':
       return getCompanyTreeData;
     case 'dept':
@@ -183,12 +186,17 @@ const api = computed(() => {
     default:
       return getOrgListData;
   }
-})
+});
+
+function clearSelectedList(e) {
+  e.stopPropagation();
+  emit('change', []);
+}
 
 function handleChange(items) {
   const selectedItems = JSON.parse(JSON.stringify(items));
-  debugger;
-  const result = selectedItems.map(item => {
+  // debugger;
+  const result = selectedItems.map((item) => {
     return {
       label: item.name || item.label || item.shortName,
       value: item.code || item.value,
@@ -204,7 +212,7 @@ function handleChange(items) {
       pid: item.pid,
       shortName: item.shortName,
       sourceType: item.sourceType,
-    }
+    };
   });
   modelValue.value = result;
   currentSelect.value = result;
@@ -228,6 +236,7 @@ function treeNodes2SelectedList(selectedNodes) {
   });
 }
 
+function changeSelectItem() {}
 </script>
 <template>
   <div class="w-full">
@@ -239,7 +248,7 @@ function treeNodes2SelectedList(selectedNodes) {
         :placeholder="placeholder"
         class="w-full"
         :open="false"
-        :mode="props.multiple? 'multiple': 'tags'"
+        :mode="props.multiple ? 'multiple' : 'tags'"
         :allowClear="true"
         :labelInValue="true"
         maxTagPlaceholder=""
@@ -248,20 +257,20 @@ function treeNodes2SelectedList(selectedNodes) {
         :showArrow="true"
       >
         <template #clearIcon>
-          <CloseCircleOutlined @click="clearSelectedList"/>
+          <CloseCircleOutlined @click="clearSelectedList" />
         </template>
         <template #suffixIcon>
-          <SearchOutlined style="color: #666"/>
+          <SearchOutlined style="color: #666" />
         </template>
         <template #[item]="data" v-for="item in Object.keys($slots)">
           <slot :name="item" v-bind="data"></slot>
         </template>
       </Select>
 
-      <OrgSelectorModal ref="orgSelectorModalRef" @change="handleChange"/>
+      <OrgSelectorModal ref="orgSelectorModalRef" @change="handleChange" />
     </template>
     <template v-else>
-<!--      <ApiComponent
+      <!--      <ApiComponent
           labelField="name"
           valueField="code"
           :api="api"
@@ -292,24 +301,24 @@ function treeNodes2SelectedList(selectedNodes) {
           </template>
       </ApiComponent>-->
       <TreeSelect
-          labelField="name"
-          valueField="id"
-          ref="selectorRef"
-          searchPlaceholder="请选择"
-          v-model:value="modelValue"
-          :placeholder="placeholder"
-          :treeCheckStrictly="props.multiple"
-          showCheckedStrategy="SHOW_ALL"
-          class="w-full "
-          :multiple="props.multiple"
-          :allowClear="true"
-          :labelInValue="props.multiple"
-          :tree-data="treeData"
-          :treeDataSimpleMode="{id: 'id', pId: 'pid', rootPId: null}"
-          :showSearch="true"
-          :filterTreeNode="handleFilterTreeNode"
+        labelField="name"
+        valueField="id"
+        ref="selectorRef"
+        searchPlaceholder="请选择"
+        v-model:value="modelValue"
+        :placeholder="placeholder"
+        :treeCheckStrictly="props.multiple"
+        showCheckedStrategy="SHOW_ALL"
+        class="w-full"
+        :multiple="props.multiple"
+        :allowClear="true"
+        :labelInValue="props.multiple"
+        :tree-data="treeData"
+        :treeDataSimpleMode="{ id: 'id', pId: 'pid', rootPId: null }"
+        :showSearch="true"
+        :filterTreeNode="handleFilterTreeNode"
       >
-<!--        <template #tagRender="{ label, closable, onClose, option }">
+        <!--        <template #tagRender="{ label, closable, onClose, option }">
           <Popover :z-index="1200">
             <template #content>
               {{ label || '-' }}
