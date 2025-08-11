@@ -17,3 +17,5 @@ export const DeleteOutline = createIconifyIcon('mdi:delete-outline');
 
 export const CloudSecurityOutline = createIconifyIcon('mdi:cloud-security-outline');
 export const QuestionMarkCircleOutline = createIconifyIcon('mdi:question-mark-circle-outline');
+
+export const RiDingding = createIconifyIcon('ri:dingding-fill');
