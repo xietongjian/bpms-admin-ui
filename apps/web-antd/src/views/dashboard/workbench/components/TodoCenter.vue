@@ -1,6 +1,6 @@
 <template>
-  <div class="h-full border flex flex-col flex-start items-stretch justify-between rounded-lg overflow-hidden">
-    <div class="!h-10 flex items-center flex-nowrap justify-between px-2 bg-white/10 border-b border-b-1">
+  <div class="x-card">
+    <div class="x-title">
       <div class="font-bold">
         <AuditOutlined class="mr-2 text-[#2d93f9]" />
         <span>办件中心</span>
@@ -9,7 +9,7 @@
         <Button type="link" size="small" @click="handleToMore()">更多</Button>
       </div>
     </div>
-    <div class="flex-1 p-2 flex flex-col justify-between items-stretch overflow-hidden">
+    <div class="x-content">
       <div class="h-10">
         <Tabs v-model:activeKey="activeKey" @change="key => onTabChange(key)" size="small" class="[&_.ant-tabs-nav]:!mb-0">
           <TabPane v-for="pane in tabList" :key="pane.key" >

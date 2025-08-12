@@ -1,15 +1,15 @@
 <template>
-  <div class="h-full border border-gray-300 flex flex-col flex-start items-stretch justify-between rounded-lg overflow-hidden">
-    <div class="!h-10 !h-[80px] flex items-center flex-nowrap justify-between px-2 bg-white/10 border-b border-b-1 border-b-gray-300">
+  <div class="x-card">
+    <div class="x-title">
       <div class="font-bold">
-        <StarFilled class="mr-2 color-[#2d93f9]" />
+        <StarFilled class="mr-2 text-[#2d93f9]" />
         <span>常用业务</span>
       </div>
       <div>
         <Button type="link" @click="handleToMore()" size="small">更多</Button>
       </div>
     </div>
-    <div class="flex-1 p-2 flex flex-row flex-wrap justify-start items-stretch overflow-hidden overflow-y-auto">
+    <div class="x-content flex-1 p-2 flex flex-row flex-wrap justify-start items-stretch">
       <div v-if="!dataLoading && dataList.length > 0"
            class="w-30 grow"
            v-for="item in dataList" :key="item">
@@ -98,3 +98,6 @@ import {computed, onMounted, ref} from 'vue';
     router.push({ name: 'Launch' });
   }
 </script>
+<style lang="scss" scoped>
+@use '../index.scss';
+</style>

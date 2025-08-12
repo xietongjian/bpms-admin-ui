@@ -1,13 +1,7 @@
 <script lang="ts" setup>
-import type {
-  WorkbenchProjectItem,
-  WorkbenchQuickNavItem,
-  WorkbenchTodoItem,
-  WorkbenchTrendItem,
-} from '@vben/common-ui';
-
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import CustomConfigRender from "#/views/base/systemConfig/components/WorkbenchLayoutRender.vue";
 
 import { useUserStore } from '@vben/stores';
 import { openWindow } from '@vben/utils';
@@ -28,8 +22,11 @@ const router = useRouter();
 </script>
 
 <template>
-  <div class="p-4">
-    <div class="flex gap-4 flex-col lg:flex-row">
+  <div class="w-full h-full overflow-y-auto">
+    <CustomConfigRender />
+
+
+<!--    <div class="flex gap-4 flex-col lg:flex-row">
       <div class="lg:w-1/3">
         <GrowCard />
         <TodoCenter class="!mb-4 enter-y" />
@@ -43,6 +40,6 @@ const router = useRouter();
         <CalendarCard class="w-full mb-4" />
         <NoticeInfo class="w-full "/>
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
