@@ -1,38 +1,40 @@
 <template>
-  <Card :loading="loading" size="small" v-bind="$attrs" >
-    <template #title>
-      <StarFilled class="mr-1 color-[#2d93f9]" />
-      常用业务
-    </template>
-    <template #extra>
-      <Button type="link" @click="handleToMore()" size="small">更多</Button>
-    </template>
-    <div class="min-h-[200px]">
-      <Row :gutter="[10, 10]">
-        <Col v-if="dataList.length > 0" :span="6" v-for="(item, index) in dataList" :key="index">
-          <TypographyLink @click="handleLaunch(item)">
-            <div class="min-h-[60px] rounded-md p-2 w-full text-left flex items-center flex-col cursor-pointer">
-              <Avatar shape="square" class="leading-[50px] bg-gray-300/30 model-icon w-[50px] h-[50px]" :src="item.modelIcon">
-                <template #icon>
-                  <PictureFilled class="text-[28px] color-gray-300" />
-                </template>
-              </Avatar>
-              <div class="text-md text-center mt-2 line-clamp-1">
-                <Tooltip :title="item.name">
-                  {{ item.name }}
-                </Tooltip>
-              </div>
+  <div class="h-full border border-gray-300 flex flex-col flex-start items-stretch justify-between rounded-lg overflow-hidden">
+    <div class="!h-10 !h-[80px] flex items-center flex-nowrap justify-between px-2 bg-white/10 border-b border-b-1 border-b-gray-300">
+      <div class="font-bold">
+        <StarFilled class="mr-2 color-[#2d93f9]" />
+        <span>常用业务</span>
+      </div>
+      <div>
+        <Button type="link" @click="handleToMore()" size="small">更多</Button>
+      </div>
+    </div>
+    <div class="flex-1 p-2 flex flex-row flex-wrap justify-start items-stretch overflow-hidden overflow-y-auto">
+      <div v-if="!dataLoading && dataList.length > 0"
+           class="w-30 grow"
+           v-for="item in dataList" :key="item">
+        <TypographyLink @click="handleLaunch(item)" class="block m-2 rounded-2 hover:bg-gray-500/20">
+          <div class="min-h-[60px] rounded-md p-2 w-full text-left flex items-center flex-col cursor-pointer">
+            <Avatar shape="square" class="leading-[50px] bg-gray-300/0 model-icon w-[50px] h-[50px]" :src="item.modelIcon">
+              <template #icon>
+                <PictureFilled class="text-[28px] color-gray-500" />
+              </template>
+            </Avatar>
+            <div class="text-md text-center mt-2 line-clamp-1">
+              <Tooltip :title="item.name">
+                {{ item.name }}
+              </Tooltip>
             </div>
-          </TypographyLink>
-        </Col>
-        <Col v-else :span="24">
-          <Empty description="暂无常用业务"/>
-        </Col>
-      </Row>
+          </div>
+        </TypographyLink>
+      </div>
+      <div v-else>
+        <Empty description="暂无常用业务"/>
+      </div>
     </div>
 
     <LaunchModal ref="launchModalRef" @success="handleSuccess" />
-  </Card>
+  </div>
 </template>
 <script lang="ts" setup>
 import {computed, onMounted, ref} from 'vue';
@@ -44,8 +46,7 @@ import {computed, onMounted, ref} from 'vue';
   import { useRouter } from 'vue-router';
 
   const userStore = useUserStore();
-  // const userInfo = computed(() => userStore.getUserInfo);
-  // const go = useGo();
+
   const router = useRouter();
   const loading = ref(true);
 
@@ -55,7 +56,6 @@ import {computed, onMounted, ref} from 'vue';
   onMounted(()=> {
     fetchCommonlyList();
   })
-  // const [registerLaunchModal, {openModal: openLaunchModal, setModalProps: setLaunchModalProps}] = useModal();
 
   async function fetchCommonlyList() {
     loading.value = true;
@@ -91,13 +91,10 @@ import {computed, onMounted, ref} from 'vue';
   }
 
   function handleSuccess() {
-    // go({name: 'Launched'});
     router.push({ name: 'Launched' });
-
   }
 
   function handleToMore() {
-    // go({ name: 'Launch' });
     router.push({ name: 'Launch' });
   }
 </script>

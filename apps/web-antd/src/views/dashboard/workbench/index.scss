@@ -1,0 +1,10 @@
+.title {
+  @apply border-primary mb-2 flex min-h-[30px] justify-between border !border-dotted rounded;
+  .ant-tag{
+    @apply flex me-0;
+  }
+  .empty {
+    @apply text-sm border border-transparent text-secondary-foreground/40;
+  }
+
+}
