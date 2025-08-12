@@ -1,32 +1,25 @@
 <template>
   <BasicModal class="h-[80%] w-[1000px]">
-    <div
-      class="border-primary group mb-2 flex justify-between border !border-dotted"
-    >
-      <div class="flex flex-wrap gap-y-2 p-1">
+    <div class="selected-box group" >
+      <div class="flex flex-wrap gap-2 p-1">
         <template
           v-if="selectedRowsList && selectedRowsList.length > 0"
           v-for="(item, index) in selectedRowsList"
           :key="index"
         >
-          <Tag
-            color="processing"
-            closable
-            @close="removeSelectedItem(item.code)"
-          >
-            {{ item.name }}
+          <Tag color="processing" closable @close="removeSelectedItem(item?.code)">
+            {{ item?.name }}
           </Tag>
         </template>
-        <span class="text-sm" v-else> 请选择人员 </span>
+        <span class="empty" v-else> 请选择人员 </span>
       </div>
-      <span class="flex h-full items-center" @click="handleRemove">
-        <a class="invisible cursor-pointer p-1 group-hover:visible"
-          ><CloseCircleOutlined
-        /></a>
+      <span class="flex h-full items-center" @click="handleRemoveAll">
+        <a class="invisible cursor-pointer p-1 group-hover:visible" title="清空"><CloseCircleOutlined class="text-red-500"/></a>
       </span>
     </div>
+
     <div ref="selectorContainerRef" class="flex h-0 flex-1 gap-2 p-0">
-      <div class="border-primary-500/50 flex h-full w-[30%] flex-col border">
+      <div class="border flex h-full w-[30%] flex-col">
         <div class="h-8 border-b pl-2 leading-8">组织</div>
         <div class="flex-1 overflow-y-auto p-1">
           <Tree
@@ -100,6 +93,7 @@ import { columns, searchFormSchema } from './selector.data';
 import { useElementSize } from '@vueuse/core';
 import { CloseCircleOutlined } from '@ant-design/icons-vue';
 
+
 const { Search } = Input;
 
 const tableHeight = ref(250);
@@ -129,7 +123,7 @@ const [BasicModal, modalApi] = useVbenModal({
       const { selectedList, multiple } =
         modalApi.getData<Record<string, any>>();
       if (selectedList) {
-        debugger;
+        // debugger;
         selectedRowsList.value = JSON.parse(JSON.stringify(selectedList));
         selectedRowsList.value.forEach((item) => {
           item['code'] = item.value;
@@ -334,6 +328,11 @@ const removeSelectedItem = (code) => {
   selectedRowsList.value.splice(idx, 1);
 };
 
+function handleRemoveAll() {
+  selectedRowsList.value = [];
+  selectedRowKeyList.value = [];
+}
+
 // 选择多选框选中行
 function onSelectChange(
   selectedKeys: Array<object>,
@@ -427,6 +426,8 @@ defineExpose(modalApi);
 </script>
 
 <style scoped lang="scss">
+@use '../index.scss';
+
 [data-vxe-ui-theme='light'] .ant-table-striped :deep(.table-striped) td {
   background-color: #fafafa;
 }

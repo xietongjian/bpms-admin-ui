@@ -6,19 +6,19 @@
     {{ selectedList }}
 
     <div
-      class="border-primary group mb-2 flex min-h-[30px] justify-between border !border-dotted"
+      class="selected-box group"
     >
       <template
         v-if="selectedList && selectedList.length > 0"
         v-for="(item, index) in selectedList"
         :key="item.id"
       >
-        <Tag color="processing" closable @close="removeSelectedItem(item.id)">
+        <Tag color="processing" closable @close="removeSelectedItem(item)">
           {{ item.shortName }}
         </Tag>
       </template>
       <template v-else>
-        <span class="selected-box">请选择组织</span>
+        <span class="">请选择组织</span>
       </template>
     </div>
     <div class="flex min-h-[300px] w-full flex-1 flex-col">
@@ -30,38 +30,6 @@
         />
       </div>
       <div class="mt-2 flex-1 overflow-y-auto">
-        <!--        <Transfer
-            show-search
-            :filter-option="filterOption"
-            v-model:target-keys="targetKeys"
-            class="tree-transfer"
-            :data-source="dataSource"
-            :render="item => item.title"
-            :show-select-all="false"
-            @search="handleSearch"
-        >
-          <template #children="{ direction, selectedKeys, onItemSelect }">
-            <Tree
-                v-if="direction === 'left'"
-                block-node
-                checkable
-                check-strictly
-                default-expand-all
-                :checked-keys="[...selectedKeys, ...targetKeys]"
-                :tree-data="treeData"
-                @check="
-                  (_, props) => {
-                    onChecked(props, [...selectedKeys, ...targetKeys], onItemSelect);
-                  }
-                "
-                @select="
-                  (_, props) => {
-                    onChecked(props, [...selectedKeys, ...targetKeys], onItemSelect);
-                  }
-                "
-            />
-          </template>
-        </Transfer>-->
         <Tree
           ref="treeRef"
           title="组织"
@@ -524,7 +492,8 @@ function handleSuccess() {
   //reload();
 }
 
-const removeSelectedItem = (id) => {
+const removeSelectedItem = ({id}) => {
+
   const keys = state.selectedRowKeys.filter((tag) => tag !== id);
   const selectedRowKeys = keys;
 
@@ -646,4 +615,6 @@ function handleCheck(e, record, b) {
 }
 defineExpose(modalApi);
 </script>
-<style lang="scss"></style>
+<style lang="scss">
+
+</style>

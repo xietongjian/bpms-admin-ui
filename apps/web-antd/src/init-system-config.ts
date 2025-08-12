@@ -10,8 +10,6 @@ const DRAGON_SYS_CONFIG_KEY = "DRAGON_SYS_CONFIG";
  * 应用初始化完成之后再进行页面加载渲染
  */
 async function initSystemConfig() {
-  console.log('==================初始化系统配置========================');
-
   try {
     const {success, data, msg} = await getSysConfigVersion();
     if (success) {

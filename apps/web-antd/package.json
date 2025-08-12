@@ -80,6 +80,7 @@
     "sortablejs": "^1.15.2",
     "vue-esign": "^1.1.4",
     "@vxe-ui/plugin-export-xlsx": "^4.1.0",
-    "exceljs": "^4.4.0"
+    "exceljs": "^4.4.0",
+    "grid-layout-plus": "^1.1.0"
   }
 }

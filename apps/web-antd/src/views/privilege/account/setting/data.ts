@@ -71,7 +71,7 @@ export const baseSetSchemas: FormSchema[] = [
     component: 'Divider',
     label: '组件测试',
     componentProps: {
-      style: 'height: 2px; background-color: #7cb305'
+      class: 'border-red-500/20 ',
     },
     formItemClass: 'col-span-3',
   },
@@ -87,7 +87,7 @@ export const baseSetSchemas: FormSchema[] = [
     },
     formItemClass: '',
   },
-  /*{
+  {
     fieldName: 'testCompanySelector1',
     component: 'OrgSelector',
     label: '公司选择-下拉-多选',
@@ -154,7 +154,7 @@ export const baseSetSchemas: FormSchema[] = [
     component: 'IconPicker',
     label: '人员选择',
     // value: 'ant-design:link-outlined'
-  },*/
+  },
 ];
 
 // 安全设置 list
