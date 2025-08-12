@@ -114,6 +114,7 @@ function refreshSystemConfig(config: any) {
       COM_APP_dynamicTitle,
       COM_APP_enablePreferences,
       COM_APP_layout,
+      SYS_COM_WORKBENCH_LAYOUT
     } = config;
 
     if(SYS_FAVICON_IMG){
@@ -144,6 +145,7 @@ function refreshSystemConfig(config: any) {
         enablePreferences: COM_APP_enablePreferences,
         layout: COM_APP_layout,
         enableCheckUpdates: false,
+        workbenchLayout: SYS_COM_WORKBENCH_LAYOUT
       },
       theme: {
         builtinType: COM_THME_builtinType,

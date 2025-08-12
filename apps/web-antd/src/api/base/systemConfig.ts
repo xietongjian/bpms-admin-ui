@@ -5,6 +5,7 @@ enum Api {
   GetAll = '/flow/base/systemConfig/getAll',
   SaveOrUpdate = '/flow/base/systemConfig/saveOrUpdate',
   Delete = '/flow/base/systemConfig/delete',
+  GetSysConfigBySn = '/flow/base/systemConfig/getSysConfigBySn',
   CheckEntityExist = '/flow/base/systemConfig/checkEntityExist',
 }
 
@@ -23,3 +24,7 @@ export const deleteByIds = (params: Array<string>) =>
 
 export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
+
+
+export const getSysConfigBySn = (params: any) =>
+    requestClient.get<any>(Api.GetSysConfigBySn, params);
