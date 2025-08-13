@@ -37,25 +37,17 @@
   import type {VxeGridProps} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
-  import {ColPage} from '@vben/common-ui';
   import {TableAction} from '#/components/table-action';
-  // import { BasicTable, useTable, TableAction } from '#/components/Table';
-  // import { useModal } from '#/components/Modal';
-  import { Popover, Button } from 'ant-design-vue';
+  import { Popover, Button, message } from 'ant-design-vue';
   import { columns, searchFormSchema } from './noticeTitle.data';
   import NoticeTitleModal from './NoticeTitleModal.vue';
   import { getNoticeTitleListByPage, deleteByIds } from '#/api/portal/cms/noticeTitle';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { PerEnum } from '#/enums/perEnum';
   import {Page} from '@vben/common-ui';
-  import {listColumns} from "#/views/base/app/app.data";
-  import {getAppListByPage} from "#/api/base/app";
-
 
   const PerPrefix = 'NoticeTitle:';
-
-  // const [registerModal, { openModal }] = useModal();
-
+  const noticeTitleModalRef = ref();
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -78,7 +70,7 @@
       highlight: true,
       labelField: 'name',
     },
-    columns: listColumns,
+    columns,
     columnConfig: {resizable: true},
     height: 'auto',
     keepSource: true,
@@ -150,26 +142,31 @@
   });*/
 
   function handleCreate() {
-    openModal(true, {
-      isUpdate: false,
+    noticeTitleModalRef.value.setData({});
+    noticeTitleModalRef.value.open();
+    noticeTitleModalRef.value.setState({
+      title: '新建',
     });
   }
 
   function handleEdit(record: Recordable) {
-    openModal(true, {
-      record,
-      isUpdate: true,
+    noticeTitleModalRef.value.setData(record);
+    noticeTitleModalRef.value.open();
+    noticeTitleModalRef.value.setState({
+      title: '编辑',
     });
   }
 
-  function handleDelete(record: Recordable) {
-    deleteByIds([record.id]).then(() => {
-      reload();
-    });
+  async function handleDelete(record: Recordable) {
+    const {success, msg} = await deleteByIds([record.id]);
+    if(success){
+      message.success(msg);
+      tableApi.reload();
+    }
   }
 
   function handleSuccess() {
-    reload();
+    tableApi.reload();
   }
 
   /*export default defineComponent({

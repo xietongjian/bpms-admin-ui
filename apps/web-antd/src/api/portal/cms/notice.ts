@@ -50,6 +50,6 @@ export const publish = (params: any) =>
 export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
-export const deleteByIds = (params: Array<string>) => requestClient.delete(Api.Delete, params);
+export const deleteByIds = (params: Array<string>) => requestClient.delete(Api.Delete, {params, responseReturn: 'body'});
 
 export const SyncNotice = () => requestClient.post(Api.Sync );

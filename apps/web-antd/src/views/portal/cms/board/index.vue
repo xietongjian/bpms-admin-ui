@@ -44,9 +44,6 @@
   import { PerEnum } from '#/enums/perEnum';
   import { Button } from 'ant-design-vue';
   import {Page} from '@vben/common-ui';
-  import {listColumns} from "#/views/base/app/app.data";
-  import {getAppListByPage} from "#/api/base/app";
-
   const PerPrefix = 'Board:';
   // const [registerModal, { openModal }] = useModal();
   const allBoardTypesMap = ref({});
@@ -73,7 +70,7 @@
       highlight: true,
       labelField: 'name',
     },
-    columns: listColumns,
+    columns,
     columnConfig: {resizable: true},
     height: 'auto',
     keepSource: true,

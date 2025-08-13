@@ -57,7 +57,7 @@
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {TableAction} from '#/components/table-action';
   import { columns, searchFormSchema } from './banner.data';
-  import { Button, Tooltip } from 'ant-design-vue';
+  import { Button, Tooltip, message } from 'ant-design-vue';
   import { getBannerListByPage, deleteByIds } from '#/api/portal/cms/banner';
   import BannerDrawer from './BannerDrawer.vue';
   import { EmpInfo } from '#/views/components/EmpInfo';
@@ -183,11 +183,11 @@
       isUpdate: false,
     });
     /*openModal(true, {
-    isUpdate: false,
-  });
-  setModalProps({
-    width: 800
-  });*/
+      isUpdate: false,
+    });
+    setModalProps({
+      width: 800
+    });*/
   }
 
   function handleEdit(record: Recordable) {
@@ -201,14 +201,17 @@
   });*/
   }
 
-  function handleDelete(record: Recordable) {
-    deleteByIds([record.id]).then(() => {
-      tablApi.reload();
-    });
+  async function handleDelete(record: Recordable) {
+    const {success, msg} = await deleteByIds([record.id]);
+    if(success){
+      message.success();
+      tableApi.reload();
+    }
+
   }
 
   function handleSuccess() {
-    tablApi.reload();
+    tableApi.reload();
   }
 </script>
 

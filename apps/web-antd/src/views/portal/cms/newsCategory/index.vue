@@ -24,7 +24,7 @@
         <EmpInfo :no="record.updatedByNo" :name="record.updatedBy" />
       </template>-->
     </BasicTable>
-    <NewsCategoryModal ref="NewsCategoryModalRef" @success="handleSuccess" />
+    <NewsCategoryModal ref="newsCategoryModalRef" @success="handleSuccess" />
   </Page>
 </template>
 <script lang="ts" setup>
@@ -43,15 +43,11 @@
   import { deleteByIds, getAllNewsCategory } from '#/api/portal/cms/newsCategory';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { PerEnum } from '#/enums/perEnum';
-  import {Button} from 'ant-design-vue';
+  import {Button, message} from 'ant-design-vue';
   import {Page} from '@vben/common-ui';
-  import {listColumns} from "#/views/base/app/app.data";
-  import {getAppListByPage} from "#/api/base/app";
 
   const PerPrefix = 'NewsCategory:';
-
-  // const [registerModal, { openModal, setModalProps }] = useModal();
-
+  const newsCategoryModalRef = ref();
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -70,11 +66,19 @@
   };
 
   const gridOptions: VxeGridProps = {
+    pagerConfig: {
+      enabled: false,
+    },
+    treeConfig: {
+      parentField: 'pid',
+      rowField: 'id',
+      transform: true,
+    },
     checkboxConfig: {
       highlight: true,
       labelField: 'name',
     },
-    columns: listColumns,
+    columns,
     columnConfig: {resizable: true},
     height: 'auto',
     keepSource: true,
@@ -171,14 +175,16 @@
     });
   }
 
-  function handleDelete(record: Recordable) {
-    deleteByIds([record.id]).then(() => {
-      reload();
-    });
+  async function handleDelete(record: Recordable) {
+    const {success, msg} = await deleteByIds([record.id]);
+    if(success){
+      tableApi.reload();
+      message.success(msg);
+    }
   }
 
   function handleSuccess() {
-    reload();
+    tableApi.reload();
   }
   function handleCreateChild(record: Recordable, e) {
     e.stopPropagation();

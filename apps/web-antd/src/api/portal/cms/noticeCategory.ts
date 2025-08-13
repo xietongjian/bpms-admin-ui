@@ -11,7 +11,7 @@ enum Api {
   NoticeCategoryList = '/flow/portal/cms/noticeCategory/list',
 }
 
-export const getAllNoticeCategory = (params) => {
+export const getAllNoticeCategory = (params: any) => {
   if (params.field) {
     params.orders = [
       {
@@ -57,4 +57,4 @@ export const update = (params) => requestClient.put(Api.Update, params);
 export const checkEntityExist = (params) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
-export const deleteByIds = (params?: Array<string>) => requestClient.delete(Api.Delete, params);
+export const deleteByIds = (params?: Array<string>) => requestClient.delete(Api.Delete, params, {responseReturn: 'body'});

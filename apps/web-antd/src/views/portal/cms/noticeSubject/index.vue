@@ -37,25 +37,19 @@
   import type {VxeGridProps} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
-  import {ColPage} from '@vben/common-ui';
   import {TableAction} from '#/components/table-action';
   // import { BasicTable, useTable, TableAction, TableImg } from '#/components/Table';
-  // import { useModal } from '#/components/Modal';
   import { columns, searchFormSchema } from './noticeSubject.data';
   import NoticeSubjectModal from './NoticeSubjectModal.vue';
   import { deleteByIds, getAllNoticeSubject } from '#/api/portal/cms/noticeSubject';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { PerEnum } from '#/enums/perEnum';
-  import {Button} from 'ant-design-vue';
+  import {Button, message} from 'ant-design-vue';
   import {Page} from '@vben/common-ui';
-  import {listColumns} from "#/views/base/app/app.data";
-  import {getAppListByPage} from "#/api/base/app";
-
 
   const PerPrefix = 'NoticeSubject:';
 
-  // const [registerModal, { openModal, setModalProps }] = useModal();
-
+  const noticeSubjectModalRef = ref();
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -74,11 +68,19 @@
   };
 
   const gridOptions: VxeGridProps = {
+    pagerConfig: {
+      enabled: false,
+    },
+    treeConfig: {
+      parentField: 'pid',
+      rowField: 'id',
+      transform: true,
+    },
     checkboxConfig: {
       highlight: true,
       labelField: 'name',
     },
-    columns: listColumns,
+    columns,
     columnConfig: {resizable: true},
     height: 'auto',
     keepSource: true,
@@ -87,13 +89,7 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
-          return await getAllNoticeSubject({
-            query: {
-              pageNum: page.currentPage,
-              pageSize: page.pageSize,
-            },
-            entity: formValues || {},
-          });
+          return await getAllNoticeSubject(formValues);
         },
       },
     },
@@ -126,12 +122,10 @@
   });*/
 
   function handleCreate() {
-    openModal(true, {
-      isUpdate: false,
-    });
-    setModalProps({
-      width: 800,
-      maskClosable: false,
+    noticeSubjectModalRef.value.setData({});
+    noticeSubjectModalRef.value.open();
+    noticeSubjectModalRef.value.setState({
+      title: '新建',
     });
   }
 
@@ -167,27 +161,35 @@
   }
 
   function handleEdit(record: Recordable) {
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });
-    setModalProps({
-      width: 800,
-      maskClosable: false,
+    noticeSubjectModalRef.value.setData(record);
+    noticeSubjectModalRef.value.open();
+    noticeSubjectModalRef.value.setState({
+      title: '编辑',
     });
   }
 
-  function handleDelete(record: Recordable) {
-    deleteByIds([record.id]).then(() => {
-      reload();
-    });
+  async function handleDelete(record: Recordable) {
+    const {success, msg} = await deleteByIds([record.id]);
+    if(success){
+      tableApi.reload();
+      message.success(msg)
+    }
   }
 
   function handleSuccess() {
-    reload();
+    tableApi.reload();
   }
 
   function handleCreateChild(record: Recordable, e) {
+    noticeSubjectModalRef.value.setData({
+      pid: record.id,
+      status: true,
+    });
+    noticeSubjectModalRef.value.open();
+    noticeSubjectModalRef.value.setState({
+      title: '新增【' + record.title + '】的子主体',
+    });
+    /*
     e.stopPropagation();
     setModalProps({
       title: '新增【' + record.title + '】的子主体',
@@ -201,7 +203,7 @@
     openModal(true, {
       record,
       isUpdate: true,
-    });
+    });*/
   }
 
 </script>

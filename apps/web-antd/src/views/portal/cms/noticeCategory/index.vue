@@ -34,7 +34,6 @@
   import type {VxeGridProps} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
-  import {ColPage} from '@vben/common-ui';
   import {TableAction} from '#/components/table-action';
   // import { BasicTable, useTable, TableAction } from '#/components/Table';
   // import { useModal } from '#/components/Modal';
@@ -44,16 +43,12 @@
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { findPath, findPathAll } from '#/utils/helper/treeHelper';
   import { PerEnum } from '#/enums/perEnum';
-  import {Button} from 'ant-design-vue';
+  import {Button, message} from 'ant-design-vue';
   import {Page} from '@vben/common-ui';
-  import {listColumns} from "#/views/base/app/app.data";
-  import {getAppListByPage} from "#/api/base/app";
-
 
   const PerPrefix = 'NoticeCategory:';
 
-  // const [registerModal, { openModal, setModalProps }] = useModal();
-
+  const noticeCategoryModalRef = ref();
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -72,11 +67,19 @@
   };
 
   const gridOptions: VxeGridProps = {
+    pagerConfig: {
+      enabled: false,
+    },
+    treeConfig: {
+      parentField: 'pid',
+      rowField: 'id',
+      transform: true,
+    },
     checkboxConfig: {
       highlight: true,
       labelField: 'name',
     },
-    columns: listColumns,
+    columns,
     columnConfig: {resizable: true},
     height: 'auto',
     keepSource: true,
@@ -85,13 +88,7 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
-          return await getAllNoticeCategory({
-            query: {
-              pageNum: page.currentPage,
-              pageSize: page.pageSize,
-            },
-            entity: formValues || {},
-          });
+          return await getAllNoticeCategory(formValues);
         },
       },
     },
@@ -155,65 +152,55 @@
   });*/
 
   function handleCreate() {
-    openModal(true, {
-      isUpdate: false,
-    });
-    setModalProps({
-      width: 650,
+    noticeCategoryModalRef.value.setData({});
+    noticeCategoryModalRef.value.open();
+    noticeCategoryModalRef.value.setState({
+      title: '新建主体',
     });
   }
 
   function handleEdit(record: Recordable) {
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });
-    setModalProps({
-      width: 650,
+    noticeCategoryModalRef.value.setData(record);
+    noticeCategoryModalRef.value.open();
+    noticeCategoryModalRef.value.setState({
+      title: '修改主体',
     });
   }
 
-  function handleDelete(record: Recordable) {
-    deleteByIds([record.id]).then(() => {
-      reload();
-    });
+  async function handleDelete(record: Recordable) {
+    const {success, msg} = await deleteByIds([record.id]);
+    if(success){
+      message.success(msg);
+      tableApi.reload();
+    }
   }
 
   function handleAddChildBtnIfShow(record: Recordable) {
     const path = findPath(
-        getDataSource(),
+        tableApi.grid.getFullData(),
         (node) => {
           return node.id === record.id;
         },
         { id: 'id', children: 'children', pid: 'pid' },
     );
-    if (path.length > 2) {
-      return false;
-    }
-    return true;
+    return path.length <= 2;
   }
 
   function handleSuccess() {
-    reload();
+    tableApi.reload();
   }
 
   function handleCreateChild(record: Recordable, e) {
-    e.stopPropagation();
-    setModalProps({
-      title: '新增【' + record.name + '】的子分类',
-      width: 650,
-    });
-    record = {
+    noticeCategoryModalRef.value.setData({
       pid: record.id,
       frontShow: 1,
       status: true,
-    };
-    openModal(true, {
-      record,
-      isUpdate: true,
+    });
+    noticeCategoryModalRef.value.open();
+    noticeCategoryModalRef.value.setState({
+      title: '新增【' + record.name + '】的子分类',
     });
   }
-
 
   /*export default defineComponent({
     name: 'NoticeCategory',

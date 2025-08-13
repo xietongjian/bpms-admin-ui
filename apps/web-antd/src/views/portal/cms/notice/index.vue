@@ -76,17 +76,15 @@
   // import { useGo } from '#/hooks/web/usePage';
   import { getAllBoard } from '#/api/portal/cms/board';
   // import { PageWrapper } from '#/components/Page';
-  import { BasicTree, TreeItem } from '#/components/Tree';
+  import { BasicTree } from '#/components/Tree';
   import { getAllNoticeCategory } from '#/api/portal/cms/noticeCategory';
   import { EmpInfo } from '#/views/components/EmpInfo';
-  import { Tag, Space, Button } from 'ant-design-vue';
+  import { Tag, Space, Button, message } from 'ant-design-vue';
   // import {StatusTagColor} from "#/enums/commonEnum";
   import { getPublishStatus } from '#/api/portal/cms/news';
   // import { PopConfirmButton } from '#/components/Button';
   import { PerEnum } from '#/enums/perEnum';
   import {Page} from '@vben/common-ui';
-  import {listColumns} from "#/views/base/app/app.data";
-  import {getAppListByPage} from "#/api/base/app";
 
 
   const PerPrefix = 'Notice:';
@@ -127,7 +125,7 @@
       highlight: true,
       labelField: 'name',
     },
-    columns: listColumns,
+    columns,
     columnConfig: {resizable: true},
     height: 'auto',
     keepSource: true,
@@ -175,7 +173,7 @@
 
   onMounted(async () => {
     fetchCategory();
-    const { getFieldsValue, updateSchema } = getForm();
+    const { getFieldsValue, updateSchema } = tableApi.formApi();
     const allPublishBoard = await getAllBoard({ type: 1 });
     const allPublishStatus = await getPublishStatus();
     // 将发布版块转换成Map
@@ -230,7 +228,7 @@
 
   function handleSelect(categoryId) {
     searchInfo.categoryId = categoryId[0];
-    reload();
+    tableApi.reload();
   }
 
   function createActions(record: Recordable) {
@@ -286,13 +284,13 @@
   }
   function handlePublish(record: Recordable) {
     publish({ publishStatus: 'PUBLISHED', id: record.id }).then(() => {
-      reload();
+      tableApi.reload();
     });
   }
 
   function handleDown(record: Recordable) {
     update({ publishStatus: 'DOWN_SHELF', id: record.id }).then(() => {
-      reload();
+      tableApi.reload();
     });
   }
 
@@ -329,17 +327,19 @@
     });
   }
 
-  function handleDelete(record: Recordable) {
-    deleteByIds([record.id]).then(() => {
-      reload();
-    });
+  async function handleDelete(record: Recordable) {
+    const {success, msg} = await deleteByIds([record.id]);
+    if(success){
+      message.success(msg);
+      tableApi.reload();
+    }
   }
 
   function handleSuccess() {
-    reload();
+    tableApi.reload();
   }
 
   async function fetchCategory() {
-    treeData.value = (await getAllNoticeCategory({ status: true })) as unknown as TreeItem[];
+    treeData.value = await getAllNoticeCategory({ status: true });
   }
 </script>

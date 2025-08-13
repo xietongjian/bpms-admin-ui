@@ -23,7 +23,7 @@
 </template>
 <script lang="ts" setup>
   // import { BasicForm, RenderCallbackParams, Rule, useForm } from '#/components/Form';
-  import { ref, unref, reactive, onMounted, watch, toRefs } from 'vue';
+  import { ref, unref, reactive, onMounted, watch, toRefs, defineExpose, defineEmits } from 'vue';
   import { baseFormSchema } from './notice.data';
   import { Card, Space, Button, Checkbox, CheckboxGroup, message } from 'ant-design-vue';
   import { getAllBoard } from '#/api/portal/cms/board';
@@ -52,6 +52,7 @@
   import {useVbenForm} from '#/adapter/form';
   import {formSchema} from "#/views/portal/cms/banner/banner.data";
 
+  const emit = defineEmits(['success'])
   const tableRef = ref<{ getDataSource: () => any } | null>(null);
   const publishStatus = ref('');
   const noticeBaseInfo = ref({});
@@ -311,10 +312,7 @@
   }
 
   async function saveAll() {
-    const res = await save(1);
-    const {
-      data: { data, msg, success },
-    } = res;
+    const { data, msg, success } = await save(1);
     if (success) {
       message.success(msg);
       loadingRef.value = false;
@@ -326,10 +324,7 @@
 
   async function submitAll() {
     try {
-      const res = await save(null);
-      const {
-        data: { data, msg, success },
-      } = res;
+      const { data, msg, success } = await save(null);
 
       const publishRes = await publish({ id: data.id });
       if (publishRes.data.success) {

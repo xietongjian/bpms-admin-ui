@@ -48,4 +48,4 @@ export const update = (params) => requestClient.post(Api.Update, params);
 export const checkEntityExist = (params) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
-export const deleteByIds = (params?: Array<string>) => requestClient.delete(Api.Delete, params);
+export const deleteByIds = (params?: Array<string>) => requestClient.delete(Api.Delete, {params, responseReturn: 'body'});

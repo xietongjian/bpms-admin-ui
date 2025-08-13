@@ -19,7 +19,7 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { computed, ref, unref, defineExpose } from 'vue';
+  import { computed, ref, unref, defineExpose, defineEmits } from 'vue';
   import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import { formSchema } from './newsCategory.data';
@@ -42,6 +42,8 @@
     // '#00215f',
     // '#72349d',
   ];
+
+  const emit = defineEmits(['success'])
 
   const isUpdate = ref(true);
 
@@ -192,6 +194,8 @@
       return { registerModal, registerForm, getTitle, handleSubmit, colorList };
     },
   });*/
+
+  defineExpose(modalApi);
 </script>
 
 <style lang="less" scoped>
