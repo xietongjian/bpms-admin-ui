@@ -9,8 +9,8 @@
         <Button type="link" size="small" @click="handleToMore()">更多</Button>
       </div>
     </div>
-    <div class="x-content">
-      <div class="h-10">
+    <div class="x-content flex flex-col">
+      <div class="h-10 px-2">
         <Tabs v-model:activeKey="activeKey" @change="key => onTabChange(key)" size="small" class="[&_.ant-tabs-nav]:!mb-0">
           <TabPane v-for="pane in tabList" :key="pane.key" >
             <template #tab>
@@ -22,7 +22,7 @@
           </TabPane>
         </Tabs>
       </div>
-      <div class="flex-1 h-full overflow-y-auto [&_.ant-list-item-meta-avatar]:!me-1">
+      <div class="flex-1 pb-2 h-full overflow-y-auto [&_.ant-list-item-meta-avatar]:!me-1">
         <div class="flex" v-if="activeKey === 'todo'">
           <List class="flex-1" size="small" :loading="todoLoading"
                 item-layout="horizontal"

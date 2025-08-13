@@ -1,60 +1,55 @@
 <template>
-  <Card
-    size="small"
-  >
-    <template #title>
-      <NotificationOutlined class="mr-1 color-[#2d93f9]" />
-      公示公告
-    </template>
-    <template #extra>
-<!--      <a-button type="link" @click="toMore" size="small">更多</a-button>-->
-    </template>
-    <List item-layout="horizontal" :data-source="dataList">
-      <template #renderItem="{ item }">
-        <ListItem class="custom-list-item">
-          <template #actions>
-            <span class="">{{ formatToDateTime(item.publishTime || new Date(), 'YYYY-MM-DD HH:mm') }}</span>
-          </template>
-          <div class="content">
-            <TypographyLink class="overflow-hidden" @click="handleShowDetail(item)" :title="item.title">
-              <span v-if="item.categoryName" :style="{ color: item.style || 'initial' }">
-                [{{ item.categoryName }}]
-              </span>
-              &nbsp;
-              <span v-if="item.noticeNo">
-                {{ item.noticeNo }}
-                -
-              </span>
-              <span class="">
-                {{ item.title }}
-              </span>
-            </TypographyLink>
-          </div>
-        </ListItem>
-      </template>
-    </List>
+  <div class="x-card">
+    <div class="x-title">
+      <div class="font-bold">
+        <NotificationOutlined class="mr-2 text-[#2d93f9]" />
+        <span>公示公告</span>
+      </div>
+      <div>
+<!--        <Button type="link" size="small" @click="handleToMore()">更多</Button>-->
+      </div>
+    </div>
+    <div class="flex-1 p-2 flex flex-col justify-between items-stretch overflow-y-auto">
+      <List item-layout="horizontal" :data-source="dataList">
+        <template #renderItem="{ item }">
+          <ListItem class="custom-list-item">
+            <template #actions>
+              <span class="">{{ formatToDateTime(item.publishTime || new Date(), 'YYYY-MM-DD HH:mm') }}</span>
+            </template>
+            <div class="content">
+              <TypographyLink class="overflow-hidden" @click="handleShowDetail(item)" :title="item.title">
+                <span v-if="item.categoryName" :style="{ color: item.style || 'initial' }">
+                  [{{ item.categoryName }}]
+                </span>
+                &nbsp;
+                <span v-if="item.noticeNo">
+                  {{ item.noticeNo }}
+                  -
+                </span>
+                <span class="">
+                  {{ item.title }}
+                </span>
+              </TypographyLink>
+            </div>
+          </ListItem>
+        </template>
+      </List>
+    </div>
     <NoticePreviewModal ref="noticePreviewModalRef" />
-  </Card>
+  </div>
 </template>
 <script lang="ts" setup>
   import { ref, onMounted } from 'vue';
-  import { Card, List, TypographyLink } from 'ant-design-vue';
+  import { List, TypographyLink } from 'ant-design-vue';
   import { formatToDateTime } from '#/utils/dateUtil';
   import { getNoticeListByPage } from '#/api/portal/cms/notice';
   import NoticePreviewModal from "./NoticePreviewModal.vue";
-  // import { useModal } from '@/components/Modal';
-  // import { useGo } from '@/hooks/web/usePage';
-  import {AuditOutlined, NotificationOutlined} from "@ant-design/icons-vue";
-
+  import {NotificationOutlined} from "@ant-design/icons-vue";
 
   const ListItem = List.Item;
   // const go = useGo();
 
   const dataList = ref([]);
-  // const [
-  //   registerNoticePreviewModal,
-  //   { openModal: openNoticePreviewModal, setModalProps: setNoticePreviewModalProps },
-  // ] = useModal();
 
   onMounted(() => {
     fetchData();
@@ -87,6 +82,7 @@
   }
 </script>
 <style lang="scss">
+@use '../index.scss';
 .custom-list-item {
   padding-left: 0 !important;
   padding-right: 0 !important;

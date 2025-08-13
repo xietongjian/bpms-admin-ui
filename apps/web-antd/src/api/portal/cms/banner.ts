@@ -8,6 +8,15 @@ enum Api {
   Delete = '/flow/portal/cms/banner/delete',
   CheckEntityExist = '/flow/base/app/checkEntityExist',
   BannerList = '/flow/portal/cms/banner/list',
+  GetBannerListByCount = '/flow/portal/cms/banner/getBannerList',
+}
+
+/**
+ * 通过登录人的数据权限-获取Banner
+ * params: {boardSn: '', count 4}
+ */
+export function getBannerListByCount(params = {}) {
+  return requestClient.post<any>(Api.GetBannerListByCount, params);
 }
 
 export const getAllBanner = (params) => {

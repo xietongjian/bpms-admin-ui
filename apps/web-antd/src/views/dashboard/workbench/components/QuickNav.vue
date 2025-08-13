@@ -9,7 +9,7 @@
         <Button type="link" @click="handleToMore()" size="small">更多</Button>
       </div>
     </div>
-    <div class="x-content flex-1 p-2 flex flex-row flex-wrap justify-start items-stretch">
+    <div class="x-content flex-1 p-2 flex flex-row flex-wrap justify-between !overflow-y-auto">
       <div v-if="!dataLoading && dataList.length > 0"
            class="w-30 grow"
            v-for="item in dataList" :key="item">

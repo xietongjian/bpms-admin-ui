@@ -1,5 +1,43 @@
 <template>
-  <Card size="small" v-bind="$attrs">
+  <div class="x-card">
+    <div class="x-title">
+      <div class="font-bold">
+        <SwapOutlined class="mr-2 color-[#2d93f9]" />
+        <span>业务入口</span>
+        <span class="font-size-[14px] text-gray-400">(跨平台统一入口)</span>
+      </div>
+      <div>
+        <a-button type="link" @click="handleMore" size="small">更多</a-button>
+      </div>
+    </div>
+    <div class="x-content p-1 flex flex-row flex-wrap justify-start overflow-hidden overflow-y-auto">
+      <div v-if="mySystemList.length > 0"
+           v-for="item in mySystemList" :key="item"
+           class="h-20 w-full md:!w-1/2 p-1"
+      >
+        <div
+            class="handle w-full h-full rounded-md p-1 bg-blue-200/30 hover:bg-blue-200/60 w-full text-left flex items-center flex-row justify-between flex-wrap cursor-pointer "
+        >
+          <a :href="item.url" target="_blank">
+            <Avatar :alt="item.name" v-if="item.imgUrl" :size="40" :src="item.imgUrl" />
+            <Avatar v-else :alt="item.name" :size="40">
+              <template #icon>
+                <PictureOutlined />
+              </template>
+            </Avatar>
+          </a>
+          <a :href="item.url" target="_blank" class="flex-1 color-[#2d93f9]">
+            <div class="font-size-[14px] font-weight-[900] line-height-[20px] flex-1 text-lg">
+              <Tooltip placement="top" :title="item.name">
+                <div class="line-clamp-1 font-bold color-gray-900/80">{{ item.name }}</div>
+              </Tooltip>
+              <div class="font-size-[12px] line-height-[20px] color-gray-700">{{ item.description }}</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+<!--  <Card size="small" v-bind="$attrs">
     <template #title>
       <SwapOutlined class="mr-1 color-[#2d93f9]" />业务入口<span class="font-size-[14px] text-gray-400">(跨平台统一入口)</span>
     </template>
@@ -39,7 +77,11 @@
       </div>
     </Spin>
     <MySystemSettingModal ref="mySystemSettingModalRef" @closeFunc="reloadMySystem"/>
-  </Card>
+  </Card>-->
+
+    </div>
+    <MySystemSettingModal ref="mySystemSettingModalRef" @closeFunc="reloadMySystem"/>
+  </div>
 </template>
 <script lang="ts" setup>
   import { ref } from 'vue';
@@ -74,3 +116,7 @@
     return Promise.resolve(true);
   }
 </script>
+
+<style lang="scss">
+@use '../index.scss';
+</style>
