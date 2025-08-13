@@ -47,7 +47,7 @@ export const getBoardListByPage = (params) => {
     delete entity['pageSize'];
   }
   const queryParam = { query, entity };
-  return requestClient.post(Api.BoardPageList, params });
+  return requestClient.post(Api.BoardPageList, params);
 };
 
 export const insert = (params) => requestClient.post(Api.Insert, params);
