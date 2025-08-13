@@ -157,22 +157,26 @@
   });*/
 
   function handleCreate() {
-    openModal(true, {
-      isUpdate: false,
-    });
-    setModalProps({
-      width: 800,
+    newsCategoryModalRef.value.setData({});
+    newsCategoryModalRef.value.open();
+    newsCategoryModalRef.value.setState({
+      title: '编辑'
     });
   }
 
   function handleEdit(record: Recordable) {
-    openModal(true, {
+    newsCategoryModalRef.value.setData(record);
+    newsCategoryModalRef.value.open();
+    newsCategoryModalRef.value.setState({
+      title: '编辑'
+    });
+    /*openModal(true, {
       record,
       isUpdate: true,
     });
     setModalProps({
       width: 800,
-    });
+    });*/
   }
 
   async function handleDelete(record: Recordable) {
@@ -187,7 +191,15 @@
     tableApi.reload();
   }
   function handleCreateChild(record: Recordable, e) {
-    e.stopPropagation();
+    newsCategoryModalRef.value.setData({
+      pid: record.id,
+      status: true,
+    });
+    newsCategoryModalRef.value.open();
+    newsCategoryModalRef.value.setState({
+      title: '新增【' + record.name + '】的子分类'
+    });
+    /*e.stopPropagation();
     setModalProps({ title: '新增【' + record.name + '】的子分类' });
     record = {
       pid: record.id,
@@ -199,7 +211,7 @@
     });
     setModalProps({
       width: 800,
-    });
+    });*/
   }
 
 

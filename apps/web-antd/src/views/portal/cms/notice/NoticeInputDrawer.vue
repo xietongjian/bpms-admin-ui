@@ -1,7 +1,7 @@
 <template>
-  <BasicDrawer >
+  <BasicDrawer class="w-1/2">
     <a-card size="small" title="基础数据" :bordered="false" body-style="background: white;">
-      <BasicForm @register="registerBaseInfo" />
+      <BasicForm/>
     </a-card>
 
     <a-card size="small" title="附件设置" :bordered="false" class="!mt-5">
@@ -18,7 +18,7 @@
       </Space>
     </template>
 
-    <NoticePreviewDrawer @register="registerNoticePreviewDrawer" />
+    <NoticePreviewDrawer ref="noticePreviewDrawerRef" />
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
@@ -50,7 +50,6 @@
   // import { BasicDrawer, useDrawer, useDrawerInner } from '#/components/Drawer';
   import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
-  import {formSchema} from "#/views/portal/cms/banner/banner.data";
 
   const emit = defineEmits(['success'])
   const tableRef = ref<{ getDataSource: () => any } | null>(null);
@@ -72,7 +71,7 @@
     },
     showDefaultActions: false,
     layout: 'horizontal',
-    schema: formSchema,
+    schema: baseFormSchema,
     wrapperClass: 'grid-cols-1',
   });
 
@@ -84,8 +83,9 @@
       if (isOpen) {
         const values = drawerApi.getData<Record<string, any>>();
         if (values) {
-          const params = JSON.stringify(JSON.parse(values.params), null, 2)
-          formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});
+          const tempValues = JSON.parse(JSON.stringify(values))
+
+          formApi.setValues(tempValues);
           drawerApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -159,16 +159,16 @@
           publishStatus.value = res.publishStatus;
           noticeBaseInfo.value = res;
 
-          await updateBaseInfoSchema({
-            fieldName: 'titleId',
-            component: 'ApiSelect',
-            componentProps: {
-              api: getAllNoticeTitle,
-              // params: {subjectId: res.subjectId}
-            },
-          });
-
-          await setBaseInfoFormFieldValue(res);
+          // await updateBaseInfoSchema({
+          //   fieldName: 'titleId',
+          //   component: 'ApiSelect',
+          //   componentProps: {
+          //     api: getAllNoticeTitle,
+          //     // params: {subjectId: res.subjectId}
+          //   },
+          // });
+          //
+          // await setBaseInfoFormFieldValue(res);
           loadingRef.value = false;
 
           tableRef.value.setTableData(res.commonFiles);
@@ -178,19 +178,19 @@
           loadingRef.value = false;
         });
     } else {
-      setBaseInfoFormFieldValue({
+     /* setBaseInfoFormFieldValue({
         publishRanges: [],
-      });
+      });*/
     }
   }
 
   function loadSigner() {
     getSigner({ subjectId: currentSubjectId.value, categoryId: currentCategoryId.value }).then(
       (res) => {
-        setBaseInfoFormFieldValue({
+        /*setBaseInfoFormFieldValue({
           signerNo: res.signerNo,
           signerName: res.signerName,
-        });
+        });*/
       },
     );
   }
@@ -204,7 +204,7 @@
     const titleList = await getAllNoticeTitle({});
 
     // 渲染主体
-    await updateBaseInfoSchema({
+    /*await updateBaseInfoSchema({
       fieldName: 'subjectId',
       component: 'TreeSelect',
       componentProps: {
@@ -218,7 +218,7 @@
           loadSigner();
 
           // 根据发文主体联动设置公文套头列表的可选项。
-          /*const fieldValues = getBaseInfoFormFieldValue();
+          /!*const fieldValues = getBaseInfoFormFieldValue();
           updateBaseInfoSchema(
             {
               fieldName: 'titleId',
@@ -231,15 +231,15 @@
           setBaseInfoFormFieldValue({
             subjectName: node.title,
             content: fieldValues.content
-          });*/
+          });*!/
         },
       },
-    });
+    });*/
 
     // 渲染所有分类
     const categoryList = await getAllNoticeCategory({ status: true });
     allCategoryList.value = categoryList;
-    await updateBaseInfoSchema({
+    /*await updateBaseInfoSchema({
       fieldName: 'categoryId',
       component: 'TreeSelect',
       componentProps: {
@@ -258,7 +258,7 @@
           }
         },
       },
-    });
+    });*/
   }
 
   onMounted(async () => {
@@ -362,6 +362,8 @@
   function handleSubmit() {
     emit('success');
   }
+
+  defineExpose(drawerApi);
 </script>
 
 <style>

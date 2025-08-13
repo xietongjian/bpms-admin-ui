@@ -38,6 +38,7 @@
   import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
 
+  const emit = defineEmits(['success']);
   const colorList = [
     '',
     '#c21401',
@@ -225,6 +226,7 @@
         return { registerModal, registerForm, getTitle, handleSubmit, colorList };
       },
     });*/
+  defineExpose(modalApi);
 </script>
 
 <style lang="less" scoped>

@@ -4,8 +4,8 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref,defineExpose } from 'vue';
-  import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
+  import { ref, computed, unref, defineExpose, defineEmits } from 'vue';
+  import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import { formSchema } from './noticeSubject.data';
   import { insert, update, checkEntityExist } from '#/api/portal/cms/noticeSubject';
@@ -15,6 +15,8 @@
   import { getAllPublishRange } from '#/api/portal/cms/publishRange';
 
   const isUpdate = ref(true);
+
+  const emit = defineEmits(['success']);
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
@@ -37,13 +39,12 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          formApi.setValues(values);
+          //formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
     },
     onConfirm() {
-      // await formApi.submitForm();
       handleSubmit();
     },
   });
@@ -165,8 +166,6 @@
     }
   });*/
 
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
-
   async function handleSubmit() {
     try {
       const {valid} = await formApi.validate();
@@ -233,4 +232,6 @@
       return { registerModal, registerForm, getTitle, handleSubmit };
     },
   });*/
+
+  defineExpose(modalApi);
 </script>

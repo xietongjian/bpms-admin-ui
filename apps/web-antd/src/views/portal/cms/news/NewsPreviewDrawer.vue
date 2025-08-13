@@ -1,5 +1,5 @@
 <template>
-  <BasicDrawer v-bind="$attrs" @register="registerNoticePreviewDrawer" width="50%" showFooter>
+  <BasicDrawer v-bind="$attrs" width="50%" showFooter>
     <div class="notice-wrapper">
       <h1 class="notice-title">{{ newsInfo?.title }}</h1>
 
@@ -30,17 +30,35 @@
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref } from 'vue';
-  import { BasicDrawer, useDrawerInner } from '#/components/Drawer';
+  // import { BasicDrawer, useDrawerInner } from '#/components/Drawer';
   import { formatToDate } from '#/utils/dateUtil';
   import { getNewsById } from '#/api/portal/cms/news';
   // import {getAllArticleComment} from "#/api/portal/cms/articleComment";
   import { Row, Col, Space, Divider } from 'ant-design-vue';
+  import {useVbenDrawer} from '@vben/common-ui';
 
   const newsInfo = ref({});
   const articleComments = ref({});
   const noticeTitle = ref({});
-
-  const [registerNoticePreviewDrawer, { setDrawerProps }] = useDrawerInner(async (data) => {
+  const [BasicDrawer, drawerApi] = useVbenDrawer({
+    onCancel() {
+      drawerApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = drawerApi.getData<Record<string, any>>();
+        if (values) {
+          const params = JSON.stringify(JSON.parse(values.params), null, 2)
+          // formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});
+          drawerApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      // handleSubmit();
+    },
+  });
+  /*const [registerNoticePreviewDrawer, { setDrawerProps }] = useDrawerInner(async (data) => {
     setDrawerProps({ confirmLoading: false });
 
     // 临时预览，未保存的时候预览
@@ -52,7 +70,7 @@
       newsInfo.value = await getNewsById({ id: data.record.id });
       // articleComments.value = await getAllArticleComment({dataId: data.record.id, dataType: 'NEWS'});
     }
-  });
+  });*/
 
   /*export default defineComponent({
     name: 'NewsPreviewDrawer',

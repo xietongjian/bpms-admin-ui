@@ -1,17 +1,28 @@
 <template>
-  <Page auto-content-height>
-    <div class="w-1/4 xl:w-1/5 m-4 mr-0 overflow-hidden bg-white">
-      <BasicTree
-        title="分类"
-        toolbar
-        search
-        :clickRowToExpand="false"
-        :treeData="treeData"
-        :fieldNames="{ key: 'id', title: 'name' }"
-        @select="handleSelect"
-      />
-    </div>
-    <BasicTable class="w-3/4 xl:w-4/5" :searchInfo="searchInfo">
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="false"
+      :split-line="false"
+      :resizable="true"
+      :left-collapsible="false"
+      :auto-content-height="true"
+      content-class="h-full">
+    <template #left >
+      <div class="w-full mr-0 overflow-hidden bg-white">
+        <BasicTree
+          title="分类"
+          toolbar
+          search
+          :clickRowToExpand="false"
+          :treeData="treeData"
+          :fieldNames="{ key: 'id', title: 'name' }"
+          @select="handleSelect"
+        />
+      </div>
+    </template>
+    <BasicTable class="w-full" :searchInfo="searchInfo">
       <template #toolbar-tools>
         <!--        <Authority :value="'News' + PerEnum.ADD">-->
         <Button type="primary" @click="handleCreate"> 新增</Button>
@@ -35,9 +46,9 @@
         <EmpInfo :no="row.personalNo" :name="row.personalName" />
       </template>
     </BasicTable>
-    <NewsPreviewDrawer @register="registerNewsPreviewDrawer" />
-    <NewsInputDrawer @register="registerNewsInputDrawer" @success="handleSuccess" />
-  </Page>
+    <NewsPreviewDrawer ref="newsPreviewDrawerRef" />
+    <NewsInputDrawer ref="newsInputDrawerRef" @success="handleSuccess" />
+  </ColPage>
 </template>
 <script lang="ts" setup>
   import { onMounted, reactive, ref } from 'vue';
@@ -62,14 +73,15 @@
   import NewsInputDrawer from './NewsInputDrawer.vue';
   import { getAllBoard } from '#/api/portal/cms/board';
   // import { PageWrapper } from '#/components/Page';
-  import { BasicTree, TreeItem } from '#/components/Tree';
+  import { BasicTree } from '#/components/Tree';
   import { getAllNewsCategory } from '#/api/portal/cms/newsCategory';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { PerEnum } from '#/enums/perEnum';
-  import {Button} from 'ant-design-vue';
+  import {Button, message} from 'ant-design-vue';
   import {Page} from '@vben/common-ui';
 
   const PerPrefix = 'News:';
+  const newsPreviewDrawerRef = ref(),newsInputDrawerRef = ref();
 
   // import {StatusTagColor} from "#/enums/commonEnum";
   // import {update} from "#/api/portal/cms/news";
@@ -84,9 +96,8 @@
     registerNewsPreviewDrawer,
     { openDrawer: openNewsPreviewDrawer, setDrawerProps: setNewsPreviewDrawerProps },
   ] = useDrawer();*/
-  const treeData = ref<TreeItem[]>([]);
+  const treeData = ref<any[]>([]);
   const searchInfo = reactive<Recordable>({});
-
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -157,7 +168,7 @@
 
   onMounted(async () => {
     fetchCategory();
-    const { getFieldsValue, updateSchema } = getForm();
+    const { getFieldsValue, updateSchema } = tableApi.formApi;
     const allPublishBoard = await getAllBoard({ type: 1 });
     const allPublishStatus = await getPublishStatus();
 
@@ -212,8 +223,13 @@
   }
 
   function handleCreate() {
+    newsInputDrawerRef.value.setData({ id: '' });
+    newsInputDrawerRef.value.open();
+    newsInputDrawerRef.value.setState({
+      title: `新增新闻`
+    });
     // go({ name: 'NewsInput', query: { id: '' } });
-    openNewsInputDrawer(true, { id: '' });
+    /*openNewsInputDrawer(true, { id: '' });
 
     setNewsInputDrawerProps({
       title: `新增新闻`,
@@ -223,18 +239,18 @@
       showOkBtn: false,
       destroyOnClose: true,
       maskClosable: false,
-    });
+    });*/
   }
 
   function handleDown(record: Recordable) {
     update({ publishStatus: 'DOWN_SHELF', id: record.id }).then(() => {
-      reload();
+      tableApi.reload();
     });
   }
 
   function handlePublish(record: Recordable) {
     publish({ publishStatus: 'PUBLISHED', id: record.id }).then(() => {
-      reload();
+      tableApi.reload();
     });
   }
 
@@ -294,33 +310,38 @@
 
   function handleSelect(categoryId) {
     searchInfo.categoryId = categoryId[0];
-    reload();
+    tableApi.reload();
   }
 
   function handleEdit(record: Recordable) {
-    openNewsInputDrawer(true, { id: record.id });
+    newsInputDrawerRef.value.setData({ id: record.id });
+    newsInputDrawerRef.value.open();
+    newsInputDrawerRef.value.setState({
+      title: `编辑新闻 - ${record.title}`,
+    });
+    /*openNewsInputDrawer(true, { id: record.id });
 
     setNewsInputDrawerProps({
-      title: `编辑新闻 - ${record.title}`,
       bodyStyle: { padding: '0px', margin: '0px' },
       width: 1000,
       cancelText: '关闭',
       showOkBtn: false,
       destroyOnClose: true,
       maskClosable: false,
-    });
+    });*/
   }
 
   function handleDelete(record: Recordable) {
     deleteByIds([record.id]).then(() => {
-      reload();
+      tableApi.reload();
     });
   }
 
   async function fetchCategory() {
-    treeData.value = (await getAllNewsCategory({ status: true })) as unknown as TreeItem[];
+    treeData.value = await getAllNewsCategory({ status: true });
   }
   function handleSuccess() {
-    reload();
+    tableApi.reload();
   }
 </script>
+

@@ -4,7 +4,7 @@ import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { h } from 'vue';
 import { getAllNewsCategory } from '#/api/portal/cms/newsCategory';
-import { Tinymce } from '#/components/Tinymce';
+// import { Tinymce } from '#/components/Tinymce';
 import { uploadApi } from '#/api/sys/upload';
 // import {getAllBoard} from "#/api/portal/cms/board";
 import { RemarkDefaultEnum } from '#/enums/commonEnum';
@@ -14,7 +14,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '标题',
     field: 'title',
-    width: 300,
+    minWidth: 300,
     align: 'left',
     resizable: true,
   },
@@ -126,7 +126,7 @@ export const formSchema: FormSchema[] = [
     required: true,
     component: 'Input',
     show: true,
-    rules: [
+   /* rules: [
       {
         required: false,
         whitespace: true,
@@ -136,7 +136,7 @@ export const formSchema: FormSchema[] = [
         max: 256,
         message: '字符长度不能大于256！',
       },
-    ],
+    ],*/
     componentProps: {
       autocomplete: 'off',
     },
@@ -194,12 +194,12 @@ export const formSchema: FormSchema[] = [
     required: false,
     component: 'Input',
     show: true,
-    rules: [
+/*    rules: [
       {
         max: 260,
         message: '字符长度不能大于260！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },
@@ -217,12 +217,12 @@ export const formSchema: FormSchema[] = [
     required: false,
     component: 'InputTextArea',
     show: true,
-    rules: [
+/*    rules: [
       {
         max: 516,
         message: '字符长度不能大于516！',
       },
-    ],
+    ],*/
     colProps: {
       span: 24,
     },
@@ -341,8 +341,8 @@ export const baseFormSchema: FormSchema[] = [
     component: 'Input',
     label: '内容',
     defaultValue: '',
-    rules: [{ required: true }],
-    render: ({ model, field }) => {
+    // rules: [{ required: true }],
+    /*render: ({ model, field }) => {
       return h(Tinymce, {
         value: model[field],
         showImageUpload: false,
@@ -352,7 +352,7 @@ export const baseFormSchema: FormSchema[] = [
           model[field] = value;
         },
       });
-    },
+    },*/
     colProps: {
       span: 24,
     },

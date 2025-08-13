@@ -11,7 +11,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
     field: 'name',
-    width: 200,
+    minWidth: 200,
     align: 'left',
     slots: { customRender: 'nameRender' },
     resizable: true,
@@ -125,7 +125,7 @@ export const formSchema: FormSchema[] = [
     required: true,
     component: 'Input',
     show: true,
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -135,7 +135,7 @@ export const formSchema: FormSchema[] = [
         max: 260,
         message: '字符长度不能大于260！',
       },
-    ],
+    ],*/
   },
   {
     fieldName: 'sn',
@@ -243,12 +243,12 @@ export const formSchema: FormSchema[] = [
     required: false,
     component: 'InputTextArea',
     show: true,
-    rules: [
+/*    rules: [
       {
         max: 512,
         message: '字符长度不能大于512！',
       },
-    ],
+    ],*/
     colProps: {
       span: 22,
     },

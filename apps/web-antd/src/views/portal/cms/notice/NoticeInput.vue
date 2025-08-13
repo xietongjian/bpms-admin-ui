@@ -19,7 +19,7 @@
         <Button type="default" @click="handleBack"> 返回 </Button>
       </Space>
     </template>
-    <NoticePreviewDrawer @register="registerNoticePreviewDrawer" />
+    <NoticePreviewDrawer ref="noticePreviewDrawerRef" />
   </PageWrapper>
 </template>
 <script lang="ts" setup>

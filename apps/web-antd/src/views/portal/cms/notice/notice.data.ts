@@ -298,11 +298,11 @@ export const baseFormSchema: FormSchema[] = [
     component: 'Input',
     label: '内容',
     defaultValue: '',
-    rules: [{ required: true }],
+    // rules: [{ required: true }],
     colProps: {
       span: 24,
     },
-    render: ({ model, field }) => {
+    /*render: ({ model, field }) => {
       return h(Tinymce, {
         value: model[field],
         showImageUpload: false,
@@ -310,6 +310,6 @@ export const baseFormSchema: FormSchema[] = [
           model[field] = value;
         },
       });
-    },
+    },*/
   },
 ];

@@ -32,6 +32,8 @@
   import type {Recordable} from '@vben/types';
   import { UploadOutlined } from '@ant-design/icons-vue';
   // import { useUserStore } from '#/store/modules/user';
+  import { resetAllStores, useAccessStore, useUserStore } from '@vben/stores';
+
   import { Button, Upload, Switch, message } from 'ant-design-vue';
 
 /*  import {
@@ -46,7 +48,7 @@
   // import { ResultEnum } from '#/enums/httpEnum';
   // import {deleteById} from "#/api/portal/cms/commonFile";
   import { formatFileSize } from '#/utils';
-  import {VxeGridProps} from "#/adapter/vxe-table";
+  import type {VxeGridProps} from '#/adapter/vxe-table';
 
   const columns: VxeGridProps['columns'] = [
     {
@@ -93,7 +95,6 @@
           onChange(checked: boolean) {
             record.pendingStatus = true;
             const newStatus = checked;
-m
             record.canDown = newStatus;
             record.pendingStatus = false;
           },
@@ -105,15 +106,15 @@ m
   const data: any[] = [];
 
   const userStore = useUserStore();
-  const { uploadUrl } = useGlobSetting();
+  const accessStore = useAccessStore();
+  // const { uploadUrl } = useGlobSetting();
   const uploading = ref(false);
   const uploadHeaders = ref();
-m
   onMounted(() => {
-    uploadHeaders.value = { satoken: userStore.getToken };
+    uploadHeaders.value = { satoken: accessStore.accessToken };
   });
 
-  const [registerTable, { getDataSource, setTableData }] = useTable({
+  /*const [registerTable, { getDataSource, setTableData }] = useTable({
     columns: columns,
     showIndexColumn: true,
     dataSource: data,
@@ -125,9 +126,9 @@ m
     },
     scroll: { y: 400 },
     pagination: false,
-  });
+  });*/
 
-  function handleEdit(record: EditRecordRow, idx) {
+  function handleEdit(record: Recordable, idx) {
     console.log(record.index);
     alert(JSON.stringify(record));
   }
@@ -163,7 +164,7 @@ m
   function handleAdd(file) {
     const data = getDataSource();
     const fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
-    const addRow: EditRecordRow = {
+    const addRow: Recordable<any> = {
       name: file.name,
       filePath: file.url,
       fileType: fileType,
@@ -173,7 +174,7 @@ m
     data.push(addRow);
   }
 
-  function createActions(record: EditRecordRow, column: BasicColumn, index): ActionItem[] {
+  function createActions(record: Recordable<any>, column: any, index): any[] {
     const records = getDataSource();
     return [
       {

@@ -5,14 +5,12 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
 import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
-// import {baseColumns} from "#/utils";
-
 
 export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
     field: 'name',
-    width: 200,
+    minWidth: 200,
     align: 'left',
     slots: { customRender: 'nameRender' },
     resizable: true,
@@ -89,7 +87,7 @@ export const formSchema: FormSchema[] = [
     required: true,
     component: 'Input',
     show: true,
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -99,7 +97,7 @@ export const formSchema: FormSchema[] = [
         max: 256,
         message: '字符长度不能大于256！',
       },
-    ],
+    ],*/
   },
   {
     fieldName: 'sn',
@@ -111,7 +109,6 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'style',
     label: '样式',
-    required: false,
     component: 'Input',
     slot: 'styleRenderSlot',
     show: true,
@@ -119,14 +116,12 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'pid',
     label: '父级分类ID',
-    required: false,
     component: 'Input',
     show: false,
   },
   {
     fieldName: 'status',
     label: '启用状态',
-    required: false,
     component: 'Switch',
     defaultValue: true,
     show: true,
@@ -139,7 +134,6 @@ export const formSchema: FormSchema[] = [
     fieldName: 'orderNo',
     label: '排序号',
     helpMessage: '数值越小越靠前！',
-    required: false,
     component: 'InputNumber',
     show: true,
     defaultValue: OrderNoDefaultEnum.VALUE,
@@ -151,15 +145,14 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'remark',
     label: '备注',
-    required: false,
     component: 'InputTextArea',
     show: true,
-    rules: [
+    /*rules: [
       {
         max: 512,
         message: '字符长度不能大于512！',
       },
-    ],
+    ],*/
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,

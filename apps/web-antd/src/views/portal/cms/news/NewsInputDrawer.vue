@@ -17,7 +17,7 @@
       </Space>
     </template>
 
-    <NewsPreviewDrawer @register="registerNewsPreviewDrawer" />
+    <NewsPreviewDrawer ref="newsPreviewDrawerRef" />
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
@@ -30,6 +30,9 @@
   import NewsPreviewDrawer from './NewsPreviewDrawer.vue';
   // import { OrgDataType } from '#/components/Selector/src/types';
   import { isEmpty } from '#/utils/is';
+  import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
+  import {useVbenForm} from "#/adapter/form";
+
   // import { useDrawer, BasicDrawer, useDrawerInner } from '#/components/Drawer';
 
   const emit = defineEmits(['success']);
@@ -39,6 +42,39 @@
   const newsBaseInfo = ref({});
 
   const boardList = ref();
+
+  const [BasicForm, formApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {
+        // class: 'w-full',
+      },
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: baseFormSchema,
+    wrapperClass: 'grid-cols-1',
+  });
+
+
+  const [BasicDrawer, drawerApi] = useVbenDrawer({
+    onCancel() {
+      drawerApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = drawerApi.getData<Record<string, any>>();
+        if (values) {
+          const tempValues = JSON.parse(JSON.stringify(values))
+
+          formApi.setValues(tempValues);
+          drawerApi.setState({loading: false, confirmLoading: false});
+        }
+      }
+    },
+    onConfirm() {
+      handleSubmit();
+    },
+  });
 
   /*const [
     registerBaseInfo,
@@ -203,6 +239,8 @@
   function handleSubmit() {
     emit('success');
   }
+
+  defineExpose(drawerApi);
 </script>
 
 <style lang="less" scoped>

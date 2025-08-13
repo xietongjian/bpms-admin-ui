@@ -24,14 +24,13 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '标题',
     field: 'title',
-    width: 250,
+    minWidth: 250,
     align: 'center',
     slots: { default: 'imgs' },
   },
   {
     title: '跳转链接地址',
     field: 'linkUrl',
-    width: 100,
     align: 'left',
     slots: { default: 'linkUrlRender' },
   },
@@ -116,7 +115,7 @@ export const formSchema: FormSchema[] = [
     component: 'Input',
     show: false,
   },
-  {
+  /*{
     fieldName: 'publishBoard',
     label: '发布版块',
     component: 'ApiRadioGroup',
@@ -135,12 +134,12 @@ export const formSchema: FormSchema[] = [
     colProps: {
       span: 24,
     },
-  },
+  },*/
   {
     fieldName: 'imgPath',
     label: '上传图片',
     required: true,
-    component: 'ImageUpload',
+    component: 'Upload',
     show: true,
     componentProps: ({ formModel }) => {
       return {
@@ -151,7 +150,7 @@ export const formSchema: FormSchema[] = [
         maxSize: 1,
         maxNumber: 1,
         multiple: false,
-        helpText: bannerImgHelpMsgObj[formModel.publishBoard],
+        // helpText: bannerImgHelpMsgObj[formModel.publishBoard],
       };
     },
   },
@@ -161,7 +160,7 @@ export const formSchema: FormSchema[] = [
     required: true,
     component: 'Input',
     show: true,
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -171,7 +170,7 @@ export const formSchema: FormSchema[] = [
         max: 260,
         message: '字符长度不能大于260！',
       },
-    ],
+    ],*/
     componentProps: {
       autocomplete: 'off',
     },
@@ -180,14 +179,14 @@ export const formSchema: FormSchema[] = [
     fieldName: 'shortContent',
     label: '简介',
     required: false,
-    component: 'InputTextArea',
+    component: 'Textarea',
     show: true,
-    rules: [
+    /*rules: [
       {
         max: 1024,
         message: '字符长度不能大于1024！',
       },
-    ],
+    ],*/
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -214,12 +213,12 @@ export const formSchema: FormSchema[] = [
     component: 'Input',
     show: true,
     colProps: { span: 16 },
-    rules: [
+    /*rules: [
       {
         type: 'url',
         message: '请输入正确的链接地址！',
       },
-    ],
+    ],*/
     componentProps: {
       placeholder: 'https://xxx.xxx.com/xxxx',
     },

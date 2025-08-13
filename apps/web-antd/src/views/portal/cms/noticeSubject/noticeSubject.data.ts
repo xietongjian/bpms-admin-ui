@@ -7,12 +7,11 @@ import { Tag } from 'ant-design-vue';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
 import { uploadApi } from '#/api/sys/upload';
 // import {getAllNoticeTitle} from "#/api/portal/cms/noticeTitle";
-
 export const columns: VxeGridProps['columns'] = [
   {
     title: '标题',
     field: 'title',
-    width: 300,
+    minWidth: 300,
     align: 'left',
   },
   {
@@ -24,7 +23,6 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '短标题',
     field: 'shortTitle',
-    width: 100,
     align: 'left',
   },
   {
@@ -52,14 +50,14 @@ export const columns: VxeGridProps['columns'] = [
     field: 'signatureImg',
     width: 100,
     align: 'center',
-    // slots: { customRender: 'signatureImgRender' },
+    slots: { default: 'signatureImg' },
   },
   {
     title: '签发人',
     field: 'signerName',
     width: 100,
     align: 'left',
-    slots: { customRender: 'signerNameRender' },
+    slots: { default: 'signerName' },
   },
   // {
   //   title: '所属单位名称',
@@ -110,17 +108,16 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: '主键',
-    required: false,
     component: 'Input',
     show: false,
   },
   {
     fieldName: 'title',
     label: '名称',
-    required: true,
+    // required: true,
     component: 'Input',
     show: true,
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -130,16 +127,16 @@ export const formSchema: FormSchema[] = [
         max: 260,
         message: '字符长度不能大于260！',
       },
-    ],
+    ],*/
     helpMessage: '用于生成落款',
   },
   {
     fieldName: 'shortTitle',
     label: '短标题',
-    required: true,
+    // required: true,
     component: 'Input',
     show: true,
-    rules: [
+    /*rules: [
       {
         required: true,
         whitespace: true,
@@ -149,12 +146,12 @@ export const formSchema: FormSchema[] = [
         max: 32,
         message: '字符长度不能大于32！',
       },
-    ],
+    ],*/
   },
   {
     fieldName: 'sn',
     label: '标识',
-    required: true,
+    // required: true,
     component: 'Input',
     show: true,
   },
@@ -184,7 +181,6 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'pid',
     label: '父主体ID',
-    required: false,
     component: 'Input',
     show: false,
   },
@@ -200,11 +196,11 @@ export const formSchema: FormSchema[] = [
   //     // helpText: 'XXXXXXXXXXXXXX'
   //   },
   // },
-  {
+  /*{
     fieldName: 'signatureImg',
     label: '签章图片',
     required: false,
-    component: 'ImageUpload',
+    component: 'Upload',
     show: true,
     componentProps: {
       api: uploadApi,
@@ -217,6 +213,29 @@ export const formSchema: FormSchema[] = [
       helpText: '(仅支持gif,png)大小不超过1M，建议上传尺寸(像素)：200px*200px',
       accept: ['gif', 'png'],
     },
+  },*/
+  {
+    component: 'Upload',
+    componentProps: {
+      // 更多属性见：https://ant.design/components/upload-cn
+      accept: '.png,.jpg,.jpeg',
+      // 自动携带认证信息
+      // customRequest: upload_file,
+      disabled: false,
+      maxCount: 1,
+      multiple: false,
+      showUploadList: true,
+      // 上传列表的内建样式，支持四种基本样式 text, picture, picture-card 和 picture-circle
+      listType: 'picture-card',
+    },
+    fieldName: 'files',
+    label: '签章图片',
+    renderComponentContent: () => {
+      return {
+        default: () => '请选择图片',
+      };
+    },
+    // rules: 'required',
   },
 
   /*{
@@ -291,12 +310,12 @@ export const formSchema: FormSchema[] = [
     required: false,
     component: 'InputTextArea',
     show: true,
-    rules: [
+    /*rules: [
       {
         max: 512,
         message: '字符长度不能大于512！',
       },
-    ],
+    ],*/
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,

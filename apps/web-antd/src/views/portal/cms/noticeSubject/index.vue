@@ -5,20 +5,25 @@
         <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>
       <template #signatureImg="{row}">
-        <TableImg :size="60" :showBadge="false" :simpleShow="true" :imgList="[row.signatureImg]" />
+        <div class="!h-20 relative">
+          <div v-if="row.signatureImg">
+            <Image :src="row.signatureImg" class="w-full !h-20 object-contain" />
+          </div>
+          <span v-else class="">暂无图片</span>
+        </div>
       </template>
       <template #action="{row}">
         <TableAction :actions="createActions(row)" />
       </template>
-
+      <template #signerName="{ row }">
+        <EmpInfo :no="row.signerNo" :name="row.signerName" />
+      </template>
       <!--      <template #logoRender="{ record }">
         <div class="banner-list-preview">
           <TableImg :showBadge="false" :simpleShow="true" :imgList="[record.logo]"/>
         </div>
       </template>-->
-      <!--      <template #signerNameRender="{ record }">
-        <EmpInfo :no="record.signerNo" :name="record.signerName" />
-      </template>
+      <!--
 
       <template #createdByRender="{ record }">
         <EmpInfo :no="record.createdByNo" :name="record.createdBy" />
@@ -44,7 +49,7 @@
   import { deleteByIds, getAllNoticeSubject } from '#/api/portal/cms/noticeSubject';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { PerEnum } from '#/enums/perEnum';
-  import {Button, message} from 'ant-design-vue';
+  import {Button, Image, message} from 'ant-design-vue';
   import {Page} from '@vben/common-ui';
 
   const PerPrefix = 'NoticeSubject:';
@@ -93,6 +98,7 @@
         },
       },
     },
+    showOverflow: false,
   };
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});

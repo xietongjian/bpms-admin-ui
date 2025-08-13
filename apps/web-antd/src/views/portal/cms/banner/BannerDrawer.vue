@@ -55,8 +55,10 @@
       if (isOpen) {
         const values = drawerApi.getData<Record<string, any>>();
         if (values) {
-          const params = JSON.stringify(JSON.parse(values.params), null, 2)
-          formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});
+          const tempValues = JSON.stringify(JSON.parse(values))
+
+          formApi.setValues(tempValues);
+          // formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});
           drawerApi.setState({loading: false, confirmLoading: false});
         }
       }

@@ -4,22 +4,22 @@
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>
+
       <template #imgs="{ row }">
-        <div class="banner-list-preview">
-          <TableImg :showBadge="false" :simpleShow="true" :imgList="[row.imgPath]" />
-          <div class="banner-title">
-            <Tooltip placement="bottom">
-              <template #title>
-                <span>{{ row.title }}</span>
-              </template>
-              <a v-if="row.linkUrl" :href="row.linkUrl" target="_blank">
-                {{ row.title }}
-              </a>
-              <span v-else>
-                {{ row.title }}
-              </span>
-            </Tooltip>
+        <div class="!h-20 relative">
+          <div v-if="row.imgPath">
+            <Image :src="row.imgPath" class="w-full !h-20 object-contain" />
           </div>
+          <span v-else class="">暂无图片</span>
+          <p :title="row.title"
+             class="absolute bottom-0 leading-8 flex flex-col justify-center bg-card/50 items-center w-full">
+            <a v-if="row.linkUrl" :href="row.linkUrl" target="_blank">
+              {{ row.title }}
+            </a>
+            <span v-else>
+              {{ row.title }}
+            </span>
+          </p>
         </div>
       </template>
       <template #linkUrlRender="{ row }">
@@ -34,9 +34,7 @@
         {{ row.endTime || '-' }}
       </template>
       <template #action="{ row }">
-        <TableAction
-          :actions="createActions(row)"
-        />
+        <TableAction :actions="createActions(row)"/>
       </template>
       <template #createdByRender="{ row }">
         <EmpInfo :no="row.createdByNo" :name="row.createdBy" />
@@ -45,7 +43,7 @@
         <EmpInfo :no="row.updatedByNo" :name="row.updatedBy" />
       </template>
     </BasicTable>
-    <BannerDrawer ref="bannerDrawerRef" />
+    <BannerDrawer ref="bannerDrawerRef"  />
   </Page>
 </template>
 <script lang="ts" setup>
@@ -57,7 +55,7 @@
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {TableAction} from '#/components/table-action';
   import { columns, searchFormSchema } from './banner.data';
-  import { Button, Tooltip, message } from 'ant-design-vue';
+  import {Button, Tooltip, message, Image} from 'ant-design-vue';
   import { getBannerListByPage, deleteByIds } from '#/api/portal/cms/banner';
   import BannerDrawer from './BannerDrawer.vue';
   import { EmpInfo } from '#/views/components/EmpInfo';
@@ -107,6 +105,7 @@
         },
       },
     },
+    showOverflow: false,
   };
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
@@ -176,12 +175,17 @@
     ];
   }
   function handleCreate() {
-    openBannerDrawer(true, {
+    bannerDrawerRef.value.setData({});
+    bannerDrawerRef.value.open();
+    bannerDrawerRef.value.setState({
+      title: '编辑'
+    });
+    /*openBannerDrawer(true, {
       record: {
         // publishBoard: board
       },
       isUpdate: false,
-    });
+    });*/
     /*openModal(true, {
       isUpdate: false,
     });
@@ -191,14 +195,20 @@
   }
 
   function handleEdit(record: Recordable) {
-    openBannerDrawer(true, { record, isUpdate: true });
+    // openBannerDrawer(true, { record, isUpdate: true });
+
+    bannerDrawerRef.value.setData(record);
+    bannerDrawerRef.value.open();
+    bannerDrawerRef.value.setState({
+      title: '编辑'
+    });
     /*openModal(true, {
-    record,
-    isUpdate: true,
-  });
-  setModalProps({
-    width: 800
-  });*/
+        record,
+        isUpdate: true,
+      });
+      setModalProps({
+        width: 800
+      });*/
   }
 
   async function handleDelete(record: Recordable) {

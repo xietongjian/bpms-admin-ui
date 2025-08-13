@@ -1,17 +1,29 @@
 <template>
-  <Page auto-content-height>
-    <div class="w-1/4 xl:w-1/5 m-4 mr-0 overflow-hidden bg-white">
-      <BasicTree
-        title="分类"
-        toolbar
-        search
-        :clickRowToExpand="false"
-        :treeData="treeData"
-        :fieldNames="{ key: 'id', title: 'name' }"
-        @select="handleSelect"
-      />
-    </div>
-    <BasicTable class="w-3/4 xl:w-4/5" :searchInfo="searchInfo">
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="false"
+      :split-line="false"
+      :resizable="true"
+      :left-collapsible="false"
+      :auto-content-height="true"
+      content-class="h-full">
+    <template #left >
+      <div class="w-full overflow-hidden bg-white">
+        <BasicTree
+          title="分类"
+          toolbar
+          search
+          :clickRowToExpand="false"
+          :treeData="treeData"
+          :fieldNames="{ key: 'id', title: 'name' }"
+          @select="handleSelect"
+        />
+      </div>
+    </template>
+
+    <BasicTable class="w-full" :searchInfo="searchInfo">
       <template #toolbar-tools>
 <!--        <Authority :value="'Notice:' + PerEnum.SYNC">
           <PopConfirmButton
@@ -47,9 +59,9 @@
         <div v-else> 未设置 </div>
       </template>
     </BasicTable>
-    <NoticePreviewDrawer @register="registerNoticePreviewDrawer" @success="handleSuccess" />
-    <NoticeInputDrawer @register="registerNoticeInputDrawer" @success="handleSuccess" />
-  </Page>
+    <NoticePreviewDrawer ref="noticePreviewDrawerRef" @success="handleSuccess" />
+    <NoticeInputDrawer ref="noticeInputDrawerRef" @success="handleSuccess" />
+  </ColPage>
 </template>
 <script lang="ts" setup>
   import { onMounted, ref, reactive, unref } from 'vue';
@@ -58,7 +70,6 @@
   import type {VxeGridProps} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
-  import {ColPage} from '@vben/common-ui';
   import {TableAction} from '#/components/table-action';
   // import { BasicTable, useTable, TableAction } from '#/components/Table';
   // import { useModal } from '#/components/Modal';
@@ -84,11 +95,11 @@
   import { getPublishStatus } from '#/api/portal/cms/news';
   // import { PopConfirmButton } from '#/components/Button';
   import { PerEnum } from '#/enums/perEnum';
-  import {Page} from '@vben/common-ui';
+  import {Page, ColPage} from '@vben/common-ui';
 
 
   const PerPrefix = 'Notice:';
-
+const noticeInputDrawerRef = ref();
   const treeData = ref<TreeItem[]>([]);
   const searchInfo = reactive<Recordable>({});
   const allPublishBoardMap = ref({});
@@ -173,7 +184,7 @@
 
   onMounted(async () => {
     fetchCategory();
-    const { getFieldsValue, updateSchema } = tableApi.formApi();
+    const { getFieldsValue, updateSchema } = tableApi.formApi;
     const allPublishBoard = await getAllBoard({ type: 1 });
     const allPublishStatus = await getPublishStatus();
     // 将发布版块转换成Map
@@ -295,7 +306,12 @@
   }
 
   function handleCreate() {
-    openNoticeInputDrawer(true, { id: '' });
+    noticeInputDrawerRef.value.setData( { id: '' });
+    noticeInputDrawerRef.value.open();
+    noticeInputDrawerRef.value.setState({
+      title: `新增公文`,
+    });
+    /*openNoticeInputDrawer(true, { id: '' });
 
     setNoticeInputDrawerProps({
       title: `新增公文`,
@@ -305,7 +321,7 @@
       showOkBtn: false,
       destroyOnClose: true,
       maskClosable: false,
-    });
+    });*/
   }
   function handleSync() {
     syncLoading.value = true;
@@ -314,7 +330,13 @@
     });
   }
   function handleEdit(record: Recordable) {
-    openNoticeInputDrawer(true, { id: record.id });
+    noticeInputDrawerRef.value.setData( { id: record.id });
+    noticeInputDrawerRef.value.open();
+    noticeInputDrawerRef.value.setState({
+      title: `编辑公文 - ${record.title}`,
+    });
+
+   /* openNoticeInputDrawer(true, { id: record.id });
 
     setNoticeInputDrawerProps({
       title: `编辑公文 - ${record.title}`,
@@ -324,7 +346,7 @@
       showOkBtn: false,
       destroyOnClose: true,
       maskClosable: false,
-    });
+    });*/
   }
 
   async function handleDelete(record: Recordable) {
@@ -342,4 +364,6 @@
   async function fetchCategory() {
     treeData.value = await getAllNoticeCategory({ status: true });
   }
+</script>
+<script setup lang="ts">
 </script>
