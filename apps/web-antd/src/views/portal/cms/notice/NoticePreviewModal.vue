@@ -1,5 +1,5 @@
 <template>
-  <BasicModal >
+  <BasicModal class="w-1/2">
     <div class="notice-wrapper">
       <div v-if="noticeTitle" class="notice-red-title" v-html="noticeTitle.titleSvg"></div>
 
@@ -29,8 +29,8 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref } from 'vue';
-  import { BasicModal, useModalInner } from '#/components/Modal';
+  import { ref, computed, unref, defineExpose } from 'vue';
+  // import { BasicModal, useModalInner } from '#/components/Modal';
   import { getNoticeById } from '#/api/portal/cms/notice';
   import { getNoticeTitleById } from '#/api/portal/cms/noticeTitle';
   import { getNoticeSubjectById } from '#/api/portal/cms/noticeSubject';
@@ -38,6 +38,7 @@
   // import {getAllCommonFile} from "#/api/portal/cms/commonFile";
   import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
+
   import {formSchema} from "#/views/portal/cms/banner/banner.data";
   const noticeInfo = ref({});
   const noticeFiles = ref({});
@@ -56,23 +57,22 @@
     wrapperClass: 'grid-cols-1',
   });
 
-  const [BasicModal, modalApi] = useVbenModal({
-    draggable: true,
+  const [BasicDrawer, drawerApi] = useVbenDrawer({
     onCancel() {
-      modalApi.close();
+      drawerApi.close();
     },
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
-        const values = modalApi.getData<Record<string, any>>();
+        const values = drawerApi.getData<Record<string, any>>();
         if (values) {
-          formApi.setValues(values);
-          modalApi.setState({loading: false, confirmLoading: false});
+          // const params = JSON.stringify(JSON.parse(values.params), null, 2)
+          // formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});
+          drawerApi.setState({loading: false, confirmLoading: false});
         }
       }
     },
     onConfirm() {
-      // await formApi.submitForm();
-      handleSubmit();
+      // handleSubmit();
     },
   });
 
@@ -119,6 +119,7 @@
       };
     },
   });*/
+  defineExpose(drawerApi)
 </script>
 
 <style lang="less" scoped>

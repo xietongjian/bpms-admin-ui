@@ -55,7 +55,7 @@
       if (isOpen) {
         const values = drawerApi.getData<Record<string, any>>();
         if (values) {
-          const tempValues = JSON.stringify(JSON.parse(values))
+          const tempValues = JSON.parse(JSON.stringify(values))
 
           formApi.setValues(tempValues);
           // formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});

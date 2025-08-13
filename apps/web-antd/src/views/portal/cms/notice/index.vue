@@ -99,7 +99,7 @@
 
 
   const PerPrefix = 'Notice:';
-const noticeInputDrawerRef = ref();
+const noticeInputDrawerRef = ref(), noticePreviewDrawerRef = ref();
   const treeData = ref<TreeItem[]>([]);
   const searchInfo = reactive<Recordable>({});
   const allPublishBoardMap = ref({});
@@ -222,7 +222,12 @@ const noticeInputDrawerRef = ref();
   });
 
   function handlePreview(record: Recordable) {
-    // 预览前获取数据传入预览方法
+    noticePreviewDrawerRef.value.setData();
+    noticePreviewDrawerRef.value.open();
+    noticePreviewDrawerRef.value.setState(
+        {title: `预览 - ${record.title}`,}
+    );
+    /*// 预览前获取数据传入预览方法
     openNoticePreviewDrawer(true, {
       isTemp: false,
       record,
@@ -234,7 +239,7 @@ const noticeInputDrawerRef = ref();
       showOkBtn: false,
       showCancelBtn: true,
       cancelText: '关闭',
-    });
+    });*/
   }
 
   function handleSelect(categoryId) {
@@ -306,7 +311,7 @@ const noticeInputDrawerRef = ref();
   }
 
   function handleCreate() {
-    noticeInputDrawerRef.value.setData( { id: '' });
+    noticeInputDrawerRef.value.setData({ id: '' });
     noticeInputDrawerRef.value.open();
     noticeInputDrawerRef.value.setState({
       title: `新增公文`,

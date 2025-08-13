@@ -1,5 +1,5 @@
 <template>
-  <BasicDrawer v-bind="$attrs" width="50%" showFooter>
+  <BasicDrawer class="w-1/2">
     <div class="notice-wrapper">
       <h1 class="notice-title">{{ newsInfo?.title }}</h1>
 
@@ -29,7 +29,7 @@
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref } from 'vue';
+  import { ref, computed, unref, defineExpose } from 'vue';
   // import { BasicDrawer, useDrawerInner } from '#/components/Drawer';
   import { formatToDate } from '#/utils/dateUtil';
   import { getNewsById } from '#/api/portal/cms/news';
@@ -48,7 +48,7 @@
       if (isOpen) {
         const values = drawerApi.getData<Record<string, any>>();
         if (values) {
-          const params = JSON.stringify(JSON.parse(values.params), null, 2)
+          // const params = JSON.stringify(JSON.parse(values.params), null, 2)
           // formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});
           drawerApi.setState({loading: false, confirmLoading: false});
         }
@@ -88,6 +88,7 @@
       };
     },
   });*/
+  defineExpose(drawerApi);
 </script>
 <!--<style lang="less">
   .table-cell-class{

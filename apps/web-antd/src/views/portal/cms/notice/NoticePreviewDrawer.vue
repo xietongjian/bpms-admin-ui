@@ -45,7 +45,7 @@
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
-  import { ref, unref } from 'vue';
+  import { ref, unref, defineExpose } from 'vue';
   // import { BasicDrawer, useDrawerInner } from '#/components/Drawer';
   import { getNoticeById } from '#/api/portal/cms/notice';
   import { getNoticeTitleById } from '#/api/portal/cms/noticeTitle';
@@ -54,16 +54,15 @@
   // import {getAllCommonFile} from "#/api/portal/cms/commonFile";
   // import { useUserStore } from '#/store/modules/user';
   import { Row, Col } from 'ant-design-vue';
-  import {useVbenModal, useVbenDrawer} from '@vben/common-ui';
-  import {useVbenForm} from '#/adapter/form';
+  import {useVbenDrawer} from '@vben/common-ui';
+  // import {useVbenForm} from '#/adapter/form';
   const noticeInfo = ref({});
   const noticeFiles = ref({});
   const noticeTitle = ref({});
   const noticeSubject = ref({});
+  const userInfo = ref({});
   // const userStore = useUserStore();
   // const { userInfo } = userStore;
-  // console.log(userInfo);
-
 
   const [BasicDrawer, drawerApi] = useVbenDrawer({
     onCancel() {
@@ -73,8 +72,8 @@
       if (isOpen) {
         const values = drawerApi.getData<Record<string, any>>();
         if (values) {
-          const params = JSON.stringify(JSON.parse(values.params), null, 2)
-          formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});
+          // const params = JSON.stringify(JSON.parse(values.params), null, 2)
+          // formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});
           drawerApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -112,7 +111,7 @@
       // });
     }
   });*/
-
+  defineExpose(drawerApi)
 </script>
 
 <style lang="less" scoped>

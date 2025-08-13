@@ -207,7 +207,15 @@
   });
 
   function handlePreview(record: Recordable) {
-    // 预览前获取数据传入预览方法
+    newsPreviewDrawerRef.value.setData();
+    newsPreviewDrawerRef.value.open();
+    newsPreviewDrawerRef.value.setState(
+        {
+          title: `预览 - ${record.title}`,
+        }
+    );
+
+    /*// 预览前获取数据传入预览方法
     openNewsPreviewDrawer(true, {
       isTemp: false,
       record,
@@ -219,7 +227,7 @@
       showOkBtn: false,
       showCancelBtn: true,
       cancelText: '关闭',
-    });
+    });*/
   }
 
   function handleCreate() {
