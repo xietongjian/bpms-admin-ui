@@ -1,18 +1,16 @@
 <template>
-  <BasicModal >
+  <BasicModal class="w-100">
     <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref,defineExpose } from 'vue';
-  import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
+  import {ref, computed, unref, defineExpose, defineEmits} from 'vue';
+  import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import { formSchema } from './noticeTitle.data';
   import { insert, update, checkEntityExist } from '#/api/portal/cms/noticeTitle';
 
-  // import { CheckExistParams } from '#/api/model/baseModel';
-
-  const isUpdate = ref(true);
+  const emit = defineEmits(['success'])
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
@@ -96,8 +94,6 @@
     }
   });*/
 
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
-
   async function handleSubmit() {
     try {
       const {valid} = await formApi.validate();
@@ -119,14 +115,5 @@
     }
   }
 
-
-  /*export default defineComponent({
-    name: 'NoticeTitleModal',
-    components: { BasicModal, BasicForm },
-    emits: ['success', 'register'],
-    setup(_, { emit }) {
-
-      return { registerModal, registerForm, getTitle, handleSubmit };
-    },
-  });*/
+  defineExpose(modalApi)
 </script>

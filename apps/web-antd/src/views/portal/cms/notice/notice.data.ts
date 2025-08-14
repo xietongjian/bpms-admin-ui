@@ -15,7 +15,6 @@ export const columns: VxeGridProps['columns'] = [
     title: '标题',
     field: 'title',
     minWidth: 200,
-    width: 400,
     align: 'left',
     resizable: true,
   },
@@ -102,12 +101,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入关键字',
     },
     labelWidth: 70,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   // {
   //   fieldName: 'categoryId',
@@ -130,12 +123,6 @@ export const searchFormSchema: FormSchema[] = [
       params: { status: 1 },
     },
     labelWidth: 70,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   {
     fieldName: 'publishStatus',
@@ -145,12 +132,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请选择发布状态',
     },
     labelWidth: 70,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   /*{
     fieldName: 'publishBoard',
@@ -180,49 +161,42 @@ export const baseFormSchema: FormSchema[] = [
   {
     fieldName: 'title',
     label: '标题',
-    required: true,
     component: 'Input',
-    show: true,
-    colProps: {
-      span: 20,
-    },
     componentProps: {
-      maxlength: 256,
       autocomplete: 'off',
     },
+    rules: z
+        .string({
+          required_error: '标题不能为空！'
+        })
+        .trim()
+        .min(1, '标题不能为空！')
+        .max(256, '字符长度不能大于256！'),
   },
   {
     fieldName: 'noticeNo',
     label: '发文编号',
-    required: false,
     component: 'Input',
-    show: false,
+    // show: false,
   },
   {
     fieldName: 'categoryId',
     label: '公文类型',
-    required: true,
+    rules: 'selectRequired',
     component: 'ApiTreeSelect',
-    show: true,
-    colProps: {
-      span: 8,
-    },
   },
   {
     fieldName: 'categoryName',
     label: '公文类型名称',
     component: 'Input',
-    show: false,
+    // show: false,
   },
   {
     fieldName: 'subjectId',
     label: '发文主体',
-    required: true,
+    // required: true,
+    rules: 'selectRequired',
     component: 'ApiTreeSelect',
-    show: true,
-    colProps: {
-      span: 8,
-    },
   },
   {
     fieldName: 'subjectName',
@@ -233,14 +207,12 @@ export const baseFormSchema: FormSchema[] = [
   {
     fieldName: 'signerNo',
     label: '签发人',
-    required: false,
     component: 'Input',
     show: false,
   },
   {
     fieldName: 'signerName',
     label: '签发人',
-    required: false,
     component: 'Input',
     ifShow: ({ values }) => {
       return !!values.signerNo;
@@ -256,12 +228,10 @@ export const baseFormSchema: FormSchema[] = [
   {
     fieldName: 'titleId',
     label: '公文套头',
-    required: false,
     component: 'ApiSelect',
     componentProps: {
       api: getAllNoticeTitle,
     },
-    show: true,
     colProps: {
       span: 10,
     },
@@ -269,13 +239,11 @@ export const baseFormSchema: FormSchema[] = [
   {
     fieldName: 'publishRanges',
     label: '发布范围',
-    required: true,
+    rules: 'selectRequired',
     component: 'OrgPersonalSelector',
     componentProps: {
       multiple: true,
     },
-    span: 24,
-    show: true,
     colProps: {
       span: 16,
     },
@@ -283,9 +251,7 @@ export const baseFormSchema: FormSchema[] = [
   {
     fieldName: 'publishTime',
     label: '发布时间',
-    required: false,
     component: 'DatePicker',
-    show: true,
     componentProps: {
       width: '100%',
     },
@@ -299,9 +265,6 @@ export const baseFormSchema: FormSchema[] = [
     label: '内容',
     defaultValue: '',
     // rules: [{ required: true }],
-    colProps: {
-      span: 24,
-    },
     /*render: ({ model, field }) => {
       return h(Tinymce, {
         value: model[field],

@@ -10,8 +10,7 @@
           <Col :span="8"
             >发布时间：{{
               noticeInfo.publishTime || formatToDate(new Date(), 'YYYY-MM-DD HH:mm:ss')
-            }}</Col
-          >
+            }}</Col>
           <Col class="text-right" :span="8">阅读量：{{ noticeInfo.visitCount || 0 }}</Col>
         </Row>
       </div>
@@ -46,7 +45,6 @@
 </template>
 <script lang="ts" setup>
   import { ref, unref, defineExpose } from 'vue';
-  // import { BasicDrawer, useDrawerInner } from '#/components/Drawer';
   import { getNoticeById } from '#/api/portal/cms/notice';
   import { getNoticeTitleById } from '#/api/portal/cms/noticeTitle';
   import { getNoticeSubjectById } from '#/api/portal/cms/noticeSubject';

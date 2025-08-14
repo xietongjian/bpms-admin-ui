@@ -4,26 +4,19 @@
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref, reactive, watch, toRefs, onMounted } from 'vue';
-  // import { BasicModal, useModalInner } from '#/components/Modal';
-  // import { BasicDrawer, useDrawerInner } from '#/components/Drawer';
+  import { ref, computed, unref, reactive, watch, toRefs, onMounted, defineExpose, defineEmits } from 'vue';
   import {useVbenDrawer} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
-  // import { BasicForm, RenderCallbackParams, Rule, useForm } from '#/components/Form';
   import { formSchema } from './banner.data';
   import { insert, update } from '#/api/portal/cms/banner';
   import { getAllBoard } from '#/api/portal/cms/board';
-  import { Checkbox, CheckboxGroup } from 'ant-design-vue';
-  // import { OrgDataType } from '#/components/Selector/src/types';
   import { getAllPublishRange } from '#/api/portal/cms/publishRange';
-  import {apiInfoFormSchema} from "#/views/base/apiInfo/apiInfo.data";
-  // import {getAllKeywords} from "#/api/portal/cms/keywords";
-
+  import { apiInfoFormSchema } from "#/views/base/apiInfo/apiInfo.data";
 
   const isUpdate = ref(true);
   const boardList = ref();
+  const emit = defineEmits(['success'])
 /*
-
   const [
     registerForm,
     { resetFields, updateSchema, getFieldsValue, setFieldsValue, validate },
@@ -67,7 +60,6 @@
       handleSubmit();
     },
   });
-
 
   /*const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     await resetFields();
@@ -132,8 +124,6 @@
     }
     setDrawerProps({ loading: false });
   });*/
-
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 
   async function handleSubmit() {
     try {

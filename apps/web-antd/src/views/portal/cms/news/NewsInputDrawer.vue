@@ -21,19 +21,15 @@
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
-  // import { BasicForm, useForm } from '#/components/Form';
   import { ref, unref, defineEmits, defineExpose } from 'vue';
   import { baseFormSchema } from './news.data';
   import { Space, Button, message } from 'ant-design-vue';
   import { getAllBoard } from '#/api/portal/cms/board';
   import { getNewsById, insert, publish, update } from '#/api/portal/cms/news';
   import NewsPreviewDrawer from './NewsPreviewDrawer.vue';
-  // import { OrgDataType } from '#/components/Selector/src/types';
   import { isEmpty } from '#/utils/is';
-  import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
+  import {useVbenDrawer} from '@vben/common-ui';
   import {useVbenForm} from "#/adapter/form";
-
-  // import { useDrawer, BasicDrawer, useDrawerInner } from '#/components/Drawer';
 
   const emit = defineEmits(['success']);
 

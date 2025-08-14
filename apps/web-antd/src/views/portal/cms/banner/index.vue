@@ -8,7 +8,7 @@
       <template #imgs="{ row }">
         <div class="!h-20 relative">
           <div v-if="row.imgPath">
-            <Image :src="row.imgPath" class="w-full !h-20 object-contain" />
+            <Image :src="row.imgPath" :alt="row.title" class="w-full !h-20 object-contain" />
           </div>
           <span v-else class="">暂无图片</span>
           <p :title="row.title"
@@ -71,7 +71,7 @@
     commonConfig: {
       labelWidth: 60,
     },
-    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
     actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
     actionPosition: 'left',
     actionLayout: 'inline',
@@ -225,7 +225,7 @@
   }
 </script>
 
-<style lang="less">
+<style lang="scss">
   .banner-list-preview {
     width: 100%;
     height: 100px;

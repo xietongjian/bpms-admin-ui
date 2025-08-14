@@ -1,19 +1,14 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-import { h } from 'vue';
-import { Tag } from 'ant-design-vue';
 import { getBoardTypes } from '#/api/portal/cms/board';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
-// import {baseColumns} from "#/utils";
-
 
 export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
     field: 'name',
-    width: 250,
+    minWidth: 250,
     align: 'left',
   },
   {
@@ -33,13 +28,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'status',
     width: 100,
     align: 'center',
-    customRender: ({ record }) => {
-      const status = record.status;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '启用' : '停用';
-      return h(Tag, { color: color }, () => text);
-    },
+    slots: { default: 'status' },
   },
   {
     title: '排序号',
@@ -71,12 +60,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请选择类型',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
   {
     fieldName: 'keyword',
@@ -86,12 +69,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -99,9 +76,11 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: '主键',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'type',
@@ -111,41 +90,35 @@ export const formSchema: FormSchema[] = [
       api: getBoardTypes,
       placeholder: '请选择类型',
     },
-    required: true,
+    rules: 'selectRequired'
   },
   {
     fieldName: 'name',
     label: '名称',
-    required: true,
     component: 'Input',
-    show: true,
-    rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 256,
-        message: '字符长度不能大于256！',
-      },
-    ],
+    rules: z
+        .string({
+          required_error: '名称不能为空！'
+        })
+        .min(1, "名称不能为空！")
+        .max(255, "字符长度不能大于255！"),
   },
   {
     fieldName: 'sn',
     label: '标识',
-    required: true,
     component: 'Input',
-    show: true,
+    rules: z
+        .string({
+          required_error: '名称不能为空！'
+        })
+        .min(1, "名称不能为空！")
+        .max(64, "字符长度不能大于64！"),
   },
-
   {
     fieldName: 'status',
     label: '启用状态',
-    required: false,
     component: 'Switch',
     defaultValue: true,
-    show: true,
     componentProps: {
       checkedChildren: '启用',
       unCheckedChildren: '禁用',
@@ -154,10 +127,8 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
-    required: false,
+    help: '数值越小越靠前！',
     component: 'InputNumber',
-    show: true,
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
       min: OrderNoDefaultEnum.MIN,
@@ -167,15 +138,12 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'remark',
     label: '备注',
-    required: false,
-    component: 'InputTextArea',
-    show: true,
-    rules: [
-      {
-        max: 512,
-        message: '字符长度不能大于512！',
-      },
-    ],
+    component: 'Textarea',
+    rules: z
+        .string()
+        .max(512, "字符长度不能大于512！")
+        .nullish()
+        .optional(),
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,

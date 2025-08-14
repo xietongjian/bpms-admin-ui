@@ -10,18 +10,12 @@
       <template #type="{row}">
         {{ row.type }}
       </template>
+      <template #status="{row}">
+        <Tag :color="row.status === 1 ? 'green' : 'red'">{{ row.status === 1 ? '启用' : '停用' }}</Tag>
+      </template>
       <template #action="{row}">
-        <TableAction
-            :actions="createActions(row)"
-        />
+        <TableAction :actions="createActions(row)" />
       </template>
-
-      <!--      <template #createdByRender="{ record }">
-        <EmpInfo :no="record.createdByNo" :name="record.createdBy" />
-      </template>
-      <template #updatedByRender="{ record }">
-        <EmpInfo :no="record.updatedByNo" :name="record.updatedBy" />
-      </template>-->
     </BasicTable>
     <BoardModal ref="boardModalRef" @success="handleSuccess" />
   </Page>
@@ -33,21 +27,18 @@
   import type {VxeGridProps} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
-  import {ColPage} from '@vben/common-ui';
   import {TableAction} from '#/components/table-action';
   // import { BasicTable, useTable, TableAction } from '#/components/Table';
   // import { useModal } from '#/components/Modal';
   import { columns, searchFormSchema } from './board.data';
   import BoardModal from './BoardModal.vue';
-  import { EmpInfo } from '#/views/components/EmpInfo';
   import { getBoardListByPage, deleteByIds, getBoardTypes } from '#/api/portal/cms/board';
   import { PerEnum } from '#/enums/perEnum';
-  import { Button } from 'ant-design-vue';
+  import { Button, Tag } from 'ant-design-vue';
   import {Page} from '@vben/common-ui';
-  const PerPrefix = 'Board:';
-  // const [registerModal, { openModal }] = useModal();
-  const allBoardTypesMap = ref({});
 
+  const PerPrefix = 'Board:';
+  const allBoardTypesMap = ref({});
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -55,7 +46,7 @@
     commonConfig: {
       labelWidth: 60,
     },
-    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
     actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
     actionPosition: 'left',
     actionLayout: 'inline',

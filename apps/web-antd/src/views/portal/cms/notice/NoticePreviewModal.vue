@@ -45,33 +45,23 @@
   const noticeTitle = ref({});
   const noticeSubject = ref({});
 
-  const [BasicForm, formApi] = useVbenForm({
-    commonConfig: {
-      componentProps: {
-        // class: 'w-full',
-      },
-    },
-    showDefaultActions: false,
-    layout: 'horizontal',
-    schema: formSchema,
-    wrapperClass: 'grid-cols-1',
-  });
 
-  const [BasicDrawer, drawerApi] = useVbenDrawer({
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
     onCancel() {
-      drawerApi.close();
+      modalApi.close();
     },
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
-        const values = drawerApi.getData<Record<string, any>>();
+        const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          // const params = JSON.stringify(JSON.parse(values.params), null, 2)
-          // formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});
-          drawerApi.setState({loading: false, confirmLoading: false});
+          // formApi.setValues(values);
+          modalApi.setState({loading: false, confirmLoading: false});
         }
       }
     },
     onConfirm() {
+      // await formApi.submitForm();
       // handleSubmit();
     },
   });

@@ -20,12 +20,10 @@
 </template>
 <script lang="ts" setup>
   import { computed, ref, unref, defineExpose, defineEmits } from 'vue';
-  import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
+  import { useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import { formSchema } from './newsCategory.data';
-  import { checkEntityExist, insert, update } from '#/api/portal/cms/newsCategory';
-  // import { CheckExistParams } from '#/api/model/baseModel';
-  // import { FormValidPatternEnum } from '#/enums/commonEnum';
+  import { insert, update } from '#/api/portal/cms/newsCategory';
   import { Select, Space, Dropdown } from 'ant-design-vue';
   import { DownOutlined, StopOutlined } from '@ant-design/icons-vue';
 

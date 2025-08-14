@@ -5,9 +5,10 @@
         <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate"> 新增 </Button>
       </template>
       <template #action="{row}">
-        <TableAction
-            :actions="createActions(row)"
-        />
+        <TableAction :actions="createActions(row)" />
+      </template>
+      <template #status="{row}">
+        <Tag :color="row.status === 1 ? 'green' : 'red'">{{ row.status === 1 ? '启用' : '停用' }}</Tag>
       </template>
       <template #signerNameRender="{ row }">
         <EmpInfo :no="row.signerNo" :name="row.signerName" />
@@ -35,15 +36,13 @@
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {TableAction} from '#/components/table-action';
-  // import { BasicTable, useTable, TableAction } from '#/components/Table';
-  // import { useModal } from '#/components/Modal';
   import { columns, searchFormSchema } from './noticeCategory.data';
   import NoticeCategoryModal from './NoticeCategoryModal.vue';
   import { getAllNoticeCategory, deleteByIds } from '#/api/portal/cms/noticeCategory';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { findPath, findPathAll } from '#/utils/helper/treeHelper';
   import { PerEnum } from '#/enums/perEnum';
-  import {Button, message} from 'ant-design-vue';
+  import {Button, message, Tag} from 'ant-design-vue';
   import {Page} from '@vben/common-ui';
 
   const PerPrefix = 'NoticeCategory:';
@@ -56,7 +55,7 @@
     commonConfig: {
       labelWidth: 60,
     },
-    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
     actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
     actionPosition: 'left',
     actionLayout: 'inline',

@@ -1,7 +1,7 @@
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
+import { OrderNoDefaultEnum, RemarkDefaultEnum, FormValidPatternEnum } from '#/enums/commonEnum';
 import { checkEntityExist } from '#/api/base/category';
 
 export const columns: VxeGridProps['columns'] = [
@@ -118,7 +118,7 @@ export const formSchema: FormSchema[] = [
             })
             .min(1, "编码不能为空！")
             .max(30, '字符长度不能大于30！')
-            .regex(new RegExp('^[a-zA-Z_]{1,}[0-9a-zA-Z_]{1,}$'), '请输入英文或数字且以英文或下划线开头！')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！')
             .refine(
                 async (e) => {
                   let result = false;

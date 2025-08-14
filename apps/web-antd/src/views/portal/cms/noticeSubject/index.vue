@@ -18,13 +18,17 @@
       <template #signerName="{ row }">
         <EmpInfo :no="row.signerNo" :name="row.signerName" />
       </template>
-      <!--      <template #logoRender="{ record }">
+      <template #status="{row}">
+        <Tag :color="row.status === 1 ? 'green' : 'red'">{{ row.status === 1 ? '启用' : '停用' }}</Tag>
+      </template>
+      <!--
+      <template #logoRender="{ record }">
         <div class="banner-list-preview">
           <TableImg :showBadge="false" :simpleShow="true" :imgList="[record.logo]"/>
         </div>
       </template>-->
-      <!--
 
+      <!--
       <template #createdByRender="{ record }">
         <EmpInfo :no="record.createdByNo" :name="record.createdBy" />
       </template>
@@ -49,7 +53,7 @@
   import { deleteByIds, getAllNoticeSubject } from '#/api/portal/cms/noticeSubject';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { PerEnum } from '#/enums/perEnum';
-  import {Button, Image, message} from 'ant-design-vue';
+  import {Button, Image, message, Tag} from 'ant-design-vue';
   import {Page} from '@vben/common-ui';
 
   const PerPrefix = 'NoticeSubject:';
@@ -62,7 +66,7 @@
     commonConfig: {
       labelWidth: 60,
     },
-    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
     actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
     actionPosition: 'left',
     actionLayout: 'inline',

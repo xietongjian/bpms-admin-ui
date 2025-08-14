@@ -7,8 +7,7 @@ import { Tag } from 'ant-design-vue';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
 // import { optionsListApi } from '#/api/demo/select';
 import { getAllBoard } from '#/api/portal/cms/board';
-import { uploadApi } from '#/api/sys/upload';
-// import {baseColumns} from "#/utils"
+import {uploadFile} from "#/api/core/upload";
 
 
 // 各频道的Banner尺寸提示
@@ -95,15 +94,9 @@ export const searchFormSchema: FormSchema[] = [
     label: '关键字',
     component: 'Input',
     componentProps: {
-      placeholder: '请输入名称',
+      placeholder: '请输入关键字',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -111,66 +104,67 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: '主键',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      triggerFields: ['id'],
+      show: false,
+    }
   },
-  /*{
-    fieldName: 'publishBoard',
-    label: '发布版块',
-    component: 'ApiRadioGroup',
+  {
+    component: 'ApiSelect',
+    // 对应组件的参数
     componentProps: {
+      class: 'w-full',
       api: getAllBoard,
       params: {
         type: 3,
       },
-      resultField: 'list',
-      // use name as label
-      labelField: 'name',
-      // use id as value
-      valueField: 'id',
     },
-    show: true,
-    colProps: {
-      span: 24,
-    },
-  },*/
+    // 字段名
+    fieldName: 'publishBoard',
+    // 界面显示的label
+    label: '发布版块',
+    rules: 'selectRequired'
+  },
   {
+    component: 'Upload',
+    componentProps: {
+      // 更多属性见：https://ant.design/components/upload-cn
+      accept: '.png,.jpg,.jpeg',
+      // 自动携带认证信息
+      customRequest: uploadFile,
+      disabled: false,
+      maxCount: 1,
+      multiple: false,
+      showUploadList: true,
+      // 上传列表的内建样式，支持四种基本样式 text, picture, picture-card 和 picture-circle
+      listType: 'picture',
+    },
     fieldName: 'imgPath',
     label: '上传图片',
-    required: true,
-    component: 'Upload',
-    show: true,
-    componentProps: ({ formModel }) => {
+    renderComponentContent: () => {
       return {
-        api: uploadApi,
-        name: 'file',
-        listType: 'picture-card',
-        className: 'banner-view',
-        maxSize: 1,
-        maxNumber: 1,
-        multiple: false,
-        // helpText: bannerImgHelpMsgObj[formModel.publishBoard],
+        default: () => '请选择图片',
       };
     },
+    wrapperClass: `
+      [&_.ant-upload-wrapper]:min-h-40
+      [&_.ant-upload-wrapper]:border
+      [&_.ant-upload-wrapper]:w-full
+    `,
+    rules: 'required',
   },
+
   {
     fieldName: 'title',
     label: '标题',
-    required: true,
     component: 'Input',
-    show: true,
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '标题不能为空！',
-      },
-      {
-        max: 260,
-        message: '字符长度不能大于260！',
-      },
-    ],*/
+    rules: z
+        .string({
+          required_error: '标题不能为空！'
+        })
+        .min(1, "标题不能为空！")
+        .max(255, "字符长度不能大于255！"),
     componentProps: {
       autocomplete: 'off',
     },
@@ -178,15 +172,12 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'shortContent',
     label: '简介',
-    required: false,
     component: 'Textarea',
-    show: true,
-    /*rules: [
-      {
-        max: 1024,
-        message: '字符长度不能大于1024！',
-      },
-    ],*/
+    rules: z
+        .string()
+        .max(1024, "字符长度不能大于1024！")
+        .nullish()
+        .optional(),
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
@@ -209,16 +200,14 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'linkUrl',
     label: '跳转链接',
-    required: false,
     component: 'Input',
-    show: true,
-    colProps: { span: 16 },
-    /*rules: [
-      {
-        type: 'url',
-        message: '请输入正确的链接地址！',
-      },
-    ],*/
+    rules: z
+        .string()
+        .max(255, "字符长度不能大于255！")
+        .regex(new RegExp(FormValidPatternEnum.URL), "请输入正确的URL地址")
+        .nullish()
+        .optional(),
+    // colProps: { span: 16 },
     componentProps: {
       placeholder: 'https://xxx.xxx.com/xxxx',
     },
@@ -226,10 +215,8 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'linkType',
     label: ' ',
-    required: false,
     component: 'RadioGroup',
     defaultValue: 1,
-    show: true,
     componentProps: {
       options: [
         {
@@ -242,15 +229,14 @@ export const formSchema: FormSchema[] = [
         },
       ],
     },
-    colProps: { span: 8 },
+    // colProps: { span: 8 },
     labelWidth: 10,
   },
   {
     fieldName: 'publishRanges',
     label: '发布范围',
-    required: true,
+    rules: 'selectRequired',
     component: 'OrgSelector',
-    show: true,
     componentProps: {
       multiple: true,
     },
@@ -258,10 +244,8 @@ export const formSchema: FormSchema[] = [
   /*{
     fieldName: 'posterUploader',
     label: '上传海报',
-    required: false,
     component: 'UploadFile',
     helpMessage:'上传长图',
-    show: true,
     componentProps: {
       className: 'banner-view',
       maxSize: 10,
@@ -272,17 +256,13 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'validTimeRange',
     label: '生效时间',
-    required: false,
     component: 'RangePicker',
-    show: true,
   },
   {
     fieldName: 'status',
     label: '启用状态',
-    required: false,
     component: 'Switch',
     defaultValue: true,
-    show: true,
     componentProps: {
       checkedChildren: '启用',
       unCheckedChildren: '禁用',
@@ -291,11 +271,8 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'orderNo',
     label: '排序号',
-    colProps: { span: 9 },
-    helpMessage: '数值越小越靠前！',
-    required: false,
+    help: '数值越小越靠前！',
     component: 'InputNumber',
-    show: true,
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
       min: OrderNoDefaultEnum.MIN,

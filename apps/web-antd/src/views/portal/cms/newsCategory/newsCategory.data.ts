@@ -2,8 +2,6 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-import { h } from 'vue';
-import { Tag } from 'ant-design-vue';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
 
 export const columns: VxeGridProps['columns'] = [
@@ -12,13 +10,12 @@ export const columns: VxeGridProps['columns'] = [
     field: 'name',
     minWidth: 200,
     align: 'left',
-    slots: { customRender: 'nameRender' },
+    slots: { default: 'name' },
     resizable: true,
   },
   {
     title: '标识',
     field: 'sn',
-    width: 100,
     align: 'left',
   },
   {
@@ -26,24 +23,17 @@ export const columns: VxeGridProps['columns'] = [
     field: 'status',
     width: 80,
     align: 'center',
-    customRender: ({ record }) => {
-      const status = record.status;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '启用' : '停用';
-      return h(Tag, { color: color }, () => text);
-    },
+    slots: {default: 'status'},
   },
   {
     title: '排序号',
     field: 'orderNo',
     width: 80,
-    align: 'left',
+    align: 'right',
   },
   {
     title: '备注',
     field: 'remark',
-    width: 200,
     align: 'left',
   },
   {
@@ -64,12 +54,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称',
     },
     labelWidth: 60,
-    colProps: {
-      span: 6,
-      lg: { span: 6, offset: 0 },
-      sm: { span: 10, offset: 0 },
-      xs: { span: 16, offset: 0 },
-    },
   },
 ];
 
@@ -77,54 +61,56 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: '主键',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
-    required: true,
     component: 'Input',
-    show: true,
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 256,
-        message: '字符长度不能大于256！',
-      },
-    ],*/
+    rules: z
+        .string({
+          required_error: '名称不能为空！'
+        })
+        .trim()
+        .min(1, '名称不能为空！')
+        .max(256, '字符长度不能大于256！'),
   },
   {
     fieldName: 'sn',
     label: '标识',
-    required: true,
     component: 'Input',
-    show: true,
+    rules: z
+        .string({
+          required_error: "编码不能为空！"
+        })
+        .min(1, "编码不能为空！")
+        .max(30, '字符长度不能大于30！')
+        .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！'),
   },
   {
     fieldName: 'style',
     label: '样式',
     component: 'Input',
     slot: 'styleRenderSlot',
-    show: true,
   },
   {
     fieldName: 'pid',
     label: '父级分类ID',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['pid']
+    }
   },
   {
     fieldName: 'status',
     label: '启用状态',
     component: 'Switch',
     defaultValue: true,
-    show: true,
     componentProps: {
       checkedChildren: '启用',
       unCheckedChildren: '禁用',
@@ -133,9 +119,8 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
+    help: '数值越小越靠前！',
     component: 'InputNumber',
-    show: true,
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
       min: OrderNoDefaultEnum.MIN,
@@ -145,14 +130,12 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'remark',
     label: '备注',
-    component: 'InputTextArea',
-    show: true,
-    /*rules: [
-      {
-        max: 512,
-        message: '字符长度不能大于512！',
-      },
-    ],*/
+    component: 'Textarea',
+    rules: z
+        .string()
+        .max(512, "字符长度不能大于512！")
+        .nullish()
+        .optional(),
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,

@@ -5,9 +5,17 @@
         <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>
       <template #action="{row}">
-        <TableAction
-            :actions="createActions(row)"
-        />
+        <TableAction :actions="createActions(row)" />
+      </template>
+      <template #status="{row}">
+        <Tag :color="row.status === 1 ? 'green' : 'red'">{{ row.status === 1 ? '启用' : '停用' }}</Tag>
+      </template>
+      <template #name="{ row }">
+        <span class="color-block" :style="{background: row.style}">
+          &nbsp;
+        </span>
+        &nbsp;
+        <span>{{row.name}}</span>
       </template>
 
       <!--      <template #createdByRender="{ record }">
@@ -43,7 +51,7 @@
   import { deleteByIds, getAllNewsCategory } from '#/api/portal/cms/newsCategory';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { PerEnum } from '#/enums/perEnum';
-  import {Button, message} from 'ant-design-vue';
+  import {Button, message, Tag} from 'ant-design-vue';
   import {Page} from '@vben/common-ui';
 
   const PerPrefix = 'NewsCategory:';
@@ -55,7 +63,7 @@
     commonConfig: {
       labelWidth: 60,
     },
-    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
     actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
     actionPosition: 'left',
     actionLayout: 'inline',

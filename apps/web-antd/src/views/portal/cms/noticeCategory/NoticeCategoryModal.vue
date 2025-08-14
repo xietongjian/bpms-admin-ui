@@ -26,13 +26,9 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref,defineExpose } from 'vue';
-  // import { BasicModal, useModalInner } from '#/components/Modal';
-  // import { BasicForm, Rule, useForm } from '#/components/Form';
+  import { ref, computed, unref, defineExpose, defineEmits } from 'vue';
   import { formSchema } from './noticeCategory.data';
   import { insert, update, checkEntityExist } from '#/api/portal/cms/noticeCategory';
-  // import { CheckExistParams } from '#/api/model/baseModel';
-  // import { FormValidPatternEnum } from '#/enums/commonEnum';
   import { Select, Space, Dropdown } from 'ant-design-vue';
   import { DownOutlined, StopOutlined } from '@ant-design/icons-vue';
   import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
@@ -177,8 +173,6 @@
     }
   });*/
 
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
-
   async function handleSubmit() {
     try {
       const {valid} = await formApi.validate();
@@ -216,16 +210,6 @@
     }
   }
 
-
-  /*  export default defineComponent({
-      name: 'NoticeCategoryModal',
-      components: { BasicModal, BasicForm, Dropdown, DownOutlined, Space, StopOutlined },
-      emits: ['success', 'register'],
-      setup(_, { emit }) {
-
-        return { registerModal, registerForm, getTitle, handleSubmit, colorList };
-      },
-    });*/
   defineExpose(modalApi);
 </script>
 

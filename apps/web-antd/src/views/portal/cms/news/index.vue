@@ -32,7 +32,8 @@
         <TableAction :actions="createActions(row)" />
       </template>
 
-      <template #publishStatusRender="{ row }">
+      <template #publishStatusName="{ row }">
+        {{row.publishStatusName}}
         <!--        <Tag :color="StatusTagColor[record.publishStatus]?.color">{{publishStatusMap[record?.publishStatus]}}</Tag>-->
       </template>
 
@@ -78,7 +79,6 @@
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { PerEnum } from '#/enums/perEnum';
   import {Button, message} from 'ant-design-vue';
-  import {Page} from '@vben/common-ui';
 
   const PerPrefix = 'News:';
   const newsPreviewDrawerRef = ref(),newsInputDrawerRef = ref();
@@ -105,7 +105,7 @@
     commonConfig: {
       labelWidth: 60,
     },
-    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
     actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
     actionPosition: 'left',
     actionLayout: 'inline',

@@ -5,21 +5,22 @@
         <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate"> 新增 </Button>
       </template>
       <template #action="{row}">
-        <TableAction
-            :actions="createActions(row)"
-        />
+        <TableAction :actions="createActions(row)" />
       </template>
-
-      <!--      <template #titleRender="{ record }">
+      <template #status="{row}">
+        <Tag :color="row.status === 1 ? 'green' : 'red'">{{ row.status === 1 ? '启用' : '停用' }}</Tag>
+      </template>
+      <template #title="{ row }">
         <Popover placement="right">
           <template #content>
             <div class="title-svg-render">
-              <p v-html="record.titleSvg"></p>
+              <p v-html="row.titleSvg"></p>
             </div>
           </template>
-          {{record.title}}
+          {{row.title}}
         </Popover>
       </template>
+      <!--
       <template #createdByRender="{ record }">
         <EmpInfo :no="record.createdByNo" :name="record.createdBy" />
       </template>
@@ -35,14 +36,12 @@
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps} from '#/adapter/vxe-table';
-
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {TableAction} from '#/components/table-action';
-  import { Popover, Button, message } from 'ant-design-vue';
+  import {Popover, Button, message, Tag} from 'ant-design-vue';
   import { columns, searchFormSchema } from './noticeTitle.data';
   import NoticeTitleModal from './NoticeTitleModal.vue';
   import { getNoticeTitleListByPage, deleteByIds } from '#/api/portal/cms/noticeTitle';
-  import { EmpInfo } from '#/views/components/EmpInfo';
   import { PerEnum } from '#/enums/perEnum';
   import {Page} from '@vben/common-ui';
 
@@ -55,7 +54,7 @@
     commonConfig: {
       labelWidth: 60,
     },
-    wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
     actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
     actionPosition: 'left',
     actionLayout: 'inline',
@@ -149,7 +148,7 @@
     });
   }
 
-  function handleEdit(record: Recordable) {
+  function handleEdit(record: Recordable<any>) {
     noticeTitleModalRef.value.setData(record);
     noticeTitleModalRef.value.open();
     noticeTitleModalRef.value.setState({
@@ -157,7 +156,7 @@
     });
   }
 
-  async function handleDelete(record: Recordable) {
+  async function handleDelete(record: Recordable<any>) {
     const {success, msg} = await deleteByIds([record.id]);
     if(success){
       message.success(msg);
@@ -168,27 +167,9 @@
   function handleSuccess() {
     tableApi.reload();
   }
-
-  /*export default defineComponent({
-    name: 'NoticeTitle',
-    components: { BasicTable, TableAction, NoticeTitleModal, Popover, Authority, EmpInfo },
-    setup() {
-
-
-      return {
-        registerTable,
-        registerModal,
-        handleCreate,
-        handleEdit,
-        handleDelete,
-        handleSuccess,
-        PerEnum,
-      };
-    },
-  });*/
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .title-svg-render {
     width: 570px;
     height: 100px;

@@ -30,7 +30,6 @@
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref, defineExpose } from 'vue';
-  // import { BasicDrawer, useDrawerInner } from '#/components/Drawer';
   import { formatToDate } from '#/utils/dateUtil';
   import { getNewsById } from '#/api/portal/cms/news';
   // import {getAllArticleComment} from "#/api/portal/cms/articleComment";
@@ -96,7 +95,7 @@
   }
 </style>-->
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .notice-wrapper {
     margin: auto;
     .notice-red-title {

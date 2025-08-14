@@ -1,12 +1,12 @@
 <template>
   <BasicDrawer class="w-1/2">
-    <a-card size="small" title="基础数据" :bordered="false" body-style="background: white;">
+    <Card size="small" title="基础数据" :bordered="false" body-style="background: white;">
       <BasicForm/>
-    </a-card>
+    </Card>
 
-    <a-card size="small" title="附件设置" :bordered="false" class="!mt-5">
+    <Card size="small" title="附件设置" :bordered="false" class="!mt-5">
       <NoticeFileTable ref="tableRef" />
-    </a-card>
+    </Card>
 
     <template #insertFooter>
       <Space>

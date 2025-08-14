@@ -4,7 +4,7 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref,defineExpose } from 'vue';
+  import { ref, computed, unref,defineExpose, defineEmits } from 'vue';
   // import { BasicModal, useModalInner } from '#/components/Modal';
   // import { BasicForm, Rule, useForm } from '#/components/Form';
   import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
@@ -16,6 +16,7 @@
   import { FormValidPatternEnum } from '#/enums/commonEnum';
 
   const isUpdate = ref(true);
+  const emit = defineEmits(['success'])
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
@@ -165,4 +166,6 @@
       return { registerModal, registerForm, getTitle, handleSubmit };
     },
   });*/
+
+  defineExpose(modalApi);
 </script>

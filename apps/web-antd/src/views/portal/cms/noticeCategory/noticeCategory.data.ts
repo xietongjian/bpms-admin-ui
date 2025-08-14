@@ -2,10 +2,7 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-import { h } from 'vue';
-import { Tag } from 'ant-design-vue';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
-// import {baseColumns} from "#/utils";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -13,7 +10,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'name',
     minWidth: 200,
     align: 'left',
-    slots: { customRender: 'nameRender' },
+    slots: { default: 'nameRender' },
     resizable: true,
   },
   {
@@ -57,24 +54,18 @@ export const columns: VxeGridProps['columns'] = [
     field: 'signerName',
     width: 100,
     align: 'left',
-    slots: { customRender: 'signerNameRender' },
+    slots: { default: 'signerNameRender' },
   },
   {
     title: '启用状态',
     field: 'status',
     width: 100,
     align: 'center',
-    customRender: ({ record }) => {
-      const enable = record.status;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '启用' : '停用';
-      return h(Tag, { color: color }, () => text);
-    },
+    slots: {default: 'status'},
   },
   {
     title: '备注',
     field: 'remark',
-    width: 100,
     align: 'left',
   },
   {
@@ -95,12 +86,6 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请输入名称',
     },
     labelWidth: 60,
-    // colProps: {
-    //   span: 6,
-    //   lg: { span: 6, offset: 0 },
-    //   sm: { span: 10, offset: 0 },
-    //   xs: { span: 16, offset: 0 },
-    // },
   },
 ];
 
@@ -108,58 +93,58 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'id',
     label: '主键',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
   },
   {
     fieldName: 'pid',
     label: '父级ID',
-    required: false,
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['pid']
+    }
   },
   {
     fieldName: 'name',
     label: '名称',
-    required: true,
     component: 'Input',
-    show: true,
-    /*rules: [
-      {
-        required: true,
-        whitespace: true,
-        message: '名称不能为空！',
-      },
-      {
-        max: 260,
-        message: '字符长度不能大于260！',
-      },
-    ],*/
+    rules: z
+        .string({
+          required_error: '名称不能为空！'
+        })
+        .trim()
+        .min(1, '名称不能为空！')
+        .max(256, '字符长度不能大于256！'),
   },
   {
     fieldName: 'sn',
     label: '标识',
-    required: true,
     component: 'Input',
-    show: true,
+    rules: z
+        .string({
+          required_error: '标识不能为空！'
+        })
+        .trim()
+        .min(1, '标识不能为空！')
+        .max(256, '字符长度不能大于256！')
+        .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！'),
   },
   {
     fieldName: 'style',
     label: '样式',
-    required: false,
     component: 'Input',
     slot: 'styleRenderSlot',
-    show: true,
   },
   {
     fieldName: 'haveSigner',
     label: '是否有签发人',
     colProps: { span: 6 },
-    required: false,
     component: 'Switch',
     defaultValue: false,
-    show: true,
     componentProps: {
       checkedChildren: '是',
       unCheckedChildren: '否',
@@ -212,10 +197,8 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'status',
     label: '启用状态',
-    required: false,
     component: 'Switch',
     defaultValue: true,
-    show: true,
     componentProps: {
       checkedChildren: '启用',
       unCheckedChildren: '禁用',
@@ -224,13 +207,8 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'orderNo',
     label: '排序号',
-    helpMessage: '数值越小越靠前！',
-    required: false,
+    help: '数值越小越靠前！',
     component: 'InputNumber',
-    show: true,
-    colProps: {
-      span: 10,
-    },
     defaultValue: OrderNoDefaultEnum.VALUE,
     componentProps: {
       min: OrderNoDefaultEnum.MIN,
@@ -240,18 +218,12 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'remark',
     label: '备注',
-    required: false,
-    component: 'InputTextArea',
-    show: true,
-/*    rules: [
-      {
-        max: 512,
-        message: '字符长度不能大于512！',
-      },
-    ],*/
-    colProps: {
-      span: 22,
-    },
+    component: 'Textarea',
+    rules: z
+        .string()
+        .max(512, "字符长度不能大于512！")
+        .nullish()
+        .optional(),
     componentProps: {
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,
