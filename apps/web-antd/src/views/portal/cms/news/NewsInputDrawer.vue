@@ -38,6 +38,7 @@
   const newsBaseInfo = ref({});
 
   const boardList = ref();
+  const newsPreviewDrawerRef = ref();
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
@@ -61,6 +62,19 @@
         const values = drawerApi.getData<Record<string, any>>();
         if (values) {
           const tempValues = JSON.parse(JSON.stringify(values))
+          getAllBoard({ type: 2 }).then(res => {
+            boardList.value = res;
+          });
+          /*await updateBaseInfoSchema([
+            {
+              fieldName: 'publishBoard',
+              componentProps: {
+                options: boardList,
+                labelInValue: true,
+              },
+            },
+          ]);*/
+          loadDataById(tempValues.id);
 
           formApi.setValues(tempValues);
           drawerApi.setState({loading: false, confirmLoading: false});
@@ -110,7 +124,7 @@
   );*/
 
   // 加载数据
-  function loadDataById(id) {
+  function loadDataById(id: any) {
     if (id) {
       loadingRef.value = true;
       getNewsById({ id })
@@ -217,7 +231,15 @@
   }
 
   async function handlePreview() {
-    const fieldValues = await getBaseInfoFormFieldValue();
+
+
+    newsPreviewDrawerRef.value.setData();
+    newsPreviewDrawerRef.value.open();
+    newsPreviewDrawerRef.value.setState({
+      title: `预览 - ${unref(newsBaseInfo).title}`,
+    });
+
+/*    const fieldValues = await getBaseInfoFormFieldValue();
     // 预览前获取数据传入预览方法
     openNewsPreviewDrawer(true, {
       isTemp: true,
@@ -230,7 +252,7 @@
       showOkBtn: false,
       showCancelBtn: true,
       cancelText: '关闭',
-    });
+    });*/
   }
   function handleSubmit() {
     emit('success');

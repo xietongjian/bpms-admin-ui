@@ -22,7 +22,6 @@
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
-  // import { BasicForm, RenderCallbackParams, Rule, useForm } from '#/components/Form';
   import { ref, unref, reactive, onMounted, watch, toRefs, defineExpose, defineEmits } from 'vue';
   import { baseFormSchema } from './notice.data';
   import { Card, Space, Button, Checkbox, CheckboxGroup, message } from 'ant-design-vue';
@@ -45,9 +44,7 @@
     getAllNoticeTitle,
     getCustomNoticeTitlesBySubjectId,
   } from '#/api/portal/cms/noticeTitle';
-  // import { OrgDataType } from '#/components/Selector/src/types';
   import { isEmpty } from '#/utils/is';
-  // import { BasicDrawer, useDrawer, useDrawerInner } from '#/components/Drawer';
   import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
 
@@ -79,13 +76,24 @@
     onCancel() {
       drawerApi.close();
     },
-    onOpenChange(isOpen: boolean) {
+    async onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = drawerApi.getData<Record<string, any>>();
         if (values) {
           const tempValues = JSON.parse(JSON.stringify(values))
+          // formApi.setValues(tempValues);
+          boardList.value = await getAllBoard({ type: 1 });
+          /*await updateBaseInfoSchema([
+            {
+              fieldName: 'publishBoard',
+              componentProps: {
+                options: boardList,
+                labelInValue: true,
+              },
+            },
+          ]);*/
+          loadDataById(tempValues.id);
 
-          formApi.setValues(tempValues);
           drawerApi.setState({loading: false, confirmLoading: false});
         }
       }

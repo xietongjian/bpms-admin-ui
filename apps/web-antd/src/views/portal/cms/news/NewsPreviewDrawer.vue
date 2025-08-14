@@ -49,6 +49,18 @@
         if (values) {
           // const params = JSON.stringify(JSON.parse(values.params), null, 2)
           // formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});
+
+          // 临时预览，未保存的时候预览
+          if (values.isTemp) {
+            newsInfo.value = values.record;
+          } else {
+            // 根据新闻ID进行预览
+            // 获取新闻数据
+            getNewsById({ id: values.record.id }).then(res => {
+              newsInfo.value = res;
+            });
+            // articleComments.value = await getAllArticleComment({dataId: data.record.id, dataType: 'NEWS'});
+          }
           drawerApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -57,44 +69,9 @@
       // handleSubmit();
     },
   });
-  /*const [registerNoticePreviewDrawer, { setDrawerProps }] = useDrawerInner(async (data) => {
-    setDrawerProps({ confirmLoading: false });
 
-    // 临时预览，未保存的时候预览
-    if (data.isTemp) {
-      newsInfo.value = data.record;
-    } else {
-      // 根据新闻ID进行预览
-      // 获取新闻数据
-      newsInfo.value = await getNewsById({ id: data.record.id });
-      // articleComments.value = await getAllArticleComment({dataId: data.record.id, dataType: 'NEWS'});
-    }
-  });*/
-
-  /*export default defineComponent({
-    name: 'NewsPreviewDrawer',
-    components: { BasicDrawer, Row, Col, Divider },
-    emits: ['success', 'register'],
-    setup(_, { emit }) {
-
-
-      return {
-        registerNoticePreviewDrawer,
-        newsInfo,
-        noticeTitle,
-        articleComments,
-        formatToDate,
-      };
-    },
-  });*/
   defineExpose(drawerApi);
 </script>
-<!--<style lang="less">
-  .table-cell-class{
-    border: 1px solid gray;
-  }
-</style>-->
-
 <style lang="scss" scoped>
   .notice-wrapper {
     margin: auto;
