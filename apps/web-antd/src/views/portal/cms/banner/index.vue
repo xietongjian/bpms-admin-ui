@@ -36,12 +36,16 @@
       <template #action="{ row }">
         <TableAction :actions="createActions(row)"/>
       </template>
-      <template #createdByRender="{ row }">
+      <template #status="{row}">
+        <Tag :color="row.status ? 'green' : 'red'">{{ row.status ? '启用' : '停用' }}</Tag>
+      </template>
+
+<!--      <template #createdByRender="{ row }">
         <EmpInfo :no="row.createdByNo" :name="row.createdBy" />
       </template>
       <template #updatedByRender="{ row }">
         <EmpInfo :no="row.updatedByNo" :name="row.updatedBy" />
-      </template>
+      </template>-->
     </BasicTable>
     <BannerDrawer ref="bannerDrawerRef"  />
   </Page>
@@ -55,7 +59,7 @@
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {TableAction} from '#/components/table-action';
   import { columns, searchFormSchema } from './banner.data';
-  import {Button, Tooltip, message, Image} from 'ant-design-vue';
+  import {Button, Tooltip, message, Image, Tag} from 'ant-design-vue';
   import { getBannerListByPage, deleteByIds } from '#/api/portal/cms/banner';
   import BannerDrawer from './BannerDrawer.vue';
   import { EmpInfo } from '#/views/components/EmpInfo';
@@ -162,14 +166,12 @@
         auth: [PerPrefix + PerEnum.DELETE],
         tooltip: '删除',
         icon: 'ant-design:delete-outlined',
-        color: 'error',
+        danger: true,
         popConfirm: {
           title: '是否确认删除',
           placement: 'left',
           confirm: handleDelete.bind(null, record),
-          okButtonProps: {
-            danger: true
-          }
+          okButtonProps: { danger: true },
         },
       },
     ];

@@ -30,21 +30,16 @@
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref, defineExpose } from 'vue';
-  // import { BasicModal, useModalInner } from '#/components/Modal';
   import { getNoticeById } from '#/api/portal/cms/notice';
   import { getNoticeTitleById } from '#/api/portal/cms/noticeTitle';
   import { getNoticeSubjectById } from '#/api/portal/cms/noticeSubject';
   import { formatToDate } from '#/utils/dateUtil';
   // import {getAllCommonFile} from "#/api/portal/cms/commonFile";
-  import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
-  import {useVbenForm} from '#/adapter/form';
-
-  import {formSchema} from "#/views/portal/cms/banner/banner.data";
+  import {useVbenModal} from '@vben/common-ui';
   const noticeInfo = ref({});
   const noticeFiles = ref({});
   const noticeTitle = ref({});
   const noticeSubject = ref({});
-
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
@@ -109,7 +104,7 @@
       };
     },
   });*/
-  defineExpose(drawerApi)
+  defineExpose(modalApi)
 </script>
 
 <style lang="less" scoped>

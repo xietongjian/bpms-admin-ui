@@ -129,7 +129,7 @@ const getBindValues = computed(() => {
       state.selectedKeys = v;
       emit('update:selectedKeys', v);
     },
-    onCheck: (v: CheckKeys, e) => {
+    onCheck: (v: any, e) => {
       let currentValue = toRaw(state.checkedKeys) as KeyType[];
       if (isArray(currentValue) && searchState.startSearch) {
         const value = e.node.eventKey;
@@ -181,7 +181,7 @@ function getSelectedKeys() {
   return state.selectedKeys;
 }
 
-function setCheckedKeys(keys: CheckKeys) {
+function setCheckedKeys(keys: any) {
   state.checkedKeys = keys;
 }
 

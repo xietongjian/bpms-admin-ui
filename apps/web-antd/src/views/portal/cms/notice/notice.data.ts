@@ -2,12 +2,9 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-import { h } from 'vue';
 import { getAllNoticeTitle, getCustomNoticeTitle } from '#/api/portal/cms/noticeTitle';
-// import { Tinymce } from '#/components/Tinymce';
 // import {getAllNoticeCategory} from "#/api/portal/cms/noticeCategory";
 import { getAllNoticeSubject } from '#/api/portal/cms/noticeSubject';
-// import {baseColumns} from "#/utils";
 import { getAllBoard } from '#/api/portal/cms/board';
 
 export const columns: VxeGridProps['columns'] = [
@@ -17,6 +14,7 @@ export const columns: VxeGridProps['columns'] = [
     minWidth: 200,
     align: 'left',
     resizable: true,
+    slots: { default: 'title' }
   },
   {
     title: '类型',

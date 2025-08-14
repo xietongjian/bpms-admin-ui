@@ -38,6 +38,7 @@
     layout: 'horizontal',
     schema: formSchema,
     wrapperClass: 'grid-cols-1',
+
   });
 
   const [BasicDrawer, drawerApi] = useVbenDrawer({

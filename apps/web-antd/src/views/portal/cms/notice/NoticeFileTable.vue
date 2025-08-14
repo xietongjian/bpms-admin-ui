@@ -187,13 +187,12 @@
       },
       {
         label: '删除',
+        danger: true,
         popConfirm: {
           title: '是否确认删除',
           placement: 'left',
           confirm: handleDel.bind(null, record, index),
-          okButtonProps: {
-            danger: true
-          }
+          okButtonProps: { danger: true },
         },
       },
     ];

@@ -13,6 +13,7 @@ enum Api {
 export const getAllNewsCategory = (params) => {
   return requestClient.post(Api.NewsCategoryList, params).then((res: any) => {
     res.forEach((item) => {
+      item.key = item.id;
       item.value = item.id;
       item.title = item.name;
     });

@@ -10,8 +10,19 @@
       :auto-content-height="true"
       content-class="h-full">
     <template #left >
-      <div class="w-full mr-0 overflow-hidden bg-white">
+      <div class="bg-card h-full w-full">
         <BasicTree
+            ref="basicTreeRef"
+            title="分类"
+            :show-search="true"
+            :show-toolbar="true"
+            :tree-data="treeData"
+            class="h-full flex flex-col"
+            size="small"
+            @select="handleSelect"
+            :height="treeHeight"
+        />
+<!--        <BasicTree
           title="分类"
           toolbar
           search
@@ -19,10 +30,10 @@
           :treeData="treeData"
           :fieldNames="{ key: 'id', title: 'name' }"
           @select="handleSelect"
-        />
+        />-->
       </div>
     </template>
-    <BasicTable class="w-full" :searchInfo="searchInfo">
+    <BasicTable class="ml-2 w-full" :searchInfo="searchInfo">
       <template #toolbar-tools>
         <!--        <Authority :value="'News' + PerEnum.ADD">-->
         <Button type="primary" @click="handleCreate"> 新增</Button>
@@ -30,6 +41,12 @@
       </template>
       <template #action="{row}">
         <TableAction :actions="createActions(row)" />
+      </template>
+
+      <template #title="{ row }">
+        <TypographyLink @click="handlePreview(row)">
+          {{row.title}}
+        </TypographyLink>
       </template>
 
       <template #publishStatusName="{ row }">
@@ -52,7 +69,7 @@
   </ColPage>
 </template>
 <script lang="ts" setup>
-  import { onMounted, reactive, ref } from 'vue';
+  import { onMounted, reactive, computed, ref } from 'vue';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps} from '#/adapter/vxe-table';
@@ -78,7 +95,20 @@
   import { getAllNewsCategory } from '#/api/portal/cms/newsCategory';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { PerEnum } from '#/enums/perEnum';
-  import {Button, message} from 'ant-design-vue';
+  import {Button, message, Tooltip, TypographyLink} from 'ant-design-vue';
+
+  import {useElementSize} from "@vueuse/core";
+  import {PartitionOutlined} from "@ant-design/icons-vue";
+
+  const basicTreeRef = ref();
+
+  const { height } = useElementSize(basicTreeRef);
+
+  const currentCategory = ref({});
+
+  const treeHeight = computed(() => {
+    return height.value - 70;
+  })
 
   const PerPrefix = 'News:';
   const newsPreviewDrawerRef = ref(),newsInputDrawerRef = ref();
@@ -129,6 +159,7 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
+          formValues.categoryId = currentCategory.value?.id;
           return await getNewsListByPage({
             query: {
               pageNum: page.currentPage,
@@ -168,7 +199,7 @@
 
   onMounted(async () => {
     fetchCategory();
-    const { getFieldsValue, updateSchema } = tableApi.formApi;
+    const { updateSchema } = tableApi.formApi;
     const allPublishBoard = await getAllBoard({ type: 1 });
     const allPublishStatus = await getPublishStatus();
 
@@ -206,7 +237,7 @@
     ]);
   });
 
-  function handlePreview(record: Recordable) {
+  function handlePreview(record: Recordable<any>) {
     newsPreviewDrawerRef.value.setData();
     newsPreviewDrawerRef.value.open();
     newsPreviewDrawerRef.value.setState(
@@ -250,19 +281,19 @@
     });*/
   }
 
-  function handleDown(record: Recordable) {
+  function handleDown(record: Recordable<any>) {
     update({ publishStatus: 'DOWN_SHELF', id: record.id }).then(() => {
       tableApi.reload();
     });
   }
 
-  function handlePublish(record: Recordable) {
+  function handlePublish(record: Recordable<any>) {
     publish({ publishStatus: 'PUBLISHED', id: record.id }).then(() => {
       tableApi.reload();
     });
   }
 
-  function createActions (record: Recordable) {
+  function createActions (record: Recordable<any>) {
     return [
       {
         auth: [PerPrefix + PerEnum.QUERY],
@@ -303,25 +334,23 @@
         auth: [PerPrefix + PerEnum.DELETE],
         tooltip: '删除',
         icon: 'ant-design:delete-outlined',
-        color: 'error',
+        danger: true,
         popConfirm: {
           title: '是否确认删除',
           placement: 'left',
           confirm: handleDelete.bind(null, record),
-          okButtonProps: {
-            danger: true
-          }
+          okButtonProps: { danger: true },
         },
       },
     ];
   }
 
-  function handleSelect(categoryId) {
-    searchInfo.categoryId = categoryId[0];
+  function handleSelect(node: any) {
+    currentCategory.value = node;
     tableApi.reload();
   }
 
-  function handleEdit(record: Recordable) {
+  function handleEdit(record: Recordable<any>) {
     newsInputDrawerRef.value.setData({ id: record.id });
     newsInputDrawerRef.value.open();
     newsInputDrawerRef.value.setState({
@@ -339,10 +368,12 @@
     });*/
   }
 
-  function handleDelete(record: Recordable) {
-    deleteByIds([record.id]).then(() => {
+  async function handleDelete(record: Recordable<any>) {
+    const {success, msg} = await deleteByIds([record.id]);
+    if(success){
+      message.success(msg);
       tableApi.reload();
-    });
+    }
   }
 
   async function fetchCategory() {

@@ -4,11 +4,9 @@ import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { h } from 'vue';
 import { getAllNewsCategory } from '#/api/portal/cms/newsCategory';
-// import { Tinymce } from '#/components/Tinymce';
 import { uploadApi } from '#/api/sys/upload';
 // import {getAllBoard} from "#/api/portal/cms/board";
 import { RemarkDefaultEnum } from '#/enums/commonEnum';
-// import {baseColumns} from "#/utils";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -17,6 +15,7 @@ export const columns: VxeGridProps['columns'] = [
     minWidth: 300,
     align: 'left',
     resizable: true,
+    slots: { default: 'title' }
   },
   /* {
     title: '发布人',

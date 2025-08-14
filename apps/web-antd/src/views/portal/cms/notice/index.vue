@@ -10,20 +10,22 @@
       :auto-content-height="true"
       content-class="h-full">
     <template #left >
-      <div class="w-full overflow-hidden bg-white">
+      <div class="bg-card h-full w-full">
         <BasicTree
-          title="分类"
-          toolbar
-          search
-          :clickRowToExpand="false"
-          :treeData="treeData"
-          :fieldNames="{ key: 'id', title: 'name' }"
-          @select="handleSelect"
+            ref="basicTreeRef"
+            title="分类"
+            :show-search="true"
+            :show-toolbar="true"
+            :tree-data="treeData"
+            class="h-full flex flex-col"
+            size="small"
+            @select="handleSelect"
+            :height="treeHeight"
         />
       </div>
     </template>
 
-    <BasicTable class="w-full" :searchInfo="searchInfo">
+    <BasicTable class="ml-2 w-full" :searchInfo="searchInfo">
       <template #toolbar-tools>
 <!--        <Authority :value="'Notice:' + PerEnum.SYNC">
           <PopConfirmButton
@@ -39,6 +41,12 @@
       <template #action="{row}">
         <TableAction :actions="createActions(row)" />
       </template>
+      <template #title="{ row }">
+        <TypographyLink @click="handlePreview(row)">
+          {{row.title}}
+        </TypographyLink>
+      </template>
+
       <template #signerName="{row}">
         <EmpInfo :no="row.signerNo" :name="row.signerName" />
       </template>
@@ -63,17 +71,15 @@
     <NoticeInputDrawer ref="noticeInputDrawerRef" @success="handleSuccess" />
   </ColPage>
 </template>
+
 <script lang="ts" setup>
-  import { onMounted, ref, reactive, unref } from 'vue';
+  import { onMounted, ref, reactive, unref, computed } from 'vue';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {TableAction} from '#/components/table-action';
-  // import { BasicTable, useTable, TableAction } from '#/components/Table';
-  // import { useModal } from '#/components/Modal';
-  // import { useDrawer } from '#/components/Drawer';
   import { columns, searchFormSchema } from './notice.data';
   import NoticePreviewDrawer from './NoticePreviewDrawer.vue';
   import NoticeInputDrawer from './NoticeInputDrawer.vue';
@@ -84,36 +90,32 @@
     publish,
     SyncNotice,
   } from '#/api/portal/cms/notice';
-  // import { useGo } from '#/hooks/web/usePage';
   import { getAllBoard } from '#/api/portal/cms/board';
-  // import { PageWrapper } from '#/components/Page';
   import { BasicTree } from '#/components/Tree';
   import { getAllNoticeCategory } from '#/api/portal/cms/noticeCategory';
   import { EmpInfo } from '#/views/components/EmpInfo';
-  import { Tag, Space, Button, message } from 'ant-design-vue';
+  import {Tag, Space, Button, message, TypographyLink} from 'ant-design-vue';
   // import {StatusTagColor} from "#/enums/commonEnum";
   import { getPublishStatus } from '#/api/portal/cms/news';
-  // import { PopConfirmButton } from '#/components/Button';
   import { PerEnum } from '#/enums/perEnum';
-  import {Page, ColPage} from '@vben/common-ui';
+  import {ColPage} from '@vben/common-ui';
+  import {useElementSize} from "@vueuse/core";
 
+  const basicTreeRef = ref(null);
+  const { height } = useElementSize(basicTreeRef);
+  const currentCategory = ref({});
+
+  const treeHeight = computed(() => {
+    return height.value - 70;
+  })
 
   const PerPrefix = 'Notice:';
-const noticeInputDrawerRef = ref(), noticePreviewDrawerRef = ref();
-  const treeData = ref<TreeItem[]>([]);
-  const searchInfo = reactive<Recordable>({});
+  const noticeInputDrawerRef = ref(), noticePreviewDrawerRef = ref();
+  const treeData = ref<any[]>([]);
+  const searchInfo = reactive<Recordable<any>>({});
   const allPublishBoardMap = ref({});
   const publishStatusMap = ref({});
   const syncLoading = ref(false);
-/*  const [
-    registerNoticePreviewDrawer,
-    { openDrawer: openNoticePreviewDrawer, setDrawerProps: setNoticePreviewDrawerProps },
-  ] = useDrawer();
-  const [
-    registerNoticeInputDrawer,
-    { openDrawer: openNoticeInputDrawer, setDrawerProps: setNoticeInputDrawerProps },
-  ] = useDrawer();*/
-
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -145,6 +147,7 @@ const noticeInputDrawerRef = ref(), noticePreviewDrawerRef = ref();
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
+          formValues.categoryId = currentCategory.value?.id;
           return await getNoticeListByPage({
             query: {
               pageNum: page.currentPage,
@@ -159,32 +162,9 @@ const noticeInputDrawerRef = ref(), noticePreviewDrawerRef = ref();
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
-  /*const [registerTable, { reload, getForm }] = useTable({
-    title: '列表',
-    api: getNoticeListByPage,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: true,
-      showResetButton: true,
-      autoSubmitOnEnter: true,
-    },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: false,
-    showIndexColumn: true,
-    actionColumn: {
-      width: 150,
-      title: '操作',
-      field: 'action',
-      fixed: 'right',
-    },
-  });*/
-
   onMounted(async () => {
     fetchCategory();
-    const { getFieldsValue, updateSchema } = tableApi.formApi;
+    const { updateSchema } = tableApi.formApi;
     const allPublishBoard = await getAllBoard({ type: 1 });
     const allPublishStatus = await getPublishStatus();
     // 将发布版块转换成Map
@@ -221,7 +201,7 @@ const noticeInputDrawerRef = ref(), noticePreviewDrawerRef = ref();
     ]);
   });
 
-  function handlePreview(record: Recordable) {
+  function handlePreview(record: Recordable<any>) {
     noticePreviewDrawerRef.value.setData();
     noticePreviewDrawerRef.value.open();
     noticePreviewDrawerRef.value.setState(
@@ -242,12 +222,12 @@ const noticeInputDrawerRef = ref(), noticePreviewDrawerRef = ref();
     });*/
   }
 
-  function handleSelect(categoryId) {
-    searchInfo.categoryId = categoryId[0];
+  function handleSelect(node: any) {
+    currentCategory.value = node;
     tableApi.reload();
   }
 
-  function createActions(record: Recordable) {
+  function createActions(record: Recordable<any>) {
     return [
       {
         auth: [PerPrefix + PerEnum.QUERY],
@@ -285,26 +265,24 @@ const noticeInputDrawerRef = ref(), noticePreviewDrawerRef = ref();
         auth: [PerPrefix + PerEnum.DELETE],
         tooltip: '删除',
         icon: 'ant-design:delete-outlined',
-        color: 'error',
+        danger: true,
         ifShow: record.sourceType !== 'EKP',
         popConfirm: {
           title: '是否确认删除',
           placement: 'left',
           confirm: handleDelete.bind(null, record),
-          okButtonProps: {
-            danger: true
-          }
+          okButtonProps: { danger: true },
         },
       },
     ];
   }
-  function handlePublish(record: Recordable) {
+  function handlePublish(record: Recordable<any>) {
     publish({ publishStatus: 'PUBLISHED', id: record.id }).then(() => {
       tableApi.reload();
     });
   }
 
-  function handleDown(record: Recordable) {
+  function handleDown(record: Recordable<any>) {
     update({ publishStatus: 'DOWN_SHELF', id: record.id }).then(() => {
       tableApi.reload();
     });
@@ -334,7 +312,7 @@ const noticeInputDrawerRef = ref(), noticePreviewDrawerRef = ref();
       syncLoading.value = false;
     });
   }
-  function handleEdit(record: Recordable) {
+  function handleEdit(record: Recordable<any>) {
     noticeInputDrawerRef.value.setData( { id: record.id });
     noticeInputDrawerRef.value.open();
     noticeInputDrawerRef.value.setState({
@@ -354,7 +332,7 @@ const noticeInputDrawerRef = ref(), noticePreviewDrawerRef = ref();
     });*/
   }
 
-  async function handleDelete(record: Recordable) {
+  async function handleDelete(record: Recordable<any>) {
     const {success, msg} = await deleteByIds([record.id]);
     if(success){
       message.success(msg);
@@ -369,6 +347,4 @@ const noticeInputDrawerRef = ref(), noticePreviewDrawerRef = ref();
   async function fetchCategory() {
     treeData.value = await getAllNoticeCategory({ status: true });
   }
-</script>
-<script setup lang="ts">
 </script>

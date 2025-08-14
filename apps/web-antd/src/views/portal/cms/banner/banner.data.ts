@@ -65,13 +65,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'status',
     width: 70,
     align: 'center',
-    customRender: ({ record }) => {
-      const status = record.status;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '启用' : '停用';
-      return h(Tag, { color: color }, () => text);
-    },
+    slots: { default: 'status' },
   },
   {
     title: '排序号',

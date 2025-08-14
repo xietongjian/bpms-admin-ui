@@ -11,7 +11,7 @@
         {{ row.type }}
       </template>
       <template #status="{row}">
-        <Tag :color="row.status === 1 ? 'green' : 'red'">{{ row.status === 1 ? '启用' : '停用' }}</Tag>
+        <Tag :color="row.status ? 'green' : 'red'">{{ row.status ? '启用' : '停用' }}</Tag>
       </template>
       <template #action="{row}">
         <TableAction :actions="createActions(row)" />
@@ -28,8 +28,6 @@
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {TableAction} from '#/components/table-action';
-  // import { BasicTable, useTable, TableAction } from '#/components/Table';
-  // import { useModal } from '#/components/Modal';
   import { columns, searchFormSchema } from './board.data';
   import BoardModal from './BoardModal.vue';
   import { getBoardListByPage, deleteByIds, getBoardTypes } from '#/api/portal/cms/board';
@@ -84,7 +82,6 @@
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
-
   function createActions(record: Recordable<any>) {
     return [
       {
@@ -97,14 +94,12 @@
         auth: [PerPrefix + PerEnum.DELETE],
         tooltip: '删除',
         icon: 'ant-design:delete-outlined',
-        color: 'error',
+        danger: true,
         popConfirm: {
           title: '是否确认删除',
           placement: 'left',
           confirm: handleDelete.bind(null, record),
-          okButtonProps: {
-            danger: true
-          }
+          okButtonProps: { danger: true },
         },
       },
     ];

@@ -19,7 +19,7 @@
         <EmpInfo :no="row.signerNo" :name="row.signerName" />
       </template>
       <template #status="{row}">
-        <Tag :color="row.status === 1 ? 'green' : 'red'">{{ row.status === 1 ? '启用' : '停用' }}</Tag>
+        <Tag :color="row.status ? 'green' : 'red'">{{ row.status ? '启用' : '停用' }}</Tag>
       </template>
       <!--
       <template #logoRender="{ record }">
@@ -157,14 +157,12 @@
         auth: [PerPrefix + PerEnum.DELETE],
         tooltip: '删除',
         icon: 'ant-design:delete-outlined',
-        color: 'error',
+        danger: true,
         popConfirm: {
           title: '是否确认删除',
           placement: 'left',
           confirm: handleDelete.bind(null, record),
-          okButtonProps: {
-            danger: true
-          }
+          okButtonProps: { danger: true },
         },
       },
     ];
