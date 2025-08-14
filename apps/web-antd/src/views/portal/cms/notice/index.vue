@@ -53,7 +53,7 @@
       <template #publishStatusName="{row}">
         {{ row.publishStatusName }}
       </template>
-      <template #publishBoard="{row}">
+<!--      <template #publishBoard="{row}">
         <div v-if="row.publishBoard">
           <Space>
             <Tag
@@ -65,7 +65,7 @@
           </Space>
         </div>
         <div v-else> 未设置 </div>
-      </template>
+      </template>-->
     </BasicTable>
     <NoticePreviewDrawer ref="noticePreviewDrawerRef" @success="handleSuccess" />
     <NoticeInputDrawer ref="noticeInputDrawerRef" @success="handleSuccess" />

@@ -54,7 +54,7 @@
         <!--        <Tag :color="StatusTagColor[record.publishStatus]?.color">{{publishStatusMap[record?.publishStatus]}}</Tag>-->
       </template>
 
-      <template #createdByRender="{ row }">
+<!--      <template #createdByRender="{ row }">
         <EmpInfo :no="row.createdByNo" :name="row.createdBy" />
       </template>
       <template #updatedByRender="{ row }">
@@ -62,7 +62,7 @@
       </template>
       <template #publishPersonalRender="{ row }">
         <EmpInfo :no="row.personalNo" :name="row.personalName" />
-      </template>
+      </template>-->
     </BasicTable>
     <NewsPreviewDrawer ref="newsPreviewDrawerRef" />
     <NewsInputDrawer ref="newsInputDrawerRef" @success="handleSuccess" />
