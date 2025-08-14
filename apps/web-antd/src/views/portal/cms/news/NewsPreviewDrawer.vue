@@ -73,7 +73,7 @@
   defineExpose(drawerApi);
 </script>
 <style lang="scss" scoped>
-  .notice-wrapper {
+  /*.notice-wrapper {
     margin: auto;
     .notice-red-title {
       width: 800px;
@@ -107,5 +107,5 @@
     .notice-files {
       clear: both;
     }
-  }
+  }*/
 </style>

@@ -1,8 +1,8 @@
 <template>
-  <BasicDrawer class="w-1/2">
-    <div class="notice-wrapper">
-      <h1 class="notice-title">{{ noticeInfo?.title || '无标题' }}</h1>
-      <div>
+  <BasicDrawer class="w-3/5">
+    <div class="w-full flex flex-col">
+      <div class="">
+        <h1 class="text-center">{{ noticeInfo?.title || '无标题' }}</h1>
         <Row>
           <Col class="text-left" :span="8"
             >发布人：{{ noticeInfo.deptName || userInfo.realName || '-' }}</Col
@@ -14,6 +14,7 @@
           <Col class="text-right" :span="8">阅读量：{{ noticeInfo.visitCount || 0 }}</Col>
         </Row>
       </div>
+
       <div v-if="noticeTitle" class="notice-red-title" v-html="noticeTitle.titleSvg"></div>
 
       <div>
@@ -66,18 +67,42 @@
     onCancel() {
       drawerApi.close();
     },
-    onOpenChange(isOpen: boolean) {
+    async onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = drawerApi.getData<Record<string, any>>();
         if (values) {
           // const params = JSON.stringify(JSON.parse(values.params), null, 2)
           // formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});
+          // 临时预览，未保存的时候预览
+          if (values.isTemp) {
+            noticeInfo.value = values.record;
+            if (unref(noticeInfo).titleId) {
+              // 获取套头数据
+              noticeTitle.value = await getNoticeTitleById(unref(noticeInfo).titleId);
+            }
+          } else {
+            // 根据公文ID进行预览
+            // 获取公文数据
+            noticeInfo.value = await getNoticeById({ id: values.id });
+            if (unref(noticeInfo).titleId) {
+              // 获取套头数据
+              noticeTitle.value = await getNoticeTitleById(unref(noticeInfo).titleId);
+            }
+
+            noticeSubject.value = await getNoticeSubjectById(unref(noticeInfo).subjectId);
+
+            // 获取公文文件数据
+            // noticeFiles.value = await getAllCommonFile({
+            //   dataId: unref(noticeInfo).id, dataType: 'NOTICE'
+            // });
+          }
+
           drawerApi.setState({loading: false, confirmLoading: false});
         }
       }
     },
     onConfirm() {
-      handleSubmit();
+      // handleSubmit();
     },
   });
 
@@ -85,35 +110,13 @@
   /*const [registerNoticePreviewDrawer, { setDrawerProps }] = useDrawerInner(async (data) => {
     setDrawerProps({ confirmLoading: false });
 
-    // 临时预览，未保存的时候预览
-    if (data.isTemp) {
-      noticeInfo.value = data.record;
-      if (unref(noticeInfo).titleId) {
-        // 获取套头数据
-        noticeTitle.value = await getNoticeTitleById(unref(noticeInfo).titleId);
-      }
-    } else {
-      // 根据公文ID进行预览
-      // 获取公文数据
-      noticeInfo.value = await getNoticeById({ id: data.record.id });
-      if (unref(noticeInfo).titleId) {
-        // 获取套头数据
-        noticeTitle.value = await getNoticeTitleById(unref(noticeInfo).titleId);
-      }
 
-      noticeSubject.value = await getNoticeSubjectById(unref(noticeInfo).subjectId);
-
-      // 获取公文文件数据
-      // noticeFiles.value = await getAllCommonFile({
-      //   dataId: unref(noticeInfo).id, dataType: 'NOTICE'
-      // });
-    }
   });*/
   defineExpose(drawerApi)
 </script>
 
 <style lang="less" scoped>
-  .notice-wrapper {
+  /*.notice-wrapper {
     width: 720px;
     margin: auto;
     .notice-red-title {
@@ -149,5 +152,5 @@
     .notice-files {
       clear: both;
     }
-  }
+  }*/
 </style>

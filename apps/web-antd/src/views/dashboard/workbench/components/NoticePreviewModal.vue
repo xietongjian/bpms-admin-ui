@@ -91,7 +91,7 @@
 </script>
 
 <style lang="less" scoped>
-  .notice-wrapper {
+  /*.notice-wrapper {
     width: 720px;
     margin: auto;
     .notice-red-title {
@@ -125,5 +125,5 @@
     .notice-files {
       clear: both;
     }
-  }
+  }*/
 </style>
