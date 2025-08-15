@@ -143,6 +143,11 @@
       show: false,
     },
     schema: searchFormSchema,
+    handleValuesChange: (values, fieldsChanged) => {
+      if (fieldsChanged.includes('publishStatus')) {
+        tableApi.formApi.submitForm();
+      }
+    },
   };
 
   const gridOptions: VxeGridProps = {
@@ -238,7 +243,7 @@
   });
 
   function handlePreview(record: Recordable<any>) {
-    newsPreviewDrawerRef.value.setData();
+    newsPreviewDrawerRef.value.setData({id: record.id, isTemp: false});
     newsPreviewDrawerRef.value.open();
     newsPreviewDrawerRef.value.setState(
         {

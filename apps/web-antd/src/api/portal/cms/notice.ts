@@ -22,9 +22,7 @@ export const getAllNotice = (params: any) => {
 };
 
 export const getNoticeById = (params: any) => {
-  return requestClient.get(Api.GetNoticeById + `/${params.id}`).then((res: any) => {
-    return Promise.resolve(res);
-  });
+  return requestClient.get(Api.GetNoticeById + `/${params.id}`);
 };
 // 获取签发人
 export const getSigner = (params: any) => {

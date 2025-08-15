@@ -202,7 +202,7 @@
   });
 
   function handlePreview(record: Recordable<any>) {
-    noticePreviewDrawerRef.value.setData();
+    noticePreviewDrawerRef.value.setData({id: record.id, isTemp: false});
     noticePreviewDrawerRef.value.open();
     noticePreviewDrawerRef.value.setState(
         {title: `预览 - ${record.title}`,}

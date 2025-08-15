@@ -1,3 +1,5 @@
+import {h} from "vue";
+import { getAllNoticeCategory } from '#/api/portal/cms/noticeCategory';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
@@ -6,6 +8,8 @@ import { getAllNoticeTitle, getCustomNoticeTitle } from '#/api/portal/cms/notice
 // import {getAllNoticeCategory} from "#/api/portal/cms/noticeCategory";
 import { getAllNoticeSubject } from '#/api/portal/cms/noticeSubject';
 import { getAllBoard } from '#/api/portal/cms/board';
+import {getAllNewsCategory} from "#/api/portal/cms/newsCategory";
+import dayjs from 'dayjs';
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -157,6 +161,15 @@ export const baseFormSchema: FormSchema[] = [
     }
   },*/
   {
+    fieldName: 'id',
+    label: '主键',
+    component: 'Input',
+    dependencies: {
+      show: false,
+      triggerFields: ['id']
+    }
+  },
+  {
     fieldName: 'title',
     label: '标题',
     component: 'Input',
@@ -175,24 +188,35 @@ export const baseFormSchema: FormSchema[] = [
     fieldName: 'noticeNo',
     label: '发文编号',
     component: 'Input',
-    // show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['noticeNo']
+    }
   },
   {
     fieldName: 'categoryId',
     label: '公文类型',
     rules: 'selectRequired',
     component: 'ApiTreeSelect',
+    componentProps: {
+      filterTreeNode: true,
+      api: getAllNoticeCategory,
+      params: { status: true },
+      class: 'w-full'
+    },
   },
   {
     fieldName: 'categoryName',
     label: '公文类型名称',
     component: 'Input',
-    // show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['categoryName']
+    }
   },
   {
     fieldName: 'subjectId',
     label: '发文主体',
-    // required: true,
     rules: 'selectRequired',
     component: 'ApiTreeSelect',
   },
@@ -200,28 +224,34 @@ export const baseFormSchema: FormSchema[] = [
     fieldName: 'subjectName',
     label: '发文主体名称',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['subjectName']
+    }
   },
   {
     fieldName: 'signerNo',
     label: '签发人',
     component: 'Input',
-    show: false,
+    dependencies: {
+      show: false,
+      triggerFields: ['signerNo']
+    }
   },
   {
     fieldName: 'signerName',
     label: '签发人',
     component: 'Input',
-    ifShow: ({ values }) => {
-      return !!values.signerNo;
-    },
+    // ifShow: ({ values }) => {
+    //   return !!values.signerNo;
+    // },
     componentProps: {
       disabled: true,
     },
-    colProps: {
-      pull: 0,
-      span: 4,
-    },
+    // colProps: {
+    //   pull: 0,
+    //   span: 4,
+    // },
   },
   {
     fieldName: 'titleId',
@@ -230,21 +260,21 @@ export const baseFormSchema: FormSchema[] = [
     componentProps: {
       api: getAllNoticeTitle,
     },
-    colProps: {
-      span: 10,
-    },
+    // colProps: {
+    //   span: 10,
+    // },
   },
   {
     fieldName: 'publishRanges',
     label: '发布范围',
     rules: 'selectRequired',
-    component: 'OrgPersonalSelector',
+    component: 'OrgSelector',
     componentProps: {
       multiple: true,
     },
-    colProps: {
-      span: 16,
-    },
+    // colProps: {
+    //   span: 16,
+    // },
   },
   {
     fieldName: 'publishTime',
@@ -253,15 +283,20 @@ export const baseFormSchema: FormSchema[] = [
     componentProps: {
       width: '100%',
     },
-    colProps: {
-      span: 4,
-    },
+    // colProps: {
+    //   span: 4,
+    // },
   },
   {
     fieldName: 'content',
-    component: 'Input',
+    component: 'Textarea',
     label: '内容',
     defaultValue: '',
+    renderComponentContent: () => {
+      return {
+        default: () => h('div', '分割线'),
+      };
+    },
     // rules: [{ required: true }],
     /*render: ({ model, field }) => {
       return h(Tinymce, {

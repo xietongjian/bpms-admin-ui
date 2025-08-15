@@ -71,6 +71,7 @@ export const searchFormSchema: FormSchema[] = [
     component: 'Input',
     componentProps: {
       placeholder: '请输入名称',
+      allowClear: true,
     },
     labelWidth: 60,
   },
@@ -81,22 +82,16 @@ export const searchFormSchema: FormSchema[] = [
     labelWidth: 60,
   },
   /*{
-    fieldName: 'publishBoard',
-    label: '发布版块',
-    component: 'ApiSelect',
-    componentProps: {
-      api: getAllBoard,
-      params: {type: 1},
-      placeholder: '请选择发布状态',
-    },
-    labelWidth: 70,
-    colProps: {
-      span: 6,
-      lg: {span: 6, offset: 0},
-      sm: {span: 10, offset: 0},
-      xs: {span: 16, offset: 0}
-    },
-  },*/
+      fieldName: 'publishBoard',
+      label: '发布版块',
+      component: 'ApiSelect',
+      componentProps: {
+        api: getAllBoard,
+        params: {type: 1},
+        placeholder: '请选择发布状态',
+      },
+      labelWidth: 70,
+    },*/
 ];
 
 export const formSchema: FormSchema[] = [
@@ -227,13 +222,14 @@ export const baseFormSchema: FormSchema[] = [
       filterTreeNode: true,
       api: getAllNewsCategory,
       params: { status: true },
+      class: 'w-full'
     },
     rules: 'selectRequired'
   },
   {
     fieldName: 'publishRanges',
     label: '发送范围',
-    component: 'OrgPersonalSelector',
+    component: 'OrgSelector',
     componentProps: {
       multiple: true,
     },
@@ -254,6 +250,7 @@ export const baseFormSchema: FormSchema[] = [
     label: '简介',
     component: 'Textarea',
     componentProps: {
+      class: 'w-full',
       showCount: true,
       autoSize: {
         minRows: RemarkDefaultEnum.MIN_ROWS,

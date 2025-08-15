@@ -25,6 +25,7 @@ export const getAllNoticeCategory = (params: any) => {
       item.key = item.id;
       item.value = item.id;
       item.title = item.name;
+      item.label = item.name;
     });
     const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
     forEach(

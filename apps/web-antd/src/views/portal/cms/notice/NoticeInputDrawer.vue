@@ -1,30 +1,32 @@
 <template>
-  <BasicDrawer class="w-1/2">
-    <Card size="small" title="基础数据" :bordered="false" body-style="background: white;">
-      <BasicForm/>
+  <BasicDrawer class="w-3/5">
+    <Card size="small" title="基础数据" :bordered="false">
+      <BasicForm>
+        <template #content="slotProps">
+          aaa<TEditor placeholder="请输入"
+                   value="xxxxxx"
+                   :minHeight="400"
+          />bbb
+        </template>
+      </BasicForm>
     </Card>
 
     <Card size="small" title="附件设置" :bordered="false" class="!mt-5">
       <NoticeFileTable ref="tableRef" />
     </Card>
 
-    <template #insertFooter>
-      <Space>
-        <Button type="primary" @click="saveAll"> 保存草稿 </Button>
-        <Button type="primary" @click="submitAll" v-if="publishStatus !== 'PUBLISHED'">
-          发布
-        </Button>
-        <Button type="primary" @click="handlePreview"> 预览 </Button>
-      </Space>
+    <template #prepend-footer>
+      <Button type="primary" @click="handlePreview"> 预览 </Button>
+      <Button type="primary" @click="saveAll"> 保存草稿 </Button>
+      <Button type="primary" @click="saveAll"> 保存并发布 </Button>
     </template>
-
     <NoticePreviewDrawer ref="noticePreviewDrawerRef" />
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
   import { ref, unref, reactive, onMounted, watch, toRefs, defineExpose, defineEmits } from 'vue';
   import { baseFormSchema } from './notice.data';
-  import { Card, Space, Button, Checkbox, CheckboxGroup, message } from 'ant-design-vue';
+  import {Card, Space, Button, message, Input} from 'ant-design-vue';
   import { getAllBoard } from '#/api/portal/cms/board';
   import {
     insert,
@@ -47,11 +49,14 @@
   import { isEmpty } from '#/utils/is';
   import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
+  import dayjs from "dayjs";
+  import {TEditor} from '#/components/TEditor';
 
   const emit = defineEmits(['success'])
   const tableRef = ref<{ getDataSource: () => any } | null>(null);
   const publishStatus = ref('');
   const noticeBaseInfo = ref({});
+  const noticePreviewDrawerRef = ref();
 
   const boardList = ref();
   const loadingRef = ref(false);
@@ -73,6 +78,9 @@
   });
 
   const [BasicDrawer, drawerApi] = useVbenDrawer({
+    closeOnClickModal: false,
+    closeOnPressEscape: false,
+    showConfirmButton: false,
     onCancel() {
       drawerApi.close();
     },
@@ -92,8 +100,9 @@
               },
             },
           ]);*/
-          loadDataById(tempValues.id);
-
+          await loadBaseData();
+          await loadDataById(tempValues);
+          // await loadDataById(va);
           drawerApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -141,51 +150,49 @@
   );
 */
   // 加载数据
-  function loadDataById(id) {
-    if (id) {
+  async function loadDataById(params: any) {
+    if (params.id) {
       loadingRef.value = true;
-      getNoticeById({ id })
-        .then(async (res) => {
-          if (res.publishRanges) {
-            res.publishRanges = res.publishRanges.map((item) => {
-              return {
-                ...item,
-                code: item.rangeId,
-                shortName: item.rangeName,
-                name: item.rangeName,
-                label: item.rangeName,
-                sourceType: OrgDataType[item.rangeType],
-              };
-            });
-          } else {
-            res.publishRanges = [];
-          }
-          res.publishBoard = res.publishBoard.split(',');
-
-          currentCategoryId.value = res.categoryId;
-          currentSubjectId.value = res.subjectId;
-          publishStatus.value = res.publishStatus;
-          noticeBaseInfo.value = res;
-
-          // await updateBaseInfoSchema({
-          //   fieldName: 'titleId',
-          //   component: 'ApiSelect',
-          //   componentProps: {
-          //     api: getAllNoticeTitle,
-          //     // params: {subjectId: res.subjectId}
-          //   },
-          // });
-          //
-          // await setBaseInfoFormFieldValue(res);
-          loadingRef.value = false;
-
-          tableRef.value.setTableData(res.commonFiles);
-        })
-        .catch((e) => {
-          console.error(e);
-          loadingRef.value = false;
+      const res = await getNoticeById({ id: params.id });
+      res.publishTime = dayjs(res.publishTime);
+      if (res.publishRanges) {
+        res.publishRanges = res.publishRanges.map((item) => {
+          return {
+            ...item,
+            code: item.rangeId,
+            shortName: item.rangeName,
+            name: item.rangeName,
+            label: item.rangeName,
+            // sourceType: OrgDataType[item.rangeType],
+          };
         });
+      } else {
+        res.publishRanges = [];
+      }
+      res.publishBoard = res.publishBoard.split(',');
+
+      currentCategoryId.value = res.categoryId;
+      currentSubjectId.value = res.subjectId;
+      publishStatus.value = res.publishStatus;
+      noticeBaseInfo.value = res;
+
+      // await updateBaseInfoSchema({
+      //   fieldName: 'titleId',
+      //   component: 'ApiSelect',
+      //   componentProps: {
+      //     api: getAllNoticeTitle,
+      //     // params: {subjectId: res.subjectId}
+      //   },
+      // });
+      //
+      // await setBaseInfoFormFieldValue(res);
+      loadingRef.value = false;
+
+      await formApi.setValues(res);
+
+      // tableRef.value.setTableData(res.commonFiles);
     } else {
+
      /* setBaseInfoFormFieldValue({
         publishRanges: [],
       });*/
@@ -205,7 +212,6 @@
 
   async function loadBaseData() {
     // boardList.value = await getAllBoard({type: 1});
-
     const subjectList = await getNoticeSubjectList({});
     allSubjectList.value = subjectList;
 
@@ -280,18 +286,18 @@
         }
       }
     ]);*/
-    await loadBaseData();
-    loadDataById();
+
   });
 
   async function save(status) {
-    const baseInfoValues = await validateBaseInfoForm();
+    const baseInfoValues = await formApi.getValues();
+    // const baseInfoValues = await formApi.getValues();
     loadingRef.value = true;
     baseInfoValues.publishRanges = baseInfoValues.publishRanges.map((item) => {
       return {
         rangeId: item.code,
         rangeName: item.name,
-        rangeType: item.rangeType || Object.values(OrgDataType)[item.sourceType - 1],
+        // rangeType: item.rangeType || Object.values(OrgDataType)[item.sourceType - 1],
       };
     });
     // baseInfoValues.publishBoard = baseInfoValues.publishBoard.join(',')
@@ -345,13 +351,16 @@
     }
   }
 
-  function handleBack() {
-    // closeCurrent();
-    // go({name: 'Notice'});
-  }
-
   async function handlePreview() {
-    const fieldValues = await getBaseInfoFormFieldValue();
+    const formValues = await formApi.getValues();
+
+    noticePreviewDrawerRef.value.setData({isTemp: true, ...formValues});
+    noticePreviewDrawerRef.value.open();
+    noticePreviewDrawerRef.value.setState({
+      title: `预览 - ${formValues.title}`,
+    });
+
+    /*const fieldValues = await getBaseInfoFormFieldValue();
     // 预览前获取数据传入预览方法
     openNoticePreviewDrawer(true, {
       isTemp: true,
@@ -365,7 +374,7 @@
       showOkBtn: false,
       showCancelBtn: true,
       cancelText: '关闭',
-    });
+    });*/
   }
   function handleSubmit() {
     emit('success');

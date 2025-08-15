@@ -674,6 +674,9 @@ importers:
       '@tanstack/vue-query':
         specifier: 'catalog:'
         version: 5.83.1(vue@3.5.18(typescript@5.9.2))
+      '@tinymce/tinymce-vue':
+        specifier: ^5.1.1
+        version: 5.1.1(vue@3.5.18(typescript@5.9.2))
       '@vben/access':
         specifier: workspace:*
         version: link:../../packages/effects/access
@@ -797,6 +800,9 @@ importers:
       sortablejs:
         specifier: ^1.15.2
         version: 1.15.6
+      tinymce:
+        specifier: ^7.1.1
+        version: 7.9.1
       vditor:
         specifier: ^3.10.4
         version: 3.11.1
@@ -4551,6 +4557,11 @@ packages:
 
   '@tanstack/vue-virtual@3.13.12':
     resolution: {integrity: sha512-vhF7kEU9EXWXh+HdAwKJ2m3xaOnTTmgcdXcF2pim8g4GvI7eRrk2YRuV5nUlZnd/NbCIX4/Ja2OZu5EjJL06Ww==}
+    peerDependencies:
+      vue: ^3.5.17
+
+  '@tinymce/tinymce-vue@5.1.1':
+    resolution: {integrity: sha512-iO57HOWesFOhsaqjA5Ea6sDvQBmJJH3/dq00Uvg7metlct2kLF+ctRgoDsetLt6gmeZ7COPftr814/XzqnJ/dg==}
     peerDependencies:
       vue: ^3.5.17
 
@@ -10905,6 +10916,12 @@ packages:
     resolution: {integrity: sha512-tX5e7OM1HnYr2+a2C/4V0htOcSQcoSTH9KgJnVvNm5zm/cyEWKJ7j7YutsH9CxMdtOkkLFy2AHrMci9IM8IPZQ==}
     engines: {node: '>=12.0.0'}
 
+  tinymce@6.8.6:
+    resolution: {integrity: sha512-++XYEs8lKWvZxDCjrr8Baiw7KiikraZ5JkLMg6EdnUVNKJui0IsrAADj5MsyUeFkcEryfn2jd3p09H7REvewyg==}
+
+  tinymce@7.9.1:
+    resolution: {integrity: sha512-zaOHwmiP1EqTeLRXAvVriDb00JYnfEjWGPdKEuac7MiZJ5aiDMZ4Unc98Gmajn+PBljOmO1GKV6G0KwWn3+k8A==}
+
   tinypool@1.1.1:
     resolution: {integrity: sha512-Zba82s87IFq9A9XmjiX5uZA/ARWDrB03OHlq+Vw1fSdt0I+4/Kutwy8BP4Y/y/aORMo61FQ0vIb5j44vSo5Pkg==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -14904,6 +14921,11 @@ snapshots:
   '@tanstack/vue-virtual@3.13.12(vue@3.5.18(typescript@5.9.2))':
     dependencies:
       '@tanstack/virtual-core': 3.13.12
+      vue: 3.5.18(typescript@5.9.2)
+
+  '@tinymce/tinymce-vue@5.1.1(vue@3.5.18(typescript@5.9.2))':
+    dependencies:
+      tinymce: 6.8.6
       vue: 3.5.18(typescript@5.9.2)
 
   '@tootallnate/once@1.1.2': {}
@@ -22034,6 +22056,10 @@ snapshots:
     dependencies:
       fdir: 6.4.6(picomatch@4.0.3)
       picomatch: 4.0.3
+
+  tinymce@6.8.6: {}
+
+  tinymce@7.9.1: {}
 
   tinypool@1.1.1: {}
 

@@ -1,6 +1,6 @@
 <template>
-  <BasicDrawer>
-    <BasicForm/>
+  <BasicDrawer class="w-3/5">
+    <BasicForm />
 
     <template #insertFooter>
       <Space>
@@ -52,19 +52,19 @@
     wrapperClass: 'grid-cols-1',
   });
 
-
   const [BasicDrawer, drawerApi] = useVbenDrawer({
     onCancel() {
       drawerApi.close();
     },
-    onOpenChange(isOpen: boolean) {
+    async onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = drawerApi.getData<Record<string, any>>();
         if (values) {
+          drawerApi.setState({loading: true, confirmLoading: true});
           const tempValues = JSON.parse(JSON.stringify(values))
-          getAllBoard({ type: 2 }).then(res => {
-            boardList.value = res;
-          });
+          // getAllBoard({ type: 2 }).then(res => {
+          //   boardList.value = res;
+          // });
           /*await updateBaseInfoSchema([
             {
               fieldName: 'publishBoard',
@@ -74,9 +74,8 @@
               },
             },
           ]);*/
-          loadDataById(tempValues.id);
-
-          formApi.setValues(tempValues);
+          await loadData(tempValues);
+          // formApi.setValues(tempValues);
           drawerApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -124,60 +123,57 @@
   );*/
 
   // 加载数据
-  function loadDataById(id: any) {
-    if (id) {
-      loadingRef.value = true;
-      getNewsById({ id })
-        .then((res) => {
-          if (res.publishRanges) {
-            res.publishRanges = res.publishRanges.map((item) => {
-              return {
-                ...item,
-                code: item.rangeId,
-                label: item.rangeName,
-                name: item.rangeName,
-                sourceType: OrgDataType[item.rangeType],
-              };
-            });
-          } else {
-            res.publishRanges = [];
-          }
+  async function loadData(params: any) {
+    if (params.id) {
+      // loadingRef.value = true;
+      const res = await getNewsById({ id: params.id });
 
-          if (res.keywords) {
-            res.keywords = res.keywords.map((item) => item.content);
-          } else {
-            res.keywords = [];
-          }
+      if (res.publishRanges) {
+        /*res.publishRanges = res.publishRanges.map((item) => {
+          return {
+            ...item,
+            code: item.rangeId,
+            label: item.rangeName,
+            name: item.rangeName,
+            sourceType: OrgDataType[item.rangeType],
+          };
+        });*/
+      } else {
+        res.publishRanges = [];
+      }
 
-          if (res.thumbImg) {
-            res.thumbUploader = [
-              {
-                name: 'file.name',
-                filePath: res.thumbImg,
-                fileType: res.thumbImg.split('.').pop(),
-                fileSize: 0,
-              },
-            ];
-          } else {
-            res.thumbUploader = [];
-          }
-          publishStatus.value = res.publishStatus;
-          // res.publishBoard = res.publishBoard.split(',');
-          setBaseInfoFormFieldValue(res);
-          newsBaseInfo.value = res;
-          // setContentInfoFormFieldValue({content: res.content, shortContent: res.shortContent});
-          loadingRef.value = false;
-        })
-        .finally(() => {
-          loadingRef.value = false;
-        });
+      /*if (res.keywords) {
+        res.keywords = res.keywords.map((item) => item.content);
+      } else {
+        res.keywords = [];
+      }*/
+
+      /*if (res.thumbImg) {
+        res.thumbUploader = [
+          {
+            name: 'file.name',
+            filePath: res.thumbImg,
+            fileType: res.thumbImg.split('.').pop(),
+            fileSize: 0,
+          },
+        ];
+      } else {
+        res.thumbUploader = [];
+      }*/
+      // publishStatus.value = res.publishStatus;
+      // res.publishBoard = res.publishBoard.split(',');
+      // setBaseInfoFormFieldValue(res);
+      // newsBaseInfo.value = res;
+      await formApi.setValues(res);
+      // setContentInfoFormFieldValue({content: res.content, shortContent: res.shortContent});
+      // loadingRef.value = false;
     } else {
       loadingRef.value = false;
     }
   }
 
-  async function save(status) {
-    const baseInfoValues = await validateBaseInfoForm();
+  async function save(status: any) {
+    const baseInfoValues = await formApi.getValues();
     loadingRef.value = true;
     baseInfoValues.publishRanges = baseInfoValues.publishRanges.map((item) => {
       return {
