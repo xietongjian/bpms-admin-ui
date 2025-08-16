@@ -1,7 +1,6 @@
 import {h} from "vue";
 import { getAllNoticeCategory } from '#/api/portal/cms/noticeCategory';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { getAllNoticeTitle, getCustomNoticeTitle } from '#/api/portal/cms/noticeTitle';
@@ -15,7 +14,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '标题',
     field: 'title',
-    minWidth: 200,
+    minWidth: 300,
     align: 'left',
     resizable: true,
     slots: { default: 'title' }
@@ -100,9 +99,9 @@ export const searchFormSchema: FormSchema[] = [
     label: '关键字',
     component: 'Input',
     componentProps: {
+      allowClear: true,
       placeholder: '请输入关键字',
     },
-    labelWidth: 70,
   },
   // {
   //   fieldName: 'categoryId',
@@ -120,20 +119,20 @@ export const searchFormSchema: FormSchema[] = [
     label: '发文主体',
     component: 'ApiTreeSelect',
     componentProps: {
+      allowClear: true,
       api: getAllNoticeSubject,
       placeholder: '请选择发文主体',
       params: { status: 1 },
     },
-    labelWidth: 70,
   },
   {
     fieldName: 'publishStatus',
     label: '发布状态',
     component: 'Select',
     componentProps: {
+      allowClear: true,
       placeholder: '请选择发布状态',
     },
-    labelWidth: 70,
   },
   /*{
     fieldName: 'publishBoard',
@@ -183,6 +182,7 @@ export const baseFormSchema: FormSchema[] = [
         .trim()
         .min(1, '标题不能为空！')
         .max(256, '字符长度不能大于256！'),
+    formItemClass: 'col-span-3 '
   },
   {
     fieldName: 'noticeNo',
@@ -204,6 +204,7 @@ export const baseFormSchema: FormSchema[] = [
       params: { status: true },
       class: 'w-full'
     },
+    formItemClass: 'col-span-1',
   },
   {
     fieldName: 'categoryName',
@@ -219,6 +220,13 @@ export const baseFormSchema: FormSchema[] = [
     label: '发文主体',
     rules: 'selectRequired',
     component: 'ApiTreeSelect',
+    componentProps: {
+      filterTreeNode: true,
+      api: getAllNoticeSubject,
+      params: { status: true },
+      class: 'w-full'
+    },
+    formItemClass: 'col-span-1',
   },
   {
     fieldName: 'subjectName',
@@ -236,7 +244,7 @@ export const baseFormSchema: FormSchema[] = [
     dependencies: {
       show: false,
       triggerFields: ['signerNo']
-    }
+    },
   },
   {
     fieldName: 'signerName',
@@ -248,6 +256,7 @@ export const baseFormSchema: FormSchema[] = [
     componentProps: {
       disabled: true,
     },
+    formItemClass: 'col-span-1',
     // colProps: {
     //   pull: 0,
     //   span: 4,
@@ -258,8 +267,11 @@ export const baseFormSchema: FormSchema[] = [
     label: '公文套头',
     component: 'ApiSelect',
     componentProps: {
+      allowClear: true,
+      class: 'w-full',
       api: getAllNoticeTitle,
     },
+    formItemClass: 'col-span-3 '
     // colProps: {
     //   span: 10,
     // },
@@ -272,6 +284,7 @@ export const baseFormSchema: FormSchema[] = [
     componentProps: {
       multiple: true,
     },
+    formItemClass: 'col-span-3 '
     // colProps: {
     //   span: 16,
     // },
@@ -281,8 +294,11 @@ export const baseFormSchema: FormSchema[] = [
     label: '发布时间',
     component: 'DatePicker',
     componentProps: {
+      format: 'YYYY-MM-DD HH:mm:ss',
+      showTime: true,
       width: '100%',
     },
+    formItemClass: 'col-span-3 '
     // colProps: {
     //   span: 4,
     // },
@@ -297,6 +313,7 @@ export const baseFormSchema: FormSchema[] = [
         default: () => h('div', '分割线'),
       };
     },
+    formItemClass: 'col-span-3 '
     // rules: [{ required: true }],
     /*render: ({ model, field }) => {
       return h(Tinymce, {

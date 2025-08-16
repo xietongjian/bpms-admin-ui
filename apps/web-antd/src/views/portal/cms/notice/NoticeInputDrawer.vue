@@ -3,22 +3,23 @@
     <Card size="small" title="基础数据" :bordered="false">
       <BasicForm>
         <template #content="slotProps">
-          aaa<TEditor placeholder="请输入"
-                   value="xxxxxx"
+          <TEditor placeholder="请输入"
+                   :value="slotProps.field.value"
                    :minHeight="400"
-          />bbb
+                   v-bind="slotProps"
+          />
         </template>
       </BasicForm>
     </Card>
 
     <Card size="small" title="附件设置" :bordered="false" class="!mt-5">
-      <NoticeFileTable ref="tableRef" />
+      <NoticeFileTable ref="noticeFileTableRef" />
     </Card>
 
     <template #prepend-footer>
       <Button type="primary" @click="handlePreview"> 预览 </Button>
       <Button type="primary" @click="saveAll"> 保存草稿 </Button>
-      <Button type="primary" @click="saveAll"> 保存并发布 </Button>
+      <Button type="primary" @click="submitAll"> 保存并发布 </Button>
     </template>
     <NoticePreviewDrawer ref="noticePreviewDrawerRef" />
   </BasicDrawer>
@@ -53,7 +54,7 @@
   import {TEditor} from '#/components/TEditor';
 
   const emit = defineEmits(['success'])
-  const tableRef = ref<{ getDataSource: () => any } | null>(null);
+  const noticeFileTableRef = ref();
   const publishStatus = ref('');
   const noticeBaseInfo = ref({});
   const noticePreviewDrawerRef = ref();
@@ -74,13 +75,13 @@
     showDefaultActions: false,
     layout: 'horizontal',
     schema: baseFormSchema,
-    wrapperClass: 'grid-cols-1',
+    wrapperClass: 'grid grid-cols-3',
   });
 
   const [BasicDrawer, drawerApi] = useVbenDrawer({
     closeOnClickModal: false,
-    closeOnPressEscape: false,
     showConfirmButton: false,
+    destroyOnClose: true,
     onCancel() {
       drawerApi.close();
     },
@@ -88,6 +89,7 @@
       if (isOpen) {
         const values = drawerApi.getData<Record<string, any>>();
         if (values) {
+          drawerApi.setState({loading: true, confirmLoading: true});
           const tempValues = JSON.parse(JSON.stringify(values))
           // formApi.setValues(tempValues);
           boardList.value = await getAllBoard({ type: 1 });
@@ -154,7 +156,7 @@
     if (params.id) {
       loadingRef.value = true;
       const res = await getNoticeById({ id: params.id });
-      res.publishTime = dayjs(res.publishTime);
+      res.publishTime && (res.publishTime = dayjs(res.publishTime));
       if (res.publishRanges) {
         res.publishRanges = res.publishRanges.map((item) => {
           return {
@@ -174,6 +176,13 @@
       currentCategoryId.value = res.categoryId;
       currentSubjectId.value = res.subjectId;
       publishStatus.value = res.publishStatus;
+
+      res.attachments.map(item => {
+        return {...item, canDown: (item.canDown===1)};
+      })
+
+      noticeFileTableRef.value.loadFileList(res.attachments);
+
       noticeBaseInfo.value = res;
 
       // await updateBaseInfoSchema({
@@ -290,7 +299,13 @@
   });
 
   async function save(status) {
+    const {valid} = await formApi.validate()
+    if(!valid){
+      return Promise.reject(false);
+    }
+    debugger;
     const baseInfoValues = await formApi.getValues();
+    debugger;
     // const baseInfoValues = await formApi.getValues();
     loadingRef.value = true;
     baseInfoValues.publishRanges = baseInfoValues.publishRanges.map((item) => {
@@ -301,22 +316,23 @@
       };
     });
     // baseInfoValues.publishBoard = baseInfoValues.publishBoard.join(',')
-    if (tableRef.value) {
-      console.log('table data:', tableRef.value.getDataSource());
-      /*baseInfoValues.commonFiles = tableRef.value.getDataSource().map((item, idx)=>{
-        // alert(idx, item);
+    if (noticeFileTableRef.value) {
+      console.log('table data:', noticeFileTableRef.value.getFileList());
+      baseInfoValues.attachments = noticeFileTableRef.value.getFileList().map((item, idx)=>{
         return {
           id: item.id,
-          name: item.name,
-          fileType: item.fileType,
+          fileName: item.fileName,
+          fileType: item.fileName?.split('.').pop(),
           filePath: item.filePath,
           fileSize: item.fileSize,
-          canDown: item.canDown,
+          canDown: item.canDown?1:0,
           orderNo: idx
         };
-      });*/
+      });
     }
     baseInfoValues.publishStatus = status;
+
+    baseInfoValues.publishTime = dayjs(baseInfoValues.publishTime).format('YYYY-MM-DD HH:mm:ss');
 
     if (baseInfoValues.id) {
       return update(baseInfoValues);
@@ -353,8 +369,13 @@
 
   async function handlePreview() {
     const formValues = await formApi.getValues();
+    const attachments = noticeFileTableRef.value.getFileList();
 
-    noticePreviewDrawerRef.value.setData({isTemp: true, ...formValues});
+    noticePreviewDrawerRef.value.setData({
+      isTemp: true, ...formValues,
+      publishTime: dayjs(formValues.publishTime).format('YYYY-MM-DD HH:mm:ss'),
+      attachments
+    });
     noticePreviewDrawerRef.value.open();
     noticePreviewDrawerRef.value.setState({
       title: `预览 - ${formValues.title}`,

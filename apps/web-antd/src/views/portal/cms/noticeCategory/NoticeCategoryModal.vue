@@ -1,8 +1,7 @@
 <template>
-  <BasicModal >
+  <BasicModal class="w-3/5">
     <BasicForm >
-      <template #styleRenderSlot="{ model, field }">
-        <!--        <a-input v-model:value="model[field]" placeholder="自定义slot" />-->
+<!--      <template #styleRenderSlot="{ model, field }">
         <div style="line-height: 0px">
           <Space class="color-selector">
             <span
@@ -21,7 +20,7 @@
             </span>
           </Space>
         </div>
-      </template>
+      </template>-->
     </BasicForm>
   </BasicModal>
 </template>
@@ -31,7 +30,7 @@
   import { insert, update, checkEntityExist } from '#/api/portal/cms/noticeCategory';
   import { Select, Space, Dropdown } from 'ant-design-vue';
   import { DownOutlined, StopOutlined } from '@ant-design/icons-vue';
-  import {useVbenDrawer, useVbenModal} from '@vben/common-ui';
+  import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
 
   const emit = defineEmits(['success']);
@@ -49,9 +48,6 @@
     '#72349d',
   ];
 
-
-  const isUpdate = ref(true);
-
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
       componentProps: {
@@ -61,7 +57,7 @@
     showDefaultActions: false,
     layout: 'horizontal',
     schema: formSchema,
-    wrapperClass: 'grid-cols-1',
+    wrapperClass: 'grid-cols-3',
   });
 
   const [BasicModal, modalApi] = useVbenModal({

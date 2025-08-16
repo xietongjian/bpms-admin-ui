@@ -12,11 +12,12 @@ enum Api {
   GetMySubjectList = '/flow/portal/cms/noticeSubject/getMySubjectList',
 }
 
-export const getNoticeSubjectList = (params) => {
+export const getNoticeSubjectList = (params: any) => {
   return requestClient.post(Api.NoticeSubjectList, params).then((res: any) => {
     res.forEach((item) => {
+      item.key = item.id;
       item.value = item.id;
-      item.label = item.name;
+      item.label = item.title;
     });
     return Promise.resolve(res);
   });
@@ -28,7 +29,6 @@ export const getAllNoticeSubject = (params) => {
     forEach(
       treeData,
       (node) => {
-        node.label = node.name;
         if (node.children.length === 0) {
           delete node.children;
         }

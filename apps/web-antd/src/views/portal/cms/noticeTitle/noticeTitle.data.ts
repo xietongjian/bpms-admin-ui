@@ -113,7 +113,7 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'remark',
     label: '备注',
-    component: 'InputTextArea',
+    component: 'Textarea',
     rules: z
         .string()
         .max(512, "字符长度不能大于512！")

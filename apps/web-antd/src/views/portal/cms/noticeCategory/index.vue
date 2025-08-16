@@ -13,17 +13,18 @@
       <template #signerNameRender="{ row }">
         <EmpInfo :no="row.signerNo" :name="row.signerName" />
       </template>
+<!--
       <template #createdByRender="{ row }">
         <EmpInfo :no="row.createdByNo" :name="row.createdBy" />
-      </template>
+      </template>-->
       <template #nameRender="{ row }">
         <span class="color-block" :style="{ background: row.style }"> &nbsp; </span>
         &nbsp;
         <span>{{ row.name }}</span>
       </template>
-      <template #updatedByRender="{ row }">
+<!--      <template #updatedByRender="{ row }">
         <EmpInfo :no="row.updatedByNo" :name="row.updatedBy" />
-      </template>
+      </template>-->
     </BasicTable>
     <NoticeCategoryModal ref="noticeCategoryModalRef" @success="handleSuccess" />
   </Page>
@@ -38,7 +39,7 @@
   import {TableAction} from '#/components/table-action';
   import { columns, searchFormSchema } from './noticeCategory.data';
   import NoticeCategoryModal from './NoticeCategoryModal.vue';
-  import { getAllNoticeCategory, deleteByIds } from '#/api/portal/cms/noticeCategory';
+  import { getNoticeCategoriesData, deleteByIds } from '#/api/portal/cms/noticeCategory';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { findPath, findPathAll } from '#/utils/helper/treeHelper';
   import { PerEnum } from '#/enums/perEnum';
@@ -87,7 +88,7 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
-          return await getAllNoticeCategory(formValues);
+          return await getNoticeCategoriesData(formValues);
         },
       },
     },
@@ -102,7 +103,7 @@
         tooltip: '添加子分类',
         icon: 'ant-design:plus-outlined',
         onClick: handleCreateChild.bind(null, record),
-        ifShow: handleAddChildBtnIfShow.bind(null, record),
+        // ifShow: handleAddChildBtnIfShow.bind(null, record),
       },
       {
         auth: [PerPrefix + PerEnum.UPDATE],
@@ -124,47 +125,24 @@
       },
     ];
   }
-  /*const [registerTable, { reload, getDataSource }] = useTable({
-    title: '列表',
-    api: getAllNoticeCategory,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: false,
-    showIndexColumn: false,
-    actionColumn: {
-      width: 100,
-      title: '操作',
-      field: 'action',
-      fixed: 'right',
-    },
-    pagination: false,
-  });*/
 
   function handleCreate() {
     noticeCategoryModalRef.value.setData({});
     noticeCategoryModalRef.value.open();
     noticeCategoryModalRef.value.setState({
-      title: '新建主体',
+      title: '新建分类',
     });
   }
 
-  function handleEdit(record: Recordable) {
+  function handleEdit(record: Recordable<any>) {
     noticeCategoryModalRef.value.setData(record);
     noticeCategoryModalRef.value.open();
     noticeCategoryModalRef.value.setState({
-      title: '修改主体',
+      title: '修改分类',
     });
   }
 
-  async function handleDelete(record: Recordable) {
+  async function handleDelete(record: Recordable<any>) {
     const {success, msg} = await deleteByIds([record.id]);
     if(success){
       message.success(msg);
@@ -172,7 +150,7 @@
     }
   }
 
-  function handleAddChildBtnIfShow(record: Recordable) {
+  function handleAddChildBtnIfShow(record: Recordable<any>) {
     const path = findPath(
         tableApi.grid.getFullData(),
         (node) => {
@@ -187,7 +165,7 @@
     tableApi.reload();
   }
 
-  function handleCreateChild(record: Recordable, e) {
+  function handleCreateChild(record: Recordable<any>, e) {
     noticeCategoryModalRef.value.setData({
       pid: record.id,
       frontShow: 1,
@@ -198,25 +176,6 @@
       title: '新增【' + record.name + '】的子分类',
     });
   }
-
-  /*export default defineComponent({
-    name: 'NoticeCategory',
-    components: { BasicTable, TableAction, NoticeCategoryModal, Authority, EmpInfo },
-    setup() {
-
-      return {
-        registerTable,
-        registerModal,
-        handleCreate,
-        handleAddChildBtnIfShow,
-        handleEdit,
-        handleDelete,
-        handleSuccess,
-        handleCreateChild,
-        PerEnum,
-      };
-    },
-  });*/
 </script>
 
 <style lang="less" scoped>

@@ -11,7 +11,7 @@ enum Api {
   NoticeCategoryList = '/flow/portal/cms/noticeCategory/list',
 }
 
-export const getAllNoticeCategory = (params: any) => {
+export const getNoticeCategoriesData = (params: any) => {
   if (params.field) {
     params.orders = [
       {
@@ -27,6 +27,12 @@ export const getAllNoticeCategory = (params: any) => {
       item.title = item.name;
       item.label = item.name;
     });
+    return Promise.resolve(res);
+  });
+}
+
+export const getAllNoticeCategory = (params: any) => {
+  return getNoticeCategoriesData(params).then((res: any) => {
     const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
     forEach(
       treeData,

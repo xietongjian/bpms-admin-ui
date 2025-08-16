@@ -1,39 +1,41 @@
 <template>
   <div>
-    <!--    <Button type="primary" @click="handleAdd"> 上传附件 </Button>-->
-    <Upload
-      v-model:file-list="fileList"
-      name="file"
-      multiple
-      @change="handleChange"
-      :action="uploadUrl"
-      :headers="uploadHeaders"
-      :showUploadList="false"
-      accept=".jpg,.jpeg,.gif,.png,.webp,.doc,.docx,.xsl,.xslx,.ppt,.pptx,.zip,.rar"
-      :disabled="uploading"
-    >
-      <Button :loading="uploading">
-        <upload-outlined />
-        上传附件
-      </Button>
-    </Upload>
-
     <BasicTable >
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'action'">
-          <TableAction :actions="createActions(record, column, index)" />
-        </template>
+      <template #toolbar-actions>
+        <Upload
+            v-model:file-list="fileList"
+            name="file"
+            multiple
+            :showUploadList="false"
+            :customRequest="handleCustomRequest"
+            accept=".jpg,.jpeg,.gif,.png,.webp,.doc,.docx,.xsl,.xslx,.ppt,.pptx,.zip,.rar"
+            :disabled="uploading"
+        >
+          <Button type="primary" :loading="uploading">
+            <upload-outlined />
+            上传附件
+          </Button>
+        </Upload>
+      </template>
+      <template #action="{ row }">
+        <TableAction outside :actions="createActions(row)" />
+      </template>
+      <template #canDown="{ row }">
+        <Switch v-model:checked="row.canDown" />
+      </template>
+      <template #fileSize="{ row }">
+        {{formatFileSize(row.fileSize)}}
       </template>
     </BasicTable>
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, ref, unref, h } from 'vue';
+  import { onMounted, ref, unref, h, defineExpose } from 'vue';
   import type {Recordable} from '@vben/types';
   import { UploadOutlined } from '@ant-design/icons-vue';
   // import { useUserStore } from '#/store/modules/user';
   import { resetAllStores, useAccessStore, useUserStore } from '@vben/stores';
-
+  import {formatFileSize} from "#/utils";
   import { Button, Upload, Switch, message } from 'ant-design-vue';
 
 /*  import {
@@ -47,65 +49,107 @@
   // import { useGlobSetting } from '#/hooks/setting';
   // import { ResultEnum } from '#/enums/httpEnum';
   // import {deleteById} from "#/api/portal/cms/commonFile";
-  import { formatFileSize } from '#/utils';
   import type {VxeGridProps} from '#/adapter/vxe-table';
+  import {useVbenVxeGrid} from "#/adapter/vxe-table";
+  import {uploadFile} from "#/api/core/upload";
+  import {TableAction} from "#/components/table-action";
+
+  const fileList = ref([]);
+
+  function handleCustomRequest(e) {
+    uploadFile({
+      file: e.file,
+      onError:() => {},
+      onProgress: ()=> {},
+      onSuccess: (url)=>{
+        const currentFile = fileList.value.find(item => item.uid===e.file.uid)
+        currentFile.filePath = url;
+        currentFile.canDown = false;
+        currentFile.fileName = currentFile.name;
+        // loadTableData();
+        handleInsert(currentFile);
+      }
+    })
+  }
+
+  const createActions = (record: any) => {
+    const actions: any[] = [
+      {
+        label: '删除',
+        danger: true,
+        popConfirm: {
+          title: '是否确认删除',
+          confirm: () => {
+            tableApi.grid?.remove(record);
+            const idx = fileList.value.findIndex(item => item.filePath === record.filePath)
+            fileList.value.splice(idx, 1)
+          },
+          okButtonProps: { danger: true },
+        },
+      },
+    ];
+    return actions;
+  };
+
+  function handleInsert(item) {
+    tableApi.grid?.insertAt({
+      fileName: item.name,
+      fileType: item.name.split('.').pop(),
+      fileSize: item.size,
+      filePath: item.filePath,
+      canDown: false,
+    }, -1);
+  }
+
+  function loadTableData() {
+    fileList.value.forEach(item => {
+      tableApi.grid?.insertAt({
+        fileName: item.fileName,
+        fileType: item.fileName?.split('.').pop(),
+        fileSize: item.fileSize,
+        size: item.fileSize,
+        filePath: item.filePath,
+        canDown: false,
+      }, -1);
+    })
+  }
 
   const columns: VxeGridProps['columns'] = [
     {
       title: '文件名',
-      field: 'name',
-      editRow: true,
+      field: 'fileName',
       align: 'left',
     },
     {
       title: '文件类型',
       field: 'fileType',
-      editRow: true,
       width: 100,
     },
     {
       title: '大小',
       field: 'fileSize',
-      editRow: false,
       width: 100,
-      customRender: ({ value }) => {
-        return formatFileSize(value);
-      },
+      slots: { default: 'fileSize' },
     },
     {
       title: '文件路径',
       field: 'filePath',
-      editRow: false,
-      defaultHidden: true,
     },
     {
       title: '是否允许下载',
       field: 'canDown',
       width: 150,
       align: 'center',
-      customRender: ({ record }) => {
-        if (!Reflect.has(record, 'pendingStatus')) {
-          record.pendingStatus = false;
-        }
-        return h(Switch, {
-          checked: record.canDown,
-          checkedChildren: '允许',
-          unCheckedChildren: '不允许',
-          loading: record.pendingStatus,
-          onChange(checked: boolean) {
-            record.pendingStatus = true;
-            const newStatus = checked;
-            record.canDown = newStatus;
-            record.pendingStatus = false;
-          },
-        });
-      },
+      slots: { default: 'canDown' },
+    },
+    {
+      width: 160,
+      title: '操作',
+      align: 'center',
+      slots: { default: 'action' },
     },
   ];
 
-  const data: any[] = [];
-
-  const userStore = useUserStore();
   const accessStore = useAccessStore();
   // const { uploadUrl } = useGlobSetting();
   const uploading = ref(false);
@@ -114,67 +158,33 @@
     uploadHeaders.value = { satoken: accessStore.accessToken };
   });
 
-  /*const [registerTable, { getDataSource, setTableData }] = useTable({
-    columns: columns,
-    showIndexColumn: true,
-    dataSource: data,
-    size: 'small',
-    actionColumn: {
-      width: 160,
-      title: '操作',
-      field: 'action',
+  const gridOptions: VxeGridProps = {
+    columns,
+    columnConfig: {resizable: true},
+    height: '250',
+    keepSource: true,
+    pagerConfig: {
+      enabled: false,
     },
-    scroll: { y: 400 },
-    pagination: false,
-  });*/
-
-  function handleEdit(record: Recordable, idx) {
-    console.log(record.index);
-    alert(JSON.stringify(record));
-  }
-
-  function handleChange(info: Recordable) {
-    const file = info.file;
-    const status = file?.status;
-    const url = file?.response?.data;
-    const responseCode = file?.response?.code;
-    const responseMsg = file?.response?.msg;
-    const name = file?.name;
-    const size = file?.size;
-
-    if (status === 'uploading') {
-      if (!unref(uploading)) {
-        // emit('uploading', name);
-        uploading.value = true;
-      }
-    } else if (status === 'done') {
-      if (responseCode === ResultEnum.SUCCESS) {
-        handleAdd({ url, name, size });
-      } else {
-        message.error(responseMsg);
-      }
-      // emit('done', name, url);
-      uploading.value = false;
-    } else if (status === 'error') {
-      // emit('error');
-      uploading.value = false;
+    border: false,
+    stripe: true,
+    editConfig: {
+      trigger: 'click',
+      mode: 'row',
+    },
+    rowDragConfig: {
+      showIcon: true,
+      animation: true,
+      dragEndMethod: () => {
+        debugger;
+        return Promise.resolve({});
+      },
     }
-  }
+  };
 
-  function handleAdd(file) {
-    const data = getDataSource();
-    const fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
-    const addRow: Recordable<any> = {
-      name: file.name,
-      filePath: file.url,
-      fileType: fileType,
-      fileSize: file.size,
-      canDown: true,
-    };
-    data.push(addRow);
-  }
+  const [BasicTable, tableApi] = useVbenVxeGrid({gridOptions});
 
-  function createActions(record: Recordable<any>, column: any, index): any[] {
+  /*function createActions(record: Recordable<any>, column: any, index): any[] {
     const records = getDataSource();
     return [
       {
@@ -196,14 +206,7 @@
         },
       },
     ];
-  }
-
-  function upRecord(arr, $index) {
-    if ($index == 0) {
-      return;
-    }
-    swapItems(arr, $index, $index - 1);
-  }
+  }*/
 
   function downRecord(arr, $index) {
     if ($index == arr.length - 1) {
@@ -217,38 +220,22 @@
     return arr;
   }
 
-  function handleDel(record) {
-    if (record.id) {
-      // deleteById(record.id).then(res=>{
-      //   message.success("删除成功");
-      // });
-    }
-
-    const records = getDataSource();
-    records.splice(
-        records.findIndex((item) => item.key === record.key),
-        1,
-    );
+  function getFileList() {
+    return fileList.value.map(item => {
+      return {
+        fileName: item.fileName,
+        filePath: item.filePath,
+        fileType: item.fileType,
+        fileSize: item.size,
+        canDown: item.canDown,
+      }
+    });
   }
 
-  /*export default defineComponent({
-    components: { BasicTable, TableAction, UploadOutlined, Upload },
-    setup() {
+  function loadFileList(files: any) {
+    fileList.value = files;
+    loadTableData(files);
+  }
 
-
-      return {
-        registerTable,
-        handleChange,
-        uploadUrl,
-        uploadHeaders,
-        handleEdit,
-        handleDel,
-        createActions,
-        handleAdd,
-        getDataSource,
-        setTableData,
-        uploading,
-      };
-    },
-  });*/
+  defineExpose({getFileList, loadFileList})
 </script>

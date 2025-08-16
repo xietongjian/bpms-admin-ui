@@ -1,8 +1,8 @@
 <template>
-  <BasicDrawer class="w-3/5">
-    <div class="w-full flex flex-col">
-      <h1 class="w-full text-2xl text-center p-4">{{ noticeInfo?.title || '无标题' }}</h1>
-      <div class="w-full grid grid-cols-2 md:grid-cols-3 px-4 items-center gap-4 text-center text-secondary-foreground/50">
+  <BasicDrawer class="w-3/5 ">
+    <div class="w-full relative">
+      <h1 class="w-full text-2xl text-center p-2">{{ noticeInfo?.title || '无标题' }}</h1>
+      <div class="w-full grid grid-cols-2 md:grid-cols-3 p-4 items-center gap-4 text-center text-secondary-foreground/50">
         <div>
           发布人：{{ noticeInfo.deptName || userInfo.realName || '-' }}
         </div>
@@ -18,30 +18,41 @@
 
       <div v-if="noticeTitle" class="notice-red-title" v-html="noticeTitle.titleSvg"></div>
 
-      <div>
+      <div class="text-center">
         {{ noticeInfo.noticeNo }}
       </div>
 
-      <h1 class="w-full text-2xl text-center p-4">{{ noticeInfo?.title }}</h1>
+<!--      <h1 class="w-full text-2xl text-center p-4">{{ noticeInfo?.title }}</h1>-->
 
-      <div class="w-full min-h-100 overflow-x-auto p-2 [&_*]:!text-card-foreground" v-html="noticeInfo.content"></div>
-
-      <div class="notice-footer">
-        <div class="">{{ noticeInfo.subjectName }}</div>
-        <div class="mt-2">{{ formatToDate(noticeInfo.publishTime, 'YYYY年MM月DD日') }}</div>
-        <img
-          v-if="noticeSubject && noticeSubject.signatureImg"
-          class="notice-signatureImg"
-          :src="noticeSubject.signatureImg"
-        />
+      <div class="w-full min-h-100 overflow-x-auto p-2 [&_*]:!text-card-foreground"
+           v-html="noticeInfo.content">
       </div>
 
-      <div v-if="noticeFiles && noticeFiles.length > 0" class="notice-files">
+      <div v-if="noticeInfo && noticeInfo?.attachments?.length > 0"
+           class="my-4"
+      >
         附件：
-        <div v-for="item in noticeFiles">
-          {{ item.name }}
+        <div class="flex flex-wrap gap-3 mt-2">
+          <div class="min-w-50" v-for="item in noticeInfo?.attachments">
+            <a :href="item.filePath" target="_blank" >{{ item.fileName }}</a>
+          </div>
         </div>
       </div>
+
+      <div class="clear-both relative flex justify-end text-center mt-4">
+        <div class="text-center">
+          <div class="relative top-[110px] text-nowrap text-xl">
+            <div class="">{{ noticeInfo.subjectName }}</div>
+            <div v-if="noticeInfo.publishTime" class="mt-2">{{ formatToDate(noticeInfo.publishTime, 'YYYY年MM月DD日') }}</div>
+          </div>
+          <img
+              v-if="noticeSubject && noticeSubject.signatureImg"
+              class="m-auto -top-30 size-40 object-contain z-9 opacity-80"
+              :src="noticeSubject.signatureImg"
+          />
+        </div>
+      </div>
+
     </div>
   </BasicDrawer>
 </template>
@@ -53,9 +64,7 @@
   import { formatToDate } from '#/utils/dateUtil';
   // import {getAllCommonFile} from "#/api/portal/cms/commonFile";
   // import { useUserStore } from '#/store/modules/user';
-  import { Row, Col } from 'ant-design-vue';
   import {useVbenDrawer} from '@vben/common-ui';
-  // import {useVbenForm} from '#/adapter/form';
   const noticeInfo = ref({});
   const noticeFiles = ref({});
   const noticeTitle = ref({});
@@ -65,6 +74,11 @@
   // const { userInfo } = userStore;
 
   const [BasicDrawer, drawerApi] = useVbenDrawer({
+    showConfirmButton: false,
+    closeOnClickModal: true,
+    closeOnPressEscape: true,
+    destroyOnClose: true,
+    cancelText: '关闭',
     onCancel() {
       drawerApi.close();
     },
@@ -72,6 +86,8 @@
       if (isOpen) {
         const values = drawerApi.getData<Record<string, any>>();
         if (values) {
+          drawerApi.setState({loading: true, confirmLoading: true});
+
           // const params = JSON.stringify(JSON.parse(values.params), null, 2)
           // formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});
           // 临时预览，未保存的时候预览
@@ -98,60 +114,13 @@
             // });
           }
 
-          drawerApi.setState({loading: false, confirmLoading: false});
         }
+        drawerApi.setState({loading: false, confirmLoading: false});
       }
     },
     onConfirm() {
       // handleSubmit();
     },
   });
-
-
-  /*const [registerNoticePreviewDrawer, { setDrawerProps }] = useDrawerInner(async (data) => {
-    setDrawerProps({ confirmLoading: false });
-
-
-  });*/
   defineExpose(drawerApi)
 </script>
-
-<style lang="less" scoped>
-  /*.notice-wrapper {
-    width: 720px;
-    margin: auto;
-    .notice-red-title {
-      width: 800px;
-      height: 80px;
-      margin: auto;
-    }
-    .notice-title {
-      font-size: 20px;
-      font-weight: bold;
-      text-align: center;
-    }
-    .notice-content {
-      margin: auto;
-      text-align: justify-all;
-      overflow-wrap: break-word;
-      white-space: normal;
-    }
-    .notice-footer {
-      clear: both;
-      position: relative;
-      float: right;
-      text-align: center;
-      margin-top: 80px;
-      height: 150px;
-      .notice-signatureImg {
-        position: relative;
-        top: -120px;
-        width: 200px;
-        height: 200px;
-      }
-    }
-    .notice-files {
-      clear: both;
-    }
-  }*/
-</style>

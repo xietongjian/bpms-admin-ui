@@ -112,11 +112,13 @@ export const formSchema: FormSchema[] = [
         .min(1, '名称不能为空！')
         .max(256, '字符长度不能大于256！'),
     help: '用于生成落款',
+    formItemClass: 'col-span-3',
   },
   {
     fieldName: 'shortTitle',
     label: '短标题',
     component: 'Input',
+    formItemClass: 'col-span-3',
     rules: z
         .string({
           required_error: '短标题不能为空！'
@@ -129,6 +131,7 @@ export const formSchema: FormSchema[] = [
     fieldName: 'sn',
     label: '标识',
     component: 'Input',
+    formItemClass: 'col-span-3',
     rules: z
         .string({
           required_error: '标识不能为空！'
@@ -221,6 +224,7 @@ export const formSchema: FormSchema[] = [
         default: () => '请选择图片',
       };
     },
+    formItemClass: 'col-span-3',
     // rules: 'required',
   },
 
@@ -244,24 +248,26 @@ export const formSchema: FormSchema[] = [
       checkedChildren: '是',
       unCheckedChildren: '否',
     },
-    // colProps: {
-    //   span: 5,
-    // },
+    formItemClass: 'col-span-1',
   },
   {
     fieldName: 'signerSelector',
     label: '签发人',
-    required: true,
+    hideLabel: true,
     component: 'PersonalSelector',
-    show: ({ values }) => {
-      return values.haveSigner;
+    componentProps: {
+      placeholder: '请选择签发人'
     },
-    dynamicRules: ({ values }) => {
-      return values.haveSigner ? [{ required: true, message: '请选择签发人' }] : [];
+    dependencies: {
+      triggerFields: ['haveSigner'],
+      show: (values) => {
+        return values.haveSigner
+      },
+      rules: (values) => {
+        return values.haveSigner?'selectRequired': '';
+      }
     },
-    colProps: {
-      span: 10,
-    },
+    formItemClass: 'col-span-2'
   },
   {
     fieldName: 'status',
@@ -272,6 +278,7 @@ export const formSchema: FormSchema[] = [
       checkedChildren: '启用',
       unCheckedChildren: '禁用',
     },
+    formItemClass: 'col-span-3',
     rules: 'selectRequired'
   },
   {
@@ -284,11 +291,13 @@ export const formSchema: FormSchema[] = [
       min: OrderNoDefaultEnum.MIN,
       max: OrderNoDefaultEnum.MAX,
     },
+    formItemClass: 'col-span-3',
   },
   {
     fieldName: 'remark',
     label: '备注',
     component: 'Textarea',
+    formItemClass: 'col-span-3',
     rules: z
         .string()
         .max(512, "字符长度不能大于512！")

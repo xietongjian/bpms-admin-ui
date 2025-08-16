@@ -1,5 +1,5 @@
 <template>
-  <BasicModal class="w-100">
+  <BasicModal class="w-3/5">
     <BasicForm />
   </BasicModal>
 </template>

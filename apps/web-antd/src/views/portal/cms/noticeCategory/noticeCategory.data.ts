@@ -11,7 +11,7 @@ export const columns: VxeGridProps['columns'] = [
     minWidth: 200,
     align: 'left',
     slots: { default: 'nameRender' },
-    resizable: true,
+    treeNode: true
   },
   {
     title: '标识',
@@ -112,6 +112,7 @@ export const formSchema: FormSchema[] = [
     fieldName: 'name',
     label: '名称',
     component: 'Input',
+    formItemClass: 'col-span-3',
     rules: z
         .string({
           required_error: '名称不能为空！'
@@ -124,6 +125,7 @@ export const formSchema: FormSchema[] = [
     fieldName: 'sn',
     label: '标识',
     component: 'Input',
+    formItemClass: 'col-span-3',
     rules: z
         .string({
           required_error: '标识不能为空！'
@@ -137,14 +139,16 @@ export const formSchema: FormSchema[] = [
     fieldName: 'style',
     label: '样式',
     component: 'Input',
-    slot: 'styleRenderSlot',
+    // slot: 'styleRenderSlot',
+    formItemClass: 'col-span-3',
   },
   {
     fieldName: 'haveSigner',
     label: '是否有签发人',
-    colProps: { span: 6 },
+    // colProps: { span: 6 },
     component: 'Switch',
     defaultValue: false,
+    formItemClass: 'col-span-1',
     componentProps: {
       checkedChildren: '是',
       unCheckedChildren: '否',
@@ -153,9 +157,9 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'refSubjectSigner',
     component: 'RadioGroup',
-    label: '',
-    colProps: { span: 10 },
+    hideLabel: true,
     defaultValue: true,
+    formItemClass: 'col-span-1',
     componentProps: {
       options: [
         {
@@ -168,30 +172,32 @@ export const formSchema: FormSchema[] = [
         },
       ],
     },
-    show: ({ values }) => {
-      return !!values.haveSigner;
-    },
-    dynamicRules: ({ values }) => {
-      return values.haveSigner ? [{ required: true, message: '请选择签发人类型' }] : [];
+    dependencies: {
+      triggerFields: ['haveSigner'],
+      show: (values) => {
+        return values.haveSigner
+      },
+      rules: (values) => {
+        return values.haveSigner?'selectRequired': '';
+      }
     },
   },
   {
     fieldName: 'signerSelector',
-    label: '',
-    colProps: { span: 6 },
-    labelWidth: 0,
-    required: false,
+    hideLabel: true,
     component: 'PersonalSelector',
     componentProps: {
       placeholder: '请选择签发人',
     },
-    show: ({ values }) => {
-      return values.haveSigner && !values.refSubjectSigner;
-    },
-    dynamicRules: ({ values }) => {
-      return values.haveSigner && !values.refSubjectSigner
-        ? [{ required: true, message: '请选择签发人' }]
-        : [];
+    formItemClass: 'col-span-1',
+    dependencies: {
+      triggerFields: ['haveSigner', 'refSubjectSigner'],
+      show: (values) => {
+        return values.haveSigner && !values.refSubjectSigner
+      },
+      rules: (values) => {
+        return values.haveSigner && !values.refSubjectSigner?'selectRequired': '';
+      }
     },
   },
   {
@@ -203,6 +209,7 @@ export const formSchema: FormSchema[] = [
       checkedChildren: '启用',
       unCheckedChildren: '禁用',
     },
+    formItemClass: 'col-span-3',
   },
   {
     fieldName: 'orderNo',
@@ -214,11 +221,13 @@ export const formSchema: FormSchema[] = [
       min: OrderNoDefaultEnum.MIN,
       max: OrderNoDefaultEnum.MAX,
     },
+    formItemClass: 'col-span-3',
   },
   {
     fieldName: 'remark',
     label: '备注',
     component: 'Textarea',
+    formItemClass: 'col-span-3',
     rules: z
         .string()
         .max(512, "字符长度不能大于512！")

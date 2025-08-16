@@ -27,7 +27,7 @@
     showDefaultActions: false,
     layout: 'horizontal',
     schema: formSchema,
-    wrapperClass: 'grid-cols-1',
+    wrapperClass: 'grid-cols-3',
   });
 
   const [BasicModal, modalApi] = useVbenModal({
@@ -39,7 +39,7 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          //formApi.setValues(values);
+          formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }

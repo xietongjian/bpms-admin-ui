@@ -1,16 +1,17 @@
 <template>
-  <div style="height: 100%; overflow: hidden">
-    <editor
+  <div class="w-full h-full">
+    <Editor
         v-model="myValue"
         :init="init"
         :enabled="enabled"
         :id="tinymceId"
-    ></editor>
+    ></Editor>
   </div>
 </template>
 
 <script setup>
-import {computed, reactive, watch, ref, nextTick, onMounted} from "vue"; //全屏
+import {computed, reactive, watch, ref, nextTick, onMounted, defineEmits} from "vue"; //全屏
+import {uploadFile} from "#/api/core/upload";
 
 import tinymce from "tinymce/tinymce";
 // import "tinymce/skins/content/default/content.css";
@@ -55,6 +56,10 @@ const props = defineProps({
       return "";
     },
   },
+  menubar: {
+    type: Boolean,
+    default: false,
+  },
   baseUrl: {
     type: String,
     default: "",
@@ -94,20 +99,20 @@ const tinymceId = ref(
     "vue-tinymce-" + +new Date() + ((Math.random() * 1000).toFixed(0) + "")
 );
 
-
 //定义一个对象 init初始化
 const init = reactive({
+  auto_update: false,
   selector: "#" + tinymceId.value, //富文本编辑器的id,
   language_url: "/libs/tinymce/langs/zh_CN.js", // 语言包的路径，具体路径看自己的项目
   language: "zh_CN",
-  skin_url: "/tinymce/skins/ui/oxide", // skin路径，具体路径看自己的项目
+  skin_url: "/libs/tinymce/skins/ui/oxide", // skin路径，具体路径看自己的项目
   editable_root: props.editable_root,
   height: 600,
   branding: false, // 是否禁用“Powered by TinyMCE”
   promotion: false, //去掉 upgrade
   // toolbar_sticky: true,
   // toolbar_sticky_offset: 100,
-  menubar: "edit view insert format tools table",
+  menubar: props.menubar, // "edit view insert format tools table",
   paste_data_images: true, //允许粘贴图像
   image_dimensions: false, //去除宽高属性
   plugins: props.plugins, //这里的数据是在props里面就定义好了的
@@ -115,7 +120,7 @@ const init = reactive({
   // 取消图片资源路径转换
   convert_urls: false,
   // table边框位0是否展示网格线
-  // visual: false,
+  visual: false,
   // 超链接默认打开方式
   link_default_target: "_blank",
   link_context_toolbar: true,
@@ -154,7 +159,7 @@ const init = reactive({
   // },
   //图片上传  -实列 具体请根据官网补充-
   images_upload_handler: function (blobInfo, progress) {
-    new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       let file = blobInfo.blob();
       if (file.size / 1024 / 1024 > 200) {
         reject({
@@ -164,29 +169,32 @@ const init = reactive({
       }
       const formData = new FormData();
       formData.append("file", file);
-      console.log( formData)
-      axios.post("/api/upload/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (progressEvent) => {
-          progress(
+      uploadFile({
+        file, onError: (error) => {
+          console.log(error);
+        }, onProgress: (precent) => {
+          // debugger;
+          // progress(50);
+          /*progress(
               Math.round((progressEvent.loaded / progressEvent.total) * 100)
-          );
-        },
-      }).then((res) => {
-        resolve(res.data.url);
+          );*/
+        }, onSuccess: (res) => {
+          resolve(res);
+        }
       })
-          .catch()
-
     });
+  },
+  init_instance_callback: function(editor) {
+    // 初始化完成后显示编辑器
+    // editor.getContainer().style.visibility = 'visible';
+    // console.log('解决方案编辑器已初始化并显示');
   },
 });
 
 // 外部传递进来的数据变化
 const myValue = computed({
   get() {
-    return props.modelValue;
+    return props.value;
   },
   set(val) {
     emits("update:modelValue", val);
@@ -197,6 +205,7 @@ const myValue = computed({
 watch(
     () => myValue.value,
     () => {
+      debugger;
       emits(
           "setHtml",
           tinymce.activeEditor.getContent({format: "text"}),
@@ -223,13 +232,18 @@ watch(
 
 //初始化编辑器
 onMounted(() => {
-  tinymce.init({
+  /*tinymce.init({
     selector: 'textarea',
     license_key: 'gpl', //使用 GNU GPL 开源协议，表示使用的是 TinyMCE 的免费社区版本
     promotion: false,//禁用 TinyMCE 推广信息广告
     language: 'zh_CN',//设置语言为中文
-  });
-  debugger;
+    init_instance_callback: function(editor) {
+      // 初始化完成后显示编辑器
+      debugger;
+      editor.getContainer().style.visibility = 'visible';
+      console.log('解决方案编辑器已初始化并显示');
+    },
+  });*/
 });
 
 // 设置值
@@ -249,12 +263,12 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
-:deep(.tox-tinymce) {
+/*:deep(.tox-tinymce) {
   border: 1px solid #dcdfe6;
   border-radius: 4px;
-
+  z-index: 1000;
   .tox-statusbar {
     display: none;
   }
-}
+}*/
 </style>
