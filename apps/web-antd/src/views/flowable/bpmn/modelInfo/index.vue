@@ -171,7 +171,7 @@ function createActions(record: Recordable<any>) {
     },
     {
       auth: [PerPrefix + PerEnum.UPDATE],
-      icon: 'clarity:note-edit-line',
+      icon: 'ant-design:form-outlined',
       tooltip: '修改',
       label: '',
       onClick: handleEdit.bind(null, record),

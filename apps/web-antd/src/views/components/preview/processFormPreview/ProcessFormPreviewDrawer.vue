@@ -138,7 +138,6 @@
     Dropdown,
     Menu,
     Space,
-    Descriptions,
     Collapse,
     message,
     Tabs,
@@ -212,7 +211,7 @@
   const requiredFormFields = ref([]);
   const processViewType = ref('view');
   ///////////////////////////////////////
-  const procInstInfo = ref({});
+  const procInstInfo = ref<any>({});
 
   watch(activeViewKey, (val) => {
     if (val === 'viewFlow') {

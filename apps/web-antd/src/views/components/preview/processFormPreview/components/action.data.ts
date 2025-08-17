@@ -1,6 +1,5 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {z} from '#/adapter/form';
-import type {VxeGridProps} from '#/adapter/vxe-table';
 import {h, markRaw} from "vue";
 import Upload from "#/views/components/common/widgets/upload/index.vue";
 import Esign from "#/views/components/common/widgets/esign/index.vue";
@@ -189,21 +188,6 @@ export const approveActionFormSchema: FormSchema[] = [
       .min(1, "审批意见不能为空！")
       .max(4000, "字符长度不能大于4000！"),
   },
-  /*{
-    fieldName: 'message',
-    label: '审批意见',
-    component: 'Textarea',
-    rules: z
-        .string({required_error: '审批意见不能为空！'})
-        .min(1, {message: '审批意见不能为空！'})
-        .max(4000, '字符长度不能大于4000！'),
-    componentProps: {
-      autoSize: {
-        minRows: 2,
-        maxRows: 10,
-      },
-    },
-  },*/
 ];
 export const fetchBackMessageFormSchema: FormSchema[] = [
   {

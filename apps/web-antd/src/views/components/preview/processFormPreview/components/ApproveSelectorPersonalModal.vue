@@ -37,7 +37,7 @@ const [BasicForm, formApi] = useVbenForm({
   showDefaultActions: false,
   layout: 'horizontal',
   schema: approveActionFormSchema,
-  wrapperClass: 'grid-cols-1',
+  wrapperClass: 'gap-0 grid-cols-1',
 });
 
 /*const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
@@ -142,7 +142,6 @@ function closeCurrModal() {
 
 async function handleSubmit() {
   const defaultMsg = '网络异常，请稍后再试！';
-  debugger;
   const {valid} = await formApi.validate();
   if (!valid) {
     return;

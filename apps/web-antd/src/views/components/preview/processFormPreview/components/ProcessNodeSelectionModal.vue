@@ -101,7 +101,7 @@
     showDefaultActions: false,
     layout: 'horizontal',
     schema: processNodeSelectionFormSchema,
-    wrapperClass: 'grid-cols-1',
+    wrapperClass: 'gap-0 grid-cols-1',
   });
 
   /*const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(

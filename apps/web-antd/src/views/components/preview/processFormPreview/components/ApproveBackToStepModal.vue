@@ -23,8 +23,8 @@
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import { approveBackToStepFormSchema, backToStepTableColumns } from './action.data';
-  import { Button, Tag, Table, message } from 'ant-design-vue';
-  import { backToStep, backToSubmitter, getBackToStepNodes } from '#/api/flowoperation/processTask';
+  import { Table, message } from 'ant-design-vue';
+  import { backToStep, getBackToStepNodes } from '#/api/flowoperation/processTask';
 
   const emit = defineEmits(['success'])
   const backToStepNodeList = ref([]);
@@ -75,7 +75,7 @@
     showDefaultActions: false,
     layout: 'horizontal',
     schema: approveBackToStepFormSchema,
-    wrapperClass: 'grid-cols-1',
+    wrapperClass: 'gap-0 grid-cols-1',
   });
 
   function closeCurrModal() {

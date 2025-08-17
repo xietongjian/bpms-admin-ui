@@ -1,26 +1,19 @@
 <template>
   <BasicModal class="w-3/5">
     <BasicForm >
-<!--      <template #styleRenderSlot="{ model, field }">
-        <div style="line-height: 0px">
-          <Space class="color-selector">
-            <span
-              @click="
-                () => {
-                  model[field] = item;
-                }
-              "
-              v-for="item in colorList"
-              class="color-item"
-              :class="{ selected: item === model[field] }"
-              :style="{ background: item }"
-              :title="item"
-            >
-              <StopOutlined title="默认" style="font-size: 26px; color: gray" v-if="item === ''" />
+      <template #style>
+        <div class="my-2 ml-1 w-full">
+          <div class="flex gap-2">
+            <span @click="()=>{selectedStyle = item}"
+                  v-for="item in colorList"
+                  class="text-center cursor-pointer size-[26px] outline outline-transparent outline-4"
+                  :class="{'outline-red-600': item === selectedStyle}"
+                  :style="{background: item}" :title="item">
+              <StopOutlined title="默认" class="text-center text-[26px] text-gray-500" v-if="item===''" />
             </span>
-          </Space>
+          </div>
         </div>
-      </template>-->
+      </template>
     </BasicForm>
   </BasicModal>
 </template>
@@ -33,7 +26,6 @@
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
 
-  const emit = defineEmits(['success']);
   const colorList = [
     '',
     '#c21401',
@@ -47,6 +39,10 @@
     '#00215f',
     '#72349d',
   ];
+
+  const selectedStyle = ref('');
+
+  const emit = defineEmits(['success'])
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
@@ -70,6 +66,7 @@
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
           formApi.setValues(values);
+          selectedStyle.value = values.style || '';
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -192,15 +189,22 @@
         values.signerName = '';
       }
       delete values.signerSelector;
+      values.style = selectedStyle.value;
       modalApi.setState({loading: true, confirmLoading: true});
+      let res = null;
       if (values.id) {
-        await update(values);
+        res = await update(values);
       } else {
-        await insert(values);
+        res = await insert(values);
       }
-
-      modalApi.close();
-      emit('success');
+      const {success, msg} = res;
+      if(success){
+        message.success(msg);
+        modalApi.close();
+        emit('success');
+      }
+    } catch (e){
+      console.error(e);
     } finally {
       modalApi.setState({loading: false, confirmLoading: false});
     }
@@ -208,17 +212,3 @@
 
   defineExpose(modalApi);
 </script>
-
-<style lang="less" scoped>
-  .color-selector {
-    .color-item {
-      width: 26px;
-      height: 26px;
-      display: inline-block;
-      outline: 4px solid transparent !important;
-    }
-    .selected {
-      outline: 4px solid red !important;
-    }
-  }
-</style>

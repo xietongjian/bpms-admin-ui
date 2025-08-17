@@ -201,7 +201,7 @@ function createSubActions(mainRecord: Recordable<any>, record: Recordable<any>) 
   return [
     {
       auth: [PerPrefix + PerEnum.UPDATE],
-      icon: 'clarity:note-edit-line',
+      icon: 'ant-design:form-outlined',
       title: '编辑',
       onClick: handleEditProperties.bind(null, mainRecord, record),
     },
@@ -233,7 +233,7 @@ function createActions(record: Recordable<any>) {
     {
       auth: [PerPrefix + PerEnum.UPDATE],
       tooltip: '修改',
-      icon: 'clarity:note-edit-line',
+      icon: 'ant-design:form-outlined',
       onClick: handleEdit.bind(null, record),
     },
     {

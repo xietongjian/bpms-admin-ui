@@ -101,19 +101,19 @@ function createActions(record: any) {
     {
       auth: [PerPrefix + PerEnum.AUTH],
       tooltip: '分配组',
-      icon: 'ant-design:usergroup-add',
+      icon: 'ant-design:user-add-outlined',
       onClick: handleSetGroup.bind(null, record),
     },
     {
       auth: [PerPrefix + PerEnum.UPDATE],
       tooltip: '设置密码',
-      icon: 'ant-design:setting-outlined',
+      icon: 'ant-design:key-outlined',
       onClick: handleSetPassword.bind(null, record),
     },
     {
       auth: [PerPrefix + PerEnum.UPDATE],
       tooltip: '修改',
-      icon: 'clarity:note-edit-line',
+      icon: 'ant-design:form-outlined',
       onClick: handleEdit.bind(null, record),
     },
     {

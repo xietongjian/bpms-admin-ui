@@ -21,13 +21,6 @@
       <!--      <template #createdByRender="{ record }">
         <EmpInfo :no="record.createdByNo" :name="record.createdBy" />
       </template>
-      <template #nameRender="{ record }">
-        <span class="color-block" :style="{background: record.style}">
-          &nbsp;
-        </span>
-        &nbsp;
-        <span>{{record.name}}</span>
-      </template>
       <template #updatedByRender="{ record }">
         <EmpInfo :no="record.updatedByNo" :name="record.updatedBy" />
       </template>-->
@@ -42,10 +35,7 @@
   import type {VxeGridProps} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
-  import {ColPage} from '@vben/common-ui';
   import {TableAction} from '#/components/table-action';
-  // import { BasicTable, TableAction, useTable } from '#/components/Table';
-  // import { useModal } from '#/components/Modal';
   import { columns, searchFormSchema } from './newsCategory.data';
   import NewsCategoryModal from './NewsCategoryModal.vue';
   import { deleteByIds, getAllNewsCategory } from '#/api/portal/cms/newsCategory';
@@ -94,14 +84,8 @@
     stripe: true,
     proxyConfig: {
       ajax: {
-        query: async ({page}, formValues) => {
-          return await getAllNewsCategory({
-            query: {
-              pageNum: page.currentPage,
-              pageSize: page.pageSize,
-            },
-            entity: formValues || {},
-          });
+        query: async ({}, formValues) => {
+          return await getAllNewsCategory(formValues);
         },
       },
     },
@@ -121,7 +105,7 @@
       {
         auth: [PerPrefix + PerEnum.UPDATE],
         tooltip: '修改',
-        icon: 'clarity:note-edit-line',
+        icon: 'ant-design:form-outlined',
         onClick: handleEdit.bind(null, record),
       },
       {
@@ -138,35 +122,11 @@
       },
     ];
   }
-  /*const [registerTable, { reload }] = useTable({
-    title: '列表',
-    api: getAllNewsCategory,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: false,
-    showIndexColumn: false,
-    actionColumn: {
-      width: 100,
-      title: '操作',
-      field: 'action',
-      fixed: 'right',
-    },
-    pagination: false,
-  });*/
-
   function handleCreate() {
     newsCategoryModalRef.value.setData({});
     newsCategoryModalRef.value.open();
     newsCategoryModalRef.value.setState({
-      title: '编辑'
+      title: '新建'
     });
   }
 
@@ -176,27 +136,20 @@
     newsCategoryModalRef.value.setState({
       title: '编辑'
     });
-    /*openModal(true, {
-      record,
-      isUpdate: true,
-    });
-    setModalProps({
-      width: 800,
-    });*/
   }
 
-  async function handleDelete(record: Recordable) {
+  async function handleDelete(record: Recordable<any>) {
     const {success, msg} = await deleteByIds([record.id]);
     if(success){
-      tableApi.reload();
       message.success(msg);
+      tableApi.reload();
     }
   }
 
   function handleSuccess() {
     tableApi.reload();
   }
-  function handleCreateChild(record: Recordable, e) {
+  function handleCreateChild(record: Recordable<any>, e) {
     newsCategoryModalRef.value.setData({
       pid: record.id,
       status: true,
@@ -205,39 +158,7 @@
     newsCategoryModalRef.value.setState({
       title: '新增【' + record.name + '】的子分类'
     });
-    /*e.stopPropagation();
-    setModalProps({ title: '新增【' + record.name + '】的子分类' });
-    record = {
-      pid: record.id,
-      status: true,
-    };
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });
-    setModalProps({
-      width: 800,
-    });*/
   }
-
-
-  /*export default defineComponent({
-    name: 'NewsCategory',
-    components: { BasicTable, TableAction, NewsCategoryModal, Authority, EmpInfo },
-    setup() {
-
-      return {
-        registerTable,
-        registerModal,
-        handleCreate,
-        handleEdit,
-        handleDelete,
-        handleSuccess,
-        handleCreateChild,
-        PerEnum,
-      };
-    },
-  });*/
 </script>
 
 <style lang="less" scoped>

@@ -125,7 +125,7 @@
         ifShow: status === 3 || status === 2,
       },
       {
-        icon: 'clarity:note-edit-line',
+        icon: 'ant-design:form-outlined',
         tooltip: '修改',
         label: '',
         onClick: handleEdit.bind(null, record),

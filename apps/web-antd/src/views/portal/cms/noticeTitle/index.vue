@@ -97,7 +97,7 @@
       {
         tooltip: '修改',
         auth: [PerPrefix + PerEnum.UPDATE],
-        icon: 'clarity:note-edit-line',
+        icon: 'ant-design:form-outlined',
         onClick: handleEdit.bind(null, record),
       },
       {

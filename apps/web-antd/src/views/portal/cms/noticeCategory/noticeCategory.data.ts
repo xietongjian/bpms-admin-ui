@@ -139,7 +139,6 @@ export const formSchema: FormSchema[] = [
     fieldName: 'style',
     label: '样式',
     component: 'Input',
-    // slot: 'styleRenderSlot',
     formItemClass: 'col-span-3',
   },
   {

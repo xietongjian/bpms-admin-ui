@@ -116,7 +116,7 @@ function createActions(row: Recordable<any>) {
       label: '',
       type: 'link',
       tooltip: '编辑',
-      icon: 'clarity:note-edit-line',
+      icon: 'ant-design:form-outlined',
       size: 'small',
       auth: [PerPrefix + PerEnum.UPDATE],
       onClick: handleEdit.bind(null, row),

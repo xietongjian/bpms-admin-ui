@@ -79,13 +79,13 @@ export const getNoticeTitleListByPage = (params) => {
   return requestClient.post(Api.NoticeTitlePageList, params);
 };
 
-export const insert = (params) => requestClient.post(Api.Insert, params);
+export const insert = (params: any) => requestClient.post(Api.Insert, params, {responseReturn: 'body'});
 
 export const getNoticeTitleById = (id) => requestClient.get(Api.GetNoticeTitleById + '/' + id);
 
-export const update = (params) => requestClient.post(Api.Update, params);
+export const update = (params: any) => requestClient.post(Api.Update, params, {responseReturn: 'body'});
 
-export const checkEntityExist = (params) =>
+export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
 export const deleteByIds = (params?: Array<string>) => requestClient.post(Api.Delete, params, {responseReturn: 'body'});

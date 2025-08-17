@@ -68,6 +68,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '性别',
     field: 'sex',
     width: 60,
+    slots: {default: 'sex'}
   },
   {
     title: '所属组',

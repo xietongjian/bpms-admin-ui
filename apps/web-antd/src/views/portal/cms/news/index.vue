@@ -77,8 +77,6 @@
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {ColPage} from '@vben/common-ui';
   import {TableAction} from '#/components/table-action';
-  // import { BasicTable, TableAction, useTable } from '#/components/Table';
-  // import { useDrawer } from '#/components/Drawer';
   import { columns, searchFormSchema } from './news.data';
   import {
     deleteByIds,
@@ -90,15 +88,12 @@
   import NewsPreviewDrawer from './NewsPreviewDrawer.vue';
   import NewsInputDrawer from './NewsInputDrawer.vue';
   import { getAllBoard } from '#/api/portal/cms/board';
-  // import { PageWrapper } from '#/components/Page';
   import { BasicTree } from '#/components/Tree';
   import { getAllNewsCategory } from '#/api/portal/cms/newsCategory';
   import { EmpInfo } from '#/views/components/EmpInfo';
   import { PerEnum } from '#/enums/perEnum';
   import {Button, message, Tooltip, TypographyLink} from 'ant-design-vue';
-
   import {useElementSize} from "@vueuse/core";
-  import {PartitionOutlined} from "@ant-design/icons-vue";
 
   const basicTreeRef = ref();
 
@@ -112,9 +107,6 @@
 
   const PerPrefix = 'News:';
   const newsPreviewDrawerRef = ref(),newsInputDrawerRef = ref();
-
-  // import {StatusTagColor} from "#/enums/commonEnum";
-  // import {update} from "#/api/portal/cms/news";
 
   const allPublishBoardMap = ref({});
   const publishStatusMap = ref({});
@@ -332,7 +324,7 @@
       {
         auth: [PerPrefix + PerEnum.UPDATE],
         tooltip: '修改',
-        icon: 'clarity:note-edit-line',
+        icon: 'ant-design:form-outlined',
         onClick: handleEdit.bind(null, record),
       },
       {

@@ -3,6 +3,21 @@ import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
+import {checkEntityExist} from "#/api/portal/cms/newsCategory";
+
+const colorList = [
+  '',
+  '#547BD5',
+  '#5CCDB2',
+  '#FF4D4F',
+  '#B57DD7',
+  '#F1A347',
+  '#00af57',
+  '#00afee',
+  '#0071be',
+  '#00215f',
+  '#72349d',
+];
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -51,7 +66,8 @@ export const searchFormSchema: FormSchema[] = [
     label: '关键字',
     component: 'Input',
     componentProps: {
-      placeholder: '请输入名称',
+      allowClear: true,
+      placeholder: '请输入关键字',
     },
     labelWidth: 60,
   },
@@ -83,19 +99,43 @@ export const formSchema: FormSchema[] = [
     fieldName: 'sn',
     label: '标识',
     component: 'Input',
-    rules: z
-        .string({
-          required_error: "编码不能为空！"
-        })
-        .min(1, "编码不能为空！")
-        .max(30, '字符长度不能大于30！')
-        .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！'),
+    dependencies: {
+      rules(values) {
+        const { id, sn } = values;
+        return z
+            .string({
+              required_error: "编码不能为空！"
+            })
+            .min(1, "编码不能为空！")
+            .max(30, '字符长度不能大于30！')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'sn',
+                      fieldValue: sn || '',
+                      fieldName: '编码',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '编码已存在',
+                },
+            );
+      },
+      triggerFields: ['sn'],
+    },
   },
   {
     fieldName: 'style',
     label: '样式',
     component: 'Input',
-    slot: 'styleRenderSlot',
   },
   {
     fieldName: 'pid',

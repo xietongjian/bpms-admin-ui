@@ -1,5 +1,4 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
@@ -78,9 +77,9 @@ export const formSchema: FormSchema[] = [
     label: '发文代号',
     component: 'Input',
     componentProps: {
-      placeholder: '用于生成字号，如：XXXXXX【2021】008号',
+      placeholder: `用于生成字号，如：XXXXXX【${new Date().getFullYear()}】008号`,
     },
-    // help: ({ model, field }) => `用于生成字号，如：${model[field] || 'XXXXXX'}【${new Date().getFullYear()}】008号`,
+    help: () => `用于生成字号，如：XXXXXX【${new Date().getFullYear()}】008号`,
     rules: z
         .string({
           required_error: '发文代号不能为空！'

@@ -302,14 +302,14 @@ function createActions(record: Recordable<any>){
     },
     {
       auth: [PerPrefix + PerEnum.UPDATE],
-      icon: 'clarity:note-edit-line',
+      icon: 'ant-design:form-outlined',
       tooltip: '编辑决策',
       label: '',
       onClick: handleEditDmn.bind(null, record),
     },
     /*{
     auth:'Dmn:'+PerEnum.UPDATE,
-    icon: 'clarity:note-edit-line',
+    icon: 'ant-design:form-outlined',
     tooltip: '编辑决策1',
     label: '',
     onClick: handleEditDmn1.bind(null, record),

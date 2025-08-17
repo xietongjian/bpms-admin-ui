@@ -5,7 +5,6 @@ import type {VbenFormProps} from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
 import {Page} from '@vben/common-ui';
 import {Button, Space, Image, Tag, message, Popconfirm} from 'ant-design-vue';
-import {CloseOutlined} from '@ant-design/icons-vue'
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {TableAction} from '#/components/table-action';
 import {getGroupListByPage, deleteByIds} from '#/api/privilege/group';
@@ -111,19 +110,19 @@ function createActions(record: Recordable<any>): any[] {
     {
       auth: [PerPrefix + PerEnum.AUTH],
       tooltip: '分配权限',
-      icon: 'ant-design:safety',
+      icon: 'ant-design:safety-certificate-outlined',
       onClick: handleAcl.bind(null, record),
     },
     {
       auth: [PerPrefix + PerEnum.AUTH],
       tooltip: '分配用户',
-      icon: 'ant-design:usergroup-add',
+      icon: 'ant-design:user-add-outlined',
       onClick: handleAddUser.bind(null, record),
     },
     {
       auth: [PerPrefix + PerEnum.UPDATE],
       tooltip: '修改',
-      icon: 'clarity:note-edit-line',
+      icon: 'ant-design:form-outlined',
       onClick: handleEdit.bind(null, record),
     },
     {

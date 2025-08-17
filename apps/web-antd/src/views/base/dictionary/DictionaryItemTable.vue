@@ -92,7 +92,7 @@
       {
         auth: [PerPrefix + PerEnum.UPDATE],
         tooltip: '修改字典项',
-        icon: 'clarity:note-edit-line',
+        icon: 'ant-design:form-outlined',
         onClick: handleEdit.bind(null, record),
       },
       {

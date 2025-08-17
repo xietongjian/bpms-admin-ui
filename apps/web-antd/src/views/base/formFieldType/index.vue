@@ -78,7 +78,7 @@ function createActions (row: Recordable<any>) {
     {
       auth: [PerPrefix + PerEnum.UPDATE],
       tooltip: '编辑',
-      icon: 'clarity:note-edit-line',
+      icon: 'ant-design:form-outlined',
       onClick: handleEdit.bind(null, row),
     },
   ];

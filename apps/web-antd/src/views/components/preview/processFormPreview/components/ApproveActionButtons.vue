@@ -1,17 +1,4 @@
 <template>
-  <!--
-  position: absolute;
-   bottom: 0;
-   left: 0;
-   width: 100%;
-   background: #e1edff;
-   border-top: 3px solid #1890ff;
-   padding: 10px 20px;
-   z-index: 999999;
-
-   .approve-ctrl-btns {
-     margin: 10px 0 0;
-   }-->
   <div class="ml-2 mt-2" v-loading="approveActionLoading">
     <div v-if="authPoints && authPoints.length > 0" class="relative">
       <BasicForm/>
@@ -111,21 +98,6 @@ const props = defineProps({
   },
 })
 
-// 人员选择弹窗
-/*const [
-  registerApproveSelectorPersonalModal,
-  {
-    openModal: openApproveSelectorPersonalSelector,
-    setModalProps: setApproveSelectorPersonalModalProps,
-  },
-] = useModal();*/
-/*  const [registerApproveMsgForm, {resetFields, setFieldsValue, getFieldsValue, validateFields }] = useForm({
-      labelWidth: 0,
-      schemas: approveMsgSchemas,
-      className: 'approve-msg-form',
-      showActionButtonGroup: false
-  });*/
-
 const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
     formItemClass: 'pb-2 [&_.text-destructive]:left-3 [&_.text-destructive]:bottom-[20px]',
@@ -138,22 +110,8 @@ const [BasicForm, formApi] = useVbenForm({
   showDefaultActions: false,
   layout: 'horizontal',
   schema: approveMsgSchemas,
-  wrapperClass: 'grid-cols-1',
+  wrapperClass: 'gap-0 grid-cols-1',
 });
-
-// 自定义审批配置弹窗
-/*  const [
-    registerCustomApproveSettingModal,
-    {
-      openModal: openCustomApproveSettingModal,
-      setModalProps: setCustomApproveSettingModalProps,
-    },
-  ] = useModal();
-
-  const [
-    registerApproveBackToStepModal,
-    { openModal: openApproveBackToStepModal, setModalProps: setApproveBackToStepModalProps },
-  ] = useModal();*/
 
 const approveMsg = ref<string>('');
 
@@ -192,7 +150,7 @@ async function doApprove() {
     // data.nextUser
     // data.flow_to
     // 弹出自定义审批配置页面
-    //FIXME
+    // FIXME
     approveCustomApproveSettingRef.value.setData({
       taskId,
       procInstId,
@@ -201,17 +159,6 @@ async function doApprove() {
       approveMsg, signImg, attachmentList
     });
     approveCustomApproveSettingRef.value.open();
-    /*openCustomApproveSettingModal(true, {
-      selectorProps: {
-        taskId,
-        procInstId,
-        approveSettings: data, // flow_to, next_user
-        message,
-      },
-    });
-    setCustomApproveSettingModalProps({
-      width: 800,
-    });*/
   } else {
     const approveComplete = async () => {
       // 组装审批的数据
@@ -327,17 +274,6 @@ async function doBackToStep() {
     ...values
   });
   approveBackToStepModalRef.value.open();
-
-  /*openApproveBackToStepModal(true, {
-    selectorProps: {
-      taskId,
-      procInstId,
-      message,
-    },
-  });
-  setApproveBackToStepModalProps({
-    width: 800,
-  });*/
 }
 
 async function doApproveSelectPersonal(actionType, multiple) {
@@ -352,34 +288,14 @@ async function doApproveSelectPersonal(actionType, multiple) {
     ...values
   });
   approveSelectorPersonalModalRef.value.open();
-
-  /*openApproveSelectorPersonalSelector(true, {
-    selectorProps: {
-      multiple,
-      actionType,
-      taskId,
-      procInstId,
-      message,
-    },
-  });
-  setApproveSelectorPersonalModalProps({
-    width: 800,
-  });*/
 }
 
 function closeFormModal() {
-  // setFieldsValue({approveMsg: ''});
   emit('success');
   approveActionLoading.value = false;
 }
 
-function resetApproveMsg() {
-  nextTick(() => {
-    resetFields();
-  });
-}
-
-defineExpose({resetApproveMsg, getFormValues: formApi.getValues, setFormValues: formApi.setValues});
+defineExpose({getFormValues: formApi.getValues, setFormValues: formApi.setValues});
 
 </script>
 <style lang="scss">

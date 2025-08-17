@@ -5,11 +5,9 @@
 </template>
 <script lang="ts" setup>
 import {ref, onMounted} from 'vue';
-
 import ApproveHistoryList from '#/views/components/process/ApproveHistoryList.vue';
 import { getCommentInfosByProcessInstanceId } from '#/api/flowable/bpmn/modelInfo';
 
-// const emit = defineEmits(['success']);
 const props = defineProps({
   procInstId: {
     type: String,

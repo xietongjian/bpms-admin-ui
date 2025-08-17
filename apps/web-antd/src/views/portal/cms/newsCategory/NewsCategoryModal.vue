@@ -1,18 +1,17 @@
 <template>
-  <BasicModal >
+  <BasicModal class="w-[600px]">
     <BasicForm >
-      <template #styleRenderSlot="{ model, field }">
-        <!--        <a-input v-model:value="model[field]" placeholder="自定义slot" />-->
-        <div style="line-height: 0px">
-          <Space class="color-selector">
-            <span @click="()=>{model[field] = item}"
+      <template #style>
+        <div class="my-2 ml-1 w-full">
+          <div class="flex gap-2">
+            <span @click="()=>{selectedStyle = item}"
                   v-for="item in colorList"
-                  class="color-item"
-                  :class="{'selected': item===model[field]}"
+                  class="text-center cursor-pointer size-[26px] outline outline-transparent outline-4"
+                  :class="{'outline-red-600': item === selectedStyle}"
                   :style="{background: item}" :title="item">
-              <StopOutlined title="默认" style="font-size: 26px; color: gray" v-if="item===''" />
+              <StopOutlined title="默认" class="text-center text-[26px] text-gray-500" v-if="item===''" />
             </span>
-          </Space>
+          </div>
         </div>
       </template>
     </BasicForm>
@@ -24,26 +23,26 @@
   import {useVbenForm} from '#/adapter/form';
   import { formSchema } from './newsCategory.data';
   import { insert, update } from '#/api/portal/cms/newsCategory';
-  import { Select, Space, Dropdown } from 'ant-design-vue';
+  import { Select, Input, Space, Dropdown, message } from 'ant-design-vue';
   import { DownOutlined, StopOutlined } from '@ant-design/icons-vue';
 
   const colorList = [
     '',
-    '#547BD5',
-    '#5CCDB2',
-    '#FF4D4F',
-    '#B57DD7',
-    '#F1A347',
-    // '#00af57',
-    // '#00afee',
-    // '#0071be',
-    // '#00215f',
-    // '#72349d',
+    '#c21401',
+    '#ff1e02',
+    '#ffc12a',
+    '#ffff3a',
+    '#90cf5b',
+    '#00af57',
+    '#00afee',
+    '#0071be',
+    '#00215f',
+    '#72349d',
   ];
 
-  const emit = defineEmits(['success'])
+  const selectedStyle = ref('');
 
-  const isUpdate = ref(true);
+  const emit = defineEmits(['success'])
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
@@ -67,6 +66,7 @@
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
           formApi.setValues(values);
+          selectedStyle.value = values.style || '';
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -159,8 +159,6 @@
     }
   });*/
 
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
-
   async function handleSubmit() {
     try {
       const {valid} = await formApi.validate();
@@ -168,44 +166,26 @@
         return;
       }
       const values = await formApi.getValues();
+      values.style = selectedStyle.value;
       modalApi.setState({loading: true, confirmLoading: true});
+      let res = null;
       if (values.id) {
-        await update(values);
+        res = await update(values);
       } else {
-        await insert(values);
+        res = await insert(values);
       }
-
-      modalApi.close();
-      emit('success');
+      const {success, msg} = res;
+      if(success){
+        message.success(msg);
+        modalApi.close();
+        emit('success');
+      }
+    } catch (e){
+      console.error(e);
     } finally {
       modalApi.setState({loading: false, confirmLoading: false});
     }
   }
 
-/*  export default defineComponent({
-    name: 'NewsCategoryModal',
-    components: { BasicModal, BasicForm, Dropdown, DownOutlined, Space, StopOutlined },
-    emits: ['success', 'register'],
-    setup(_, { emit }) {
-
-
-      return { registerModal, registerForm, getTitle, handleSubmit, colorList };
-    },
-  });*/
-
   defineExpose(modalApi);
 </script>
-
-<style lang="less" scoped>
-  .color-selector {
-    .color-item {
-      width: 26px;
-      height: 26px;
-      display: inline-block;
-      outline: 4px solid transparent !important;
-    }
-    .selected {
-      outline: 4px solid red !important;
-    }
-  }
-</style>

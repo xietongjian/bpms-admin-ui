@@ -10,8 +10,6 @@
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref, defineExpose, defineEmits } from 'vue';
-  // import { BasicModal, useModalInner } from '@/components/Modal';
-  // import { BasicForm, useForm } from '@/components/Form/index';
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
 
@@ -180,7 +178,6 @@
         return;
       }
       const values = await formApi.getValues();
-      debugger;
       // 审批参数封装
       // 封装nextUsers字段(code,name,values)
       let nextUsers = [];

@@ -43,11 +43,11 @@ export const getNewsCategoryListByPage = (params) => {
   return requestClient.post(Api.NewsCategoryPageList, params);
 };
 
-export const insert = (params) => requestClient.post(Api.Insert, params);
+export const insert = (params: any) => requestClient.post(Api.Insert, params, {responseReturn: 'body'});
 
-export const update = (params) => requestClient.post(Api.Update, params);
+export const update = (params: any) => requestClient.post(Api.Update, params, {responseReturn: 'body'});
 
-export const checkEntityExist = (params) =>
+export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
 export const deleteByIds = (params?: Array<string>) => requestClient.delete(Api.Delete, {params, responseReturn: 'body'});

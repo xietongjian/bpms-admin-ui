@@ -36,7 +36,7 @@
           placement="bottom"
         >
           <Icon
-            icon="clarity:note-edit-line"
+            icon="ant-design:form-outlined"
             class="m-2"
             style="color: #536dfe; cursor: pointer"
             @click="handleEditFlow(node)"

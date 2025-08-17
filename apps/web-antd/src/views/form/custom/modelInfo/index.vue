@@ -290,7 +290,7 @@ import {columns, searchFormSchema} from './modelInfo.data';
     return [
       {
         auth: [PerPrefix + PerEnum.UPDATE],
-        icon: 'clarity:note-edit-line',
+        icon: 'ant-design:form-outlined',
         tooltip: '修改',
         label: '',
         onClick: handleEdit.bind(null, record),

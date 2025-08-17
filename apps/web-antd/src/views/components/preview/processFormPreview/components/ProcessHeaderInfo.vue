@@ -11,7 +11,7 @@
 </template>
 <script lang="ts" setup>
 import {ref, defineProps, defineEmits, onMounted, defineExpose, watch} from 'vue';
-import {Collapse, CollapsePanel, Descriptions, DescriptionsItem} from 'ant-design-vue';
+import {Descriptions, DescriptionsItem} from 'ant-design-vue';
 import {getStartHeadInfoVoByProcessInstanceId} from "#/api/flowoperation/processInst";
 
 const emit = defineEmits(['success']);
