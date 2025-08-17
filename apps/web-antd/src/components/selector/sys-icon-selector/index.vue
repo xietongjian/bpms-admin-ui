@@ -248,11 +248,11 @@ defineExpose({ toggleOpenState, open, close });
     v-model:open="visible"
     overlayClassName="max-w-[700px]"
   >
-    <div class="group bg-card relative w-20 h-20 border border-dotted hover:border-primary rounded flex justify-center items-center cursor-pointer">
-      <img v-if="!!currentSelect" :src="currentSelect" class="w-16 h-16 object-cover margin-auto"/>
+    <div class="group bg-card relative size-20 border border-dotted hover:border-primary rounded flex justify-center items-center cursor-pointer">
+      <img v-if="!!currentSelect" :src="currentSelect" class="size-16 object-cover margin-auto"/>
       <PictureOutlined v-else class="text-4xl opacity-30" />
       <div v-if="!!currentSelect" @click="handleClear" class="group-hover:visible invisible rounded-full p-[1px] bg-primary/10 hover:bg-primary/20 absolute top-0 right-0 text-primary">
-        <CloseOutlined />
+        <CloseOutlined class="text-red-500" />
       </div>
     </div>
     <template #content>

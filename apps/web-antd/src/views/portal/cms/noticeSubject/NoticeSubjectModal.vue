@@ -8,13 +8,8 @@
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import { formSchema } from './noticeSubject.data';
-  import { insert, update, checkEntityExist } from '#/api/portal/cms/noticeSubject';
-  // import { CheckExistParams } from '#/api/model/baseModel';
-  import { FormValidPatternEnum } from '#/enums/commonEnum';
-  // import { OrgDataType } from '#/components/Selector/src/types';
-  import { getAllPublishRange } from '#/api/portal/cms/publishRange';
+  import { insert, update } from '#/api/portal/cms/noticeSubject';
 
-  const isUpdate = ref(true);
 
   const emit = defineEmits(['success']);
 
@@ -39,7 +34,14 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          formApi.setValues(values);
+
+          const signatureImgUpload = values.signatureImg ? [{url: values.signatureImg}] : [];
+          const signerSelector = values.signerNo ? [{value: values.signerNo, label: values.signerName}] : [];
+
+          const formData = {...values, signatureImgUpload, signerSelector};
+
+
+          formApi.setValues(formData);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -173,7 +175,7 @@
         return;
       }
       const values = await formApi.getValues();
-      debugger;
+
       /*values.usingRanges = values.usingRanges.map(item=>{
         return {
           rangeId: item.code,
@@ -207,12 +209,19 @@
 
       delete values.signerSelector;
       values.haveSigner = values.haveSigner ? 1 : 0;
+
+      const signatureImg = values.signatureImgUpload?.length > 0
+          ? values.signatureImgUpload[0].response||values.signatureImgUpload[0].url : '';
+
+      debugger;
+      const formData = {...values, signatureImg};
+
       modalApi.setState({loading: true, confirmLoading: true});
 
-      if (values.id) {
-        await update(values);
+      if (formData.id) {
+        await update(formData);
       } else {
-        await insert(values);
+        await insert(formData);
       }
 
       modalApi.close();

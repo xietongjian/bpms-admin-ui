@@ -5,7 +5,7 @@
         <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>
       <template #signatureImg="{row}">
-        <div class="!h-20 relative">
+        <div class="!h-20 relative flex items-center justify-center">
           <div v-if="row.signatureImg">
             <Image :src="row.signatureImg" class="w-full !h-20 object-contain" />
           </div>

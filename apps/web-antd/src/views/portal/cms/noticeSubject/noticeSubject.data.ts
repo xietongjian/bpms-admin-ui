@@ -3,7 +3,8 @@ import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
-// import {getAllNoticeTitle} from "#/api/portal/cms/noticeTitle";
+import {uploadFile} from "#/api/core/upload";
+import { checkEntityExist } from '#/api/portal/cms/noticeSubject';
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -76,6 +77,38 @@ export const columns: VxeGridProps['columns'] = [
     slots: { default: 'action' },
     fixed: 'right',
   },
+  /*{
+    align: 'right',
+    cellRender: {
+      attrs: {
+        nameField: 'title',
+        // onClick: onActionClick,
+      },
+      name: 'CellOperation',
+      options: [
+        {
+          code: 'append',
+          text: '新增下级',
+          icon: 'ant-design:form-outlined',
+        },
+        'edit', // 默认的编辑按钮
+        // 'delete', // 默认的删除按钮
+        {
+          code: 'delete',
+          icon: 'ant-design:delete-outlined',
+          text: '',
+          title: '删除',
+          okButtonProps: { danger: true },
+        }
+      ],
+    },
+    field: 'operation',
+    fixed: 'right',
+    headerAlign: 'center',
+    showOverflow: false,
+    title: '操作',
+    width: 200,
+  },*/
 ];
 
 export const searchFormSchema: FormSchema[] = [
@@ -132,14 +165,39 @@ export const formSchema: FormSchema[] = [
     label: '标识',
     component: 'Input',
     formItemClass: 'col-span-3',
-    rules: z
-        .string({
-          required_error: '标识不能为空！'
-        })
-        .trim()
-        .min(1, '标识不能为空！')
-        .max(256, '字符长度不能大于256！')
-        .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！'),
+    dependencies: {
+      rules(values) {
+        const { id, sn } = values;
+        return z
+            .string({
+              required_error: '标识不能为空！'
+            })
+            .trim()
+            .min(1, '标识不能为空！')
+            .max(256, '字符长度不能大于256！')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'sn',
+                      fieldValue: sn || '',
+                      fieldName: '标识',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '标识已存在',
+                },
+            );
+      },
+      triggerFields: ['sn'],
+    },
   },
   /*  {
     fieldName: 'titleId',
@@ -209,7 +267,7 @@ export const formSchema: FormSchema[] = [
       // 更多属性见：https://ant.design/components/upload-cn
       accept: '.png,.jpg,.jpeg',
       // 自动携带认证信息
-      // customRequest: upload_file,
+      customRequest: uploadFile,
       disabled: false,
       maxCount: 1,
       multiple: false,
@@ -217,7 +275,7 @@ export const formSchema: FormSchema[] = [
       // 上传列表的内建样式，支持四种基本样式 text, picture, picture-card 和 picture-circle
       listType: 'picture-card',
     },
-    fieldName: 'files',
+    fieldName: 'signatureImgUpload',
     label: '签章图片',
     renderComponentContent: () => {
       return {

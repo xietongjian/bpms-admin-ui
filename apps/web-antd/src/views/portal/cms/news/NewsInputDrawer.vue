@@ -1,6 +1,14 @@
 <template>
   <BasicDrawer class="w-3/5">
-    <BasicForm />
+    <BasicForm >
+      <template #content="slotProps">
+        <TEditor placeholder="请输入"
+                 :value="slotProps.field.value"
+                 :minHeight="400"
+                 v-bind="slotProps"
+        />
+      </template>
+    </BasicForm>
 
     <template #insertFooter>
       <Space>
@@ -30,6 +38,7 @@
   import { isEmpty } from '#/utils/is';
   import {useVbenDrawer} from '@vben/common-ui';
   import {useVbenForm} from "#/adapter/form";
+  import {TEditor} from "#/components/TEditor";
 
   const emit = defineEmits(['success']);
 
@@ -53,6 +62,7 @@
   });
 
   const [BasicDrawer, drawerApi] = useVbenDrawer({
+    destroyOnClose: true,
     onCancel() {
       drawerApi.close();
     },

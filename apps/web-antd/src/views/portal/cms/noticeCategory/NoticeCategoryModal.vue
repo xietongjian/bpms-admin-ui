@@ -20,11 +20,11 @@
 <script lang="ts" setup>
   import { ref, computed, unref, defineExpose, defineEmits } from 'vue';
   import { formSchema } from './noticeCategory.data';
-  import { insert, update, checkEntityExist } from '#/api/portal/cms/noticeCategory';
-  import { Select, Space, Dropdown } from 'ant-design-vue';
+  import { insert, update } from '#/api/portal/cms/noticeCategory';
   import { DownOutlined, StopOutlined } from '@ant-design/icons-vue';
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
+  import {message} from 'ant-design-vue';
 
   const colorList = [
     '',
@@ -65,8 +65,10 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          formApi.setValues(values);
-          selectedStyle.value = values.style || '';
+          const signerSelector = values.signerNo ? [{value: values.signerNo, label: values.signerName}]: [];
+          const formData = {...values, signerSelector};
+          formApi.setValues(formData);
+          selectedStyle.value = formData.style || '';
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -200,7 +202,7 @@
       const {success, msg} = res;
       if(success){
         message.success(msg);
-        modalApi.close();
+        await modalApi.close();
         emit('success');
       }
     } catch (e){

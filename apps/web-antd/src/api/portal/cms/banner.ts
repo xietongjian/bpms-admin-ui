@@ -19,28 +19,21 @@ export function getBannerListByCount(params = {}) {
   return requestClient.post<any>(Api.GetBannerListByCount, params);
 }
 
-export const getAllBanner = (params) => {
+export const getAllBanner = (params: any) => {
   return requestClient.post(Api.BannerList, params).then((res: any) => {
     return Promise.resolve(res);
   });
 };
 
-export const getBannerListByPage = (params) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { query, entity };
+export const getBannerListByPage = (params: any) => {
   return requestClient.post(Api.BannerPageList, params);
 };
 
-export const insert = (params) => requestClient.post(Api.Insert, params);
+export const insert = (params: any) => requestClient.post(Api.Insert, params, {responseReturn: 'body'});
 
-export const update = (params) => requestClient.post(Api.Update, params);
+export const update = (params: any) => requestClient.post(Api.Update, params, {responseReturn: 'body'});
 
-export const checkEntityExist = (params) =>
+export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
 export const deleteByIds = (params?: Array<string>) => requestClient.delete(Api.Delete, {params, responseReturn: 'body'});

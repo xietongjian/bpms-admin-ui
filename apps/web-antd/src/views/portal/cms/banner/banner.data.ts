@@ -134,7 +134,7 @@ export const formSchema: FormSchema[] = [
       // 上传列表的内建样式，支持四种基本样式 text, picture, picture-card 和 picture-circle
       listType: 'picture',
     },
-    fieldName: 'imgPath',
+    fieldName: 'imgPathUpload',
     label: '上传图片',
     renderComponentContent: () => {
       return {

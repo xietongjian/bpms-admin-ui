@@ -15,7 +15,8 @@
 
       <div class="my-4 border-t-2 border-primary/50" ></div>
 
-      <div class="w-full min-h-100 overflow-x-auto p-2 [&_*]:!text-card-foreground" v-html="newsInfo?.content"></div>
+      <div class="w-full min-h-100 overflow-x-auto p-2 [&_*]:!text-card-foreground break-all [&_*]:!wrap-break-word"
+           v-html="newsInfo?.content"></div>
 
       <!--
       <div class="notice-files">
@@ -37,6 +38,7 @@
   const newsInfo = ref({});
   const [BasicDrawer, drawerApi] = useVbenDrawer({
     showConfirmButton: false,
+    destroyOnClose: true,
     cancelText: '关闭',
     onCancel() {
       drawerApi.close();

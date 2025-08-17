@@ -4,29 +4,18 @@
   </BasicDrawer>
 </template>
 <script lang="ts" setup>
-  import { ref, computed, unref, reactive, watch, toRefs, onMounted, defineExpose, defineEmits } from 'vue';
+  import { ref, defineExpose, defineEmits } from 'vue';
   import {useVbenDrawer} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import { formSchema } from './banner.data';
   import { insert, update } from '#/api/portal/cms/banner';
+  import {message} from 'ant-design-vue';
   import { getAllBoard } from '#/api/portal/cms/board';
   import { getAllPublishRange } from '#/api/portal/cms/publishRange';
   import { apiInfoFormSchema } from "#/views/base/apiInfo/apiInfo.data";
 
-  const isUpdate = ref(true);
   const boardList = ref();
   const emit = defineEmits(['success'])
-/*
-  const [
-    registerForm,
-    { resetFields, updateSchema, getFieldsValue, setFieldsValue, validate },
-  ] = useForm({
-    labelWidth: 100,
-    schemas: formSchema,
-    showActionButtonGroup: false,
-    fieldMapToTime: [['fieldTime', ['startTime', 'endTime'], 'YYYY-MM-DD']],
-  });
-*/
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
@@ -38,10 +27,11 @@
     layout: 'horizontal',
     schema: formSchema,
     wrapperClass: 'grid-cols-1',
-
+    fieldMappingTime: [['validTimeRange', ['startTime', 'endTime'], 'YYYY-MM-DD']],
   });
 
   const [BasicDrawer, drawerApi] = useVbenDrawer({
+    destroyOnClose: true,
     onCancel() {
       drawerApi.close();
     },
@@ -49,10 +39,9 @@
       if (isOpen) {
         const values = drawerApi.getData<Record<string, any>>();
         if (values) {
-          const tempValues = JSON.parse(JSON.stringify(values))
-
-          formApi.setValues(tempValues);
-          // formApi.setValues({...values, params, requestArr: [values.method || '', values.url || '']});
+          const imgPathUpload = values.imgPath ? [{url: values.imgPath }]: [];
+          const formData = {...values, imgPathUpload};
+          formApi.setValues(formData);
           drawerApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -154,45 +143,32 @@
         return {
           rangeId: item.id,
           rangeName: item.shortName,
-          rangeType: Object.values(OrgDataType)[item.sourceType - 1],
+          // rangeType: Object.values(OrgDataType)[item.sourceType - 1],
         };
       });
 
       values.status = values.status ? 1 : 0;
 
-      if (values.id) {
-        await update(values);
-      } else {
-        await insert(values);
-      }
+      const formData = {...values,};
 
-      drawerApi.close();
-      emit('success');
+      let res = {success: false, msg: '操作失败！'};
+      if (formData.id) {
+        res = await update(formData);
+      } else {
+        res = await insert(formData);
+      }
+      const {success, msg} = res;
+      if (success) {
+        message.success(msg);
+        await drawerApi.close();
+        emit('success');
+      }
+    } catch (e){
+      console.error(e);
     } finally {
-      modalApi.setState({loading: false, confirmLoading: false});
+      drawerApi.setState({loading: false, confirmLoading: false});
     }
   }
-
-  /*export default defineComponent({
-    components: {
-      BasicModal,
-      BasicDrawer,
-      BasicForm,
-      [Checkbox.name]: Checkbox,
-      [CheckboxGroup.name]: CheckboxGroup,
-    },
-    setup(props, { emit }) {
-
-
-      return {
-        boardList,
-        registerDrawer,
-        registerForm,
-        getTitle,
-        handleSubmit,
-      };
-    },
-  });*/
 
   defineExpose(drawerApi);
 </script>

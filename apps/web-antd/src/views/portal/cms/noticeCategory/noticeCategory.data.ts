@@ -3,6 +3,7 @@ import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
+import { checkEntityExist } from '#/api/portal/cms/noticeCategory';
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -126,14 +127,38 @@ export const formSchema: FormSchema[] = [
     label: '标识',
     component: 'Input',
     formItemClass: 'col-span-3',
-    rules: z
-        .string({
-          required_error: '标识不能为空！'
-        })
-        .trim()
-        .min(1, '标识不能为空！')
-        .max(256, '字符长度不能大于256！')
-        .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！'),
+    dependencies: {
+      rules(values) {
+        const { id, sn } = values;
+        return z
+            .string({
+              required_error: "标识不能为空！"
+            })
+            .min(1, "标识不能为空！")
+            .max(256, '字符长度不能大于256！')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'sn',
+                      fieldValue: sn || '',
+                      fieldName: '标识',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '标识已存在',
+                },
+            );
+      },
+      triggerFields: ['sn'],
+    },
   },
   {
     fieldName: 'style',

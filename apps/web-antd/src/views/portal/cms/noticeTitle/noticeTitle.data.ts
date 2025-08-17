@@ -30,6 +30,11 @@ export const columns: VxeGridProps['columns'] = [
     align: 'left',
   },
   {
+    title: '备注',
+    field: 'remark',
+    align: 'left',
+  },
+  {
     title: '操作',
     width: 120,
     align: 'center',

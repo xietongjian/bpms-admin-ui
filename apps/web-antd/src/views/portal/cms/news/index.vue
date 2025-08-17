@@ -110,14 +110,7 @@
 
   const allPublishBoardMap = ref({});
   const publishStatusMap = ref({});
-/*  const [
-    registerNewsInputDrawer,
-    { openDrawer: openNewsInputDrawer, setDrawerProps: setNewsInputDrawerProps },
-  ] = useDrawer();
-  const [
-    registerNewsPreviewDrawer,
-    { openDrawer: openNewsPreviewDrawer, setDrawerProps: setNewsPreviewDrawerProps },
-  ] = useDrawer();*/
+
   const treeData = ref<any[]>([]);
   const searchInfo = reactive<Recordable>({});
 
