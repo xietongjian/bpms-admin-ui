@@ -303,6 +303,7 @@ function resolvePathVariables(path, variables) {
 
 async function handleTesting() {
   try {
+    debugger;
     apiTestingErrorMsg.value = '';
     const currentApi = unref(currentNode);
     let url = currentApi.url;

@@ -23,11 +23,22 @@
         <template #name="{row}">
           {{row.name}}
         </template>
+        <template #statusName="{row}">
+          <Tag v-if="row.status === 2" color="#2db7f5">{{row.statusName}}</Tag>
+          <Tag v-else-if="row.status === 3" color="#87d068">{{row.statusName}}</Tag>
+          <Tag v-else-if="row.status === 4" color="#f50">{{row.statusName}}</Tag>
+          <Tag v-else color="gray">{{row.statusName}}</Tag>
+        </template>
         <template #expandContent="{ row }">
           <SubBasicTable
               :gridOptions="createSubGridOptions(row)"
               @page-change="({ currentPage, pageSize }) => handlePageChange(row, currentPage, pageSize)"
           >
+            <template #statusName="{row}">
+              <Tag v-if="row.suspensionState === 2" color="red">挂起</Tag>
+              <Tag v-else-if="row.suspensionState === 1" color="green">激活</Tag>
+              <Tag v-else color="gray">未知</Tag>
+            </template>
             <template #action="{row: subRow}">
               <TableAction
                   :actions="createSubActions(row, subRow)"
@@ -44,21 +55,17 @@
   </ColPage>
 </template>
 <script lang="ts" setup>
-import {ref, unref, reactive, nextTick} from 'vue';
+import {ref, reactive} from 'vue';
 
 import {PerEnum} from '#/enums/perEnum';
 import type {Recordable} from '@vben/types';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
-
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import {ColPage, Page} from '@vben/common-ui';
-
+import {ColPage} from '@vben/common-ui';
 import {TableAction} from '#/components/table-action';
-
-import {getBpmnByModelKey, getModelInfoPageList, stopBpmn} from '#/api/flowable/bpmn/modelInfo';
+import {getModelInfoPageList} from '#/api/flowable/bpmn/modelInfo';
 import FlowCategoryTree from '#/views/components/leftTree/FlowCategoryTree.vue';
-
 import {BpmnPreviewModal} from '#/views/components/preview';
 import {
   findHisProcessDefinitionPagerModel,
@@ -68,14 +75,13 @@ import {
 } from '#/api/flowoperation/processDefinition';
 import {columns, hisDefinitionColumns, searchFormSchema} from './processDefinition.data';
 import CodePreviewModal from '#/views/components/preview/codePreview/index.vue';
-import {message, Button} from 'ant-design-vue'
+import {message, Tag} from 'ant-design-vue'
 
 const currentModelInfo = ref<Recordable<any>>({});
 const currentCategory = ref<Recordable<any>>({});
-const loadingRef = ref(false);
 
 const PerPrefix = 'ProcessDefinition:';
-const loading = reactive({});
+const loading = reactive<any>({});
 
 const bpmnPreviewModalRef = ref(),
     codePreviewModalRef = ref();
@@ -87,7 +93,9 @@ const formOptions: VbenFormProps = {
     labelWidth: 60,
   },
   wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-  actionWrapperClass: 'col-span-2 col-start-3 text-left',
+  actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
+  actionPosition: 'left',
+  actionLayout: 'inline',
   resetButtonOptions: {
     show: false,
   },
@@ -145,7 +153,7 @@ const gridEvents: VxeGridListeners = {
 };
 
 const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
-const expandData = reactive({});
+const expandData = reactive<any>({});
 // 加载子表数据
 const loadSubData = async (row, currentPage, pageSize) => {
   loading[row.id] = true;
@@ -320,16 +328,3 @@ function handleSelect(node: any) {
 }
 </script>
 
-<style lang="scss">
-.process-definition {
-  .ant-table-expanded-row {
-    .ant-table-cell {
-      .vben-basic-table {
-        .ant-table {
-          margin: 0 !important;
-        }
-      }
-    }
-  }
-}
-</style>

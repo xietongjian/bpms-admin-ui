@@ -183,8 +183,13 @@ export const searchFormSchema: FormSchema[] = [
       api: getProcessStatusEnums,
       labelField: 'value',
       valueField: 'label',
-      disabled: true,
     },
+    dependencies: {
+      disabled(values) {
+        return true;
+      },
+      triggerFields: ['processStatus'],
+    }
   },
 ];
 

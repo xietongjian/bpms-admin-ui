@@ -1,139 +1,154 @@
 <template>
   <Page auto-content-height>
     <div class="w-full ">
-<!--      <MarkdownViewer :value="docContent" />-->
+      <!--      <MarkdownViewer :value="docContent" />-->
       <div v-html="docContentHtml" class="markdown-body markdown-content"></div>
 
-<!--      <Markdown
-          html
-          linkify
-          typographer
-          highlight
-          :source="docContent"
-          :options="markdownOptions"
-      />-->
+      <!--      <Markdown
+                html
+                linkify
+                typographer
+                highlight
+                :source="docContent"
+                :options="markdownOptions"
+            />-->
 
-<!--      <VMarkdownView
-          html
-          :mode="getTheme"
-          :content="docContent"
-          :options="markdownOptions"
-      ></VMarkdownView>-->
+      <!--      <VMarkdownView
+                html
+                :mode="getTheme"
+                :content="docContent"
+                :options="markdownOptions"
+            ></VMarkdownView>-->
     </div>
   </Page>
 </template>
 <script lang="ts" setup>
-  import {computed, ref, unref, onMounted, nextTick } from 'vue';
-  import {getIntegrationDoc} from "#/api/sys/integration";
-  import { useRouter } from 'vue-router';
-  import {Page} from '@vben/common-ui';
-  // import Markdown from 'vue3-markdown-it';
-  import hljs from 'highlight.js';
-  import 'highlight.js/styles/dark.css';
-  import 'highlight.js/styles/github.css';
+import {computed, ref, unref, onMounted, nextTick, watch} from 'vue';
+import {getIntegrationDoc} from "#/api/sys/integration";
+import {useRouter} from 'vue-router';
+import {Page} from '@vben/common-ui';
+// import Markdown from 'vue3-markdown-it';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/dark.css';
+import 'highlight.js/styles/github.css';
 
-  import { Marked } from 'marked'
-  import { markedHighlight } from "marked-highlight";
-  // import { VMarkdownView } from 'vue3-markdown'
-  import 'highlight.js/styles/atom-one-dark.css'
+import {Marked} from 'marked'
+import {markedHighlight} from "marked-highlight";
+// import { VMarkdownView } from 'vue3-markdown'
+import 'highlight.js/styles/atom-one-dark.css'
 
-  import { usePreferences } from '@vben/preferences';
+import {usePreferences} from '@vben/preferences';
 
-  // import 'vue3-markdown/dist/vue3-markdown.css'
+// import 'vue3-markdown/dist/vue3-markdown.css'
 
-  const markdownOptions = {
-    highlight: true,
+const markdownOptions = {
+  highlight: true,
+}
+
+const {isDark} = usePreferences();
+
+const getTheme = computed(() => {
+  if (isDark) {
+    switchHighlightTheme('dark');
+  } else {
+    switchHighlightTheme('github');
   }
+  return (isDark.value ? 'dark' : 'light');
+});
 
-  const { isDark } = usePreferences();
-  const getTheme = computed(() => {
-    if(isDark){
-      switchHighlightTheme('dark');
-    } else {
-      switchHighlightTheme('github');
-    }
-    return (isDark.value ? 'dark' : 'light');
-  });
+watch(isDark, (darkMode) => {
+  if (darkMode) {
+    switchHighlightTheme('dark');
+  } else {
+    switchHighlightTheme('light');
+  }
+})
 
 
-  const {currentRoute} = useRouter();
+const {currentRoute} = useRouter();
 
-  const loading = ref(true);
+const loading = ref(true);
 
-  const docContent = ref('');
+const docContent = ref('');
 
-  onMounted(async () => {
-    await nextTick();
-    await loadDocContent();
-  });
-  const marked=new Marked(
-      markedHighlight({
-        langPrefix: 'hljs language-',
-        highlight(code, lang) {
-          const language = hljs.getLanguage(lang) ? lang : 'shell'
-          return hljs.highlight(code, { language }).value
-        }
-      })
-  )
-  /*
-  * markedHighlight({
-        emptyLangClass: 'hljs',
-        langPrefix: 'hljs language-',
-        highlight(code, lang, info) {
-          const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-          return hljs.highlight(code, { language }).value;
-        }
-      })
-  * */
-  marked.use({
-    highlight: (code) => {
-      return hljs.highlightAuto(code).value;
-    }
-  });
-
-  const docContentHtml = computed(() => {
-        return marked.parse(docContent.value);
+onMounted(async () => {
+  await nextTick();
+  await loadDocContent();
+});
+const marked = new Marked(
+    markedHighlight({
+      langPrefix: 'hljs language-',
+      highlight(code, lang) {
+        const language = hljs.getLanguage(lang) ? lang : 'shell'
+        return hljs.highlight(code, {language}).value
       }
-  );
-
-  async function loadDocContent() {
-    try {
-      loading.value = true;
-      const fileName = unref(currentRoute).path.split('/').pop();
-      const url = `/docs/integration/${fileName}/index.md`;
-      const {data} = await getIntegrationDoc({ url });
-      docContent.value = data;
-    } catch (e) {
-      console.error(e);
-    } finally {
-      loading.value = false;
-    }
-  }
-
-  function switchHighlightTheme(newTheme) {
-    debugger;
-    // 移除所有旧的主题样式
-    document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-      if (link.href.includes('/highlight.js/styles/')) {
-        link.remove();
+    })
+)
+/*
+* markedHighlight({
+      emptyLangClass: 'hljs',
+      langPrefix: 'hljs language-',
+      highlight(code, lang, info) {
+        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+        return hljs.highlight(code, { language }).value;
       }
-    });
-
-    // 加载新主题样式
-    var themeLink = document.createElement('link');
-    themeLink.rel = 'stylesheet';
-    themeLink.href = '/highlight.js/styles/' + newTheme + '.css';
-    document.head.appendChild(themeLink);
-
-    // 重新渲染所有高亮代码
-    hljs.highlightAll();
+    })
+* */
+marked.use({
+  highlight: (code) => {
+    return hljs.highlightAuto(code).value;
   }
+});
+
+const docContentHtml = computed(() => {
+      return marked.parse(docContent.value);
+    }
+);
+
+async function loadDocContent() {
+  try {
+    loading.value = true;
+    const fileName = unref(currentRoute).path.split('/').pop();
+    const url = `/docs/integration/${fileName}/index.md`;
+    const {data} = await getIntegrationDoc({url});
+    docContent.value = data;
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
+}
+
+function switchHighlightTheme(newTheme) {
+  // 移除所有旧的主题样式
+  document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+    if (link.href.includes('/highlight.js/styles/')) {
+      link.remove();
+    }
+  });
+
+  // 加载新主题样式
+  const themeLink = document.createElement('link');
+  themeLink.rel = 'stylesheet';
+  themeLink.href = '/highlight.js/styles/' + newTheme + '.css';
+  document.head.appendChild(themeLink);
+
+  // 加载新主题样式
+  const themeLink2 = document.createElement('link');
+  themeLink2.rel = 'stylesheet';
+  themeLink2.href = 'node_modules/github-markdown-css/github-markdown-' + newTheme + '.css';
+  document.head.appendChild(themeLink2);
+
+  // 重新渲染所有高亮代码
+  hljs.highlightAll();
+}
 </script>
 
-<style scoped lang="css">
+<style scoped lang="scss">
 @import 'github-markdown-css/github-markdown.css';
 @import 'github-markdown-css/github-markdown-dark.css';
 @import 'github-markdown-css/github-markdown-light.css';
+
 .markdown-body {
   box-sizing: border-box;
   min-width: 200px;
@@ -146,6 +161,7 @@
     padding: 15px;
   }
 }
+
 /*
 .markdown-content table {
   width: 100%;

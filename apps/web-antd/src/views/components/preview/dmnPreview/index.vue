@@ -113,7 +113,6 @@
 
 
   import { dmnSimulatorInputFormSchema } from '#/views/flowable/dmn/modelInfo/modelInfo.data';
-  import {apiCategoryFormSchema} from "#/views/base/apiInfo/apiInfo.data";
   import { usePreferences } from '@vben/preferences';
 
   const { isDark } = usePreferences();

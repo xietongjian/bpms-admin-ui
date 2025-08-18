@@ -7,6 +7,7 @@
   import { formSchema } from './positionInfo.data';
   import { saveOrUpdate } from '#/api/org/positionInfo';
   import { formatToDate } from '#/utils/dateUtil';
+  import dayjs from "dayjs";
 
   const isUpdate = ref(true);
   const emit = defineEmits(["success"])
@@ -28,7 +29,8 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          formApi.setValues(values);
+          const formData = {...values, startDate: dayjs(values.startDate)};
+          formApi.setValues(formData);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }

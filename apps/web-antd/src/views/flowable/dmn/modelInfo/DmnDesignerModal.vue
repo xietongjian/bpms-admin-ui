@@ -171,7 +171,9 @@ const [BasicForm, formApi] = useVbenForm({
   showDefaultActions: false,
   layout: 'horizontal',
   schema: dmnBaseFormSchema,
-  wrapperClass: 'grid-cols-4',
+  wrapperClass: 'grid grid-cols-3 lg:grid-cols-4',
+  actionPosition: 'left',
+  actionLayout: 'inline',
 });
 
 const publishBtnVisibility = computed(() => {

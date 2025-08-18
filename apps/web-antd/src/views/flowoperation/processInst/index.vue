@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { nextTick, createVNode, ref } from 'vue';
+  import { createVNode, ref } from 'vue';
   import { PerEnum } from '#/enums/perEnum';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
@@ -189,6 +189,19 @@
       ajax: {
         query: async ({page}, formValues) => {
           formValues.startedUserIds = (formValues.startedUserIds && formValues.startedUserIds.map(item => item.value)[0]);
+
+          const { updateSchema } = tableApi.formApi;
+          updateSchema([
+            {
+              fieldName: 'processStatus',
+              dependencies: {
+                disabled(values) {
+                  return procInstDataType.value === 'running';
+                },
+                triggerFields: ['processStatus'],
+              },
+            },
+          ]);
           return await findProcessinstancesPagerModel({
             query: {
               pageNum: page.currentPage,
@@ -203,9 +216,8 @@
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
-  async function handleChangeProcInstType(e: Event) {
-    const values = await tableApi?.formApi.getValues();
-    tableApi.reload(values);
+  function handleChangeProcInstType(e: Event) {
+    tableApi.reload();
   }
 
   function handleViewForm(record: Recordable<any>) {
@@ -377,16 +389,7 @@
     message.success('已拷贝到剪切板！');
   }
 
-  async function handleReload(value) {
-    const { updateSchema } = tableApi.formApi;
-    await updateSchema([
-      {
-        fieldName: 'processStatus',
-        componentProps: {
-          disabled: value === 'running',
-        },
-      },
-    ]);
+  async function handleReload() {
     tableApi.reload();
   }
 

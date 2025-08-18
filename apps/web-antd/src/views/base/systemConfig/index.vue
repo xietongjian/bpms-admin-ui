@@ -63,8 +63,10 @@ const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 60,
   },
-  wrapperClass: 'grid-cols-1 md:grid-cols-3 lg:grid-cols-3 lg:grid-cols-1',
-  actionWrapperClass: 'col-span-3 col-start-2 text-left ml-2',
+  wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+  actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
+  actionPosition: 'left',
+  actionLayout: 'inline',
   resetButtonOptions: {
     show: false,
   },

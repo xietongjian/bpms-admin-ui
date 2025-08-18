@@ -128,7 +128,7 @@ const [BasicForm, formApi] = useVbenForm({
   showDefaultActions: false,
   layout: 'horizontal',
   schema: formSchema,
-  wrapperClass: 'grid-cols-3',
+  wrapperClass: 'grid grid-cols-3',
 });
 
 async function loadData(values: Recordable<any>) {

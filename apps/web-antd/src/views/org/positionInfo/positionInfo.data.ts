@@ -74,6 +74,7 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'name',
     label: '岗位名称',
+    component: 'Input',
     rules: z
         .string({
           required_error: '岗位名称不能为空',
@@ -112,7 +113,7 @@ export const formSchema: FormSchema[] = [
     label: '成立日期',
     component: 'DatePicker',
     componentProps: {
-      getPopupContainer: () => document.body,
+
     },
   },
   {

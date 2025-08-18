@@ -82,7 +82,7 @@ const formOptions: VbenFormProps = {
   schema: searchFormSchema,
 };
 
-const gridOptions: VxeGridProps<any> = {
+const gridOptions: VxeGridProps = {
   checkboxConfig: {
     highlight: true,
     labelField: 'name',
@@ -147,15 +147,15 @@ function handleEdit(record: Recordable<any>) {
   platformConfigModalRef.value.setData(record);
   platformConfigModalRef.value.open();
   platformConfigModalRef.value.setState({
-    title: '新建'
+    title: '编辑'
   });
 }
 
 async function handleDelete(record: Recordable<any>) {
   const {success, msg} = await deleteByIds([record.id]);
   if(success) {
-    tableApi.reload();
     message.success(msg);
+    tableApi.reload();
   } else {
     message.error(msg);
   }
@@ -167,15 +167,7 @@ function handleSuccess() {
     tableApi.reload();
   }, 200);
 }
-
-function handleCloseFunc() {
-  setTimeout(() => {
-    tableApi.reload();
-  }, 200);
-  return Promise.resolve(true);
-}
-
-async function doCopyContent(content) {
+async function doCopyContent(content: string) {
   await copy(content);
   message.success('已拷贝到剪切板！');
 }
