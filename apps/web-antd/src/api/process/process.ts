@@ -283,6 +283,23 @@ export function updateCommentInfo(params: any) {
   return requestClient.post(Api.UpdateCommentInfo, params , {isReturnNativeResponse: true});
 }
 
+/**
+ * 获取常用审批意见，如【同意，好的，确认，通过，OK，已核实，情况属实，可以，已审核】
+ */
+export const getCommonApproveMsgList = () => {
+  const commonApproveMsgList = [
+    { id: '1', msg: '同意' },
+    { id: '2', msg: '好的' },
+    { id: '3', msg: '确认' },
+    { id: '4', msg: '通过' },
+    { id: '5', msg: 'OK' },
+    { id: '6', msg: '已核实' },
+    { id: '7', msg: '情况属实' },
+    { id: '8', msg: '可以' },
+    { id: '9', msg: '已审核' },
+  ];
+  return Promise.resolve(commonApproveMsgList);
+};
 export const getInitBpmnXml = (params: any) => {
   const initBpmnXml = `
   <?xml version="1.0" encoding="UTF-8"?>

@@ -100,7 +100,7 @@ const props = defineProps({
 
 const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
-    formItemClass: 'pb-2 [&_.text-destructive]:left-3 [&_.text-destructive]:bottom-[20px]',
+    formItemClass: 'pb-2 [&_.text-destructive]:hidden [&_.text-destructive]:bottom-[20px]',
     hideLabel: true,
     hideRequiredMark: true,
     componentProps: {

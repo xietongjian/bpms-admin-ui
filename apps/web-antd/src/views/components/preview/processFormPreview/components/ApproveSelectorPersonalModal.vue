@@ -18,15 +18,6 @@ import {
 } from '#/api/flowoperation/processTask';
 
 const emit = defineEmits(['success', 'register']);
-const selectorTypeRef = ref('');
-/*const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
-  labelWidth: 100,
-  schemas: approveActionFormSchema,
-  showActionButtonGroup: false,
-  actionColOptions: {
-    span: 23,
-  },
-});*/
 
 const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
@@ -40,38 +31,6 @@ const [BasicForm, formApi] = useVbenForm({
   wrapperClass: 'gap-0 grid-cols-1',
 });
 
-/*const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
-  async (data) => {
-    await resetFields();
-    setModalProps({confirmLoading: false, loading: false});
-    const { actionType, multiple, taskId, procInstId, message } = data.selectorProps;
-    selectorTypeRef.value = actionType;
-
-    switch (actionType) {
-      case 'reviewTask':
-        updatePropsByActionType('流程转阅', '转阅人员', '转阅附言');
-        break;
-      case 'delegateTask':
-        updatePropsByActionType('流程委派', '委派人员', '委派附言');
-        break;
-      case 'turnTask':
-        updatePropsByActionType('流程转办', '转办人员', '转办附言');
-        break;
-      case 'addsign':
-        updatePropsByActionType('流程加签', '加签人员', '加签附言');
-        break;
-    }
-
-    setFieldsValue({
-      actionType,
-      taskId,
-      procInstId,
-      message,
-    });
-    setModalProps({ confirmLoading: false });
-  },
-);*/
-
 const [BasicModal, modalApi] = useVbenModal({
   draggable: true,
   onCancel() {
@@ -83,7 +42,7 @@ const [BasicModal, modalApi] = useVbenModal({
       if (values) {
         // formApi.setValues(values);
         modalApi.setState({loading: false, confirmLoading: false});
-        const {actionType, multiple, taskId, procInstId, approveMsg} = values;
+        const {actionType, multiple} = values;
 
         switch (actionType) {
           case 'reviewTask':
@@ -99,10 +58,8 @@ const [BasicModal, modalApi] = useVbenModal({
             updatePropsByActionType('流程加签', '加签人员', multiple, '加签附言');
             break;
         }
+        debugger;
         formApi.setValues({
-          actionType,
-          taskId,
-          procInstId,
           ...values
         });
       }
@@ -133,9 +90,6 @@ const updatePropsByActionType = (title, actionPersonalLabel, multiple, messageLa
 };
 
 function closeCurrModal() {
-  // setModalProps({ confirmLoading: false });
-  // changeLoading(false);
-  // closeModal();
   modalApi.close();
   emit('success');
 }
@@ -167,7 +121,7 @@ async function handleSubmit() {
     message: approveMsg,
     signatureImg: signImg,
     commentAttachmentList
-  };
+  } as any;
 
   switch (actionType) {
     case 'reviewTask': // 转阅
@@ -188,7 +142,7 @@ async function handleSubmit() {
         modalApi.setState({loading: false, confirmLoading: false})
       }
       break;
-    case 'delegateTask':
+    case 'delegateTask': // 委派
       params['delegateUserCode'] = actionPersonal?.map((item) => item.code)[0] || '';
       try {
         const {success, msg} = await delegateTask(params);
@@ -206,7 +160,7 @@ async function handleSubmit() {
         modalApi.setState({loading: false, confirmLoading: false})
       }
       break;
-    case 'turnTask':
+    case 'turnTask': // 转办
       params['turnToUserId'] = actionPersonal?.map((item) => item.code)[0] || '';
       try {
         const {success, msg} = await turnTask(params);
@@ -224,7 +178,7 @@ async function handleSubmit() {
         modalApi.setState({loading: false, confirmLoading: false})
       }
       break;
-    case 'addsign':
+    case 'addsign': // 加签 （true：前加签，false：后加签）
       params['signPersonals'] = actionPersonal?.map(item => item.code) || [];
       if (signType) {
         try {
@@ -260,41 +214,9 @@ async function handleSubmit() {
         }
       }
       break;
-    case 'afterAddSign':
-      params['signPersonals'] = actionPersonal?.map((item) => item.code) || [];
-      try {
-        const {success, msg} = await afterAddSign(params);
-        if (success) {
-          message.success(msg);
-          closeCurrModal();
-        } else {
-          message.error(msg || defaultMsg);
-          modalApi.setState({loading: false, confirmLoading: false})
-        }
-      } catch (e) {
-        message.error(defaultMsg);
-        console.error(e);
-      } finally {
-        modalApi.setState({loading: false, confirmLoading: false})
-      }
-      break;
-    case 'beforeAddSign':
-      params['signPersonals'] = actionPersonal?.map((item) => item.code) || [];
-      try {
-        const {success, msg} = await beforeAddSign(params);
-        if (success) {
-          message.success(msg);
-          closeCurrModal();
-        } else {
-          message.error(msg || defaultMsg);
-          modalApi.setState({loading: false, confirmLoading: false})
-        }
-      } catch (e) {
-        message.error(defaultMsg);
-        console.error(e);
-      } finally {
-        modalApi.setState({loading: false, confirmLoading: false})
-      }
+    default:
+      message.error('未定义的审批功能！')
+      modalApi.setState({loading: false, confirmLoading: false})
       break;
   }
 }

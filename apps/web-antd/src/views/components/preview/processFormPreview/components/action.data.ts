@@ -3,6 +3,7 @@ import {z} from '#/adapter/form';
 import {h, markRaw} from "vue";
 import Upload from "#/views/components/common/widgets/upload/index.vue";
 import Esign from "#/views/components/common/widgets/esign/index.vue";
+import QuickReply from "#/views/components/common/widgets/quickReply/index.vue";
 
 /**
  * 审批意见
@@ -16,14 +17,6 @@ export const approveMsgSchemas: FormSchema[] = [
     component: markRaw(Upload),
     wrapperClass: 'approve-attachment-wrapper',
     formItemClass: 'approve-attachment-form-item'
-    /**
-     * .ant-upload-select {
-     *     position: absolute;
-     *     bottom: 48px;
-     *     right: 20px;
-     *     z-index: 9;
-     *   }
-     */
   },
   {
     fieldName: 'signImg',
@@ -40,6 +33,7 @@ export const approveMsgSchemas: FormSchema[] = [
     label: '',
     component: 'Textarea',
     componentProps: {
+      allowClear: true,
       placeholder: '请输入审批意见！',
       autoSize: {
         minRows: 3,
@@ -54,6 +48,26 @@ export const approveMsgSchemas: FormSchema[] = [
       .min(1, "审批意见不能为空！")
       .max(4000, "字符长度不能大于4000！"),
     labelWidth: 0,
+  },
+  {
+    fieldName: 'commonApproveMsg',
+    modelPropName: 'value',
+    label: '',
+    defaultValue: '',
+    disabledOnChangeListener: false,
+    component: markRaw(QuickReply),
+    dependencies: {
+      componentProps(values) {
+        return {
+          onSelect(val: string){
+            values.approveMsg = val;
+          }
+        };
+      },
+      triggerFields: ['commonApproveMsg'],
+    },
+    wrapperClass: 'approve-sign-wrapper',
+    formItemClass: 'absolute bottom-[35px] left-[10px] z-10',
   },
 ];
 
@@ -111,15 +125,6 @@ export const approveActionFormSchema: FormSchema[] = [
     }
   },
   {
-    fieldName: 'actionType',
-    label: 'actionType',
-    component: 'Input',
-    dependencies: {
-      show: false,
-      triggerFields: ['actionType']
-    }
-  },
-  {
     fieldName: 'procInstId',
     label: 'procInstId',
     component: 'Input',
@@ -141,12 +146,17 @@ export const approveActionFormSchema: FormSchema[] = [
   },
   {
     fieldName: 'signType',
-    component: 'Input',
+    component: 'Checkbox',
     label: ' ',
-    suffix: () => h('span', {class: 'text-red-600'}, '加签审批完成之后是否流转到我审批'),
+    // suffix: () => h('span', {class: 'text-red-600'}, '加签审批完成之后是否流转到我审批'),
+    renderComponentContent: () => {
+      return {
+        default: () => ['加签审批完成之后是否流转到我审批'],
+      };
+    },
     dependencies: {
       if: (values) => values.actionType === 'addsign',
-      triggerFields: ['signType']
+      triggerFields: ['actionType']
     },
   },
   {
