@@ -47,11 +47,11 @@
         <EmpInfo :no="row.updatedByNo" :name="row.updatedBy" />
       </template>-->
     </BasicTable>
-    <BannerDrawer ref="bannerDrawerRef"  />
+    <BannerDrawer ref="bannerDrawerRef" @success="handleSuccess" />
   </Page>
 </template>
 <script lang="ts" setup>
-  import { onMounted, ref, unref } from 'vue';
+  import { onMounted, ref } from 'vue';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps} from '#/adapter/vxe-table';
@@ -59,7 +59,7 @@
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {TableAction} from '#/components/table-action';
   import { columns, searchFormSchema } from './banner.data';
-  import {Button, Tooltip, message, Image, Tag} from 'ant-design-vue';
+  import {Button, message, Image, Tag} from 'ant-design-vue';
   import { getBannerListByPage, deleteByIds } from '#/api/portal/cms/banner';
   import BannerDrawer from './BannerDrawer.vue';
   import { EmpInfo } from '#/views/components/EmpInfo';
@@ -197,29 +197,22 @@
   }
 
   function handleEdit(record: Recordable) {
-    // openBannerDrawer(true, { record, isUpdate: true });
-
     bannerDrawerRef.value.setData(record);
     bannerDrawerRef.value.open();
     bannerDrawerRef.value.setState({
       title: '编辑'
     });
-    /*openModal(true, {
-        record,
-        isUpdate: true,
-      });
-      setModalProps({
-        width: 800
-      });*/
+
   }
 
-  async function handleDelete(record: Recordable) {
+  async function handleDelete(record: Recordable<any>) {
     const {success, msg} = await deleteByIds([record.id]);
     if(success){
-      message.success();
+      message.success(msg);
       tableApi.reload();
+    }else {
+      message.error(msg);
     }
-
   }
 
   function handleSuccess() {

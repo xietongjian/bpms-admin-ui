@@ -16,7 +16,8 @@
         <TableAction :actions="createActions(row)" />
       </template>
       <template #signerName="{ row }">
-        <EmpInfo :no="row.signerNo" :name="row.signerName" />
+        <EmpInfo v-if="row.haveSigner" :no="row.signerNo" :name="row.signerName" />
+        <span v-else>无</span>
       </template>
       <template #status="{row}">
         <Tag :color="row.status ? 'green' : 'red'">{{ row.status ? '启用' : '停用' }}</Tag>
@@ -47,7 +48,6 @@
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {TableAction} from '#/components/table-action';
-  // import { BasicTable, useTable, TableAction, TableImg } from '#/components/Table';
   import { columns, searchFormSchema } from './noticeSubject.data';
   import NoticeSubjectModal from './NoticeSubjectModal.vue';
   import { deleteByIds, getAllNoticeSubject } from '#/api/portal/cms/noticeSubject';
@@ -97,7 +97,7 @@
     stripe: true,
     proxyConfig: {
       ajax: {
-        query: async ({page}, formValues) => {
+        query: async ({}, formValues) => {
           return await getAllNoticeSubject(formValues);
         },
       },
@@ -107,30 +107,6 @@
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
-  /*const [registerTable, { reload }] = useTable({
-    title: '列表',
-    api: getAllNoticeSubject,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: false,
-    showIndexColumn: false,
-    pagination: false,
-    actionColumn: {
-      width: 100,
-      title: '操作',
-      field: 'action',
-      fixed: 'right',
-    },
-  });*/
-
   function handleCreate() {
     noticeSubjectModalRef.value.setData({});
     noticeSubjectModalRef.value.open();
@@ -139,7 +115,7 @@
     });
   }
 
-  function createActions(record: Recordable) {
+  function createActions(record: Recordable<any>) {
     return [
       {
         auth: [PerPrefix + PerEnum.ADD],
@@ -168,7 +144,7 @@
     ];
   }
 
-  function handleEdit(record: Recordable) {
+  function handleEdit(record: Recordable<any>) {
     noticeSubjectModalRef.value.setData(record);
     noticeSubjectModalRef.value.open();
     noticeSubjectModalRef.value.setState({
@@ -176,7 +152,7 @@
     });
   }
 
-  async function handleDelete(record: Recordable) {
+  async function handleDelete(record: Recordable<any>) {
     const {success, msg} = await deleteByIds([record.id]);
     if(success){
       tableApi.reload();
@@ -188,7 +164,7 @@
     tableApi.reload();
   }
 
-  function handleCreateChild(record: Recordable, e) {
+  function handleCreateChild(record: Recordable<any>) {
     noticeSubjectModalRef.value.setData({
       pid: record.id,
       status: true,
@@ -197,21 +173,6 @@
     noticeSubjectModalRef.value.setState({
       title: '新增【' + record.title + '】的子主体',
     });
-    /*
-    e.stopPropagation();
-    setModalProps({
-      title: '新增【' + record.title + '】的子主体',
-      width: 800,
-      maskClosable: false,
-    });
-    record = {
-      pid: record.id,
-      status: true,
-    };
-    openModal(true, {
-      record,
-      isUpdate: true,
-    });*/
   }
 
 </script>

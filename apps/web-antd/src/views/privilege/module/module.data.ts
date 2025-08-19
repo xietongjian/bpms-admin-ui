@@ -147,6 +147,7 @@ export const formSchema: FormSchema[] = [
       triggerFields: ['sn'],
       rules(values) {
         const {id, sn} = values;
+        debugger;
         return z.string({
           required_error: '标识不能为空！'
         }).min(1, '标识不能为空！')

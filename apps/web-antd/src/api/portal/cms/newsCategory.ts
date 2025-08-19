@@ -32,14 +32,7 @@ export const getAllNewsCategory = (params) => {
   });
 };
 
-export const getNewsCategoryListByPage = (params) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { ...query, ...entity };
+export const getNewsCategoryListByPage = (params: any) => {
   return requestClient.post(Api.NewsCategoryPageList, params);
 };
 
@@ -50,4 +43,4 @@ export const update = (params: any) => requestClient.post(Api.Update, params, {r
 export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
-export const deleteByIds = (params?: Array<string>) => requestClient.delete(Api.Delete, {params, responseReturn: 'body'});
+export const deleteByIds = (params?: Array<string>) => requestClient.delete(Api.Delete, {data: params, responseReturn: 'body'});

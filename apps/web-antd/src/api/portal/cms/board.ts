@@ -17,7 +17,7 @@ enum Api {
  * BANNER(3, "轮播图");
  * @param params
  */
-export const getAllBoard = (params) => {
+export const getAllBoard = (params: any) => {
   return requestClient.post(Api.BoardList, params).then((res: any) => {
     res.forEach((item) => {
       item.label = item.name;
@@ -39,22 +39,15 @@ export const getBoardTypes = () => {
   });
 };
 
-export const getBoardListByPage = (params) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { query, entity };
+export const getBoardListByPage = (params: any) => {
   return requestClient.post(Api.BoardPageList, params);
 };
 
-export const insert = (params) => requestClient.post(Api.Insert, params);
+export const insert = (params: any) => requestClient.post(Api.Insert, params, {responseReturn: 'body'});
 
-export const update = (params) => requestClient.put(Api.Update, params);
+export const update = (params: any) => requestClient.post(Api.Update, params, {responseReturn: 'body'});
 
-export const checkEntityExist = (params) =>
+export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
-export const deleteByIds = (params?: Array<string>) => requestClient.delete(Api.Delete, params);
+export const deleteByIds = (params?: Array<string>) => requestClient.post(Api.Delete, params, {responseReturn: 'body'});

@@ -54,6 +54,6 @@ export const update = (params) => {
 export const checkEntityExist = (params) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
-export const deleteByIds = (params?: Array<string>) => requestClient.post(Api.Delete, params);
+export const deleteByIds = (params?: Array<string>) => requestClient.post(Api.Delete, params, { responseReturn: 'body' });
 
 export const getPublishStatus = () => requestClient.get(Api.GetPublishStatus);

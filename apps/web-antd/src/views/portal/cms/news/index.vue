@@ -346,23 +346,15 @@
     newsInputDrawerRef.value.setState({
       title: `编辑新闻 - ${record.title}`,
     });
-    /*openNewsInputDrawer(true, { id: record.id });
-
-    setNewsInputDrawerProps({
-      bodyStyle: { padding: '0px', margin: '0px' },
-      width: 1000,
-      cancelText: '关闭',
-      showOkBtn: false,
-      destroyOnClose: true,
-      maskClosable: false,
-    });*/
   }
 
   async function handleDelete(record: Recordable<any>) {
     const {success, msg} = await deleteByIds([record.id]);
-    if(success){
+    if (success) {
       message.success(msg);
       tableApi.reload();
+    } else {
+      message.error(msg);
     }
   }
 

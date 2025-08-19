@@ -10,15 +10,27 @@
       <template #status="{row}">
         <Tag :color="row.status ? 'green' : 'red'">{{ row.status ? '启用' : '停用' }}</Tag>
       </template>
+      <template #refSubjectSigner="{row}">
+        <Tag :color="row.refSubjectSigner ? 'green' : 'red'">{{ row.refSubjectSigner ? '是' : '否' }}</Tag>
+      </template>
+      <template #haveSigner="{row}">
+        <Tag :color="row.haveSigner ? 'green' : 'red'">{{ row.haveSigner ? '是' : '否' }}</Tag>
+      </template>
       <template #signerNameRender="{ row }">
-        <EmpInfo :no="row.signerNo" :name="row.signerName" />
+        <div >
+          <div v-if="row.haveSigner" >
+            <EmpInfo v-if="!row.refSubjectSigner" :no="row.signerNo" :name="row.signerName" />
+            <span v-else>关联主体签发人</span>
+          </div>
+          <span v-else>无</span>
+        </div>
       </template>
 <!--
       <template #createdByRender="{ row }">
         <EmpInfo :no="row.createdByNo" :name="row.createdBy" />
       </template>-->
       <template #nameRender="{ row }">
-        <span class="color-block" :style="{ background: row.style }"> &nbsp; </span>
+        <span class="size-5 inline-block" :style="{ background: row.style }"> &nbsp; </span>
         &nbsp;
         <span>{{ row.name }}</span>
       </template>
@@ -177,11 +189,3 @@
     });
   }
 </script>
-
-<style lang="less" scoped>
-  .color-block {
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-  }
-</style>

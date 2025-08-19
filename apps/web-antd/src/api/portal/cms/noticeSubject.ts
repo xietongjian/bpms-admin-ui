@@ -23,7 +23,7 @@ export const getNoticeSubjectList = (params: any) => {
   });
 };
 
-export const getAllNoticeSubject = (params) => {
+export const getAllNoticeSubject = (params: any) => {
   return getNoticeSubjectList(params).then((res) => {
     const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
     forEach(
@@ -65,25 +65,18 @@ export const getMySubjectList = async () => {
   });
 };
 
-export const getNoticeSubjectById = (id) =>
+export const getNoticeSubjectById = (id: string) =>
   requestClient.get(Api.GetNoticeSubjectById + '/' + id);
 
-export const getNoticeSubjectListByPage = (params) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
-  const entity = params || {};
-  if (entity) {
-    delete entity['pageNum'];
-    delete entity['pageSize'];
-  }
-  const queryParam = { ...query, ...entity };
+export const getNoticeSubjectListByPage = (params: any) => {
   return requestClient.post(Api.NoticeSubjectPageList, params);
 };
 
-export const insert = (params) => requestClient.post(Api.Insert, params);
+export const insert = (params: any) => requestClient.post(Api.Insert, params, {responseReturn: 'body'});
 
-export const update = (params) => requestClient.put(Api.Update, params);
+export const update = (params: any) => requestClient.put(Api.Update, params, {responseReturn: 'body'});
 
-export const checkEntityExist = (params) =>
+export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
-export const deleteByIds = (params?: Array<string>) => requestClient.delete(Api.Delete, {params, responseReturn: 'body'});
+export const deleteByIds = (params?: Array<string>) => requestClient.delete(Api.Delete, {data: params, responseReturn: 'body'});

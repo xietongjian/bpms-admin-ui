@@ -11,14 +11,15 @@
         <Tag :color="row.status ? 'green' : 'red'">{{ row.status ? '启用' : '停用' }}</Tag>
       </template>
       <template #name="{ row }">
-        <span class="color-block" :style="{background: row.style}">
+        <span class="size-5 inline-block" :style="{background: row.style}">
           &nbsp;
         </span>
         &nbsp;
         <span>{{row.name}}</span>
       </template>
 
-      <!--      <template #createdByRender="{ record }">
+      <!--
+      <template #createdByRender="{ record }">
         <EmpInfo :no="record.createdByNo" :name="record.createdBy" />
       </template>
       <template #updatedByRender="{ record }">
@@ -39,7 +40,6 @@
   import { columns, searchFormSchema } from './newsCategory.data';
   import NewsCategoryModal from './NewsCategoryModal.vue';
   import { deleteByIds, getAllNewsCategory } from '#/api/portal/cms/newsCategory';
-  import { EmpInfo } from '#/views/components/EmpInfo';
   import { PerEnum } from '#/enums/perEnum';
   import {Button, message, Tag} from 'ant-design-vue';
   import {Page} from '@vben/common-ui';
@@ -130,7 +130,7 @@
     });
   }
 
-  function handleEdit(record: Recordable) {
+  function handleEdit(record: Recordable<any>) {
     newsCategoryModalRef.value.setData(record);
     newsCategoryModalRef.value.open();
     newsCategoryModalRef.value.setState({
@@ -161,10 +161,3 @@
   }
 </script>
 
-<style lang="less" scoped>
-  .color-block {
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-  }
-</style>

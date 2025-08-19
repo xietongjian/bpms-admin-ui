@@ -12,6 +12,9 @@
 <script setup>
 import {computed, reactive, watch, ref, nextTick, onMounted, defineEmits} from "vue"; //全屏
 import {uploadFile} from "#/api/core/upload";
+import { usePreferences } from '@vben/preferences';
+
+const { isDark } = usePreferences();
 
 import tinymce from "tinymce/tinymce";
 // import "tinymce/skins/content/default/content.css";
@@ -45,6 +48,12 @@ import "tinymce/plugins/importcss"; //引入自定义样式的css文件
 import "tinymce/plugins/accordion"; // 可折叠数据手风琴模式
 import "tinymce/plugins/anchor"; //锚点
 import "tinymce/plugins/fullscreen";
+
+// 引入富文本编辑器主题的js和css
+// import 'tinymce/skins/content/default/content.css';
+// import 'tinymce/skins/content/dark/content.css';
+// import 'tinymce/themes/silver/theme.min.js';
+// import 'tinymce/themes/silver/theme';
 
 
 const emits = defineEmits(["update:modelValue", "setHtml"]);
@@ -105,7 +114,9 @@ const init = reactive({
   selector: "#" + tinymceId.value, //富文本编辑器的id,
   language_url: "/libs/tinymce/langs/zh_CN.js", // 语言包的路径，具体路径看自己的项目
   language: "zh_CN",
-  skin_url: "/libs/tinymce/skins/ui/oxide", // skin路径，具体路径看自己的项目
+  // skin_url: "/libs/tinymce/skins/ui/oxide", // skin路径，具体路径看自己的项目
+  // theme: 'silver', // 主题 必须引入
+  // skin_url: '/libs/tinymce/skins/ui/oxide-dark', // 主题路径
   editable_root: props.editable_root,
   height: 600,
   branding: false, // 是否禁用“Powered by TinyMCE”
@@ -191,6 +202,17 @@ const init = reactive({
   },
 });
 
+watch(
+    () => isDark,
+    async () => {
+      // 主题路径
+      init.skin_url = isDark.value ? '/libs/tinymce/skins/ui/oxide-dark' : '/libs/tinymce/skins/ui/oxide';
+    },
+    {
+      immediate: true,
+    },
+);
+
 // 外部传递进来的数据变化
 const myValue = computed({
   get() {
@@ -205,7 +227,6 @@ const myValue = computed({
 watch(
     () => myValue.value,
     () => {
-      debugger;
       emits(
           "setHtml",
           tinymce.activeEditor.getContent({format: "text"}),

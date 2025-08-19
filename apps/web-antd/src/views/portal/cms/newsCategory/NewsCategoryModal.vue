@@ -6,8 +6,8 @@
           <div class="flex gap-2">
             <span @click="()=>{selectedStyle = item}"
                   v-for="item in colorList"
-                  class="text-center cursor-pointer size-[26px] outline outline-transparent outline-4"
-                  :class="{'outline-red-600': item === selectedStyle}"
+                  class="text-center cursor-pointer size-[26px] outline outline-red-600 outline-transparent outline-4"
+                  :class="{'!outline-red-600': item === selectedStyle}"
                   :style="{background: item}" :title="item">
               <StopOutlined title="默认" class="text-center text-[26px] text-gray-500" v-if="item===''" />
             </span>
@@ -18,13 +18,13 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { computed, ref, unref, defineExpose, defineEmits } from 'vue';
+  import { ref, defineExpose, defineEmits } from 'vue';
   import { useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import { formSchema } from './newsCategory.data';
   import { insert, update } from '#/api/portal/cms/newsCategory';
-  import { Select, Input, Space, Dropdown, message } from 'ant-design-vue';
-  import { DownOutlined, StopOutlined } from '@ant-design/icons-vue';
+  import { message } from 'ant-design-vue';
+  import { StopOutlined } from '@ant-design/icons-vue';
 
   const colorList = [
     '',
@@ -72,92 +72,9 @@
       }
     },
     onConfirm() {
-      // await formApi.submitForm();
       handleSubmit();
     },
   });
-
-  /*const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] = useForm({
-    labelWidth: 100,
-    schemas: formSchema,
-    showActionButtonGroup: false,
-  });
-
-  const getBaseDynamicRules = (params: CheckExistParams) => {
-    return [
-      {
-        trigger: 'blur',
-        validator: (_, value) => {
-          if (value) {
-            return checkEntityExist({
-              id: params.id,
-              fieldName: params.field,
-              fieldValue: value,
-              fieldName: params.fieldName,
-            })
-                .then((res) => {
-                  if (res) {
-                    return Promise.resolve();
-                  } else {
-                    return Promise.reject(params.fieldName + '已存在，请修改！');
-                  }
-                })
-                .catch((res) => {
-                  return Promise.reject(res);
-                });
-          } else {
-            return Promise.resolve();
-          }
-        },
-      },
-    ] as Rule[];
-  };
-
-  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
-    await resetFields();
-    setModalProps({ confirmLoading: false });
-    isUpdate.value = !!data?.isUpdate;
-    let formData = data.record;
-
-    await updateSchema([
-      {
-        fieldName: 'sn',
-        dynamicRules: () => {
-          return [
-            {
-              required: true,
-              whitespace: true,
-              message: '标识不能为空！',
-            },
-            {
-              pattern: new RegExp(FormValidPatternEnum.SN),
-              type: 'string',
-              message: '请输入英文或数字！',
-            },
-            {
-              max: 32,
-              message: '字符长度不能大于32！',
-            },
-            ...getBaseDynamicRules({
-              id: (unref(isUpdate) && formData && formData.id) || '',
-              fieldName: 'sn',
-              fieldValue: '',
-              fieldName: '标识',
-            }),
-          ];
-        },
-        componentProps: {
-          disabled: unref(isUpdate) && formData.id,
-        },
-      },
-    ]);
-
-    if (unref(isUpdate)) {
-      setFieldsValue({
-        ...formData,
-      });
-    }
-  });*/
 
   async function handleSubmit() {
     try {

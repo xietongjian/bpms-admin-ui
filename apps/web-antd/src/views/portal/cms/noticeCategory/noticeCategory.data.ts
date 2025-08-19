@@ -20,42 +20,18 @@ export const columns: VxeGridProps['columns'] = [
     width: 100,
     align: 'left',
   },
-  /*{
-    title: '是否关联主体的签发人',
-    field: 'refSubjectSigner',
-    width: 100,
-    align: 'center',
-    customRender: ({record}) => {
-      const enable = record.refSubjectSigner;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '是' : '否';
-      return h(Tag, {color: color}, () => text);
-    },
-  },
   {
-    title: '是否有签发人',
-    field: 'haveSigner',
-    width: 100,
-    align: 'center',
-    customRender: ({record}) => {
-      const enable = record.haveSigner;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '是' : '否';
-      return h(Tag, {color: color}, () => text);
-    },
-  },*/
+    title: '签发人',
+    field: 'signerName',
+    width: 200,
+    align: 'left',
+    slots: { default: 'signerNameRender' },
+  },
   {
     title: '排序号',
     field: 'orderNo',
     width: 100,
     align: 'left',
-  },
-  {
-    title: '签发人姓名',
-    field: 'signerName',
-    width: 100,
-    align: 'left',
-    slots: { default: 'signerNameRender' },
   },
   {
     title: '启用状态',

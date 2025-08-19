@@ -16,7 +16,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '标识',
     field: 'sn',
-    width: 100,
+    width: 150,
     align: 'left',
   },
   {

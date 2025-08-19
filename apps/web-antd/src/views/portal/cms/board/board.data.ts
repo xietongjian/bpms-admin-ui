@@ -1,8 +1,8 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-import { getBoardTypes } from '#/api/portal/cms/board';
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
+import { getBoardTypes, checkEntityExist } from '#/api/portal/cms/board';
+import {FormValidPatternEnum, OrderNoDefaultEnum, RemarkDefaultEnum} from '#/enums/commonEnum';
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -22,6 +22,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'type',
     width: 100,
     align: 'left',
+    slots: { default: 'typeRender' }
   },
   {
     title: '启用状态',
@@ -57,6 +58,7 @@ export const searchFormSchema: FormSchema[] = [
     component: 'ApiSelect',
     componentProps: {
       api: getBoardTypes,
+      allowClear: true,
       placeholder: '请选择类型',
     },
     labelWidth: 60,
@@ -66,6 +68,7 @@ export const searchFormSchema: FormSchema[] = [
     label: '关键字',
     component: 'Input',
     componentProps: {
+      allowClear: true,
       placeholder: '请输入名称',
     },
     labelWidth: 60,
@@ -85,8 +88,9 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'type',
     label: '类型',
-    component: 'ApiRadioGroup',
+    component: 'ApiSelect',
     componentProps: {
+      class: 'w-full',
       api: getBoardTypes,
       placeholder: '请选择类型',
     },
@@ -107,12 +111,38 @@ export const formSchema: FormSchema[] = [
     fieldName: 'sn',
     label: '标识',
     component: 'Input',
-    rules: z
-        .string({
-          required_error: '名称不能为空！'
-        })
-        .min(1, "名称不能为空！")
-        .max(64, "字符长度不能大于64！"),
+    dependencies: {
+      rules(values) {
+        const { id, sn } = values;
+        return z
+            .string({
+              required_error: "标识不能为空！"
+            })
+            .min(1, "标识不能为空！")
+            .max(30, '字符长度不能大于30！')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'sn',
+                      fieldValue: sn || '',
+                      fieldName: '标识',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '标识已存在',
+                },
+            );
+      },
+      triggerFields: ['sn'],
+    },
   },
   {
     fieldName: 'status',

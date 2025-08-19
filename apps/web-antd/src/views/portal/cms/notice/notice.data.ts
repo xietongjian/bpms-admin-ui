@@ -308,12 +308,12 @@ export const baseFormSchema: FormSchema[] = [
     component: 'Textarea',
     label: '内容',
     defaultValue: '',
-    renderComponentContent: () => {
+    /*renderComponentContent: () => {
       return {
         default: () => h('div', '分割线'),
       };
-    },
-    formItemClass: 'col-span-3 '
+    },*/
+    formItemClass: 'col-span-3 items-baseline'
     // rules: [{ required: true }],
     /*render: ({ model, field }) => {
       return h(Tinymce, {

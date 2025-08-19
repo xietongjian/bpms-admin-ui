@@ -15,6 +15,7 @@ const emit = defineEmits(['success', 'register']);
 const isUpdate = ref(true);
 
 const [BasicDrawer, drawerApi] = useVbenDrawer({
+  destroyOnClose: true,
   onCancel() {
     drawerApi.close();
   },

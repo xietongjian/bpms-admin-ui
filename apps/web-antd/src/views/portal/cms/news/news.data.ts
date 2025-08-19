@@ -57,7 +57,7 @@ export const columns: VxeGridProps['columns'] = [
   },
   {
     title: '操作',
-    width: 120,
+    width: 140,
     align: 'center',
     slots: { default: 'action' },
     fixed: 'right',
@@ -249,6 +249,7 @@ export const baseFormSchema: FormSchema[] = [
     fieldName: 'shortContent',
     label: '简介',
     component: 'Textarea',
+    formItemClass: 'items-baseline',
     componentProps: {
       class: 'w-full',
       showCount: true,
@@ -269,18 +270,7 @@ export const baseFormSchema: FormSchema[] = [
     label: '内容',
     defaultValue: '',
     rules: 'required',
-    // rules: [{ required: true }],
-    /*render: ({ model, field }) => {
-      return h(Tinymce, {
-        value: model[field],
-        showImageUpload: false,
-        options: [],
-        plugins: [],
-        onChange: (value: string) => {
-          model[field] = value;
-        },
-      });
-    },*/
+    formItemClass: 'items-baseline',
   },
   /*{
     fieldName: 'publishTime',
