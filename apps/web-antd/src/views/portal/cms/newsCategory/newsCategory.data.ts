@@ -27,6 +27,7 @@ export const columns: VxeGridProps['columns'] = [
     align: 'left',
     slots: { default: 'name' },
     resizable: true,
+    treeNode: true
   },
   {
     title: '标识',

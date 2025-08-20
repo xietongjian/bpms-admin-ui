@@ -39,7 +39,11 @@
   import {TableAction} from '#/components/table-action';
   import { columns, searchFormSchema } from './newsCategory.data';
   import NewsCategoryModal from './NewsCategoryModal.vue';
-  import { deleteByIds, getAllNewsCategory } from '#/api/portal/cms/newsCategory';
+  import {
+    deleteByIds,
+    getAllNewsCategories,
+    getAllNewsCategory
+  } from '#/api/portal/cms/newsCategory';
   import { PerEnum } from '#/enums/perEnum';
   import {Button, message, Tag} from 'ant-design-vue';
   import {Page} from '@vben/common-ui';
@@ -85,7 +89,7 @@
     proxyConfig: {
       ajax: {
         query: async ({}, formValues) => {
-          return await getAllNewsCategory(formValues);
+          return await getAllNewsCategories(formValues);
         },
       },
     },

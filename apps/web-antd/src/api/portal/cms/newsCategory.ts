@@ -10,8 +10,11 @@ enum Api {
   NewsCategoryList = '/flow/portal/cms/newsCategory/list',
 }
 
+export const getAllNewsCategories = (params) => {
+  return requestClient.post(Api.NewsCategoryList, params);
+};
 export const getAllNewsCategory = (params) => {
-  return requestClient.post(Api.NewsCategoryList, params).then((res: any) => {
+  return getAllNewsCategories(params).then((res: any) => {
     res.forEach((item) => {
       item.key = item.id;
       item.value = item.id;
