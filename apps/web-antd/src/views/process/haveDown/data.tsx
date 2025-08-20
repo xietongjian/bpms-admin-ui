@@ -1,9 +1,8 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 
-import { Badge } from 'ant-design-vue';
 import {getApps} from "#/api/process/process";
-// import {getApproveStatusIcon} from "@/utils";
+
 export const searchFormSchema: FormSchema[] = [
   {
     fieldName: 'formName',
@@ -55,6 +54,7 @@ export const haveDownTableColumns: VxeGridProps['columns']= [
     width: 85,
     field: 'startPersonName',
     align: 'left',
+    slots: {default: 'startPersonName'}
   },
   {
     title: '审批时间',

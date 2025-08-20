@@ -70,6 +70,7 @@ async function handleDelete(record: Recordable<any>) {
   if (success) {
     message.success(msg);
     tableApi.reload();
+
   }else {
     message.error(msg);
   }

@@ -1,10 +1,4 @@
 <script setup lang="ts">
-  /**
-   * @desc OneYearPie
-   * @author DragonTeam <https://www.bpmport.com>
-   * @since 2024/10/11 15:48
-   */
-
   import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
   import { nextTick, ref, Ref, shallowRef, watch } from 'vue';
   import {

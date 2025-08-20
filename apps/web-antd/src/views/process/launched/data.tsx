@@ -1,8 +1,5 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
 import type {VxeGridProps} from '#/adapter/vxe-table';
-
-import { Badge } from 'ant-design-vue';
 // import {getApproveStatusIcon} from "@/utils";
 export const searchFormSchema: FormSchema[] = [
   {

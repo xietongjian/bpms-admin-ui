@@ -267,6 +267,7 @@ export const apiInfoFormSchema: FormSchema[] = [
     label: '响应示例',
     component: markRaw(CodeEditor),
     wrapperClass: 'border',
+    formItemClass: 'items-start',
     componentProps: {
       type: 'json',
       class: 'w-full',

@@ -7,7 +7,7 @@
         class="h-full flex flex-col"
         size="small"
         @select="handleSelect"
-        title="公司"
+        title="分类"
     />
   </div>
 </template>

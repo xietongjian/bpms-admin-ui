@@ -1,4 +1,4 @@
-import { OrderNoDefaultEnum } from '#/enums/commonEnum';
+import {FormValidPatternEnum, OrderNoDefaultEnum} from '#/enums/commonEnum';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { z } from '#/adapter/form';
@@ -98,7 +98,38 @@ export const formSchema: FormSchema[] = [
     fieldName: 'code',
     label: '编码',
     component: 'Input',
-    rules: 'required',
+    dependencies: {
+      rules(values) {
+        const { id, code } = values;
+        return z
+          .string({
+            required_error: "编码不能为空！"
+          })
+          .min(1, "编码不能为空！")
+          .max(256, '字符长度不能大于256！')
+          .regex(new RegExp(FormValidPatternEnum.CODE), '请输入英文或数字且以英文或下划线开头！')
+          .refine(
+            async (e) => {
+              let result = false;
+              try {
+                result = await checkEntityExist({
+                  id: id,
+                  field: 'code',
+                  fieldValue: code || '',
+                  fieldName: '编码',
+                });
+              } catch (e) {
+                console.error(e);
+              }
+              return result;
+            },
+            {
+              message: '编码已存在',
+            },
+          );
+      },
+      triggerFields: ['code'],
+    },
   },
   {
     fieldName: 'typeId',

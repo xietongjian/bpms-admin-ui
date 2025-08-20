@@ -151,7 +151,7 @@ export const personalFormSchema: FormSchema[] = [
             })
             .min(1, "工号不能为空")
             .max(100, '最多输入100个字符')
-            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
+            .regex(new RegExp(FormValidPatternEnum.CODE), '请输入英文或数字')
             .refine(
                 async (e) => {
                   let result = false;

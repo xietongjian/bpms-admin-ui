@@ -24,7 +24,7 @@
       </div>
     </template>
 
-    <BasicTable class="ml-2 w-full" :searchInfo="searchInfo">
+    <BasicTable class="ml-2 w-full" :searchInfo="searchInfo" table-title="公文列表">
       <template #toolbar-tools>
 <!--        <Authority :value="'Notice:' + PerEnum.SYNC">
           <PopConfirmButton

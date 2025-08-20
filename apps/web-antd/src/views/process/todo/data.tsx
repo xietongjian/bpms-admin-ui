@@ -61,6 +61,7 @@ export const todoTableColumns: VxeGridProps['columns'] = [
     width: 85,
     field: 'startPersonName',
     align: 'left',
+    slots: {default: 'startPersonName'}
   },
   {
     title: '到达时间',

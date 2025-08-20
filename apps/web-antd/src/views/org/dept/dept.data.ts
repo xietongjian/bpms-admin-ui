@@ -110,7 +110,7 @@ export const deptFormSchema: FormSchema[] = [
             .string({required_error: '编码不能为空！'})
             .min(1, {message: '编码不能为空！'})
             .max(100, {message: '字符长度不能大于100！'})
-            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
+            .regex(new RegExp(FormValidPatternEnum.CODE), '请输入英文或数字')
             .refine(
                 async (e) => {
                   let result = false;

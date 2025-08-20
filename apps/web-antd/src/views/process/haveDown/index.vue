@@ -24,8 +24,8 @@
         {{ timeDurationFormatter(row.duration) }}
       </template>
     </BasicTable>
-    <BpmnPreviewModal ref="bpmnPreviewModalRef" />
 
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" />
     <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
   </Page>
 </template>
@@ -37,14 +37,14 @@ import type {VbenFormProps} from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
 
 import {Page} from '@vben/common-ui';
-  import {TypographyLink, Tooltip} from 'ant-design-vue';
-  import {PartitionOutlined} from '@ant-design/icons-vue';
+import {TypographyLink, Tooltip} from 'ant-design-vue';
+import {PartitionOutlined} from '@ant-design/icons-vue';
 import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
-  import { haveDownTableColumns, searchFormSchema } from './data';
-  import {getApplyedTasksPagerModel} from "#/api/process/process";
-  import {EmpInfo} from '#/views/components/EmpInfo';
+import {haveDownTableColumns, searchFormSchema} from './data';
+import {getApplyedTasksPagerModel} from "#/api/process/process";
+import {EmpInfo} from '#/views/components/EmpInfo';
 import {ProcessStatus} from "#/views/components/common";
-  import {timeDurationFormatter} from "#/utils";
+import {timeDurationFormatter} from "#/utils";
 
 const bpmnPreviewModalRef = ref(),
     processFormPreviewDrawerRef = ref();
@@ -110,6 +110,3 @@ function handleBpmnPreview(modelKey: string, procInstId: string) {
   }
 
 </script>
-<style lang="scss">
-  //@import '../index.scss';
-</style>

@@ -29,10 +29,6 @@ setupVbenVxeTable({
       grid: {
         align: 'center',
         border: false,
-        columnConfig: {
-          resizable: true,
-        },
-
         formConfig: {
           // 全局禁用vxe-table的表单配置，使用formOptions
           enabled: false,
@@ -43,13 +39,46 @@ setupVbenVxeTable({
           response: {
             result: 'rows',
             total: 'total',
-            // list: 'items',
+            list: 'rows',
           },
           showActiveMsg: true,
           showResponseMsg: false,
         },
-        round: true,
+        // 溢出展示形式
         showOverflow: true,
+        pagerConfig: {
+          // 默认条数
+          pageSize: 20,
+          // 分页可选条数
+          pageSizes: [10, 20, 30, 40, 50, 100],
+        },
+        rowConfig: {
+          // 鼠标移入行显示 hover 样式
+          isHover: true,
+          // 点击行高亮
+          isCurrent: false,
+        },
+        columnConfig: {
+          // 可拖拽列宽
+          resizable: true,
+        },
+        // 右上角工具栏
+        toolbarConfig: {
+          // 自定义列
+          custom: true,
+          customOptions: {
+            icon: 'vxe-icon-setting',
+          },
+          // 最大化
+          zoom: true,
+          // 刷新
+          refresh: true,
+          refreshOptions: {
+            // 默认为reload 修改为在当前页刷新
+            code: 'query',
+          },
+        },
+        round: true,
         size: 'small',
       } as VxeTableGridOptions,
     });

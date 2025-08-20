@@ -7,9 +7,6 @@ enum Api {
 }
 
 export const getModelByNodeReportQueryVo = (params: any) => {
-  if (params.userNo && params.userNo.length > 0) {
-    params.userNo = params.userNo[0].code;
-  }
   return requestClient.post<any>(Api.GetModelByNodeReportQueryVo, params);
 };
 

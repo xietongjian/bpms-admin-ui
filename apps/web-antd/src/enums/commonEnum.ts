@@ -26,6 +26,7 @@ export enum RemarkDefaultEnum {
 
 export enum FormValidPatternEnum {
   // '^[a-zA-Z_]{1,}[0-9a-zA-Z_]{1,}$'
+  CODE = '^[0-9a-zA-Z_\-]{1,}$', // 请输入英文或数字！
   SN = '^[a-zA-Z_]{1,}[0-9a-zA-Z_]{1,}$', // 请输入英文或数字（以英文或下划线开头）！
   FIELD_NAME_SN = '(^_([a-zA-Z0-9]_?)*$)|(^[a-zA-Z](_?[a-zA-Z0-9])*_?$)',
   URL = "^(http:\\/\\/|https:\\/\\/|\\/)",

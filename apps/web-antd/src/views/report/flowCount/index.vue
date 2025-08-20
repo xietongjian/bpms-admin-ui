@@ -1,10 +1,10 @@
 <template>
-  <Page auto-content-height>
+  <Page auto-content-height class="flex flex-col">
     <div class="p-4 bg-card" style="padding-bottom: 0">
-      <BasicForm class="" @register="registerSearchForm" />
+      <BasicForm/>
     </div>
 
-    <div class="mt-4">
+    <div class="mt-4 flex-1">
       <Tabs
         @change="handleChangeTab"
         type="card"
@@ -105,7 +105,10 @@
     showDefaultActions: false,
     layout: 'horizontal',
     schema: searchFormSchema,
-    wrapperClass: 'grid-cols-1',
+    wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
+    actionPosition: 'left',
+    actionLayout: 'inline',
   });
 
   /*const [

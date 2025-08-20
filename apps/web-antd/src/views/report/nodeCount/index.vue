@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height>
-    <BasicTable @register="registerTable">
+    <BasicTable >
       <template #toolbar-tools>
         <Button type="primary" @click="handleExport"> 导出Excel </Button>
       </template>
@@ -12,9 +12,9 @@
         <EmpInfo :no="row.personalCode" :name="row.personalName" />
       </template>
     </BasicTable>
-    <ApproveHistoryModal ref="approveHistoryModalRef" @register="registerApproveHistoryModal" />
-    <FlowPropertiesModal ref="flowPropertiesModalRef" @register="registerFlowPropertiesModal" />
-    <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" @success="handleSuccess" />
+    <ApproveHistoryModal ref="approveHistoryModalRef" />
+    <FlowPropertiesModal ref="flowPropertiesModalRef" />
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" @success="handleSuccess" />
   </Page>
 </template>
 <script lang="ts" setup>
@@ -26,7 +26,6 @@
 
   // import { BasicTable, useTable, TableAction } from '@/components/Table';
   import {BpmnPreviewModal} from '#/views/components/preview';
-  import { getAll } from '#/api/base/app';
   // import { useLoading } from '@/components/Loading';
   import { columns, searchFormSchema } from './nodeCount.data';
   import type {Recordable} from '@vben/types';
@@ -40,7 +39,7 @@
   import { Button, message } from 'ant-design-vue';
   import {TableAction} from '#/components/table-action';
   import {getCustomPagerModel} from "#/api/form/customForm";
-  import {ColPage, Page} from '@vben/common-ui';
+  import {Page} from '@vben/common-ui';
 
   // const { createMessage } = useMessage();
   // const [openFullLoading, closeFullLoading] = useLoading({
@@ -116,13 +115,18 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
+          let userNo = '';
           // currentModelInfo.value = {};
+          if (formValues.userNo && formValues.userNo.length > 0) {
+            userNo = formValues.userNo[0].code;
+          }
+
           return await getModelByNodeReportQueryVo({
             query: {
               pageNum: page.currentPage,
               pageSize: page.pageSize,
             },
-            entity: formValues || {},
+            entity: {...formValues, userNo},
           });
         },
       },
@@ -179,7 +183,7 @@
     try {
       const values = await validate();
       if (!values.userNo) {
-        createMessage.warning('请选择人员进行查询！');
+        message.warning('请选择人员进行查询！');
         return;
       }
       setProps({
@@ -187,7 +191,7 @@
           loading: true,
         },
       });
-      await reload(values);
+      await tableApi.reload(values);
     } catch (error) {
     } finally {
       setProps({
@@ -199,7 +203,7 @@
   }
 
   function handleViewApproveHistory(record: Recordable<any>) {
-    openApproveHistoryModal(true, {
+    /*openApproveHistoryModal(true, {
       record,
       isUpdate: true,
     });
@@ -209,11 +213,11 @@
       title: `查看流程【${record.modelName}】的审批记录`,
       showOkBtn: false,
       cancelText: '关闭',
-    });
+    });*/
   }
 
   function handleViewFlowProperties(record: Recordable<any>) {
-    openFlowPropertiesModal(true, {
+    /*openFlowPropertiesModal(true, {
       record,
     });
     setFlowPropertiesModalProps({
@@ -222,11 +226,11 @@
       title: `查看流程【${record.modelName}】的变量`,
       showOkBtn: false,
       cancelText: '关闭',
-    });
+    });*/
   }
 
   function handlePreview(record: Recordable<any>) {
-    openBpmnPreviewModal(true, {
+    /*openBpmnPreviewModal(true, {
       modelKey: record.modelKey,
       procInstId: record.processInstanceId,
     });
@@ -236,11 +240,11 @@
       useWrapper: false,
       showOkBtn: false,
       cancelText: '关闭',
-    });
+    });*/
   }
 
   async function handleExport() {
-    openFullLoading();
+    /*openFullLoading();
     const { validate } = getForm();
     const values = await validate();
     exportExcel(values)
@@ -251,10 +255,10 @@
         setTimeout(() => {
           closeFullLoading();
         }, 500);
-      });
+      });*/
   }
 
   function handleSuccess() {
-    reload();
+    tableApi.reload();
   }
 </script>
