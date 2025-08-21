@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height>
-    <BasicTable class="proc-inst-table">
+    <BasicTable >
       <template #toolbar-actions>
         <RadioGroup v-model:value="procInstDataType" button-style="solid" @change="handleChangeProcInstType">
           <RadioButton value="running">

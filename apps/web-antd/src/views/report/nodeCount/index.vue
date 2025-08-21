@@ -18,33 +18,27 @@
   </Page>
 </template>
 <script lang="ts" setup>
-  import { nextTick } from 'vue';
+  import { nextTick, ref } from 'vue';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
 
-  // import { BasicTable, useTable, TableAction } from '@/components/Table';
   import {BpmnPreviewModal} from '#/views/components/preview';
-  // import { useLoading } from '@/components/Loading';
   import { columns, searchFormSchema } from './nodeCount.data';
   import type {Recordable} from '@vben/types';
 
   import ApproveHistoryModal from '#/views/flowoperation/processInst/ApproveHistoryModal.vue';
   import FlowPropertiesModal from '#/views/flowoperation/processInst/FlowPropertiesModal.vue';
   import { EmpInfo } from '#/views/components/EmpInfo';
-  // import { useModal } from '@/components/Modal';
   import { exportExcel, getModelByNodeReportQueryVo } from '#/api/report/nodeCount';
   import { downloadBlob, downloadByOnlineUrl, downloadByUrl } from '#/utils/file/download';
   import { Button, message } from 'ant-design-vue';
   import {TableAction} from '#/components/table-action';
-  import {getCustomPagerModel} from "#/api/form/customForm";
   import {Page} from '@vben/common-ui';
 
-  // const { createMessage } = useMessage();
-  // const [openFullLoading, closeFullLoading] = useLoading({
-  //   tip: '下载中...',
-  // });
+  const bpmnPreviewModalRef = ref();
+
 
 /*  const [registerApproveHistoryModal, { openModal: openApproveHistoryModal, setModalProps }] =
     useModal();
@@ -88,7 +82,7 @@
     commonConfig: {
       labelWidth: 60,
     },
-    wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
     actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
     actionPosition: 'left',
     actionLayout: 'inline',
@@ -112,22 +106,19 @@
       labelField: 'name',
       trigger: 'row',
     },
+    pagerConfig: {
+      enabled: false,
+    },
     proxyConfig: {
       ajax: {
-        query: async ({page}, formValues) => {
+        query: async ({}, formValues) => {
           let userNo = '';
           // currentModelInfo.value = {};
           if (formValues.userNo && formValues.userNo.length > 0) {
             userNo = formValues.userNo[0].code;
           }
 
-          return await getModelByNodeReportQueryVo({
-            query: {
-              pageNum: page.currentPage,
-              pageSize: page.pageSize,
-            },
-            entity: {...formValues, userNo},
-          });
+          return await getModelByNodeReportQueryVo({...formValues, userNo});
         },
       },
     },
@@ -230,6 +221,11 @@
   }
 
   function handlePreview(record: Recordable<any>) {
+    bpmnPreviewModalRef.value.setData({
+      modelKey: record.modelKey,
+      procInstId: record.processInstanceId,
+    });
+    bpmnPreviewModalRef.value.open();
     /*openBpmnPreviewModal(true, {
       modelKey: record.modelKey,
       procInstId: record.processInstanceId,

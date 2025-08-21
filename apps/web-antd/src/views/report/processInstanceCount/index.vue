@@ -14,7 +14,6 @@
   import {useVbenForm} from "#/adapter/form";
   import {Page} from '@vben/common-ui';
 
-  defineOptions({ name: 'ProcessInstanceCount' });
 
   const operationType = ref('2');
   const params = ref({

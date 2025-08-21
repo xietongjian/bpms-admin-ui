@@ -7,6 +7,12 @@ import { Tag } from 'ant-design-vue';
 
 export const columns: VxeGridProps['columns'] = [
   {
+    title: '流程名称',
+    field: 'processName',
+    align: 'left',
+    slots: {default: 'processName'}
+  },
+  {
     title: '公司名称',
     field: 'companyName',
     align: 'left',
@@ -27,31 +33,12 @@ export const columns: VxeGridProps['columns'] = [
     align: 'left',
   },
   {
-    title: '流程名称',
-    field: 'processName',
-    align: 'left',
-  },
-  {
     title: '状态',
     field: 'processStatusName',
     width: 120,
-    customRender: ({ record }) => {
-      /*processStatus
-        processStatusName*/
-      const status = record.processStatus;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '办结' : '审批中';
-      return h(Tag, { color: color }, () => text);
-    },
+    slots: {default: 'processStatusName'}
   },
-  {
-    field: 'action',
-    fixed: 'right',
-    slots: {default: 'action'},
-    title: '操作',
-    width: 120,
-  },
+
 ];
 
 /*

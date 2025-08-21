@@ -48,27 +48,27 @@ const convertSearchInfo = (entity: any) => {
 };
 
 export const getFlowCountReport = (params: any) => {
-  let entity = params || {};
-  entity = convertSearchInfo(entity);
+  params.entity = convertSearchInfo(params.entity);
   return requestClient.post<any>(Api.GetFlowCountReport, params);
 };
 
 // 查询已发
 export const getMyProcessDetail = (params: any) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
+/*  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
   let entity = params || {};
   if (entity) {
     delete entity['pageNum'];
     delete entity['pageSize'];
     entity = convertSearchInfo(entity);
   }
-  const queryParam = { query, entity } as BasicPageSearchParams<any>;
+  const queryParam = { query, entity } as BasicPageSearchParams<any>;*/
+  params.entity = convertSearchInfo(params.entity);
   return requestClient.post<any>(Api.GetMyProcessDetail, params);
 };
 
 // 查询待办，已办 taskFinishFlag： true已办  false待办
 export const getTaskProcessDetail = (params: any) => {
-  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
+/*  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
   let entity = params || {};
   if (entity) {
     delete entity['pageNum'];
@@ -76,7 +76,9 @@ export const getTaskProcessDetail = (params: any) => {
     entity = convertSearchInfo(entity);
   }
   const queryParam = { query, entity } as BasicPageSearchParams<any>;
-  return requestClient.post<any>({ url: Api.GetTaskProcessDetail, params: queryParam });
+  */
+  params.entity = convertSearchInfo(params.entity);
+  return requestClient.post<any>(Api.GetTaskProcessDetail, params);
 };
 
 // 下载Excel已发

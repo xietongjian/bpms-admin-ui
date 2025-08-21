@@ -41,6 +41,7 @@ export const searchFormSchema: FormSchema[] = [
       placeholder: '请选择人员',
     },
     labelWidth: 60,
+    rules: 'required'
   },
   /*{
     fieldName: 'roleSn',
