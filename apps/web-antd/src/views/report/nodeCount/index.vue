@@ -21,13 +21,10 @@
   import { nextTick, ref } from 'vue';
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
-
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
-
   import {BpmnPreviewModal} from '#/views/components/preview';
   import { columns, searchFormSchema } from './nodeCount.data';
   import type {Recordable} from '@vben/types';
-
   import ApproveHistoryModal from '#/views/flowoperation/processInst/ApproveHistoryModal.vue';
   import FlowPropertiesModal from '#/views/flowoperation/processInst/FlowPropertiesModal.vue';
   import { EmpInfo } from '#/views/components/EmpInfo';
@@ -38,43 +35,6 @@
   import {Page} from '@vben/common-ui';
 
   const bpmnPreviewModalRef = ref();
-
-
-/*  const [registerApproveHistoryModal, { openModal: openApproveHistoryModal, setModalProps }] =
-    useModal();
-  const [
-    registerFlowPropertiesModal,
-    { openModal: openFlowPropertiesModal, setModalProps: setFlowPropertiesModalProps },
-  ] = useModal();
-  const [
-    registerBpmnPreviewModal,
-    { openModal: openBpmnPreviewModal, setModalProps: setBpmnPreviewProps },
-  ] = useModal();*/
-
-  /*const [registerTable, { getForm, reload }] = useTable({
-    title: '列表',
-    api: getModelByNodeReportQueryVo,
-    immediate: false,
-    columns,
-    formConfig: {
-      labelWidth: 100,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-      submitFunc: doSearchFunc,
-    },
-    useSearchForm: true,
-    bordered: true,
-    pagination: false,
-    showIndexColumn: true,
-    actionColumn: {
-      width: 140,
-      title: '操作',
-      dataIndex: 'action',
-    },
-  });*/
-
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
@@ -132,7 +92,6 @@
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions, gridEvents});
 
-
   nextTick(() => {
     // const { updateSchema } = getForm();
     /*getAll().then((res) => {
@@ -166,58 +125,12 @@
     ];
   }
 
-  /**
-   *  自定义搜索功能
-   **/
-  async function doSearchFunc() {
-    const { validate, setProps } = getForm();
-    try {
-      const values = await validate();
-      if (!values.userNo) {
-        message.warning('请选择人员进行查询！');
-        return;
-      }
-      setProps({
-        submitButtonOptions: {
-          loading: true,
-        },
-      });
-      await tableApi.reload(values);
-    } catch (error) {
-    } finally {
-      setProps({
-        submitButtonOptions: {
-          loading: false,
-        },
-      });
-    }
-  }
-
   function handleViewApproveHistory(record: Recordable<any>) {
-    /*openApproveHistoryModal(true, {
-      record,
-      isUpdate: true,
-    });
-    setModalProps({
-      width: 800,
-      height: 500,
-      title: `查看流程【${record.modelName}】的审批记录`,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });*/
+
   }
 
   function handleViewFlowProperties(record: Recordable<any>) {
-    /*openFlowPropertiesModal(true, {
-      record,
-    });
-    setFlowPropertiesModalProps({
-      width: 800,
-      height: 500,
-      title: `查看流程【${record.modelName}】的变量`,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });*/
+
   }
 
   function handlePreview(record: Recordable<any>) {
@@ -226,17 +139,6 @@
       procInstId: record.processInstanceId,
     });
     bpmnPreviewModalRef.value.open();
-    /*openBpmnPreviewModal(true, {
-      modelKey: record.modelKey,
-      procInstId: record.processInstanceId,
-    });
-    setBpmnPreviewProps({
-      title: `预览-${record.modelName}`,
-      centered: true,
-      useWrapper: false,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });*/
   }
 
   async function handleExport() {

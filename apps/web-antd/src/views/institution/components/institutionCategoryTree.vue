@@ -16,7 +16,7 @@
   const slot = defineSlots<{
     actions(props: { node: any }): any;
   }>();
-
+debugger;
   const treeTheme = computed(() => {
     // return isDark.value ? createTheme([treeDark]) : undefined;
     return undefined;
@@ -62,14 +62,9 @@
 </script>
 
 <template>
-  <div class="company-tree bg-white m-4 mr-0 overflow-hidden" v-loading="treeLoading">
+  <div class="company-tree mr-0 overflow-hidden" v-loading="treeLoading">
     <div class="h-full n-naive-framework-tree">
-      aaa
-      <TreeHeader title="制度分类" toolbar :search="false" :expandAll="expandAll">
-        <template #append>
-          <slot name="header"></slot>
-        </template>
-      </TreeHeader>
+      <div>制度分类</div>
       <Spin
         wrapperClassName="h-[calc(100%-56px)] overflow-y-auto"
         :spinning="treeLoading"

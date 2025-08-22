@@ -80,14 +80,6 @@ function handleCreate() {
     title: `新增制度`
   });
   institutionModalRef.value.open();
-  /*
-  openEditModal(true, {isUpdate: false, record});
-  setEditModalProps({
-    title: `新增制度`,
-    bodyStyle: {padding: '0px', margin: '0px'},
-    width: 900,
-    height: 400,
-  });*/
 }
 
 function handleEdit(record: Recordable<any>) {
@@ -96,13 +88,6 @@ function handleEdit(record: Recordable<any>) {
     title: `修改制度`,
   });
   institutionModalRef.value.open();
-  /*openEditModal(true, {record, isUpdate: true});
-  setEditModalProps({
-    title: `修改制度`,
-    bodyStyle: {padding: '0px', margin: '0px'},
-    width: 900,
-    height: 420,
-  });*/
 }
 
 function handleDelete(institution: Recordable<any>) {

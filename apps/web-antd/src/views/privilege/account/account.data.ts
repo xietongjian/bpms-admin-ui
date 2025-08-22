@@ -2,6 +2,8 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {z} from "@vben/common-ui";
 import { getAllList } from '#/api/privilege/group';
+import {FormValidPatternEnum} from "#/enums/commonEnum";
+import {checkEntityExist} from "#/api/privilege/account";
 
 /**
  * 性别列表
@@ -141,7 +143,7 @@ export const accountFormSchema: FormSchema[] = [
     fieldName: 'realNameSelector',
     label: '关联人员',
     component: 'PersonalSelector',
-    formItemClass: 'col-span-4',
+    formItemClass: 'col-span-2',
     componentProps: {
       placeholder: '请选择人员',
       multiple: false,
@@ -154,20 +156,11 @@ export const accountFormSchema: FormSchema[] = [
       trigger(values, form) {
         if(values.realNameSelector){
           const currentPersonal = values.realNameSelector[0];
-          form.setValues({
-              username: currentPersonal.value,
-              userNo: currentPersonal.value,
-          });
+          currentPersonal&&form.setFieldValue('username', (values.id && values.username) ?? currentPersonal.value, true);
+          currentPersonal&&form.setFieldValue('userNo', currentPersonal.value, true);
         }
       },
     }
-  },
-  {
-    fieldName: 'username',
-    label: '用户名',
-    component: 'Input',
-    rules: 'required',
-    formItemClass: 'col-span-2 col-start-1 items-baseline',
   },
   {
     fieldName: 'userNo',
@@ -175,7 +168,75 @@ export const accountFormSchema: FormSchema[] = [
     component: 'Input',
     formItemClass: 'col-span-2',
     // required: true,
-    rules: "required",
+    // rules: "required",
+    dependencies: {
+      rules(values) {
+        return z
+          .string({
+            required_error: "工号不能为空！"
+          })
+          .min(1, "工号不能为空！")
+          .max(30, '字符长度不能大于30！')
+          .regex(new RegExp(FormValidPatternEnum.CODE), '请输入英文或数字且以英文或下划线开头！')
+          .refine(
+            async (e) => {
+              let result = false;
+              try {
+                result = await checkEntityExist({
+                  id: values.id,
+                  field: 'userNo',
+                  fieldValue: values.userNo || '',
+                  fieldName: '工号',
+                });
+              } catch (e) {
+                console.error(e);
+              }
+              return result;
+            },
+            {
+              message: '工号已存在',
+            },
+          );
+      },
+      triggerFields: ['code'],
+    },
+  },
+  {
+    fieldName: 'username',
+    label: '用户名',
+    component: 'Input',
+    rules: 'required',
+    formItemClass: 'col-span-2 col-start-1 items-baseline',
+    dependencies: {
+      rules(values) {
+        return z
+          .string({
+            required_error: "用户名不能为空！"
+          })
+          .min(1, "用户名不能为空！")
+          .max(30, '字符长度不能大于30！')
+          .refine(
+            async (e) => {
+              let result = false;
+              try {
+                result = await checkEntityExist({
+                  id: values.id,
+                  field: 'username',
+                  fieldValue: values.username || '',
+                  fieldName: '用户名',
+                });
+              } catch (e) {
+                console.error(e);
+              }
+              return result;
+            },
+            {
+              message: '用户名已存在',
+            },
+          );
+      },
+      triggerFields: ['username'],
+    },
   },
   {
     fieldName: 'realName',

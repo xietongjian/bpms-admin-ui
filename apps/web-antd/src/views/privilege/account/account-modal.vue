@@ -17,16 +17,18 @@ const [BasicModal, modalApi] = useVbenModal({
   onCancel() {
     modalApi.close();
   },
-  onOpenChange(isOpen: boolean) {
+  async onOpenChange(isOpen: boolean) {
     if (isOpen) {
       const values = modalApi.getData<Record<string, any>>();
       if (values) {
-        imageUrl.value = values.image;
-        values.realNameSelector = [{
-          label: values.realName,
-          value: values.userNo
-        }];
-        baseFormApi.setValues(values);
+        const formData = JSON.parse(JSON.stringify(values));
+        imageUrl.value = formData?.image;
+
+        formData.userNo && (formData.realNameSelector = [{
+          label: formData.realName,
+          value: formData.userNo
+        }]);
+        await baseFormApi.setValues(formData);
         modalApi.setState({loading: false, confirmLoading: false});
       }
     }

@@ -196,7 +196,7 @@
   const approvalHistoryLoading = ref(false);
   const flowBaseInfo = ref({});
   const formType = ref(0);
-  const params = ref({});
+  const params = ref<any>({});
   const showOperation = ref(false);
   const formEditable = ref(false);
   const showBizFormData = ref(true);
@@ -396,7 +396,7 @@
       });
   }
 
-  function checkAuthPointer(authPoints) {
+  function checkAuthPointer(authPoints: Array<any>) {
     const {procInstId} = unref(procInstInfo);
     if (authPoints) {
       setTimeout(() => {

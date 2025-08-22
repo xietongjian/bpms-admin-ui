@@ -1,4 +1,4 @@
-import { requestClient } from '#/api/request';
+import {requestClient} from '#/api/request';
 
 enum Api {
   AccountPageList = '/flow/privilege/user/getPagerModel',
@@ -11,18 +11,18 @@ enum Api {
 }
 
 export const getAccountPageList = (params: any) => {
-  return requestClient.post<any>(Api.AccountPageList, params );
+  return requestClient.post<any>(Api.AccountPageList, params);
 };
 
 export const checkEntityExist = (params: any) =>
-  requestClient.post<boolean>( Api.CheckEntityExist, params );
+  requestClient.post<boolean>(Api.CheckEntityExist, params);
 
 export const getAllList = (params?: any) => {
-  return requestClient.post<any>(Api.GetAllList, params );
+  return requestClient.post<any>(Api.GetAllList, params);
 };
 
 export const saveOrUpdate = (params?: any) =>
-  requestClient.post<any>( Api.SaveOrUpdate, params, { responseReturn: 'body' });
+  requestClient.post<any>(Api.SaveOrUpdate, params, {responseReturn: 'body'});
 
 export const allocationRoles = (params: any) => {
   const userId = params.userId;
@@ -31,7 +31,7 @@ export const allocationRoles = (params: any) => {
 };
 
 export const setPassword = (params: any) =>
-  requestClient.post<any>(Api.SetPassword, params, { responseReturn: 'body' });
+  requestClient.post<any>(Api.SetPassword, params, {responseReturn: 'body'});
 
 export const deleteByIds = (params: Array<string>) =>
-  requestClient.post<any>(Api.Delete, params );
+  requestClient.post<any>(Api.Delete, params);
