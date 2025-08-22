@@ -89,12 +89,6 @@ const apiCategoryDataMap = ref<any>({});
 const apiCategoryTreeData = ref<any[]>([]);
 const apiCategoryModalRef = ref();
 const apiInfoDrawerRef = ref();
-/*
-const [registerApiCategoryModal, {
-  openModal: openApiCategoryModal,
-  setModalProps: setApiCategoryModalProps
-}] = useModal();
-*/
 
 const treeActionList: any[] = [
   {
