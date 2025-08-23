@@ -7716,7 +7716,8 @@ function _sfc_render$1Y(_ctx, _cache, $props, $setup, $data, $options) {
             createTextVNode("\u5E2E\u52A9"),
             createElementVNode("i", { class: "fm-iconfont icon-question-circle" }, null, -1)
           ])),
-          _: 1
+          _: 1,
+          __: [2]
         }, 8, ["onClick"])
       ])) : createCommentVNode("", true)
     ]),
@@ -14085,7 +14086,8 @@ function _sfc_render$1U(_ctx, _cache, $props, $setup, $data, $options) {
                           style: { "font-size": "12px", "margin": "5px" }
                         }, null, -1)
                       ])),
-                      _: 1
+                      _: 1,
+                      __: [1]
                     }, 8, ["disabled"])
                   ]),
                   _: 2
@@ -14296,7 +14298,8 @@ function _sfc_render$1U(_ctx, _cache, $props, $setup, $data, $options) {
                                 style: { "font-size": "12px", "margin": "5px" }
                               }, null, -1)
                             ])),
-                            _: 1
+                            _: 1,
+                            __: [2]
                           }, 8, ["disabled"])
                         ]),
                         _: 2
@@ -14473,7 +14476,8 @@ function _sfc_render$1U(_ctx, _cache, $props, $setup, $data, $options) {
                       style: { "font-size": "12px", "margin": "5px" }
                     }, null, -1)
                   ])),
-                  _: 1
+                  _: 1,
+                  __: [3]
                 }, 8, ["disabled"])
               ]),
               _: 2
@@ -14545,7 +14549,8 @@ function _sfc_render$1U(_ctx, _cache, $props, $setup, $data, $options) {
                 }, null, -1)),
                 createTextVNode(toDisplayString$1(_ctx.$t("fm.actions.add")), 1)
               ]),
-              _: 1
+              _: 1,
+              __: [4]
             }, 8, ["onClick"])) : createCommentVNode("", true)
           ]),
           _: 1
@@ -14765,7 +14770,8 @@ function _sfc_render$1T(_ctx, _cache, $props, $setup, $data, $options) {
               style: { "font-size": "12px", "margin": "5px" }
             }, null, -1))
           ]),
-          _: 1
+          _: 1,
+          __: [0]
         })
       ]),
       _: 1
@@ -28093,7 +28099,8 @@ function _sfc_render$1P(_ctx, _cache, $props, $setup, $data, $options) {
         }, null, -1)),
         createTextVNode(toDisplayString$1(_ctx.$t("fm.datasource.edit.add")), 1)
       ]),
-      _: 1
+      _: 1,
+      __: [1]
     }, 8, ["onClick"])) : createCommentVNode("", true)
   ]);
 }
@@ -28523,7 +28530,8 @@ function _sfc_render$1M(_ctx, _cache, $props, $setup, $data, $options) {
           class: "fm-iconfont icon-plus"
         }, null, -1))
       ]),
-      _: 1
+      _: 1,
+      __: [18]
     }, 8, ["onClick"]),
     createVNode(_component_el_button, {
       link: "",
@@ -28537,7 +28545,8 @@ function _sfc_render$1M(_ctx, _cache, $props, $setup, $data, $options) {
           class: "fm-iconfont icon-plus"
         }, null, -1))
       ]),
-      _: 1
+      _: 1,
+      __: [19]
     }, 8, ["onClick"]),
     createVNode(_component_el_popover, {
       ref: "popoverRef",
@@ -28810,7 +28819,8 @@ function _sfc_render$1L(_ctx, _cache, $props, $setup, $data, $options) {
         }, null, 8, ["modelValue"]),
         _cache[2] || (_cache[2] = createTextVNode(" px "))
       ]),
-      _: 1
+      _: 1,
+      __: [2]
     }, 8, ["label"]),
     createVNode(_component_el_form_item, {
       label: _ctx.$t("fm.config.widget.operationButton")
@@ -28867,7 +28877,8 @@ function _sfc_render$1L(_ctx, _cache, $props, $setup, $data, $options) {
                   default: withCtx(() => _cache[3] || (_cache[3] = [
                     createElementVNode("i", { class: "fm-iconfont icon-zidingyishuju" }, null, -1)
                   ])),
-                  _: 2
+                  _: 2,
+                  __: [3]
                 }, 1032, ["type", "onClick"]),
                 createElementVNode("i", {
                   style: { "font-size": "16px", "margin": "0 5px", "cursor": "pointer" },
@@ -28898,7 +28909,8 @@ function _sfc_render$1L(_ctx, _cache, $props, $setup, $data, $options) {
               class: "fm-iconfont icon-plus"
             }, null, -1))
           ]),
-          _: 1
+          _: 1,
+          __: [6]
         }, 8, ["onClick"])
       ]),
       _: 1
@@ -29087,7 +29099,8 @@ function _sfc_render$1K(_ctx, _cache, $props, $setup, $data, $options) {
           style: { "font-size": "12px", "margin": "5px" }
         }, null, -1))
       ]),
-      _: 1
+      _: 1,
+      __: [1]
     }, 8, ["onClick"])
   ]);
 }
@@ -30547,6 +30560,7 @@ const getDictionaryTree = async () => {
   const dictionarys = await getDictionarys();
   dictTypes.forEach((item2) => {
     item2["disabled"] = true;
+    item2["label"] = item2.name;
   });
   dictionarys.forEach((item2) => {
     item2.pid = item2.dicTypeId;
@@ -31115,6 +31129,11 @@ const _sfc_main$1O = {
       if (val === "dict") {
         this.loadDataDict();
       }
+    },
+    "data.options.remote": function(val) {
+      if (val === true) {
+        this.data.options.showLabel = true;
+      }
     }
   }
 };
@@ -31635,7 +31654,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                   default: withCtx(() => _cache[224] || (_cache[224] = [
                                     createTextVNode("light")
                                   ])),
-                                  _: 1
+                                  _: 1,
+                                  __: [224]
                                 }),
                                 createVNode(_component_el_radio_button, {
                                   label: "dark",
@@ -31644,7 +31664,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                   default: withCtx(() => _cache[225] || (_cache[225] = [
                                     createTextVNode("dark")
                                   ])),
-                                  _: 1
+                                  _: 1,
+                                  __: [225]
                                 })
                               ]),
                               _: 1
@@ -31904,7 +31925,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                   default: withCtx(() => _cache[226] || (_cache[226] = [
                                     createTextVNode("\u516C\u53F8\uFF0C\u90E8\u95E8")
                                   ])),
-                                  _: 1
+                                  _: 1,
+                                  __: [226]
                                 }),
                                 createVNode(_component_el_radio, {
                                   label: "company",
@@ -31913,7 +31935,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                   default: withCtx(() => _cache[227] || (_cache[227] = [
                                     createTextVNode("\u9009\u516C\u53F8")
                                   ])),
-                                  _: 1
+                                  _: 1,
+                                  __: [227]
                                 }),
                                 createVNode(_component_el_radio, {
                                   label: "dept",
@@ -31922,7 +31945,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                   default: withCtx(() => _cache[228] || (_cache[228] = [
                                     createTextVNode("\u9009\u90E8\u95E8")
                                   ])),
-                                  _: 1
+                                  _: 1,
+                                  __: [228]
                                 })
                               ]),
                               _: 1
@@ -31984,37 +32008,43 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                       default: withCtx(() => _cache[229] || (_cache[229] = [
                                         createElementVNode("i", { class: "fm-iconfont icon-justify-content-flex-start-icon" }, null, -1)
                                       ])),
-                                      _: 1
+                                      _: 1,
+                                      __: [229]
                                     }),
                                     createVNode(_component_el_radio_button, { value: "flex-end" }, {
                                       default: withCtx(() => _cache[230] || (_cache[230] = [
                                         createElementVNode("i", { class: "fm-iconfont icon-justify-content-flex-end-icon" }, null, -1)
                                       ])),
-                                      _: 1
+                                      _: 1,
+                                      __: [230]
                                     }),
                                     createVNode(_component_el_radio_button, { value: "center" }, {
                                       default: withCtx(() => _cache[231] || (_cache[231] = [
                                         createElementVNode("i", { class: "fm-iconfont icon-justify-content-center-icon" }, null, -1)
                                       ])),
-                                      _: 1
+                                      _: 1,
+                                      __: [231]
                                     }),
                                     createVNode(_component_el_radio_button, { value: "space-between" }, {
                                       default: withCtx(() => _cache[232] || (_cache[232] = [
                                         createElementVNode("i", { class: "fm-iconfont icon-justify-content-space-between-icon" }, null, -1)
                                       ])),
-                                      _: 1
+                                      _: 1,
+                                      __: [232]
                                     }),
                                     createVNode(_component_el_radio_button, { value: "space-around" }, {
                                       default: withCtx(() => _cache[233] || (_cache[233] = [
                                         createElementVNode("i", { class: "fm-iconfont icon-justify-content-space-around-icon" }, null, -1)
                                       ])),
-                                      _: 1
+                                      _: 1,
+                                      __: [233]
                                     }),
                                     createVNode(_component_el_radio_button, { value: "space-evenly" }, {
                                       default: withCtx(() => _cache[234] || (_cache[234] = [
                                         createElementVNode("i", { class: "fm-iconfont icon-justify-content-space-evenly-icon" }, null, -1)
                                       ])),
-                                      _: 1
+                                      _: 1,
+                                      __: [234]
                                     })
                                   ]),
                                   _: 1
@@ -32038,25 +32068,29 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                       default: withCtx(() => _cache[235] || (_cache[235] = [
                                         createElementVNode("i", { class: "fm-iconfont icon-align-items-flex-start" }, null, -1)
                                       ])),
-                                      _: 1
+                                      _: 1,
+                                      __: [235]
                                     }),
                                     createVNode(_component_el_radio_button, { value: "flex-end" }, {
                                       default: withCtx(() => _cache[236] || (_cache[236] = [
                                         createElementVNode("i", { class: "fm-iconfont icon-align-items-flex-end" }, null, -1)
                                       ])),
-                                      _: 1
+                                      _: 1,
+                                      __: [236]
                                     }),
                                     createVNode(_component_el_radio_button, { value: "center" }, {
                                       default: withCtx(() => _cache[237] || (_cache[237] = [
                                         createElementVNode("i", { class: "fm-iconfont icon-align-items-center" }, null, -1)
                                       ])),
-                                      _: 1
+                                      _: 1,
+                                      __: [237]
                                     }),
                                     createVNode(_component_el_radio_button, { value: "stretch" }, {
                                       default: withCtx(() => _cache[238] || (_cache[238] = [
                                         createElementVNode("i", { class: "fm-iconfont icon-align-items-stretch" }, null, -1)
                                       ])),
-                                      _: 1
+                                      _: 1,
+                                      __: [238]
                                     })
                                   ]),
                                   _: 1
@@ -32081,19 +32115,22 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                     default: withCtx(() => _cache[239] || (_cache[239] = [
                                       createElementVNode("i", { class: "fm-iconfont icon-text-align-left" }, null, -1)
                                     ])),
-                                    _: 1
+                                    _: 1,
+                                    __: [239]
                                   }),
                                   createVNode(_component_el_radio_button, { value: "center" }, {
                                     default: withCtx(() => _cache[240] || (_cache[240] = [
                                       createElementVNode("i", { class: "fm-iconfont icon-text-align-center" }, null, -1)
                                     ])),
-                                    _: 1
+                                    _: 1,
+                                    __: [240]
                                   }),
                                   createVNode(_component_el_radio_button, { value: "right" }, {
                                     default: withCtx(() => _cache[241] || (_cache[241] = [
                                       createElementVNode("i", { class: "fm-iconfont icon-text-align-right" }, null, -1)
                                     ])),
-                                    _: 1
+                                    _: 1,
+                                    __: [241]
                                   })
                                 ]),
                                 _: 1
@@ -32115,19 +32152,22 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                     default: withCtx(() => _cache[242] || (_cache[242] = [
                                       createElementVNode("i", { class: "fm-iconfont icon-ic24-vertical-align-top" }, null, -1)
                                     ])),
-                                    _: 1
+                                    _: 1,
+                                    __: [242]
                                   }),
                                   createVNode(_component_el_radio_button, { value: "middle" }, {
                                     default: withCtx(() => _cache[243] || (_cache[243] = [
                                       createElementVNode("i", { class: "fm-iconfont icon-vertical-align-middle-outlined" }, null, -1)
                                     ])),
-                                    _: 1
+                                    _: 1,
+                                    __: [243]
                                   }),
                                   createVNode(_component_el_radio_button, { value: "bottom" }, {
                                     default: withCtx(() => _cache[244] || (_cache[244] = [
                                       createElementVNode("i", { class: "fm-iconfont icon-ic24-vertical-align-bottom" }, null, -1)
                                     ])),
-                                    _: 1
+                                    _: 1,
+                                    __: [244]
                                   })
                                 ]),
                                 _: 1
@@ -32167,7 +32207,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                     default: withCtx(() => _cache[245] || (_cache[245] = [
                                       createTextVNode("Horizontal")
                                     ])),
-                                    _: 1
+                                    _: 1,
+                                    __: [245]
                                   }),
                                   createVNode(_component_el_radio_button, {
                                     label: "vertical",
@@ -32176,7 +32217,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                     default: withCtx(() => _cache[246] || (_cache[246] = [
                                       createTextVNode("Vertical")
                                     ])),
-                                    _: 1
+                                    _: 1,
+                                    __: [246]
                                   })
                                 ]),
                                 _: 1
@@ -32300,7 +32342,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                               style: { "width": "130px" }
                             }, null, 8, ["modelValue"])
                           ]),
-                          _: 1
+                          _: 1,
+                          __: [247]
                         }, 8, ["label"])) : createCommentVNode("", true),
                         $props.data.type == "alert" ? (openBlock(), createElementBlock(Fragment, { key: 38 }, [
                           createVNode(_component_el_form_item, {
@@ -32432,7 +32475,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                   default: withCtx(() => _cache[248] || (_cache[248] = [
                                     createTextVNode("Large")
                                   ])),
-                                  _: 1
+                                  _: 1,
+                                  __: [248]
                                 }),
                                 createVNode(_component_el_radio_button, {
                                   label: "default",
@@ -32441,7 +32485,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                   default: withCtx(() => _cache[249] || (_cache[249] = [
                                     createTextVNode("Default")
                                   ])),
-                                  _: 1
+                                  _: 1,
+                                  __: [249]
                                 }),
                                 createVNode(_component_el_radio_button, {
                                   label: "small",
@@ -32450,7 +32495,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                   default: withCtx(() => _cache[250] || (_cache[250] = [
                                     createTextVNode("Small")
                                   ])),
-                                  _: 1
+                                  _: 1,
+                                  __: [250]
                                 })
                               ]),
                               _: 1
@@ -32984,7 +33030,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                         default: withCtx(() => _cache[251] || (_cache[251] = [
                                           createElementVNode("i", { class: "fm-iconfont icon-pm" }, null, -1)
                                         ])),
-                                        _: 1
+                                        _: 1,
+                                        __: [251]
                                       })
                                     ]),
                                     _: 1
@@ -33653,7 +33700,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                     default: withCtx(() => _cache[256] || (_cache[256] = [
                                       createTextVNode("always")
                                     ])),
-                                    _: 1
+                                    _: 1,
+                                    __: [256]
                                   }),
                                   createVNode(_component_el_radio_button, {
                                     label: "hover",
@@ -33662,7 +33710,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                     default: withCtx(() => _cache[257] || (_cache[257] = [
                                       createTextVNode("hover")
                                     ])),
-                                    _: 1
+                                    _: 1,
+                                    __: [257]
                                   }),
                                   createVNode(_component_el_radio_button, {
                                     label: "never",
@@ -33671,7 +33720,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                     default: withCtx(() => _cache[258] || (_cache[258] = [
                                       createTextVNode("never")
                                     ])),
-                                    _: 1
+                                    _: 1,
+                                    __: [258]
                                   })
                                 ]),
                                 _: 1
@@ -34006,7 +34056,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                       default: withCtx(() => _cache[260] || (_cache[260] = [
                                         createElementVNode("i", { class: "fm-iconfont icon-pm" }, null, -1)
                                       ])),
-                                      _: 1
+                                      _: 1,
+                                      __: [260]
                                     })
                                   ]),
                                   _: 1
@@ -34331,7 +34382,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                       default: withCtx(() => _cache[265] || (_cache[265] = [
                                         createElementVNode("i", { class: "fm-iconfont icon-pm" }, null, -1)
                                       ])),
-                                      _: 1
+                                      _: 1,
+                                      __: [265]
                                     })
                                   ]),
                                   _: 1
@@ -34542,7 +34594,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                       default: withCtx(() => _cache[272] || (_cache[272] = [
                                         createElementVNode("i", { class: "fm-iconfont icon-pm" }, null, -1)
                                       ])),
-                                      _: 1
+                                      _: 1,
+                                      __: [272]
                                     })
                                   ]),
                                   _: 1
@@ -34931,7 +34984,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                       default: withCtx(() => _cache[280] || (_cache[280] = [
                                         createElementVNode("i", { class: "fm-iconfont icon-pm" }, null, -1)
                                       ])),
-                                      _: 1
+                                      _: 1,
+                                      __: [280]
                                     })
                                   ]),
                                   _: 1
@@ -35018,7 +35072,8 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                     default: withCtx(() => _cache[282] || (_cache[282] = [
                                       createElementVNode("i", { class: "fm-iconfont icon-pm" }, null, -1)
                                     ])),
-                                    _: 1
+                                    _: 1,
+                                    __: [282]
                                   }, 8, ["onClick"])
                                 ]),
                                 _: 1
@@ -35912,7 +35967,8 @@ function _sfc_render$1H(_ctx, _cache, $props, $setup, $data, $options) {
                       }, null, -1)),
                       createTextVNode(" " + toDisplayString$1(_ctx.$t("fm.datasource.config.add")), 1)
                     ]),
-                    _: 1
+                    _: 1,
+                    __: [10]
                   }, 8, ["onClick"])
                 ]),
                 _: 1
@@ -36152,7 +36208,8 @@ function _sfc_render$1H(_ctx, _cache, $props, $setup, $data, $options) {
                                   }, null, 8, ["modelValue"]),
                                   _cache[12] || (_cache[12] = createElementVNode("div", { class: "code-line" }, "}", -1))
                                 ]),
-                                _: 1
+                                _: 1,
+                                __: [11, 12]
                               }, 8, ["title"]),
                               createVNode(_component_el_collapse_item, {
                                 title: _ctx.$t("fm.datasource.edit.responseSuccess"),
@@ -36169,7 +36226,8 @@ function _sfc_render$1H(_ctx, _cache, $props, $setup, $data, $options) {
                                   }, null, 8, ["modelValue"]),
                                   _cache[14] || (_cache[14] = createElementVNode("div", { class: "code-line" }, "}", -1))
                                 ]),
-                                _: 1
+                                _: 1,
+                                __: [13, 14]
                               }, 8, ["title"]),
                               createVNode(_component_el_collapse_item, {
                                 title: _ctx.$t("fm.datasource.edit.requestError"),
@@ -36185,7 +36243,8 @@ function _sfc_render$1H(_ctx, _cache, $props, $setup, $data, $options) {
                                   }, null, 8, ["modelValue"]),
                                   _cache[16] || (_cache[16] = createElementVNode("div", { class: "code-line" }, "}", -1))
                                 ]),
-                                _: 1
+                                _: 1,
+                                __: [15, 16]
                               }, 8, ["title"])
                             ]),
                             _: 1
@@ -37172,7 +37231,8 @@ function _sfc_render$1C(_ctx, _cache, $props, $setup, $data, $options) {
                                 style: { "font-size": "13px" }
                               }, null, -1)
                             ])),
-                            _: 2
+                            _: 2,
+                            __: [4]
                           }, 1032, ["onClick"])
                         ]),
                         _: 2
@@ -37195,7 +37255,8 @@ function _sfc_render$1C(_ctx, _cache, $props, $setup, $data, $options) {
                       }, null, 8, ["modelValue", "onUpdate:modelValue"]),
                       _cache[6] || (_cache[6] = createElementVNode("div", { class: "code-line" }, "}", -1))
                     ]),
-                    _: 2
+                    _: 2,
+                    __: [5, 6]
                   }, 1024)) : createCommentVNode("", true)
                 ]),
                 _: 2
@@ -37746,7 +37807,8 @@ function _sfc_render$1B(_ctx, _cache, $props, $setup, $data, $options) {
                       }, null, -1)),
                       createTextVNode(toDisplayString$1(_ctx.$t("fm.eventscript.config.add")), 1)
                     ]),
-                    _: 1
+                    _: 1,
+                    __: [7]
                   }, 8, ["onClick"])
                 ]),
                 _: 1
@@ -37941,7 +38003,8 @@ function _sfc_render$1B(_ctx, _cache, $props, $setup, $data, $options) {
                           }, null, 8, ["modelValue", "height"]),
                           _cache[10] || (_cache[10] = createElementVNode("div", { class: "code-line" }, "}", -1))
                         ]),
-                        _: 1
+                        _: 1,
+                        __: [9, 10]
                       })) : createCommentVNode("", true),
                       $data.formData.type == "rule" ? (openBlock(), createBlock(_component_event_rule, {
                         key: 2,
@@ -38182,7 +38245,8 @@ function _sfc_render$1z(_ctx, _cache, $props, $setup, $data, $options) {
                       default: withCtx(() => _cache[8] || (_cache[8] = [
                         createTextVNode("Element")
                       ])),
-                      _: 1
+                      _: 1,
+                      __: [8]
                     }),
                     createVNode(_component_el_radio_button, {
                       value: "antd",
@@ -38192,7 +38256,8 @@ function _sfc_render$1z(_ctx, _cache, $props, $setup, $data, $options) {
                       default: withCtx(() => _cache[9] || (_cache[9] = [
                         createTextVNode("Ant Design")
                       ])),
-                      _: 1
+                      _: 1,
+                      __: [9]
                     }, 8, ["disabled"])
                   ]),
                   _: 1
@@ -38310,7 +38375,8 @@ function _sfc_render$1z(_ctx, _cache, $props, $setup, $data, $options) {
                       default: withCtx(() => _cache[10] || (_cache[10] = [
                         createTextVNode("Large")
                       ])),
-                      _: 1
+                      _: 1,
+                      __: [10]
                     }),
                     createVNode(_component_el_radio_button, {
                       value: "default",
@@ -38319,7 +38385,8 @@ function _sfc_render$1z(_ctx, _cache, $props, $setup, $data, $options) {
                       default: withCtx(() => _cache[11] || (_cache[11] = [
                         createTextVNode("Default")
                       ])),
-                      _: 1
+                      _: 1,
+                      __: [11]
                     }),
                     createVNode(_component_el_radio_button, {
                       value: "small",
@@ -38328,7 +38395,8 @@ function _sfc_render$1z(_ctx, _cache, $props, $setup, $data, $options) {
                       default: withCtx(() => _cache[12] || (_cache[12] = [
                         createTextVNode("Small")
                       ])),
-                      _: 1
+                      _: 1,
+                      __: [12]
                     })
                   ]),
                   _: 1
@@ -45205,7 +45273,8 @@ function _sfc_render$1w(_ctx, _cache, $props, $setup, $data, $options) {
                 createTextVNode(" \u90E8\u95E8\uFF1A" + toDisplayString$1($data.data.deptName), 1),
                 _cache[5] || (_cache[5] = createElementVNode("br", null, null, -1))
               ]),
-              _: 1
+              _: 1,
+              __: [0, 1, 2, 3, 4, 5]
             })
           ]),
           _: 1
@@ -45224,7 +45293,7 @@ function _sfc_render$1w(_ctx, _cache, $props, $setup, $data, $options) {
     _: 3
   }, 8, ["onShow"]);
 }
-var EmpInfoPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1C, [["render", _sfc_render$1w], ["__scopeId", "data-v-1b8012d3"]]);
+var EmpInfoPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1C, [["render", _sfc_render$1w], ["__scopeId", "data-v-1f4adcb0"]]);
 var OrgInfoPopover_vue_vue_type_style_index_0_scoped_true_lang = "";
 const _sfc_main$1B = {
   name: "OrgInfoPopover",
@@ -45403,7 +45472,7 @@ function _sfc_render$1v(_ctx, _cache, $props, $setup, $data, $options) {
     _: 3
   }, 8, ["onShow"]);
 }
-var OrgInfoPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1B, [["render", _sfc_render$1v], ["__scopeId", "data-v-7ea86576"]]);
+var OrgInfoPopover = /* @__PURE__ */ _export_sfc(_sfc_main$1B, [["render", _sfc_render$1v], ["__scopeId", "data-v-a07a1fd2"]]);
 var ProcessInfoPopover_vue_vue_type_style_index_0_scoped_true_lang = "";
 const _sfc_main$1A = {
   name: "ProcessInfoPopover",
@@ -49850,7 +49919,7 @@ function _sfc_render$1p(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-var MobileOrgItem = /* @__PURE__ */ _export_sfc(_sfc_main$1v, [["render", _sfc_render$1p], ["__scopeId", "data-v-f13dd9b0"]]);
+var MobileOrgItem = /* @__PURE__ */ _export_sfc(_sfc_main$1v, [["render", _sfc_render$1p], ["__scopeId", "data-v-396c0326"]]);
 const _sfc_main$1u = {
   components: {
     MobileOrgItem,
@@ -50492,7 +50561,8 @@ function _sfc_render$1n(_ctx, _cache, $props, $setup, $data, $options) {
                     default: withCtx(() => _cache[9] || (_cache[9] = [
                       createTextVNode("\u53D6\u6D88")
                     ])),
-                    _: 1
+                    _: 1,
+                    __: [9]
                   }, 8, ["onClick"])
                 ]),
                 _: 1
@@ -50508,7 +50578,8 @@ function _sfc_render$1n(_ctx, _cache, $props, $setup, $data, $options) {
                     default: withCtx(() => _cache[10] || (_cache[10] = [
                       createTextVNode("\u786E\u5B9A")
                     ])),
-                    _: 1
+                    _: 1,
+                    __: [10]
                   }, 8, ["onClick"])
                 ]),
                 _: 1
@@ -51474,7 +51545,8 @@ function _sfc_render$1j(_ctx, _cache, $props, $setup, $data, $options) {
                     default: withCtx(() => _cache[7] || (_cache[7] = [
                       createTextVNode("\u53D6\u6D88")
                     ])),
-                    _: 1
+                    _: 1,
+                    __: [7]
                   }, 8, ["onClick"])
                 ]),
                 _: 1
@@ -51490,7 +51562,8 @@ function _sfc_render$1j(_ctx, _cache, $props, $setup, $data, $options) {
                     default: withCtx(() => _cache[8] || (_cache[8] = [
                       createTextVNode("\u786E\u5B9A")
                     ])),
-                    _: 1
+                    _: 1,
+                    __: [8]
                   }, 8, ["onClick"])
                 ]),
                 _: 1
@@ -52006,7 +52079,8 @@ function _sfc_render$1h(_ctx, _cache, $props, $setup, $data, $options) {
                                 default: withCtx(() => _cache[3] || (_cache[3] = [
                                   createTextVNode("\u67E5\u8BE2")
                                 ])),
-                                _: 1
+                                _: 1,
+                                __: [3]
                               }, 8, ["onClick"])
                             ]),
                             _: 1
@@ -52176,7 +52250,7 @@ function _sfc_render$1g(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ]);
 }
-var MobileProcessItem = /* @__PURE__ */ _export_sfc(_sfc_main$1m, [["render", _sfc_render$1g], ["__scopeId", "data-v-74329a24"]]);
+var MobileProcessItem = /* @__PURE__ */ _export_sfc(_sfc_main$1m, [["render", _sfc_render$1g], ["__scopeId", "data-v-18e4739c"]]);
 const _sfc_main$1l = {
   components: {
     MobileProcessItem,
@@ -52771,7 +52845,8 @@ function _sfc_render$1e(_ctx, _cache, $props, $setup, $data, $options) {
                     default: withCtx(() => _cache[8] || (_cache[8] = [
                       createTextVNode("\u53D6\u6D88")
                     ])),
-                    _: 1
+                    _: 1,
+                    __: [8]
                   }, 8, ["onClick"])
                 ]),
                 _: 1
@@ -52787,7 +52862,8 @@ function _sfc_render$1e(_ctx, _cache, $props, $setup, $data, $options) {
                     default: withCtx(() => _cache[9] || (_cache[9] = [
                       createTextVNode("\u786E\u5B9A")
                     ])),
-                    _: 1
+                    _: 1,
+                    __: [9]
                   }, 8, ["onClick"])
                 ]),
                 _: 1
@@ -57973,7 +58049,7 @@ const __default__$3 = {
 };
 const __injectCSSVars__$3 = () => {
   useCssVars((_ctx) => ({
-    "50841f18": _ctx.padding
+    "6045e583": _ctx.padding
   }));
 };
 const __setup__$3 = __default__$3.setup;
@@ -59136,7 +59212,7 @@ const _sfc_main$12 = {
     };
   }
 };
-var FmVantSelect = /* @__PURE__ */ _export_sfc(_sfc_main$12, [["__scopeId", "data-v-7a537970"]]);
+var FmVantSelect = /* @__PURE__ */ _export_sfc(_sfc_main$12, [["__scopeId", "data-v-fd779b10"]]);
 const _sfc_main$11 = {
   __name: "Cascader",
   props: {
@@ -59579,7 +59655,8 @@ const _sfc_main$10 = Object.assign({
               default: withCtx(() => _cache[2] || (_cache[2] = [
                 createTextVNode("\u4E0A\u4F20\u6587\u4EF6")
               ])),
-              _: 1
+              _: 1,
+              __: [2]
             })
           ]),
           _: 1
@@ -59630,7 +59707,7 @@ const _sfc_main$10 = Object.assign({
     };
   }
 });
-var FmVantUploader = /* @__PURE__ */ _export_sfc(_sfc_main$10, [["__scopeId", "data-v-96384606"]]);
+var FmVantUploader = /* @__PURE__ */ _export_sfc(_sfc_main$10, [["__scopeId", "data-v-6b6ad645"]]);
 const _sfc_main$$ = {
   components: {
     FmVantSelect,
@@ -61598,7 +61675,8 @@ function _sfc_render$Q(_ctx, _cache, $props, $setup, $data, $options) {
               default: withCtx(() => _cache[10] || (_cache[10] = [
                 createTextVNode("# 1")
               ])),
-              _: 1
+              _: 1,
+              __: [10]
             })) : (openBlock(), createElementBlock("span", _hoisted_3$g, "# 1"))
           ])) : createCommentVNode("", true),
           createElementVNode("div", _hoisted_4$e, [
@@ -66433,7 +66511,8 @@ function _sfc_render$I(_ctx, _cache, $props, $setup, $data, $options) {
                     style: { "font-size": "12px", "margin": "5px" }
                   }, null, -1)
                 ])),
-                _: 1
+                _: 1,
+                __: [0]
               }, 8, ["disabled"])
             ]),
             _: 2
@@ -66736,7 +66815,8 @@ function _sfc_render$I(_ctx, _cache, $props, $setup, $data, $options) {
                 }, null, -1)),
                 createTextVNode(toDisplayString$1(_ctx.$t("fm.actions.add")), 1)
               ]),
-              _: 1
+              _: 1,
+              __: [1]
             }, 8, ["onClick"])) : createCommentVNode("", true)
           ]),
           _: 1
@@ -67386,8 +67466,9 @@ const generateElementItemMixin = {
       options && options.value && this.loadOptions(options.value);
     }
     if (this.widget.options.remote && this.widget.options.remoteType === "dict" && this.dataSourceValue) {
-      let options = this.getDictDataSourceOptions();
-      options && options.value && this.loadOptions(options.value);
+      this.getDictDataSourceOptions().then((res) => {
+        res && this.loadOptions(res);
+      });
     }
     if (this.widget.options.remote && this.widget.options.remoteType == "fx") {
       let options = executeExpression(this.widget.options.remoteFx, {}, this.formContext);
@@ -67662,9 +67743,9 @@ const generateElementItemMixin = {
       return this.dataSourceValue.find((item2) => item2.key === key);
     },
     async getDictDataSourceOptions(remoteName = "remoteDataSource") {
-      let key = this.group ? this.group + "." + this.widget.model + "." + this.widget.options[remoteName] : this.widget.model + "." + this.widget.options[remoteName];
-      await getDictionaryItems({ mainId: this.widget.options[remoteName] });
-      return this.dataSourceValue.find((item2) => item2.key === key);
+      this.group ? this.group + "." + this.widget.model + "." + this.widget.options[remoteName] : this.widget.model + "." + this.widget.options[remoteName];
+      const dataItems = await getDictionaryItems({ mainId: this.widget.options[remoteName] });
+      return dataItems;
     },
     disabledElement(disabled) {
       this.generateDisabled = disabled;
@@ -70869,7 +70950,7 @@ const __default__$2 = {
 };
 const __injectCSSVars__$2 = () => {
   useCssVars((_ctx) => ({
-    "6fcb5211": _ctx.padding
+    "24ce5861": _ctx.padding
   }));
 };
 const __setup__$2 = __default__$2.setup;
@@ -73757,7 +73838,8 @@ function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
                           style: { "font-size": "12px", "margin": "5px" }
                         }, null, -1)
                       ])),
-                      _: 1
+                      _: 1,
+                      __: [2]
                     }, 8, ["disabled"])
                   ]),
                   _: 2
@@ -73968,7 +74050,8 @@ function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
                                 style: { "font-size": "12px", "margin": "5px" }
                               }, null, -1)
                             ])),
-                            _: 1
+                            _: 1,
+                            __: [3]
                           }, 8, ["disabled"])
                         ]),
                         _: 2
@@ -74148,7 +74231,8 @@ function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
                       style: { "font-size": "12px", "margin": "5px" }
                     }, null, -1)
                   ])),
-                  _: 1
+                  _: 1,
+                  __: [4]
                 }, 8, ["disabled"])
               ]),
               _: 2
@@ -74229,7 +74313,8 @@ function _sfc_render$v(_ctx, _cache, $props, $setup, $data, $options) {
                 }, null, -1)),
                 createTextVNode(toDisplayString$1(_ctx.$t("fm.actions.add")), 1)
               ]),
-              _: 1
+              _: 1,
+              __: [5]
             }, 8, ["onClick"])) : createCommentVNode("", true)
           ]),
           _: 1
@@ -74352,7 +74437,8 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
                     style: { "font-size": "12px", "margin": "5px" }
                   }, null, -1)
                 ])),
-                _: 1
+                _: 1,
+                __: [1]
               }, 8, ["disabled"])
             ]),
             _: 2
@@ -74661,7 +74747,8 @@ function _sfc_render$u(_ctx, _cache, $props, $setup, $data, $options) {
                 }, null, -1)),
                 createTextVNode(toDisplayString$1(_ctx.$t("fm.actions.add")), 1)
               ]),
-              _: 1
+              _: 1,
+              __: [2]
             }, 8, ["onClick"])) : createCommentVNode("", true)
           ]),
           _: 1
@@ -76400,7 +76487,7 @@ const __default__$1 = {
 };
 const __injectCSSVars__$1 = () => {
   useCssVars((_ctx) => ({
-    "9e76e42c": _ctx.labelWidth
+    "6b8c169e": _ctx.labelWidth
   }));
 };
 const __setup__$1 = __default__$1.setup;
@@ -78003,7 +78090,7 @@ const __default__ = {
 };
 const __injectCSSVars__ = () => {
   useCssVars((_ctx) => ({
-    "9978757c": _ctx.padding
+    "27c5e7ac": _ctx.padding
   }));
 };
 const __setup__ = __default__.setup;
@@ -79704,7 +79791,8 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
                           style: { "font-size": "12px", "margin": "5px" }
                         }, null, -1)
                       ])),
-                      _: 2
+                      _: 2,
+                      __: [1]
                     }, 1032, ["disabled", "onClick"])) : createCommentVNode("", true)
                   ])
                 ]),
@@ -79732,7 +79820,8 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
           }, null, -1)),
           createTextVNode(toDisplayString$1(_ctx.$t("fm.actions.add")), 1)
         ]),
-        _: 1
+        _: 1,
+        __: [2]
       }, 8, ["onClick"])
     ])) : createCommentVNode("", true),
     _ctx.paging && _ctx.subformData.length ? (openBlock(), createElementBlock("div", _hoisted_4$3, [
@@ -82521,7 +82610,7 @@ const _sfc_main$a = {
     };
   }
 };
-var FmVantDialog = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-ad3dd8cc"]]);
+var FmVantDialog = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-7771af5a"]]);
 const _sfc_main$9 = {
   name: "generate-dialog",
   components: {
@@ -83567,7 +83656,8 @@ function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
               default: withCtx(() => _cache[7] || (_cache[7] = [
                 createElementVNode("i", { class: "fm-iconfont icon-pc" }, null, -1)
               ])),
-              _: 1
+              _: 1,
+              __: [7]
             }),
             createVNode(_component_el_radio_button, {
               label: "pad",
@@ -83576,7 +83666,8 @@ function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
               default: withCtx(() => _cache[8] || (_cache[8] = [
                 createElementVNode("i", { class: "fm-iconfont icon-pad" }, null, -1)
               ])),
-              _: 1
+              _: 1,
+              __: [8]
             }),
             createVNode(_component_el_radio_button, {
               label: "mobile",
@@ -83585,7 +83676,8 @@ function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
               default: withCtx(() => _cache[9] || (_cache[9] = [
                 createElementVNode("i", { class: "fm-iconfont icon-mobile" }, null, -1)
               ])),
-              _: 1
+              _: 1,
+              __: [9]
             })
           ]),
           _: 1
@@ -83657,7 +83749,8 @@ function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
                 createElementVNode("div", _hoisted_2$4, toDisplayString$1(_ctx.$t("fm.description.qrcodePreview")), 1),
                 _cache[13] || (_cache[13] = createElementVNode("div", { id: "fmpreviewqrcode" }, null, -1))
               ]),
-              _: 1
+              _: 1,
+              __: [13]
             })
           ], 512), [
             [vShow, $data.platform === "mobile" && $data.showQrcode]
@@ -85586,7 +85679,8 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
                                 createTextVNode("\xA0\xA0")
                               ], -1)
                             ])),
-                            _: 1
+                            _: 1,
+                            __: [22]
                           }, 8, ["content"])
                         ]),
                         default: withCtx(() => [
@@ -85848,7 +85942,8 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
                                 createTextVNode("\xA0\xA0")
                               ], -1)
                             ])),
-                            _: 1
+                            _: 1,
+                            __: [23]
                           }, 8, ["content"])
                         ]),
                         default: withCtx(() => [
@@ -85980,7 +86075,8 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
                           }, null, -1)),
                           createTextVNode(toDisplayString$1(_ctx.$t("fm.actions.import")), 1)
                         ]),
-                        _: 1
+                        _: 1,
+                        __: [31]
                       }, 8, ["onClick"])) : createCommentVNode("", true),
                       $props.preview ? (openBlock(), createBlock(_component_el_button, {
                         key: 3,
@@ -85996,7 +86092,8 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
                           }, null, -1)),
                           createTextVNode(toDisplayString$1(_ctx.$t("fm.actions.preview")), 1)
                         ]),
-                        _: 1
+                        _: 1,
+                        __: [32]
                       }, 8, ["onClick"])) : createCommentVNode("", true),
                       $props.clearable ? (openBlock(), createBlock(_component_el_button, {
                         key: 4,
@@ -86012,7 +86109,8 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
                           }, null, -1)),
                           createTextVNode(toDisplayString$1(_ctx.$t("fm.actions.clear")), 1)
                         ]),
-                        _: 1
+                        _: 1,
+                        __: [33]
                       }, 8, ["onClick"])) : createCommentVNode("", true),
                       $props.generateJson ? (openBlock(), createBlock(_component_el_button, {
                         key: 5,
@@ -86028,7 +86126,8 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
                           }, null, -1)),
                           createTextVNode(toDisplayString$1(_ctx.$t("fm.actions.json")), 1)
                         ]),
-                        _: 1
+                        _: 1,
+                        __: [34]
                       }, 8, ["onClick"])) : createCommentVNode("", true),
                       $props.generateCode ? (openBlock(), createBlock(_component_el_button, {
                         key: 6,
@@ -86044,10 +86143,12 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
                           }, null, -1)),
                           createTextVNode(toDisplayString$1(_ctx.$t("fm.actions.code")), 1)
                         ]),
-                        _: 1
+                        _: 1,
+                        __: [35]
                       }, 8, ["onClick"])) : createCommentVNode("", true)
                     ]),
-                    _: 3
+                    _: 3,
+                    __: [36]
                   }),
                   createVNode(_component_el_main, {
                     class: normalizeClass({ "widget-empty": $data.widgetForm.list.length == 0 })
@@ -87800,7 +87901,8 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
                           style: { "font-size": "12px", "margin": "5px" }
                         }, null, -1)
                       ])),
-                      _: 2
+                      _: 2,
+                      __: [1]
                     }, 1032, ["disabled", "onClick"])) : createCommentVNode("", true)
                   ])
                 ]),
@@ -87828,7 +87930,8 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
           }, null, -1)),
           createTextVNode(" " + toDisplayString$1(_ctx.$t("fm.actions.add")), 1)
         ]),
-        _: 1
+        _: 1,
+        __: [2]
       }, 8, ["onClick"])
     ])) : createCommentVNode("", true),
     _ctx.paging && _ctx.tableData.length ? (openBlock(), createElementBlock("div", _hoisted_6, [

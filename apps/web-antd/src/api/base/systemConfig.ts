@@ -27,4 +27,4 @@ export const checkEntityExist = (params: any) =>
 
 
 export const getSysConfigBySn = (params: any) =>
-    requestClient.get<any>(Api.GetSysConfigBySn, params);
+    requestClient.get<any>(Api.GetSysConfigBySn, {params});

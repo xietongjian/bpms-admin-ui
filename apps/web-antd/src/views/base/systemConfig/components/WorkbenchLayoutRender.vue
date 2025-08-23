@@ -1,5 +1,5 @@
 <template>
-  <div ref="wrapper" >
+  <div ref="wrapper" class="w-full h-full">
     <GridLayout class="!h-full w-full" ref="gridLayout" v-model:layout="layout" :row-height="10">
       <GridItem
           class="component-item overflow-auto [&_span.vgl-item__resizer]:!z-9 group"

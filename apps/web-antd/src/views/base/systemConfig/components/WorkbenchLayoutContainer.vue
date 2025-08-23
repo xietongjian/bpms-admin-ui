@@ -48,7 +48,7 @@
           >
             <span
                 title="移除组件"
-                class="!hidden group-hover:!flex group-hover:absolute !text-red-500 text-xl hover:!text-red-600 z-50 cursor-pointer top-0 right-0 size-6 rounded-full text-center items-center justify-center"
+                class="!hidden group-hover:!flex group-hover:absolute !text-red-500 text-xl hover:!text-red-600 z-100 cursor-pointer top-0 right-0 size-6 rounded-full text-center items-center justify-center"
                 @click="removeLayout(item.i)">
               <CloseCircleOutlined/>
             </span>
