@@ -31,7 +31,9 @@
               stripe: true,
               pagerConfig: {enabled: false},
               columns: propertiesColumns,
-              data: row.listenerProperties}"
+              data: row.listenerProperties,
+              toolbarConfig: {enabled: false}
+            }"
         >
           <template #option="{row: rec}">
             <TableAction :actions="createSubActions(row, rec)" />

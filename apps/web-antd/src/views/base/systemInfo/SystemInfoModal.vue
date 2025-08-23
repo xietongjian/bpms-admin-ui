@@ -22,7 +22,11 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          formApi.setValues(values);
+          const formData = JSON.parse(JSON.stringify(values));
+          if (formData.imgUrl) {
+            formData.imgUpload = [{url: formData.imgUrl}];
+          }
+          formApi.setValues(formData);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -49,8 +53,9 @@
     try {
       const { valid } = await formApi.validate();
       if (!valid) return;
-      const values = await formApi.getValues();
       modalApi.setState({loading: true, confirmLoading: true});
+      const values = await formApi.getValues();
+      values.imgUrl = values.imgUpload && values.imgUpload.length > 0 ? (values.imgUpload[0].response||values.imgUpload[0].url) : '';
       const {success, msg} = await saveOrUpdateSystemInfo(values);
       if(success){
         message.success(msg);

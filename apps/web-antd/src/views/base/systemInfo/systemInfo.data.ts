@@ -4,6 +4,7 @@ import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 
 import { uploadApi } from '#/api/sys/upload';
+import {uploadFile} from "#/api/core/upload";
 
 /**
  * name
@@ -12,6 +13,13 @@ import { uploadApi } from '#/api/sys/upload';
  * description
  */
 export const columns: VxeGridProps['columns'] = [
+  {
+    title: '图标',
+    field: 'imgUrl',
+    width: 100,
+    align: 'center',
+    slots: { default: 'imgUrl' },
+  },
   {
     title: '名称',
     field: 'name',
@@ -92,25 +100,48 @@ export const formSchema: FormSchema[] = [
         .max(64, "名称不能大于64个字符"),
   },
   {
-    fieldName: 'imgUrl',
-    label: '图标',
-    component: 'ImageUpload',
-    dependencies: {
-      show: false,
-      triggerFields: ["id"]
-    },
+    component: 'Upload',
     componentProps: {
-      api: uploadApi,
-      name: 'file',
+      // 更多属性见：https://ant.design/components/upload-cn
+      accept: '.png,.jpg,.jpeg',
+      // 自动携带认证信息
+      customRequest: uploadFile,
+      disabled: false,
       maxCount: 1,
-      listType: 'picture-card',
-      maxSize: 1,
-      maxNumber: 1,
       multiple: false,
+      showUploadList: true,
+      // 上传列表的内建样式，支持四种基本样式 text, picture, picture-card 和 picture-circle
+      listType: 'picture-card',
       helpText: '(仅支持gif,png)大小不超过1M，建议上传尺寸(像素)：200px*200px',
-      accept: ['gif', 'png'],
+    },
+    fieldName: 'imgUpload',
+    label: '图标',
+    renderComponentContent: () => {
+      return {
+        default: () => '请选择图片',
+      };
     },
   },
+  // {
+  //   fieldName: 'imgUrl',
+  //   label: '图标',
+  //   component: 'Upload',
+  //   // dependencies: {
+  //   //   // show: false,
+  //   //   // triggerFields: ["id"]
+  //   // },
+  //   componentProps: {
+  //     api: uploadApi,
+  //     name: 'file',
+  //     maxCount: 1,
+  //     listType: 'picture-card',
+  //     maxSize: 1,
+  //     maxNumber: 1,
+  //     multiple: false,
+  //     helpText: '(仅支持gif,png)大小不超过1M，建议上传尺寸(像素)：200px*200px',
+  //     accept: ['gif', 'png'],
+  //   },
+  // },
   {
     label: '系统描述',
     fieldName: 'description',

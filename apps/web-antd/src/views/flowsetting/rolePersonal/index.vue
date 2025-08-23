@@ -23,15 +23,17 @@
       </template>
       <template #expandContent="{ row }">
         <SubBasicTable
-            height="300"
-            :gridOptions="{
+          height="300"
+          :gridOptions="{
               size: 'mini',
               keepSource: true,
               border: false,
               stripe: true,
               pagerConfig: {enabled: false},
               columns: personalColumns,
-              data: row.rolePersonal}"
+              data: row.rolePersonal,
+              toolbarConfig: {enabled: false}
+          }"
         >
           <template #action="{row: rcd}">
             <TableAction :actions="createActions(row, rcd)"/>

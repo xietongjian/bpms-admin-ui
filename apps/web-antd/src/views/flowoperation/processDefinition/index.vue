@@ -221,6 +221,7 @@ const createSubGridOptions = (row: Recordable<any>) => {
     columnConfig: {resizable: true},
     loading: loading[row.id],
     data: expandData[row.id]?.list || [],
+    toolbarConfig: {enabled: false},
     pagerConfig: {
       currentPage: expandData[row.id]?.currentPage || 1,
       pageSize: expandData[row.id]?.pageSize || 10,

@@ -79,7 +79,7 @@ export const formSchema: FormSchema[] = [
             })
             .min(1, "编码不能为空")
             .max(10, '最多输入10个字符')
-            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
+            .regex(new RegExp(FormValidPatternEnum.CODE), '请输入英文或数字')
             .refine(
                 async (e) => {
                   let result = false;

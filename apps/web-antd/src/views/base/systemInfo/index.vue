@@ -2,24 +2,18 @@
   <Page auto-content-height>
     <BasicTable>
       <template #toolbar-tools>
-        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
+        <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>
       <template #action="{ row }">
-        <TableAction
-            :actions="createActions(row)"
-        />
+        <TableAction :actions="createActions(row)"/>
       </template>
-      <template #imgUrl="{ row }">
-        <Space>
-          <Avatar :src="row.imgUrl" class="w-[60px] h-[60px]">
-            <template #icon>
-              <UserOutlined/>
-            </template>
-          </Avatar>
-          <span>
-              {{ row.name }}
-            </span>
-        </Space>
+      <template #imgUrl="{row}">
+        <div class="!h-16 flex flex-col items-center justify-center">
+          <div v-if="row.imgUrl">
+            <Image :src="row.imgUrl" class="w-full !h-16 object-contain" />
+          </div>
+          <span v-else class="">暂无图片</span>
+        </div>
       </template>
     </BasicTable>
 
@@ -27,17 +21,16 @@
   </Page>
 </template>
 <script lang="ts" setup>
-import {ref, unref} from 'vue';
+import {ref} from 'vue';
 import type {Recordable} from '@vben/types';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {PerEnum} from "#/enums/perEnum";
 import {getPagerModel, deleteSystemById} from '#/api/base/systemInfo';
-import {Tag, Avatar, Button, Space} from 'ant-design-vue';
+import { Button, message, Image} from 'ant-design-vue';
 import {columns, searchFormSchema} from './systemInfo.data';
 import SystemInfoModal from './SystemInfoModal.vue';
-import { TableAction } from '#/components/table-action';
-
+import {TableAction} from '#/components/table-action';
 import {UserOutlined} from "@ant-design/icons-vue";
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
 import {Page} from "@vben/common-ui";
@@ -61,8 +54,7 @@ const formOptions: VbenFormProps = {
   schema: searchFormSchema,
 };
 
-
-const gridOptions: VxeGridProps<any> = {
+const gridOptions: VxeGridProps = {
   checkboxConfig: {
     highlight: true,
     labelField: 'name',
@@ -76,6 +68,7 @@ const gridOptions: VxeGridProps<any> = {
   keepSource: true,
   border: false,
   stripe: true,
+  showOverflow: false,
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
@@ -102,7 +95,7 @@ function createActions(record: Recordable<any>) {
       onClick: handleEdit.bind(null, record),
     },
     {
-      auth: [PerEnum + PerEnum.DELETE],
+      auth: [PerPrefix + PerEnum.DELETE],
       tooltip: '删除',
       icon: 'ant-design:delete-outlined',
       danger: true,
@@ -110,7 +103,7 @@ function createActions(record: Recordable<any>) {
         title: '是否确认删除',
         confirm: handleDelete.bind(null, record),
         placement: 'left',
-        okButtonProps: { danger: true },
+        okButtonProps: {danger: true},
       },
     },
   ];
@@ -132,10 +125,12 @@ function handleEdit(record: Recordable<any>) {
   });
 }
 
-function handleDelete(record: Recordable<any>) {
-  deleteSystemById([record.id]).then((res) => {
+async function handleDelete(record: Recordable<any>) {
+  const {success, msg} = await deleteSystemById([record.id]);
+  if (success) {
+    message.success(msg);
     tableApi.reload();
-  });
+  }
 }
 
 function handleSuccess() {
