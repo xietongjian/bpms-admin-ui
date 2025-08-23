@@ -49,4 +49,5 @@ vite.config.ts.*
 *.sln
 *.sw?
 .history
+.cursor
 !**/form-making/dist
