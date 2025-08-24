@@ -19,20 +19,20 @@
           @drop="handleDrop"
       >
         <template #header>
-          <Authority :value="'ProcessFramework:' + PerEnum.ADD">
+<!--          <Authority :value="'ProcessFramework:' + PerEnum.ADD">-->
             <Tooltip title="新增公司架构">
               <Button type="primary" size="small" @click="handleCreateSystem">
                 <PlusOutlined />
               </Button>
             </Tooltip>
-          </Authority>
-          <Authority :value="'ProcessFramework:' + PerEnum.ADD">
+<!--          </Authority>-->
+<!--          <Authority :value="'ProcessFramework:' + PerEnum.ADD">-->
             <Tooltip title="下载架构导入模板">
               <Button class="ml-2" type="primary" size="small" @click="handleDownloadTemplate">
                 <DownloadOutlined />
               </Button>
             </Tooltip>
-          </Authority>
+<!--          </Authority>-->
         </template>
 
         <template #actions="{ node }">

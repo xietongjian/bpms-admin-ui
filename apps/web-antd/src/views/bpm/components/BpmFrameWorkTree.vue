@@ -1,11 +1,16 @@
 <template>
-  <div class="bg-card overflow-hidden" v-loading="treeLoading">
-    <div class="h-full n-naive-framework-tree">
-      <div title="流程体系/架构" toolbar :search="false" :expandAll="expandAll">
-        <slot name="header"></slot>
+  <div class="bg-card h-full" v-loading="treeLoading">
+    <div class="h-full n-naive-framework-tree flex flex-col">
+      <div class="p-2 border-b flex items-center justify-between" title="流程体系/架构" toolbar :search="false" :expandAll="expandAll">
+        <div class="flex-1 text-md font-bold">
+          流程体系/架构
+        </div>
+        <div class="">
+          <slot name="header">流程体系/架构</slot>
+        </div>
       </div>
       <div
-          wrapperClassName="h-[calc(100%-56px)] overflow-y-auto"
+          class="overflow-y-auto flex-1 h-10"
           :spinning="treeLoading"
           tip="加载中..."
       >

@@ -1,23 +1,24 @@
 <script lang="ts" setup>
-  import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
+  import { defineEmits, defineExpose } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import {message} from 'ant-design-vue';
   import { formSchema } from './platformConfig.data';
-  import { saveOrUpdate } from '#/api/base/platformConfig';
+  import { saveOrUpdate, getPlatformConfigById } from '#/api/base/platformConfig';
 
-  const emit = defineEmits(['success', 'register']);
+  const emit = defineEmits(['success']);
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
     onCancel() {
       modalApi.close();
     },
-    onOpenChange(isOpen: boolean) {
+    async onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          formApi.setValues(values);
+          const formData = !!values.id ? (await getPlatformConfigById(values.id)) : {};
+          await formApi.setValues(formData);
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
@@ -48,11 +49,11 @@
       }
       const values = await formApi.getValues();
       const {success, msg} = await saveOrUpdate(values);
-      if(success){
+      if (success) {
         message.success(msg);
         modalApi.close();
         emit('success');
-      }else {
+      } else {
         message.error(msg);
       }
     } finally {

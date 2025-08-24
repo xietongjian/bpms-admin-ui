@@ -10,30 +10,18 @@
       </template>
 
       <template #appKey="{ row }">
-        <a @click="doCopyContent(row.appKey)">
-          <CopyOutlined/>
-        </a>
         {{ row.appKey }}
       </template>
 
       <template #appSecret="{ row }">
-        <a @click="doCopyContent(row.appSecret)">
-          <CopyOutlined/>
-        </a>
         {{ row.appSecret }}
       </template>
 
       <template #agentId="{ row }">
-        <a @click="doCopyContent(row.agentId)">
-          <CopyOutlined/>
-        </a>
         {{ row.agentId }}
       </template>
 
       <template #corpId="{ row }">
-        <a @click="doCopyContent(row.corpId)">
-          <CopyOutlined/>
-        </a>
         {{ row.corpId }}
       </template>
       <template #type="{row}">

@@ -49,6 +49,7 @@ const gridOptions: VxeGridProps = {
   keepSource: true,
   border: false,
   stripe: true,
+  showOverflow: false,
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {

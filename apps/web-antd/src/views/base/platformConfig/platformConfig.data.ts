@@ -107,7 +107,7 @@ export const formSchema: FormSchema[] = [
         })
         .trim()
         .min(1, "appKey不能为空")
-        .max(32, "字符长度不能大于32！")
+        .max(64, "字符长度不能大于64！")
   },
   {
     fieldName: 'appSecret',
@@ -121,7 +121,7 @@ export const formSchema: FormSchema[] = [
     },
     rules: z
         .string()
-        .max(1500, "字符长度不能大于1500！")
+        .max(100, "字符长度不能大于100！")
         .nullish()
         .optional(),
   },
@@ -135,7 +135,7 @@ export const formSchema: FormSchema[] = [
         })
         .trim()
         .min(1, "名称不能为空")
-        .max(128, "字符长度不能大于128！")
+        .max(255, "字符长度不能大于255！")
   },
   {
     fieldName: 'agentId',

@@ -2,10 +2,10 @@
   @apply h-full border flex flex-col items-stretch justify-between rounded-lg overflow-hidden;
 
   .x-title{
-    @apply bg-card/80 h-10 flex items-center flex-nowrap justify-between px-2 border-b;
+    @apply bg-card/90 h-10 flex items-center flex-nowrap justify-between px-2 border-b;
   }
   .x-content{
-    @apply bg-card/40 flex-1 overflow-hidden;
+    @apply bg-card/80 flex-1 overflow-hidden;
   }
   .ant-tag{
     @apply flex me-0;

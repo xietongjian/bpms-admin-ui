@@ -1,8 +1,13 @@
 <template>
   <div ref="wrapper" class="w-full h-full">
-    <GridLayout class="!h-full w-full" ref="gridLayout" v-model:layout="layout" :row-height="10">
+    <GridLayout
+            class="!h-full w-full"
+            ref="gridLayout"
+            v-model:layout="layout"
+            :col-num="24"
+            :row-height="10">
       <GridItem
-          class="component-item overflow-auto [&_span.vgl-item__resizer]:!z-9 group"
+          class="component-item overflow-auto"
           v-for="item in layout"
           :is-draggable="false"
           :is-resizable="false"
@@ -66,45 +71,6 @@ function syncMousePosition(event: MouseEvent) {
 }
 
 </script>
-<style lang="less" scoped>
-.vgl-layout {
-  //background-color: #eee;
-}
-
-.component-item{
-  :deep(.vgl-item__resizer){
-    z-index: 9999!important;
-  }
-}
-
-
-:deep(.vgl-item--resizing) {
-  opacity: 90%;
-}
-
-:deep(.vgl-item--static) {
-  background-color: #cce;
-}
-
-.text {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: auto;
-  font-size: 24px;
-  text-align: center;
-}
-
-.layout-json {
-  padding: 10px;
-  margin-top: 10px;
-  background-color: #ddd;
-  border: 1px solid black;
-}
-
-.columns {
-  columns: 120px;
-}
+<style lang="scss" scoped>
 
 </style>

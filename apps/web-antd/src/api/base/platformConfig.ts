@@ -4,6 +4,7 @@ enum Api {
   SaveOrUpdate = '/flow/platform/config/saveOrUpdate',
   Delete = '/flow/platform/config/delete',
   CheckEntityExist = '/flow/platform/config/checkEntityExist',
+  GetPlatformConfigById = '/flow/platform/config/get',
 }
 
 export const getPlatformConfigListByPage = (params?: any) => {
@@ -17,3 +18,6 @@ export const checkEntityExist = (params: any) =>
 
 export const deleteByIds = (params: Array<string>) =>
   requestClient.post<any>(Api.Delete, params, {responseReturn: 'body'});
+
+export const getPlatformConfigById = (params: string) =>
+  requestClient.post<any>(Api.GetPlatformConfigById, params);

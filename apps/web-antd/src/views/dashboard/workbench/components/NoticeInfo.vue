@@ -9,7 +9,7 @@
 <!--        <Button type="link" size="small" @click="handleToMore()">更多</Button>-->
       </div>
     </div>
-    <div class="flex-1 p-2 flex flex-col justify-between items-stretch overflow-y-auto">
+    <div class="flex-1 x-content p-2 flex flex-col justify-between items-stretch overflow-y-auto">
       <List item-layout="horizontal" :data-source="dataList">
         <template #renderItem="{ item }">
           <ListItem class="custom-list-item">

@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-full p-0 items-stretch gap-2">
-    <div class="w-40 h-full overflow-y-auto border bg-blue/10 p-2"
+      <div class="w-40 h-full overflow-y-auto border bg-blue/10 p-2"
          :class="{'!hidden': !componentPanelVisible}">
       <div class="flex flex-col gap-2 overflow-hidden">
         <div
@@ -29,7 +29,13 @@
         <CaretLeftOutlined v-else/>
       </span>
       <div ref="wrapper" class="flex-1 w-full h-full !relative overflow-x-hidden">
-        <GridLayout class="bg-slate/10" ref="gridLayout" :is-bounded="true" v-model:layout="layout" :row-height="10">
+        <GridLayout
+            class="bg-slate/10"
+            ref="gridLayout"
+            :is-bounded="true"
+            v-model:layout="layout"
+            :row-height="10"
+            :col-num="24">
           <GridItem
               class="component-item overflow-hidden [&_span.vgl-item__resizer]:!z-50 group"
               v-for="item in layout"
@@ -39,6 +45,10 @@
               :w="item.w"
               :h="item.h"
               :i="item.i"
+              :minW="item.minW"
+              :minH="item.minH"
+              :maxW="item.maxW"
+              :maxH="item.maxH"
               @resize="resize"
               @move="move"
               @resized="resized"
@@ -347,17 +357,30 @@ defineExpose({
   height: 100%;
   overflow-y: auto;
 }
-.vgl-layout::before {
-  position: absolute;
-  width: calc(100% - 5px);
-  height: calc(100% - 5px);
-  margin: 5px;
-  content: '';
-  background-image:
-      linear-gradient(to right, lightgrey 1px, transparent 1px),
-      linear-gradient(to bottom, lightgrey 1px, transparent 1px);
-  background-repeat: repeat;
-  background-size: calc(calc(100% - 5px) / 12) 40px;
+.vgl-layout{
+  &::before, &::after{
+    z-index: 0;
+    position: absolute;
+    width: calc(100% - 5px);
+    height: calc(100% - 5px);
+    margin: 5px;
+    content: '';
+    background-repeat: repeat;
+  }
+  &::before{
+    background-image:
+        linear-gradient(to right, rgba(211,211,211,0.5) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(211,211,211,0.5) 1px, transparent 1px);
+    background-size: calc(calc(100% - 5px) / 24) 40px;
+  }
+  &::after{
+    background-image:
+        linear-gradient(to right, rgba(211,211,211) 1px, transparent 1px);
+    background-size: calc(calc(100% - 5px) / 12) 40px;
+  }
+  .vgl-item{
+    z-index: 9;
+  }
 }
 
 .component-item {
