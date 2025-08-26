@@ -5,7 +5,6 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
 import { h } from 'vue';
 import { Tag } from 'ant-design-vue';
 import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
-// import { optionsListApi } from '#/api/demo/select';
 import { getAllBoard } from '#/api/portal/cms/board';
 import {uploadFile} from "#/api/core/upload";
 
@@ -28,12 +27,17 @@ export const columns: VxeGridProps['columns'] = [
     slots: { default: 'imgs' },
   },
   {
+    title: '发布版块',
+    field: 'publishBoard',
+    align: 'left',
+    slots: { default: 'publishBoard' },
+  },
+  {
     title: '跳转链接地址',
     field: 'linkUrl',
     align: 'left',
     slots: { default: 'linkUrlRender' },
   },
-
   {
     title: '跳转方式',
     field: 'linkType',
@@ -83,6 +87,21 @@ export const columns: VxeGridProps['columns'] = [
 ];
 
 export const searchFormSchema: FormSchema[] = [
+  {
+    component: 'ApiSelect',
+    // 对应组件的参数
+    componentProps: {
+      class: 'w-full',
+      api: getAllBoard,
+      params: {
+        type: 3,
+      },
+    },
+    // 字段名
+    fieldName: 'publishBoard',
+    // 界面显示的label
+    label: '发布版块',
+  },
   {
     fieldName: 'keyword',
     label: '关键字',

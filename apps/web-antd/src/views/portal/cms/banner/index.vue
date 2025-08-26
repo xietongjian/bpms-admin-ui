@@ -22,6 +22,11 @@
           </p>
         </div>
       </template>
+      <template #publishBoard="{ row }">
+        <Tag v-for="item in row.publishBoard.split(',')">
+          {{publishBoardSnMap.get(item)?.name}}
+        </Tag>
+      </template>
       <template #linkUrlRender="{ row }">
         <a v-if="row.linkUrl" :href="row.linkUrl" target="_blank">
           {{ row.linkUrl }}
@@ -39,13 +44,6 @@
       <template #status="{row}">
         <Tag :color="row.status ? 'green' : 'red'">{{ row.status ? '启用' : '停用' }}</Tag>
       </template>
-
-<!--      <template #createdByRender="{ row }">
-        <EmpInfo :no="row.createdByNo" :name="row.createdBy" />
-      </template>
-      <template #updatedByRender="{ row }">
-        <EmpInfo :no="row.updatedByNo" :name="row.updatedBy" />
-      </template>-->
     </BasicTable>
     <BannerDrawer ref="bannerDrawerRef" @success="handleSuccess" />
   </Page>
@@ -63,19 +61,23 @@
   import { getBannerListByPage, deleteByIds } from '#/api/portal/cms/banner';
   import BannerDrawer from './BannerDrawer.vue';
   import { EmpInfo } from '#/views/components/EmpInfo';
+  import { getAllBoard } from '#/api/portal/cms/board';
   import { PerEnum } from '#/enums/perEnum';
   import {Page} from '@vben/common-ui';
 
   const PerPrefix = 'Banner:';
+
+  const publishBoardList = ref<any>([]);
+  const publishBoardSnMap = ref<any>(new Map());
   const bannerDrawerRef = ref();
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,
     submitOnEnter: true,
     commonConfig: {
-      labelWidth: 60,
+      labelWidth: 70,
     },
-    wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    wrapperClass: 'grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
     actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
     actionPosition: 'left',
     actionLayout: 'inline',
@@ -114,45 +116,14 @@
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
-  /*const [registerTable, { reload, getForm }] = useTable({
-    title: '列表',
-    api: getBannerListByPage,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    searchInfo: {
-      // publishBoard: board
-    },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: false,
-    showIndexColumn: false,
-    actionColumn: {
-      width: 100,
-      title: '操作',
-      field: 'action',
-      slots: { customRender: 'action' },
-      fixed: 'right',
-    },
-  });*/
+  onMounted(async() => {
+    const res = await getAllBoard({type: 3});
+    publishBoardList.value = res;
 
-  onMounted(() => {
-    /*const { updateSchema } = getForm();
-    updateSchema([
-      {
-        fieldName: 'publishBoard',
-        componentProps: {
-          onChange: (value, label, extra) => {
-            reload({ searchInfo: { publishBoard: value } });
-          },
-        },
-      },
-    ]);*/
+    res.forEach((item: any) => {
+      publishBoardSnMap.value.set(item.sn, item);
+    });
+
   });
   function createActions(record: Recordable<any>) {
     return [
@@ -182,18 +153,6 @@
     bannerDrawerRef.value.setState({
       title: '编辑'
     });
-    /*openBannerDrawer(true, {
-      record: {
-        // publishBoard: board
-      },
-      isUpdate: false,
-    });*/
-    /*openModal(true, {
-      isUpdate: false,
-    });
-    setModalProps({
-      width: 800
-    });*/
   }
 
   function handleEdit(record: Recordable) {
@@ -202,7 +161,6 @@
     bannerDrawerRef.value.setState({
       title: '编辑'
     });
-
   }
 
   async function handleDelete(record: Recordable<any>) {
