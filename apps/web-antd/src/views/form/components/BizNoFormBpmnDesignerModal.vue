@@ -18,7 +18,7 @@
                 processModelKey
               }}</TypographyText>
               -
-              <Tag :color="finallyStatusStyle.color">{{ finallyStatusStyle.statusName || '草稿' }}</Tag>
+              <BpmnModelStatus :status="designerStatus.finallyStatus" :status-name="designerStatus.finallyStatusName"/>
             </Tooltip>
           </Col>
           <Col span="8">
@@ -186,6 +186,7 @@
   import { useClipboard } from '@vueuse/core';
   import { getXMLAttribute, updateXMLAttribute } from '#/utils/domUtils';
   import {useProcessSettingStore} from "#/store";
+  import BpmnModelStatus from "#/views/components/common/widgets/BpmnModelStatus.vue";
   // import { useAppStore } from '@/store/modules/app';
 
   const {getDesignerCurrentStepValue, setDesignerStepObj} = useProcessSettingStore();
@@ -331,6 +332,7 @@
   }
 
   const [BasicModal, modalApi] = useVbenModal({
+    headerClass: '!py-2',
     fullscreen: true,
     fullscreenButton: false,
     draggable: false,

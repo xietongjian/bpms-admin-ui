@@ -64,6 +64,9 @@
             {{ row.appName }}
           </Tooltip>
         </template>
+        <template #statusName="{row}">
+          <BpmnModelStatus :status="row.status" :status-name="row.statusName"/>
+        </template>
       </BasicTable>
     </div>
     <CopyModelInfoModal ref="copyModelInfoModalRef" @success="handleSuccess" formType="custom" />
@@ -98,6 +101,7 @@ import TaskFormDesignerModal from '#/views/form/components/TaskFormDesignerModal
 import BpmnDesignerModal from '#/views/form/components/BpmnDesignerModal.vue';
 import {Avatar, Button, Popconfirm, Tooltip, message} from 'ant-design-vue';
 import {columns, searchFormSchema} from './modelInfo.data';
+import BpmnModelStatus from "#/views/components/common/widgets/BpmnModelStatus.vue";
 
   const PerPrefix = 'Custom:';
 
@@ -175,6 +179,7 @@ import {columns, searchFormSchema} from './modelInfo.data';
     autoResize: false,
     stripe: true,
     round: false,
+    showOverflow: false,
     radioConfig: {
       highlight: true,
       labelField: 'name',

@@ -2,10 +2,8 @@ import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 
-import { Tag } from 'ant-design-vue';
-
-import { h } from 'vue';
 import {getAll} from "#/api/base/app";
+import {getModelStatusList} from "#/api/flowable/bpmn/modelInfo";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -43,25 +41,12 @@ export const columns: VxeGridProps['columns'] = [
     field: 'statusName',
     width: 70,
     align: 'center',
-    customRender: ({ record }) => {
-      const { status, statusName } = record;
-      let color = '';
-      if (~~status === 2) {
-        color = '#2db7f5';
-      } else if (~~status === 3) {
-        color = '#87d068';
-      } else if (~~status === 4) {
-        color = '#f50';
-      } else {
-        color = 'gray';
-      }
-      return h(Tag, { color: color }, () => statusName);
-    },
+    slots: { default: 'statusName' }
   },
   {
     title: '应用范围',
     field: 'appliedRangeName',
-    width: 100,
+    width: 140,
     align: 'left',
     resizable: true,
   },
@@ -88,6 +73,16 @@ export const columns: VxeGridProps['columns'] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
+    fieldName: 'keyword',
+    label: '关键字',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入名称/编码',
+      allowClear: true,
+    },
+    labelWidth: 60,
+  },
+  {
     fieldName: 'appSn',
     label: '系统',
     component: 'ApiSelect',
@@ -101,26 +96,26 @@ export const searchFormSchema: FormSchema[] = [
         value: 'sn',
         label: 'name'
       },
-    }
-  },
-  {
-    fieldName: 'keyword',
-    label: '关键字',
-    component: 'Input',
-    componentProps: {
-      placeholder: '请输入名称/编码',
-      allowClear: true,
     },
-    labelWidth: 60,
   },
   {
-    fieldName: 'categoryCode',
-    label: '',
-    component: 'Input',
-    dependencies: {
-      show: false,
-      triggerFields: ['categoryCode']
-    }
+    fieldName: 'status',
+    label: '状态',
+    component: 'ApiSelect',
+    labelWidth: 80,
+    componentProps: {
+      // 菜单接口转options格式
+      afterFetch: (data: any[]) => {
+        data.unshift({name: '全部', value: ''});
+      },
+      // 菜单接口
+      api: getModelStatusList,
+      allowClear: true,
+      fieldNames: {
+        value: 'value',
+        label: 'name'
+      },
+    },
   },
 ];
 

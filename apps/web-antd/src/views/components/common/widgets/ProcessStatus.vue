@@ -18,6 +18,9 @@
 </template>
 
 <script lang="ts" setup>
+/**
+ * 流程实例状态
+ */
 import { type PropType } from 'vue'
 import {computed, defineProps} from 'vue';
 import {Badge} from 'ant-design-vue';

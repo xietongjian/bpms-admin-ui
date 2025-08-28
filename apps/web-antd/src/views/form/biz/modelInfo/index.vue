@@ -104,6 +104,9 @@
         <template #action="{row}">
           <TableAction :actions="createActions(row)" />
         </template>
+        <template #statusName="{row}">
+          <BpmnModelStatus :status="row.status" :status-name="row.statusName"/>
+        </template>
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
           </template>
@@ -163,6 +166,7 @@
   import { PerEnum } from '#/enums/perEnum';
   import BizBpmnDesignerModal from '#/views/form/components/BizBpmnDesignerModal.vue';
   import BizNoFormBpmnDesignerModal from '#/views/form/components/BizNoFormBpmnDesignerModal.vue';
+  import BpmnModelStatus from "#/views/components/common/widgets/BpmnModelStatus.vue";
 
   const MenuItem = Menu.Item;
   const PerPrefix = 'Biz:';
@@ -184,7 +188,7 @@
       labelWidth: 60,
     },
     // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个
-    wrapperClass: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    wrapperClass: 'grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
     actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
     actionPosition: 'left',
     actionLayout: 'inline',
@@ -203,6 +207,7 @@
     autoResize: false,
     stripe: true,
     round: false,
+    showOverflow: false,
     radioConfig: {
       highlight: true,
       labelField: 'name',

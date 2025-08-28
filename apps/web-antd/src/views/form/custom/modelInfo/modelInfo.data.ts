@@ -1,7 +1,7 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
-import {FormValidPatternEnum} from "#/enums/commonEnum";
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
+import {getModelStatusList} from "#/api/flowable/bpmn/modelInfo";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -39,25 +39,12 @@ export const columns: VxeGridProps['columns'] = [
     field: 'statusName',
     width: 70,
     align: 'center',
-    /*customRender: ({ record }) => {
-      const { status, statusName } = record;
-      let color = '';
-      if (~~status === 2) {
-        color = '#2db7f5';
-      } else if (~~status === 3) {
-        color = '#87d068';
-      } else if (~~status === 4) {
-        color = '#f50';
-      } else {
-        color = 'gray';
-      }
-      return h(Tag, { color: color }, () => statusName);
-    },*/
+    slots: { default: 'statusName' }
   },
   {
     title: '应用范围',
     field: 'appliedRangeName',
-    width: 120,
+    width: 150,
     align: 'left',
     resizable: true,
   },
@@ -93,6 +80,25 @@ export const searchFormSchema: FormSchema[] = [
     },
     labelWidth: 60,
   },
+  {
+    fieldName: 'status',
+    label: '状态',
+    component: 'ApiSelect',
+    labelWidth: 60,
+    componentProps: {
+      // 菜单接口转options格式
+      afterFetch: (data: any[]) => {
+        data.unshift({name: '全部', value: ''});
+      },
+      // 菜单接口
+      api: getModelStatusList,
+      allowClear: true,
+      fieldNames: {
+        value: 'value',
+        label: 'name'
+      },
+    },
+  }
 ];
 
 export const modelInfoFormSchema: FormSchema[] = [
@@ -130,7 +136,7 @@ export const modelInfoFormSchema: FormSchema[] = [
     fieldName: 'modelKey',
     label: '标识',
     component: 'Input',
-    required: true,
+    rules: 'required'
   },
   {
     fieldName: 'appSn',

@@ -160,22 +160,16 @@ export const deployForm = (params: any) =>
     { responseReturn: 'body' }
   );
 
-export const getInitBpmnXml = (params: any) => {
-  const initBpmnXml = `
-  <?xml version="1.0" encoding="UTF-8"?>
-  <bpmn:definitions
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
-    xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-    xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
-    xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
-    targetNamespace="http://bpmn.io/schema/bpmn"
-    id="Definitions_${params.key}">
-    <bpmn:process id="${params.key}" name="${params.name}" isExecutable="true"></bpmn:process>
-    <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-      <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="${params.key}"></bpmndi:BPMNPlane>
-    </bpmndi:BPMNDiagram>
-  </bpmn:definitions>
-  `;
-  return Promise.resolve(initBpmnXml);
+/**
+ * 获取流程模板的所有状态
+ * CG(1, "草稿"), DFB(2, "待发布"), YFB(3, "已发布"), TY(4, "停用");
+ */
+export const getModelStatusList = () => {
+  const modelStatusList = [
+    {name: '草稿', value: 1},
+    {name: '待发布', value: 2},
+    {name: '已发布', value: 3},
+    {name: '停用', value: 4},
+  ];
+  return Promise.resolve(modelStatusList);
 };
