@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import {ComponentInstance, computed, nextTick, ref} from 'vue';
+import {computed, nextTick, ref} from 'vue';
 import {LoadingOutlined,} from '@ant-design/icons-vue';
 import {BpmnMocker, BpmnPresetViewer} from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
 import '#/assets/bpmn/viewer/lib/bpmn-viewer.css';
@@ -91,7 +91,7 @@ const [BasicModal, modalApi] = useVbenModal({
 });
 
 
-const bpmnMockerRef = ref<ComponentInstance<typeof BpmnPresetViewer>>();
+const bpmnMockerRef = ref<any>();
 
 const modelName = ref('');
 

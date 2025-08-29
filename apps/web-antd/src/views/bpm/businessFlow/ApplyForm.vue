@@ -61,7 +61,6 @@
 
 <script lang="ts" setup>
   import { computed, nextTick, onMounted, ref, unref, watchEffect } from 'vue';
-  import type { ComponentInstance } from 'vue';
   import { useRouter } from 'vue-router';
   import { Modal, Space, Tooltip, message } from 'ant-design-vue';
   import {Page} from '@vben/common-ui';
@@ -93,8 +92,8 @@
   const isUpdate = ref(false);
   const saveBtnLoading = ref(false);
   const mainId = ref<string>('');
-  const flowInfoFormRef = ref<ComponentInstance<typeof BasicForm>>();
-  const framePageRef = ref<ComponentInstance<typeof IntegralDesigner>>();
+  const flowInfoFormRef = ref<any>();
+  const framePageRef = ref<any>();
   const allParentsFramework = ref<Record<string, any>[]>([]);
 
   /*const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({

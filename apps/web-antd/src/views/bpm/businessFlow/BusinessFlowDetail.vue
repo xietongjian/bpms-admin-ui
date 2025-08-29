@@ -157,7 +157,7 @@
     allParentsFrameworkAndSystem.value = allParents.reverse();
   }
 
-  const viewerRef = shallowRef<ComponentInstance<typeof BpmnViewer>>();
+  const viewerRef = shallowRef<any>();
   function loadSvgXml(xml: string) {
     viewerRef.value?.createNewProcess(xml);
   }

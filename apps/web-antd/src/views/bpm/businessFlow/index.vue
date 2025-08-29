@@ -1,68 +1,69 @@
 <template>
-  <Page auto-content-height
-    v-loading="loadingRef"
-    dense
-    fixed-height
-    contentFullHeight
-    contentClass="flex"
-    class="custom-wrapper-content"
-  >
-    <BpmFrameWorkTree
-      ref="frameWorkTree"
-      class="w-3/10 xl:3/10"
-      type="3"
-      draggable
-      :max-level="3"
-      :allow-drop="allowDrop"
-      @dragstart="validateDrag"
-      @drop="handleDrop"
-      @select="handleDetail"
-    >
-      <template #actions="{ node }">
-        <Tooltip
-          v-if="node.extra?.type === '2' && hasAccessByCodes([PerPrefix + PerEnum.ADD])"
-          title="流程建模"
-          placement="bottom"
-        >
-          <PlusOutlined
-            class="m-2"
-            style="color: #536dfe; cursor: pointer"
-            @click="handleCreate(node)"
-          />
-        </Tooltip>
-        <Tooltip
-          v-if="node.extra?.type === '3' && hasAccessByCodes([PerPrefix + PerEnum.UPDATE])"
-          title="修改"
-          placement="bottom"
-        >
-          <Icon
-            icon="ant-design:form-outlined"
-            class="m-2"
-            style="color: #536dfe; cursor: pointer"
-            @click="handleEditFlow(node)"
-          />
-        </Tooltip>
-        <Dropdown trigger="hover" v-if="getDropdownMenu(node).length">
-          <Button type="link" size="small">
-            <MoreOutlined class="icon-more" />
-          </Button>
-          <template #overlay>
-            <Menu>
-              <MenuItem v-for="i in getDropdownMenu(node)" :key="i.ev">
-                <span @click="i.clickFunc">
-                  <Icon :icon="i.icon" :color="i.color" class="mr-2" style="{ cursor: pointer }" />
-                  <span>{{ i.label }}</span>
-                </span>
-              </MenuItem>
-            </Menu>
-          </template>
-        </Dropdown>
-      </template>
-    </BpmFrameWorkTree>
-
-    <div class="w-7/10 xl:w-7/10 m-4 ml-2 shrink-0" v-loading="previewLoading">
+  <ColPage
+      :left-max-width="50"
+      :left-min-width="10"
+      :left-width="15"
+      :split-handle="false"
+      :split-line="false"
+      :resizable="true"
+      :left-collapsible="false"
+      :auto-content-height="true"
+      content-class="h-full">
+    <template #left >
+      <BpmFrameWorkTree
+        ref="frameWorkTree"
+        class="w-3/10 xl:3/10"
+        type="3"
+        draggable
+        :max-level="3"
+        :allow-drop="allowDrop"
+        @dragstart="validateDrag"
+        @drop="handleDrop"
+        @select="handleDetail"
+      >
+        <template #actions="{ node }">
+          <Tooltip
+            v-if="node.extra?.type === '2' && hasAccessByCodes([PerPrefix + PerEnum.ADD])"
+            title="流程建模"
+            placement="bottom"
+          >
+            <PlusOutlined
+              class="m-2"
+              style="color: #536dfe; cursor: pointer"
+              @click="handleCreate(node)"
+            />
+          </Tooltip>
+          <Tooltip
+            v-if="node.extra?.type === '3' && hasAccessByCodes([PerPrefix + PerEnum.UPDATE])"
+            title="修改"
+            placement="bottom"
+          >
+            <EditOutlined
+              style="color: #536dfe; cursor: pointer"
+              @click="handleEditFlow(node)"
+            />
+          </Tooltip>
+          <Dropdown trigger="hover" v-if="getDropdownMenu(node).length">
+            <Button type="link" size="small">
+              <MoreOutlined class="icon-more" />
+            </Button>
+            <template #overlay>
+              <Menu>
+                <MenuItem v-for="i in getDropdownMenu(node)" :key="i.ev">
+                  <span @click="i.clickFunc">
+                    <Icon :icon="i.icon" :color="i.color" class="mr-2" style="{ cursor: pointer }" />
+                    <span>{{ i.label }}</span>
+                  </span>
+                </MenuItem>
+              </Menu>
+            </template>
+          </Dropdown>
+        </template>
+      </BpmFrameWorkTree>
+    </template>
+    <div class="w-full h-full ml-2 shrink-0" v-loading="previewLoading">
       <div v-if="selectedNode?.id" class="flex h-full">
-        <div class="content-container w-full bg-white">
+        <div class="content-container w-full bg-card">
           <BpmnViewer
             v-if="showXml"
             ref="viewerRef"
@@ -78,45 +79,44 @@
             :editable="false"
             :theme="isDark ? 'dark' : 'light'"
           />
-          <div style="line-height: 200px; text-align: center">
+          <div class="leading-50 text-center" >
             <Spin tip="加载中..." />
           </div>
         </div>
         <div
-          class="bg-white ml-2 p-2 base-info-box overflow-y-auto"
+          class="bg-white ml-2 p-2 base-info-box overflow-y-auto pt-3"
           :class="{ 'base-info-box-collapse': infoCollapsed }"
-          style="padding-top: 10px; overflow-y: scroll"
         >
-          <Tooltip :title="infoCollapsed ? '展开' : '收起'" @click="infoCollapsed = !infoCollapsed">
-            <span style="cursor: pointer" class="font-bold text-md">
+          <div
+              class="font-bold text-md cursor-pointer"
+              :class="{'w-6 h-full': infoCollapsed}"
+              @click="infoCollapsed = !infoCollapsed"
+          >
+            <Tooltip :title="infoCollapsed ? '展开' : '收起'" >
               <MenuFoldOutlined v-show="infoCollapsed" />
               <MenuUnfoldOutlined v-show="!infoCollapsed" />
-              基本信息
-            </span>
-          </Tooltip>
+            </Tooltip>
+            基本信息
+          </div>
 
-          <Description
-            class="mt-2 p-4"
-            v-if="!infoCollapsed && selectedNode.extra.type !== '3'"
-            size="middle"
-            :bordered="false"
-            :column="1"
-            :data="frameworkInfo"
-            :schema="frameworkInfo.type === '1' ? detailSystemViewSchema : detailViewSchema"
-          />
-          <Description
-            class="mt-2 p-4"
-            v-if="!infoCollapsed && selectedNode.extra.type === '3'"
-            size="middle"
-            :bordered="false"
-            :column="1"
-            :data="businessInfo"
-            :schema="detailSchema"
-          />
+          <div v-if="!infoCollapsed && selectedNode.extra.type !== '3'" class="mt-4">
+            <Descriptions
+                size="middle"
+                :bordered="false"
+                :column="{ md: 1 }"
+            >
+              <DescriptionsItem v-if="frameworkInfo.type === '1'" v-for="item in detailSystemViewSchema" :label="item.label">
+                {{ frameworkInfo[item.fieldName] }}
+              </DescriptionsItem>
+              <DescriptionsItem v-else v-for="item in detailViewSchema" :label="item.label">
+                {{ frameworkInfo[item.fieldName] }}
+              </DescriptionsItem>
+            </Descriptions>
+          </div>
         </div>
       </div>
 
-      <div v-else class="p-4 h-full bg-white">
+      <div v-else class="p-4 h-full bg-card flex flex-col justify-center ">
         <Empty description="请选择左侧体系/架构进行预览！" />
       </div>
     </div>
@@ -129,35 +129,33 @@
     <BusinessFlowApplyFormModal
         ref="businessFlowApplyFormModalRef"
         @success="handleRequestSuccess" />
-  </Page>
+  </ColPage>
 </template>
 
 <script lang="ts" setup>
   import { createVNode, nextTick, ref, shallowRef } from 'vue';
-  import type { ComponentInstance } from 'vue';
   import BusinessFlowApplyFormModal from './BusinessFlowApplyFormModal.vue';
   import AuthSettingModal from './AuthSettingModal.vue';
   import { deleteBusinessFlowById, moveBusinessFlowToFrame } from '#/api/bpm/businessflow';
   import { getBusinessFlowById, publishProcess } from '#/api/bpm/businessFlowApply';
-  import {Page} from '@vben/common-ui';
+  import {ColPage} from '@vben/common-ui';
   import { BpmnViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer';
   import { IntegralDesigner } from '#/assets/logicflow/lf-designer';
   import { getById } from '#/api/bpm/framework';
-  import { Button, Dropdown, Descriptions, Empty, Menu, MenuItem, Modal, Spin, Tooltip, message } from 'ant-design-vue';
+  import { Button, Dropdown, Descriptions, DescriptionsItem, Empty, Menu, MenuItem, Modal, Spin, Tooltip, message } from 'ant-design-vue';
   import { detailSystemViewSchema, detailViewSchema } from '#/views/bpm/framework/framework.data';
   import {useRouter} from 'vue-router';
-
-  // import { Description } from '@/components/Description';
   import {
     ExclamationCircleOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     MoreOutlined,
     PlusOutlined,
+    EditOutlined
   } from '@ant-design/icons-vue';
   import { detailSchema } from '#/views/bpm/businessFlow/businessFlowApply.data';
+
   import BpmFrameWorkTree from '#/views/bpm/components/BpmFrameWorkTree.vue';
-  // import Icon from '@/components/Icon/Icon.vue';
   import { usePreferences } from '@vben/preferences';
   import {useAccess} from "@vben/access";
   import type {Recordable} from '@vben/types';
@@ -170,9 +168,9 @@
   const {hasAccessByCodes}  = useAccess();
   const router = useRouter();
 
-  const frameWorkTree = shallowRef<ComponentInstance<typeof BpmFrameWorkTree>>();
-  const framePageRef = shallowRef<ComponentInstance<typeof IntegralDesigner>>();
-  const viewerRef = shallowRef<ComponentInstance<typeof BpmnViewer>>();
+  const frameWorkTree = shallowRef<any>();
+  const framePageRef = shallowRef<any>();
+  const viewerRef = shallowRef<any>();
 
   const selectedNode = ref<Recordable<any>>({});
   const currentCategory = ref<Recordable<any>>({});
@@ -185,19 +183,6 @@
 
   const authSettingModalRef = ref(),
       businessFlowApplyFormModalRef = ref();
-
-/*  const [
-    registerAuthSettingModal,
-    { openModal: openAuthSettingModal, setModalProps: setAuthSettingModalProps },
-  ] = useModal();
-
-  const [
-    registerBusinessFlowApplyFormModal,
-    {
-      openModal: openBusinessFlowApplyFormModal,
-      setModalProps: setBusinessFlowApplyFormModalProps,
-    },
-  ] = useModal();*/
 
   function getDropdownMenu(node) {
     if (node.extra?.type !== '3') {
@@ -242,36 +227,12 @@
     // setModalBaseProps();
   }
 
-  function setModalBaseProps() {
-    /*setBusinessFlowApplyFormModalProps({
-      title: `创建`,
-      bodyStyle: { padding: '0px', margin: '0px' },
-      defaultFullscreen: true,
-      maskClosable: false,
-      centered: true,
-      showOkBtn: false,
-      showCancelBtn: false,
-      draggable: false,
-      canFullscreen: false,
-      closable: false,
-      destroyOnClose: true,
-    });*/
-  }
-
   function handleAuthSetting(record: Recordable<any>) {
     businessFlowApplyFormModalRef.value.setData(record);
     businessFlowApplyFormModalRef.value.setState({
       title: '设置【' + record.name + '】的查阅权限',
     });
     businessFlowApplyFormModalRef.value.open();
-
-    // openAuthSettingModal(true, {
-    //   record: record,
-    // });
-    // setAuthSettingModalProps({
-    //   title: '设置【' + record.name + '】的查阅权限',
-    //   width: 800,
-    // });
   }
 
   // 拖拽验证
@@ -404,13 +365,13 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import '#/assets/logicflow/style.css';
   @import '#/assets/hilight-js/index.css';
   @import '#/assets/bpmn/viewer/lib/style.css';
 </style>
 <style lang="scss" scoped>
-  .content-container {
+/*  .content-container {
     height: 100%;
     width: 100%;
     min-width: 70%;
@@ -422,5 +383,5 @@
   .base-info-box-collapse {
     width: 40px;
     text-align: center;
-  }
+  }*/
 </style>

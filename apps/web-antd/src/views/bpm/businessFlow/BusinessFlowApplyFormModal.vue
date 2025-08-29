@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ComponentInstance, computed, defineEmits, defineExpose, nextTick, ref, unref } from 'vue';
+  import { computed, defineEmits, defineExpose, nextTick, ref, unref } from 'vue';
   import { Badge, Button, Col, Modal, Row, Space, Steps, Tooltip, message } from 'ant-design-vue';
   import { IntegralDesigner } from '#/assets/business-designer/business-designer';
   import { getByFlowId, getById, saveOrUpdate } from '#/api/bpm/businessFlowApply';
@@ -119,7 +119,7 @@
   const modelBaseInfo = ref<Record<string, any>>({});
 
   // const { closeCurrent } = useTabs();
-  const framePageRef = ref<ComponentInstance<typeof IntegralDesigner>>();
+  const framePageRef = ref<any>();
   const allParentsFramework = ref<Record<string, any>[]>([]);
   const currentStepValue = ref(0);
   const dataTypeRef = ref('');

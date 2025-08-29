@@ -88,7 +88,6 @@
 
 <script lang="ts" setup>
 import {defineEmits, defineExpose, nextTick, ref, shallowRef, unref} from 'vue';
-import type {ComponentInstance} from 'vue';
 // import { BasicModal, useModalInner } from '@/components/Modal';
 import {useVbenModal} from '@vben/common-ui';
 import {usePreferences} from '@vben/preferences';
@@ -117,7 +116,7 @@ const collapseBaseInfo = ref(false);
 const isUpdate = ref(false);
 const saveBtnLoading = ref(false);
 const mainId = ref('');
-const logicFlowRef = shallowRef<ComponentInstance<typeof IntegralDesigner>>();
+const logicFlowRef = shallowRef<any>();
 const allParentsFramework = ref<Record<string, any>[]>([]);
 const modelBaseInfo = ref<Record<string, any>>({});
 const formLoading = ref(false);

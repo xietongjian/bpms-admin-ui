@@ -96,7 +96,6 @@
 <script lang="ts" setup>
   import { computed, createVNode, nextTick, ref, shallowRef } from 'vue';
 
-  import type {ComponentInstance} from 'vue';
   import type {Recordable} from '@vben/types';
 
   import {Page} from '@vben/common-ui';
@@ -137,9 +136,9 @@
 
   const modelInfoSelectorModalRef = ref();
   const pageLoading = ref(false);
-  const frameWorkTree = shallowRef<ComponentInstance<typeof BpmFrameWorkTree>>();
-  const framePageRef = shallowRef<ComponentInstance<typeof IntegralDesigner>>();
-  const viewerRef = shallowRef<ComponentInstance<typeof BpmnViewer>>();
+  const frameWorkTree = shallowRef<any>();
+  const framePageRef = shallowRef<any>();
+  const viewerRef = shallowRef<any>();
 
   const businessFlowId = ref('');
   const selectedBindTarget = ref<Recordable<any>>({});

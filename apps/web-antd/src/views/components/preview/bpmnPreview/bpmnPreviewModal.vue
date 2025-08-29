@@ -75,7 +75,7 @@ import {computed, ref, unref, shallowRef, defineExpose, nextTick} from 'vue';
     showConfirmButton: false,
     cancelText: '关闭',
   });
-  const presetViewer = ref<ComponentInstance<typeof BpmnPresetViewer>>();
+  const presetViewer = ref<any>();
   const bpmnViewer = shallowRef();
 
 

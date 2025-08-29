@@ -152,7 +152,6 @@
   import { createVNode, nextTick, ref, shallowRef, unref } from 'vue';
   import { Button, Descriptions, Dropdown, Empty, Menu, message, MenuItem, Modal, Spin, Tooltip } from 'ant-design-vue';
   import type { Recordable } from '@vben/types';
-  import type {ComponentInstance} from 'vue';
 
   import {
     DeleteOutlined,
@@ -199,8 +198,8 @@
 
   const selectedNode = ref<Recordable<any>>({});
   const currentNode = shallowRef<Recordable<any>>();
-  const basicTreeRef = shallowRef<ComponentInstance<typeof BpmFrameWorkTree>>();
-  const framePageRef = shallowRef<ComponentInstance<typeof IntegralDesigner>>();
+  const basicTreeRef = shallowRef<any>();
+  const framePageRef = shallowRef<any>();
 
   // const [
   //   registerFrameworkDesignerModal,

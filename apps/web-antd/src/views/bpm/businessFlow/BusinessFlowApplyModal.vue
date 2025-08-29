@@ -1,19 +1,17 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal >
+    <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import { defineComponent, ref, computed, unref } from 'vue';
+  import { ref, computed, unref } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
-
   import {formSchema} from './businessFlowApply.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/bpm/businessFlowApply';
-  // import { CheckExistParams } from '#/api/model/baseModel';
 
+  const emit = defineEmits(['success']);
   const isUpdate = ref(true);
-
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
       labelWidth: 100,
@@ -22,7 +20,7 @@
     showDefaultActions: false,
   });
 
-  const getBaseDynamicRules = (params: any) => {
+  /*const getBaseDynamicRules = (params: any) => {
     return [
       {
         trigger: 'blur',
@@ -50,7 +48,7 @@
         },
       },
     ] as Rule[];
-  };
+  };*/
 
   const [BasicModal, modalApi] = useVbenModal({
     fullscreenButton: false,
@@ -76,13 +74,17 @@
 
   async function handleSubmit() {
     try {
-      const values = await validate();
-      setModalProps({ confirmLoading: true });
+      const {valid} = await formApi.validate();
+      if(!valid){
+        return;
+      }
+      const values = await formApi.getValues();
+      modalApi.setState({loading: true, confirmLoading: true});
       await saveOrUpdate(values);
-      closeModal();
+      modalApi.close();
       emit('success');
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: true, confirmLoading: true});
     }
   }
 
@@ -96,4 +98,5 @@
       return { registerModal, registerForm, getTitle, handleSubmit };
     },
   });*/
+  defineExpose(modalApi)
 </script>
