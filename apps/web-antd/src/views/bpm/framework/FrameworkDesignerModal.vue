@@ -1,10 +1,5 @@
 <template>
-  <BasicModal
-      :footer="null"
-      v-bind="$attrs"
-      @register="registerModal"
-      wrap-class-name="framework-designer-container "
-  >
+  <BasicModal >
     <template #title>
       <div style="width: 100%">
         <Row>

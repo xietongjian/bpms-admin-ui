@@ -2,7 +2,7 @@
   <ColPage
       :left-max-width="50"
       :left-min-width="10"
-      :left-width="15"
+      :left-width="20"
       :split-handle="false"
       :split-line="false"
       :resizable="true"
@@ -19,62 +19,49 @@
           @drop="handleDrop"
       >
         <template #header>
-<!--          <Authority :value="'ProcessFramework:' + PerEnum.ADD">-->
-            <Tooltip title="新增公司架构">
-              <Button type="primary" size="small" @click="handleCreateSystem">
-                <PlusOutlined />
-              </Button>
-            </Tooltip>
-<!--          </Authority>-->
-<!--          <Authority :value="'ProcessFramework:' + PerEnum.ADD">-->
-            <Tooltip title="下载架构导入模板">
-              <Button class="ml-2" type="primary" size="small" @click="handleDownloadTemplate">
-                <DownloadOutlined />
-              </Button>
-            </Tooltip>
-<!--          </Authority>-->
+          <Tooltip v-access:code="PerPrefix+PerEnum.ADD" title="新增公司架构">
+            <Button type="primary" size="small" @click="handleCreateSystem">
+              <PlusOutlined />
+            </Button>
+          </Tooltip>
+          <Tooltip v-access:code="PerPrefix+PerEnum.ADD" title="下载架构导入模板">
+            <Button class="ml-2" type="primary" size="small" @click="handleDownloadTemplate">
+              <DownloadOutlined />
+            </Button>
+          </Tooltip>
         </template>
 
         <template #actions="{ node }">
-          <Authority :value="'ProcessFramework:' + PerEnum.ADD">
-            <Tooltip :title="node.extra.type === '1' ? '新增架构' : '新增子架构'">
-              <PlusOutlined
-                  class="mr-2"
-                  style="color: #536dfe; cursor: pointer"
-                  @click.stop="handleCreateChild(node)"
-              />
-            </Tooltip>
-          </Authority>
+          <Tooltip v-access:code="PerPrefix+PerEnum.ADD" :title="node.extra.type === '1' ? '新增架构' : '新增子架构'">
+            <PlusOutlined
+                style="color: #536dfe; cursor: pointer"
+                @click.stop="handleCreateChild(node)"
+            />
+          </Tooltip>
           <Dropdown trigger="hover" v-if="validatePermission(node)">
             <Button type="link" size="small">
               <MoreOutlined class="icon-more" />
             </Button>
             <template #overlay>
               <Menu>
-                <Authority v-if="node.extra.type === '1'" :value="'ProcessFramework:' + PerEnum.ADD">
-                  <MenuItem>
-                    <span @click.stop="handleUploadFramework(node)">
-                      <PlusOutlined class="mr-2" style="color: #536dfe; cursor: pointer" />
-                      <span>批量导入</span>
-                    </span>
-                  </MenuItem>
-                </Authority>
-                <Authority :value="'ProcessFramework:' + PerEnum.UPDATE">
-                  <MenuItem>
-                    <span @click.stop="handleEditFramework(node)">
-                      <FormOutlined class="mr-2" style="color: #536dfe; cursor: pointer" />
-                      <span>编辑</span>
-                    </span>
-                  </MenuItem>
-                </Authority>
-                <Authority :value="'ProcessFramework:' + PerEnum.DELETE">
-                  <MenuItem>
-                    <span @click="handleDeleteFramework(node)">
-                      <DeleteOutlined class="mr-2" style="color: #ed6f6f; cursor: pointer" />
-                      <span>删除</span>
-                    </span>
-                  </MenuItem>
-                </Authority>
+                <MenuItem v-if="node.extra.type === '1'" v-access:code="PerPrefix+PerEnum.ADD">
+                  <div @click.stop="handleUploadFramework(node)">
+                    <PlusOutlined class="mr-2" style="color: #536dfe; cursor: pointer" />
+                    <span>批量导入</span>
+                  </div>
+                </MenuItem>
+                <MenuItem v-access:code="PerPrefix+PerEnum.UPDATE">
+                  <div @click.stop="handleEditFramework(node)">
+                    <FormOutlined class="mr-2" style="color: #536dfe; cursor: pointer" />
+                    <span>编辑</span>
+                  </div>
+                </MenuItem>
+                <MenuItem v-access:code="PerPrefix+PerEnum.DELETE">
+                  <span @click="handleDeleteFramework(node)">
+                    <DeleteOutlined class="mr-2" style="color: #ed6f6f; cursor: pointer" />
+                    <span>删除</span>
+                  </span>
+                </MenuItem>
               </Menu>
             </template>
           </Dropdown>
@@ -105,11 +92,11 @@
               style="padding-top: 10px; overflow-y: scroll"
           >
             <Tooltip :title="collapseBaseInfo ? '展开' : '收起'" @click="handleCollapseBaseInfo">
-            <span style="cursor: pointer" class="font-bold text-md">
-              <MenuFoldOutlined v-show="collapseBaseInfo" /><!-- 左箭头 -->
-              <MenuUnfoldOutlined v-show="!collapseBaseInfo" /><!-- 右箭头 -->
-              基本信息
-            </span>
+              <span style="cursor: pointer" class="font-bold text-md">
+                <MenuFoldOutlined v-show="collapseBaseInfo" /><!-- 左箭头 -->
+                <MenuUnfoldOutlined v-show="!collapseBaseInfo" /><!-- 右箭头 -->
+                基本信息
+              </span>
             </Tooltip>
 
             <Descriptions
@@ -135,20 +122,12 @@
       </div>
     </div>
 
-    <FrameworkDesignerModal
-        ref="frameworkDesignerModalRef"
-        @success="handleFrameworkDesignerModalSuccess"
-    />
-
-    <FrameworkUploadModal
-        ref="frameworkUploadModalRef"
-        @success="reloadFrameworkTree"
-    />
+    <FrameworkDesignerModal ref="frameworkDesignerModalRef" @success="handleFrameworkDesignerModalSuccess" />
+    <FrameworkUploadModal ref="frameworkUploadModalRef" @success="reloadFrameworkTree" />
   </ColPage>
 </template>
 
 <script lang="ts" setup>
-  // import { Authority } from '@/components/Authority';
   import { createVNode, nextTick, ref, shallowRef, unref } from 'vue';
   import { Button, Descriptions, Dropdown, Empty, Menu, message, MenuItem, Modal, Spin, Tooltip } from 'ant-design-vue';
   import type { Recordable } from '@vben/types';
@@ -170,8 +149,6 @@
     moveFramework,
   } from '#/api/bpm/framework';
   import {ColPage} from '@vben/common-ui';
-
-  // import { Description } from '@/components/Description';
   import { detailSystemViewSchema, detailViewSchema } from './framework.data';
   import { PerEnum } from '#/enums/perEnum';
   import { downloadByUrl } from '#/utils/file/download';
@@ -201,12 +178,6 @@
   const basicTreeRef = shallowRef<any>();
   const framePageRef = shallowRef<any>();
 
-  // const [
-  //   registerFrameworkDesignerModal,
-  //   { openModal: openFrameworkDesignerModal, setModalProps: setFrameworkDesignerModalProps },
-  // ] = useModal();
-  // const [registerFrameworkUploadModal, { openModal: openFrameworkUploadModal }] = useModal();
-
   async function handleFrameworkDesignerModalSuccess(data) {
     if (data.id) {
       await basicTreeRef.value?.fetch();
@@ -217,8 +188,6 @@
   }
   // 创建体系
   function handleCreateSystem() {
-    // openFrameworkDesignerModal(true, { type: 'system' });
-
     frameworkDesignerModalRef.value.setData({ type: 'system' }).open();
     setModalBaseProps();
   }
@@ -256,8 +225,8 @@
     );
   }
 
-  function handleEditFramework(record: Recordable) {
-    if (!hasAccessByCodes(PerPrefix + PerEnum.UPDATE)) {
+  function handleEditFramework(record: Recordable<any>) {
+    if (!hasAccessByCodes([PerPrefix + PerEnum.UPDATE])) {
       message.warn('无操作权限，请联系管理员！');
       return;
     }
@@ -272,8 +241,8 @@
     frameworkUploadModalRef.value.setData(node).open();
   }
 
-  function handleCreateChild(record: Recordable) {
-    if (!hasAccessByCodes(PerPrefix + PerEnum.ADD, false)) {
+  function handleCreateChild(record: Recordable<any>) {
+    if (!hasAccessByCodes([PerPrefix + PerEnum.ADD])) {
       message.warn('无操作权限，请联系管理员！');
       return;
     }
@@ -283,8 +252,8 @@
     setModalBaseProps();
   }
 
-  function handleDeleteFramework(record: Recordable) {
-    if (!hasAccessByCodes(PerPrefix + PerEnum.DELETE, false)) {
+  function handleDeleteFramework(record: Recordable<any>) {
+    if (!hasAccessByCodes([PerPrefix + PerEnum.DELETE])) {
       message.warn('无操作权限，请联系管理员！');
       return;
     }
@@ -299,7 +268,6 @@
           const { success, msg, data } = await deleteByIds([record.id]);
           if (success) {
             message.success(msg);
-            // await basicTreeRef.value.fetch();
             await basicTreeRef.value?.handleDelete(record);
           } else {
             message.error(msg);
@@ -326,6 +294,7 @@
     }
   }
   async function handleDrop({ node, dragNode, dropPosition }) {
+    debugger;
     treeLoading.value = true;
     try {
       // 设置相关请求参数
@@ -360,7 +329,6 @@
 
   function doPreview() {
     previewLoading.value = true;
-    debugger;
     getById({ id: currentNode.value?.id })
       .then((res) => {
         frameworkInfo.value = res;
@@ -405,7 +373,7 @@
   }
 </script>
 
-<style lang="less">
+<style lang="scss">
   .role-companies {
     .company-item {
       margin-bottom: 5px;
@@ -417,7 +385,7 @@
     }
   }
 </style>
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .base-info-box {
     width: 600px;
     transition: width 0.25s;

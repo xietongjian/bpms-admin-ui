@@ -16,8 +16,7 @@
       <BasicTable >
         <template #toolbar-tools >
           <div class="flex flex-row gap-2">
-            <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH"
-                placement="bottom">
+            <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH" placement="bottom">
               <template #title>
                 <span>只有状态为【待发布】的数据才能发布</span>
               </template>

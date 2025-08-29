@@ -6,7 +6,7 @@
           流程体系/架构
         </div>
         <div class="">
-          <slot name="header">流程体系/架构</slot>
+          <slot name="header" >流程体系/架构</slot>
         </div>
       </div>
       <div
@@ -14,15 +14,15 @@
           :spinning="treeLoading"
           tip="加载中..."
       >
-        <Tree
+        <DirectoryTree
             block-node
-            :expandedKeys="expandedKeys"
+            :showIcon="false"
+            v-model:expandedKeys="expandedKeys"
             :selectedKeys="selectedKeys"
             :treeData="treeData"
             @select="handleClick"
-            :on-load="asyncLoadData"
+            :loadData="asyncLoadData"
             :draggable="draggable"
-            :node-props="nodeProps"
             :render-prefix="renderIcon"
             :render-suffix="renderActions"
             :allow-drop="allowDrop"
@@ -32,19 +32,36 @@
             @dragstart="$emit('dragstart', $event)"
             @drop="$emit('drop', $event)"
         >
+          <template #icon="record">
+<!--            {{record.extra.type}}-->
+
+          </template>
+          <template #title="record">
+            <div class="flex items-start group relative leading-7 gap-1">
+              <span class="w-4">
+                <ApartmentOutlined class="text-[#1890ff]"/>
+              </span>
+              <span class="flex-1 !break-all" :title="record.name">
+                {{record.name}}
+              </span>
+              <div class="flex items-center leading-7 justify-between gap-2 invisible group-hover:visible h-full inline-block">
+                <slot name="actions" :node="record"></slot>
+              </div>
+            </div>
+          </template>
 <!--          <template #empty>
             <Empty :image="Empty.PRESENTED_IMAGE_SIMPLE" class="!mt-4"/>
           </template>-->
-        </Tree>
+        </DirectoryTree>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {computed, defineEmits, onMounted, ref, h} from 'vue';
+import {computed, defineSlots, defineEmits, onMounted, ref, h} from 'vue';
 import type {PropType} from 'vue';
-import {Empty, Spin, Tree} from 'ant-design-vue';
+import {Empty, Spin, Tree, Dropdown, Menu, DirectoryTree} from 'ant-design-vue';
 // import { createTheme, NConfigProvider, NTree, treeDark } from 'naive-ui';
 // import TreeHeader from '@/components/Tree/src/components/TreeHeader.vue';
 import {findNode, getAllParentKeys} from '#/utils/helper/treeHelper';
@@ -53,13 +70,14 @@ import {
   getChildrenTreeNodes,
   getOneTwoLeftTreeNodes,
 } from '#/api/bpm/businessflow';
-import {ApartmentOutlined, NodeExpandOutlined, RetweetOutlined} from '@ant-design/icons-vue';
+import {ApartmentOutlined, PlusOutlined, MoreOutlined, NodeExpandOutlined, RetweetOutlined} from '@ant-design/icons-vue';
 import {isArray} from '#/utils/is';
 import {usePreferences} from '@vben/preferences';
 
 defineOptions({name: 'BpmFrameWorkTree'});
 
 const {isDark} = usePreferences();
+const MenuItem = Menu.Item;
 
 const prop = defineProps({
   draggable: {
@@ -114,6 +132,10 @@ function handleClick(selectedKeys, e) {
   }, 200);
 }
 
+
+function handleMoreMenuClick() {
+
+}
 const nodeProps = ({option}) => {
   return {
     onClick() {
@@ -199,11 +221,11 @@ function asyncLoadData(treeNode) {
           .then((children) => {
             if (children?.length) {
               children.forEach((i) => (i.isLeaf = true));
-              treeNode.isLeaf = false;
-              treeNode.children = children;
+              treeNode.dataRef.isLeaf = false;
+              treeNode.dataRef.children = children;
             } else {
-              treeNode.children = [];
-              treeNode.isLeaf = true;
+              treeNode.dataRef.children = [];
+              treeNode.dataRef.isLeaf = true;
             }
             resolve();
           })
@@ -229,11 +251,11 @@ function asyncLoadData(treeNode) {
             });
             if (children.length) {
               // children.forEach((i) => (i.isLeaf = i.extra.isLeaf === 'true'));
-              treeNode.isLeaf = false;
-              treeNode.children = children;
+              treeNode.dataRef.isLeaf = false;
+              treeNode.dataRef.children = children;
             } else {
-              treeNode.children = [];
-              treeNode.isLeaf = true;
+              treeNode.dataRef.children = [];
+              treeNode.dataRef.isLeaf = true;
             }
             resolve();
           })
@@ -241,8 +263,8 @@ function asyncLoadData(treeNode) {
       return;
     }
     // 3. 其他情况下，默认是子节点
-    treeNode.children = [];
-    treeNode.isLeaf = true;
+    treeNode.dataRef.children = [];
+    treeNode.dataRef.isLeaf = true;
     resolve();
   });
 }
