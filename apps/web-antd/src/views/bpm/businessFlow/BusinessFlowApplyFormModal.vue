@@ -1,9 +1,6 @@
 <template>
   <BasicModal
     :footer="null"
-    v-bind="$attrs"
-    @register="registerModal"
-    wrap-class-name="business-flow-apply-container "
   >
     <template #title>
       <div style="width: 100%">
@@ -72,7 +69,7 @@
           </span>
         </Tooltip>
 
-        <BasicForm @register="registerForm" v-show="!collapseBaseInfo" class="!mt-4" />
+        <BasicForm v-show="!collapseBaseInfo" class="!mt-4" />
       </div>
     </div>
   </BasicModal>

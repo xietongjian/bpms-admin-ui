@@ -85,16 +85,13 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { PerEnum } from '#/enums/perEnum';
-
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import type { VbenFormProps } from '@vben/common-ui';
 import type { Recordable } from '@vben/types';
-
 import { Page } from '@vben/common-ui';
 import { Button, Tag, message, Descriptions } from 'ant-design-vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { TableAction } from '#/components/table-action';
-
 import { getAll, deleteBusinessTokenById } from '#/api/base/bizTokenConfig';
 import { columns, searchFormSchema } from './bizTokenConfig.data';
 import BizTokenConfigDrawer from './BizTokenConfigDrawer.vue';

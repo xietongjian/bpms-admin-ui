@@ -2,7 +2,7 @@
   <ColPage
       :left-max-width="50"
       :left-min-width="10"
-      :left-width="15"
+      :left-width="20"
       :split-handle="false"
       :split-line="false"
       :resizable="true"

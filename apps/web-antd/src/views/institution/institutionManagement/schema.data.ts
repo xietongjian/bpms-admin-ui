@@ -16,27 +16,28 @@ export const InstitutionColumns: VxeGridProps['columns'] = [
   {
     title: '级别',
     field: 'level',
-    align: 'left',
+    align: 'right',
     width: 80,
     resizable: true,
   },
   {
     title: '权限范围',
     field: 'privilegeRange',
-    align: 'right',
     width: 120,
-    format: (text) => (text === '1' ? '公开' : '范围内可见'),
+    slots: {default: 'privilegeRange'},
   },
   {
     title: '部门',
     field: 'deptRangeData',
     minWidth: 300,
+    slots: {default: 'deptRangeData'},
     width: 300,
   },
   {
     title: '岗位',
     field: 'positionRangeData',
     minWidth: 300,
+    slots: {default: 'positionRangeData'},
     width: 300,
   },
   {

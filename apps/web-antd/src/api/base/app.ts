@@ -47,5 +47,5 @@ export async function checkEntityExist(params: any) {
  * @param params
  */
 export async function refreshSecretKey (params: string) {
-  return requestClient.post<string>(Api.RefreshSecretKey + '/' + params, {}, {responseReturn: 'body'});
+  return requestClient.post<any>(Api.RefreshSecretKey + '/' + params, {}, {responseReturn: 'body'});
 }

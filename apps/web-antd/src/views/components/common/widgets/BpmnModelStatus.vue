@@ -10,7 +10,7 @@ import {computed, defineProps} from 'vue';
 import {Tag} from 'ant-design-vue';
 
 const props = defineProps({
-  status: {default: '', type: String},
+  status: {default: '', type: Number},
   statusName: {default: '草稿', type: String},
 });
 

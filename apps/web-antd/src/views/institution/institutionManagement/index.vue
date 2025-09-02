@@ -38,7 +38,7 @@ const formOptions: VbenFormProps = {
   schema: InstitutionSearchForm,
 };
 
-const gridOptions: VxeGridProps<any> = {
+const gridOptions: VxeGridProps = {
   columns: InstitutionColumns,
   columnConfig: {resizable: true},
   height: 'auto',
@@ -49,7 +49,7 @@ const gridOptions: VxeGridProps<any> = {
     ajax: {
       query: async ({page}, formValues) => {
         formValues.categoryId = currentNode.value.id;
-        return getGroupListByPage({
+        return getInstitutionTableData({
           query: {
             pageNum: page.currentPage,
             pageSize: page.pageSize,
@@ -65,7 +65,6 @@ const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
 async function handleSelect(node: any) {
   currentNode.value = node;
-
   await tableApi.reload();
 }
 
@@ -127,11 +126,11 @@ function createActions(record) {
   <ColPage
       :left-max-width="50"
       :left-min-width="10"
-      :left-width="15"
-      :split-handle="true"
-      :split-line="true"
+      :left-width="20"
+      :split-handle="false"
+      :split-line="false"
       :resizable="true"
-      :left-collapsible="true"
+      :left-collapsible="false"
       :auto-content-height="true"
       content-class="h-full">
     <template #left>
@@ -140,7 +139,7 @@ function createActions(record) {
       </div>
     </template>
 
-    <BasicTable class="w-full">
+    <BasicTable class="ml-2 w-full">
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>
@@ -152,6 +151,10 @@ function createActions(record) {
             }}
           </Tag>
         </Space>
+      </template>
+
+      <template #privilegeRange="{row}">
+        {{row.privilegeRange ==='1'?'公开':'范围内可见'}}
       </template>
       <template #positionRangeData="{row}">
         <Space class="flex-wrap">

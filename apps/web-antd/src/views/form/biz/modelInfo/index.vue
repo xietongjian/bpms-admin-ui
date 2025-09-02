@@ -16,32 +16,33 @@
       <BasicTable >
         <template #toolbar-tools >
           <div class="flex flex-row gap-2">
-            <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH" placement="bottom">
-              <template #title>
-                <span>只有状态为【待发布】的数据才能发布</span>
-              </template>
-              <Popconfirm
-                  :title="`确定要发布【${currentModelInfo.name}】流程吗？`"
-                  @confirm="handlePublish"
-                  :disabled="!showPublishBtn"
-              >
+            <Popconfirm
+                :title="`确定要发布【${currentModelInfo.name}】流程吗？`"
+                @confirm="handlePublish"
+                :disabled="!showPublishBtn"
+            >
+              <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH" placement="bottom">
+                <template #title>
+                  <span>只有状态为【待发布】的数据才能发布</span>
+                </template>
                 <Button :disabled="!showPublishBtn" type="primary">发布</Button>
-              </Popconfirm>
-            </Tooltip>
-            <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH"
-                placement="bottom">
-              <template #title>
-                <span>只有状态为【待发布/已发布】的数据才能停用</span>
-              </template>
-              <Popconfirm
-                  :title="`确定要停用【${currentModelInfo.name}】流程吗？`"
-                  @confirm="handleStop"
-                  :disabled="!showStopBtn"
-                  :okButtonProps="{ danger: true }"
-              >
+              </Tooltip>
+            </Popconfirm>
+
+            <Popconfirm
+                :title="`确定要停用【${currentModelInfo.name}】流程吗？`"
+                @confirm="handleStop"
+                :disabled="!showStopBtn"
+                :okButtonProps="{ danger: true }"
+            >
+              <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH"
+                       placement="bottom">
+                <template #title>
+                  <span>只有状态为【待发布/已发布】的数据才能停用</span>
+                </template>
                 <Button :disabled="!showStopBtn" type="primary" danger>停用</Button>
-              </Popconfirm>
-            </Tooltip>
+              </Tooltip>
+            </Popconfirm>
             <Dropdown v-access:code="PerPrefix+PerEnum.ADD" placement="bottom">
               <template #overlay>
                 <Menu @click="handleCreate">

@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import {defineExpose, defineEmits} from 'vue';
 import {message} from 'ant-design-vue';
-
 import {useVbenModal} from '@vben/common-ui';
 import {useVbenForm} from '#/adapter/form';
-
 import {formSchema} from './app.data';
 import {saveOrUpdate} from '#/api/base/app';
 
@@ -59,6 +57,7 @@ async function handleSubmit() {
         message.error(msg);
       }
     } catch (e) {
+      console.error(e);
       message.error(e);
     } finally {
       modalApi.setState({loading: false, confirmLoading: false});

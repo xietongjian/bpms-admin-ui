@@ -1,14 +1,12 @@
 <script setup lang="ts">
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
-  import { computed, defineEmits, defineExpose, ref } from 'vue';
+  import { computed, defineEmits, defineExpose } from 'vue';
   import { InstitutionalClassificationFormSchema } from './schema.data';
-  // import { FormValidPatternEnum } from '#/enums/constantEnum';
+  import {message} from 'ant-design-vue';
   import { saveOrUpdateClassification } from '#/api/institution/institution';
 
   const emit = defineEmits(['success']);
-
-  const isUpdate = ref(true);
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
@@ -17,7 +15,6 @@
     schema: InstitutionalClassificationFormSchema,
     showDefaultActions: false,
   });
-
 
   const [BasicModal, modalApi] = useVbenModal({
     fullscreenButton: false,
@@ -65,8 +62,6 @@
     },
   });
 
-  const getTitle = computed(() => (isUpdate.value ? '新增' : '修改'));
-
   async function handleSubmit() {
     try {
       modalApi.setState({loading: true, confirmLoading: true});
@@ -76,13 +71,17 @@
         return;
       }
       const values = await formApi.getValues();
-      await saveOrUpdateClassification(values);
-      // closeModal();
-      modalApi.close();
-      emit('success');
+      const {success, msg} = await saveOrUpdateClassification(values);
+      if(success){
+        emit('success');
+        modalApi.close();
+      } else {
+        message.error(msg);
+      }
+    } catch (e) {
+      console.error(e);
     } finally {
       modalApi.setState({loading: false, confirmLoading: false});
-
     }
   }
 
@@ -90,7 +89,7 @@
 </script>
 
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
+  <BasicModal >
     <BasicForm />
   </BasicModal>
 </template>

@@ -4,20 +4,16 @@ import type { Recordable } from '@vben/types';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {PerEnum} from "#/enums/perEnum";
-
 import {Page} from '@vben/common-ui';
 import {Button, Image, Tag, message} from 'ant-design-vue';
-
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import { TableAction } from '#/components/table-action';
-
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import AppModal from './app-modal.vue';
 import AppSecretKeyModal from './app-secret-key-modal.vue';
 import {deleteByIds, getAppListByPage} from '#/api/base/app';
 
 const PerPrefix = "App:";
-
 
 const appModalRef = ref();
 const appSecretKeyModalRef = ref();

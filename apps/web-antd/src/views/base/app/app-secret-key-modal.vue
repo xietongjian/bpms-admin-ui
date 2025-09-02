@@ -14,7 +14,6 @@ const emit = defineEmits<{
 
 const {copy, text} = useClipboard({legacy: true});
 
-
 // 用于判断用户是否操作过数据
 const dataChanged = ref(false);
 

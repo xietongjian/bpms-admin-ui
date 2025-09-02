@@ -16,10 +16,10 @@ export const saveOrUpdate = (params: any) => {
   return requestClient.post<any>(Api.SaveOrUpdate + '/' + params.businessFlowId,
       params.modelInfoIds,
     {
-      successMessageMode: 'message',
+      responseReturn: 'body',
     },
   );
 };
 
 export const deleteByIds = (params?: Array<string>) =>
-  requestClient.post<any>(Api.Delete, params);
+  requestClient.post<any>(Api.Delete, params, {responseReturn: 'body'});
