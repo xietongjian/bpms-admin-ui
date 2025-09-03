@@ -255,7 +255,7 @@ export const formSchema: FormSchema[] = [
   {
     fieldName: 'redirect',
     label: '跳转地址',
-    help: '目录菜单跳转地址！',
+    help: '目录默认跳转地址！',
     component: 'Input',
     dependencies: {
       show: (values) => values.moduleType === 'dictionary',
@@ -268,7 +268,7 @@ export const formSchema: FormSchema[] = [
             (val) => {
               return new RegExp('[^\/]+(\/(.+))*').test(val);
             },
-            { message: '请输入正确的目录菜单跳转地址！' },
+            { message: '请输入正确的目录默认跳转地址！' },
         )
         .optional(),
   },
