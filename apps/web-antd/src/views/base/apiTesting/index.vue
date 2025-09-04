@@ -115,10 +115,6 @@ import {useVbenForm} from "#/adapter/form";
 const treeLoading = ref(true);
 const apiTestingErrorMsg = ref("");
 const TabPane = Tabs.TabPane;
-// const [registerApiTestingDrawer, {openDrawer: openApiTestingDrawer, setDrawerProps: setApiTestingDrawerProps}] = useDrawer();
-/*const [openFullLoading, closeFullLoading] = useLoading({
-  tip: '存在执行...',
-});*/
 const apiInfoTreeData = ref<any[]>([]);
 
 const activeParamKey = ref("header");
