@@ -1,25 +1,22 @@
 <template>
-  <BasicModal content-class="designer-container p-0" >
+  <BasicModal content-class="p-0" >
     <template #title>
       <div class="w-full">
         <Row>
           <Col span="8" class="flex items-center">
             <span v-if="!modelBaseInfo.name">新建流程</span>
-            <Tooltip :zIndex="10000" v-else placement="buttom">
-              <template #title>
-                {{ modelBaseInfo.name }}
-              </template>
+            <div v-else>
               编辑流程 -
               <TypographyText @click="doCopyContent(modelBaseInfo.name)">{{
-                modelBaseInfo.name
-              }}</TypographyText>
+                  modelBaseInfo.name
+                }}</TypographyText>
               -
               <TypographyText type="secondary" @click="doCopyContent(processModelKey)">{{
-                processModelKey
-              }}</TypographyText>
+                  processModelKey
+                }}</TypographyText>
               -
               <BpmnModelStatus :status="designerStatus.finallyStatus" :status-name="designerStatus.finallyStatusName"/>
-            </Tooltip>
+            </div>
           </Col>
           <Col span="8">
             <Steps
@@ -51,7 +48,7 @@
               </Step>
             </Steps>
           </Col>
-          <Col span="8" style="text-align: right">
+          <Col span="8" class="text-right">
             <Space>
               <Popconfirm v-access:code="PerPrefix+PerEnum.PUBLISH" v-if="publishBtnVisibility" @confirm="handlePublish">
                 <template #title>
@@ -82,15 +79,15 @@
                 保存
               </Button>
 
-              <Button :disabled="currentStepValue === 0 || saveLoading" @click="handlePrev"
-                >上一步</Button
-              >
+              <Button :disabled="currentStepValue === 0 || saveLoading" @click="handlePrev">
+                上一步
+              </Button>
               <Button
                 :disabled="currentStepValue > 1 || saveLoading"
                 type="primary"
-                @click="handleNext"
-                >下一步</Button
-              >
+                @click="handleNext">
+                下一步
+              </Button>
               <Button type="default" @click="handleClose">关闭</Button>
             </Space>
           </Col>
@@ -147,9 +144,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { onMounted, ref, unref, computed, defineExpose } from 'vue';
+  import { ref, unref, computed, defineExpose } from 'vue';
   import BpmnDesigner from '#/views/components/process/BpmnDesigner.vue';
-  // import { useProcessSettingStore } from '@/store/modules/processSetting';
   import {
     getByModelId,
     loadFormBpmnStatus,
@@ -162,11 +158,9 @@
     Badge,
     Button,
     Space,
-    Tooltip,
     Row,
     Col,
     Steps,
-    Tag,
     Popconfirm,
     Result,
     message,
@@ -174,39 +168,25 @@
   } from 'ant-design-vue';
   import ModelInfoSetting from '#/views/form/components/ModelInfoSetting.vue';
   import FlowVariableSetting from '#/views/form/components/FlowVariableSetting.vue';
-  import FormDesigner from '#/views/components/form/formMaking/index.vue';
-  import BpmnBaseInfo from '#/views/form/components/BpmnBaseInfo.vue';
-
-  // import { usePermission } from '@/hooks/web/usePermission';
   import { PerEnum } from '#/enums/perEnum';
-  // import { useMessage } from '@/hooks/web/useMessage';
-
   import {useVbenModal} from '@vben/common-ui';
-  import {useVbenForm} from '#/adapter/form';
   import { useClipboard } from '@vueuse/core';
   import { getXMLAttribute, updateXMLAttribute } from '#/utils/domUtils';
   import {useProcessSettingStore} from "#/store";
   import BpmnModelStatus from "#/views/components/common/widgets/BpmnModelStatus.vue";
-  // import { useAppStore } from '@/store/modules/app';
 
   const {getDesignerCurrentStepValue, setDesignerStepObj} = useProcessSettingStore();
-
-  // const appStore = useAppStore();
   const PerPrefix = 'Biz:';
 
   // 0保存成功，1保存中，2保存失败
   const autoSaveStatus = ref(-1);
   const { copy } = useClipboard({ legacy: true });
 
-  // const { bpmnDesignerAutoSaveSwitch } = appStore.getSystemConfig;
-
   const Step = Steps.Step;
   const emit = defineEmits(['success']);
   const currentStepValue = ref<number>(0);
   const maxStepValue = ref<number>(0);
   const publishLastStepValue = ref<number>(0);
-  // const processSettingStore = useProcessSettingStore();
-  // const { hasPermission } = usePermission();
 
   const designerStatus = ref({
     formDesignerStatus: 0,
@@ -219,25 +199,6 @@
   const publishBtnVisibility = computed(() => {
     const { finallyStatus } = unref(designerStatus);
     return finallyStatus === 2;
-  });
-
-  const privilegeSn = computed(() => {
-    return formType.value === 'custom' ? 'Custom' : 'Biz';
-  });
-
-  const finallyStatusStyle = computed(() => {
-    const { finallyStatus, finallyStatusName } = unref(designerStatus);
-    let color = 'gray';
-    if (~~finallyStatus === 2) {
-      color = '#2db7f5';
-    } else if (~~finallyStatus === 3) {
-      color = '#87d068';
-    } else if (~~finallyStatus === 4) {
-      color = '#f50';
-    } else {
-      color = 'gray';
-    }
-    return { color, statusName: finallyStatusName };
   });
 
   const processModelKey = computed(() => {
@@ -253,7 +214,6 @@
     // };
   };
 
-  // const { message, createConfirm } = useMessage();
   const modelId = ref('');
   const modelKey = ref('');
   // formType值：custom/biz/bizNoForm
@@ -348,6 +308,9 @@
         settingInfo: false,
         finallyStatus: false,
       };
+      processModelId.value = '';
+      processModelName.value = '';
+      modelKey.value = '';
       emit('success');
     },
     onOpenChange(isOpen: boolean) {
@@ -359,10 +322,6 @@
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
-    },
-    onConfirm() {
-      // await formApi.submitForm();
-      // handleSubmit();
     },
   });
 
@@ -447,7 +406,6 @@
     return baseSettingRef.value
       .handleSubmit()
       .then((res) => {
-        debugger;
         modelBaseInfo.value.name = res.name;
         processModelId.value = res.modelId;
         processModelName.value = res.name;
@@ -609,7 +567,6 @@
       stepLoadStatus.value.bpmnDesigner = true;
       stepsDisabled.value.bpmnDesigner = false;
     }
-
     setStepStore(current);
   }
 
@@ -625,14 +582,6 @@
 
   function handleClose() {
     modalApi.close();
-
-    // closeModal();
-    // dataStatusIsDraft.value = {
-    //   bpmnDesigner: false,
-    //   settingInfo: false,
-    //   finallyStatus: false,
-    // };
-    // emit('success');
   }
 
   // 加载三个步骤的状态
@@ -704,58 +653,9 @@
     handleStepChange(unref(currentStepValue));
   };
 
-  function handleOpenChange(flag) {
-    if (!flag) {
-      processModelId.value = '';
-      processModelName.value = '';
-      modelKey.value = '';
-    }
-  }
-
   function doCopyContent(content: string) {
     copy(content);
     message.success('已拷贝到剪切板！');
   }
   defineExpose(modalApi);
 </script>
-<style lang="scss">
-  .form-designer {
-    .ant-tabs-content {
-      height: 100%;
-    }
-  }
-  .designer-container {
-    > .ant-modal {
-      > .ant-modal-content {
-        > .ant-modal-header {
-          cursor: default !important;
-        }
-      }
-      > div[aria-hidden='true'] {
-        display: none !important;
-      }
-    }
-    .ant-modal-content {
-      .ant-modal-header {
-        margin-bottom: 0;
-
-        .designer-steps {
-          .ant-steps-item-title {
-            overflow: visible;
-          }
-        }
-      }
-      .ant-modal-body {
-        .scroll-container {
-          padding-top: 0;
-        }
-      }
-      .scrollbar.scroll-container {
-        padding: 0;
-      }
-      .scroll-container .scrollbar__wrap {
-        margin-bottom: 0 !important;
-      }
-    }
-  }
-</style>

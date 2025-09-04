@@ -185,6 +185,7 @@ const gridOptions: VxeGridProps = {
     ajax: {
       query: async ({page}, formValues) => {
         currentModelInfo.value = {};
+        formValues.categoryCode = unref(currentCategory)?.code;
         return await getCustomPagerModel({
           query: {
             pageNum: page.currentPage,
@@ -243,27 +244,6 @@ function handleCreate() {
     categoryCode: unref(currentCategory).code,
   });
   bpmnDesignerModalRef.value.open();
-
-  /*openBpmnDesignerModal(true, {
-    modelKey: '',
-    modelId: '',
-    formType: 'custom',
-    categoryCode: unref(currentCategory).code,
-  });*/
-  /*setBpmnDesignerModalProps({
-    title: `添加表单`,
-    bodyStyle: { padding: '0px', margin: '0px' },
-    defaultFullscreen: true,
-    maskClosable: false,
-    centered: true,
-    keyboard: false,
-    showOkBtn: false,
-    showCancelBtn: false,
-    draggable: false,
-    canFullscreen: false,
-    closable: false,
-    destroyOnClose: true,
-  });*/
 }
 
 function handleCloseFunc() {
@@ -315,22 +295,6 @@ function handleEdit(record: Recordable<any>) {
   const query = {modelKey, modelId, categoryCode, formType: 'custom'};
   bpmnDesignerModalRef.value.setData(query);
   bpmnDesignerModalRef.value.open();
-
-  /*openBpmnDesignerModal(true, { ...query });
-  setBpmnDesignerModalProps({
-    title: `添加表单`,
-    bodyStyle: { padding: '0px', margin: '0px' },
-    defaultFullscreen: true,
-    maskClosable: false,
-    keyboard: false,
-    centered: true,
-    showOkBtn: false,
-    showCancelBtn: false,
-    draggable: false,
-    canFullscreen: false,
-    closable: false,
-    destroyOnClose: true,
-  });*/
 }
 
 // 复制
@@ -345,13 +309,6 @@ function handleCopy() {
   copyModelInfoModalRef.value.setState({
     title: '复制【' + selectedRow.name + '】表单、流程',
   });
-  /*openCopyModal(true, {
-    record: selectedRows[0],
-  });
-  setCopyModalProps({
-    title: '复制【' + selectedRows[0].name + '】表单、流程',
-    width: 600,
-  });*/
 }
 
 async function publish(modelKey: string) {
@@ -414,8 +371,7 @@ function handleSuccess() {
 }
 
 function handleBpmnDesignerModalSuccess() {
-  const {getValues} = tableApi.formApi;
-  tableApi.reload({...getValues(), categoryCode: unref(currentCategory).code});
+  tableApi.query();
 }
 
 function changePublishStopBtnShow(status) {

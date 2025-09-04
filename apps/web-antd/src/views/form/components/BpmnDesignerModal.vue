@@ -1,26 +1,22 @@
 <template>
-  <BasicModal content-class="designer-container p-0" >
+  <BasicModal content-class="p-0" >
     <template #title>
       <div class="w-full">
         <Row>
           <Col span="8" class="flex items-center">
             <span v-if="!modelBaseInfo.name">新建流程</span>
-
-            <Tooltip :zIndex="10000" v-else placement="buttom">
-              <template #title>
-                {{ modelBaseInfo.name }}
-              </template>
+            <div v-else>
               编辑流程 -
               <TypographyText @click="doCopyContent(modelBaseInfo.name)">{{
-                modelBaseInfo.name
-              }}</TypographyText>
+                  modelBaseInfo.name
+                }}</TypographyText>
               -
               <TypographyText type="secondary" @click="doCopyContent(processModelKey)">{{
-                processModelKey
-              }}</TypographyText>
+                  processModelKey
+                }}</TypographyText>
               -
               <BpmnModelStatus :status="designerStatus.finallyStatus" :status-name="designerStatus.finallyStatusName"/>
-            </Tooltip>
+            </div>
           </Col>
           <Col span="8">
             <Steps
@@ -31,14 +27,7 @@
               type="navigation"
               :style="{ marginBottom: '0px', paddingTop: '0' }"
             >
-              <Step v-if="hideFormDesigner" :disabled="stepsDisabled.formDesigner">
-                <template #title>
-                  <Badge color="#f50" :dot="dataStatusIsDraft.formDesigner" :offset="[5, 0]">
-                    流程配置
-                  </Badge>
-                </template>
-              </Step>
-              <Step v-else :disabled="stepsDisabled.formDesigner">
+              <Step :disabled="stepsDisabled.formDesigner">
                 <template #title>
                   <Badge color="#f50" :dot="dataStatusIsDraft.formDesigner" :offset="[5, 0]">
                     设计表单
@@ -108,17 +97,7 @@
     </template>
     <div class="w-full h-full">
       <!-- 表单设计 -->
-      <div v-if="hideFormDesigner" v-show="currentStepValue === 0" class="h-full">
-        <BpmnBaseInfo
-          :id="modelId"
-          ref="formDesignerRef"
-          v-if="stepLoadStatus.formDesigner"
-          :form-type="formType"
-          :model-key="modelKey"
-          :category-code="categoryCode"
-        />
-      </div>
-      <div v-else v-show="currentStepValue === 0" class="h-full">
+      <div v-show="currentStepValue === 0" class="h-full">
         <FormDesigner
           :id="modelId"
           ref="formDesignerRef"
@@ -165,7 +144,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { onMounted, ref, unref, computed, defineExpose } from 'vue';
+  import { ref, unref, computed, defineExpose } from 'vue';
   import BpmnDesigner from '#/views/components/process/BpmnDesigner.vue';
   import {
     getByModelId,
@@ -175,35 +154,27 @@
     deployForm,
   } from '#/api/flowable/bpmn/modelInfo';
   import {
-    Modal, Badge, Button, Space, Tooltip, Row, Col, Steps, Tag, Popconfirm, Result, message, TypographyText,
+    Modal, Badge, Button, Space, Row, Col, Steps, Popconfirm, Result, message, TypographyText,
   } from 'ant-design-vue';
   import ModelInfoSetting from '#/views/form/components/ModelInfoSetting.vue';
   import FlowVariableSetting from '#/views/form/components/FlowVariableSetting.vue';
   import FormDesigner from '#/views/components/form/formMaking/index.vue';
-  import BpmnBaseInfo from '#/views/form/components/BpmnBaseInfo.vue';
   import {useAccess} from '@vben/access';
 
   import { PerEnum } from '#/enums/perEnum';
   import { useProcessSettingStore } from '#/store';
 
   import {useVbenModal} from '@vben/common-ui';
-  import {useVbenForm} from '#/adapter/form';
   import { getXMLAttribute, updateXMLAttribute } from '#/utils/domUtils';
   import { useClipboard } from '@vueuse/core';
   import BpmnModelStatus from "#/views/components/common/widgets/BpmnModelStatus.vue";
 
-  // import { useAppStore } from '@/store/modules/app';
   const {hasAccessByCodes} = useAccess();
-
   const { copy } = useClipboard({ legacy: true });
-
   const PerPrefix = 'Custom:';
-  // const appStore = useAppStore();
 
   // 0保存成功，1保存中，2保存失败
   const autoSaveStatus = ref(-1);
-
-  // const { bpmnDesignerAutoSaveSwitch } = appStore.getSystemConfig;
 
   const Step = Steps.Step;
   const emit = defineEmits(['success']);
@@ -223,31 +194,6 @@
   const publishBtnVisibility = computed(() => {
     const { finallyStatus } = unref(designerStatus);
     return finallyStatus === 2;
-  });
-
-  const privilegeSn = computed(() => {
-    return formType.value === 'custom' ? 'Custom' : 'Biz';
-  });
-
-  const hideFormDesigner = computed(() => {
-    return (
-      privilegeSn.value === 'Biz' && !hasAccessByCodes([`${privilegeSn.value}:${PerEnum.FORM_EDIT}`])
-    );
-  });
-
-  const finallyStatusStyle = computed(() => {
-    const { finallyStatus, finallyStatusName } = unref(designerStatus);
-    let color = 'gray';
-    if (~~finallyStatus === 2) {
-      color = '#2db7f5';
-    } else if (~~finallyStatus === 3) {
-      color = '#87d068';
-    } else if (~~finallyStatus === 4) {
-      color = '#f50';
-    } else {
-      color = 'gray';
-    }
-    return { color, statusName: finallyStatusName };
   });
 
   const processModelKey = computed(() => {
@@ -697,41 +643,3 @@
     ...modalApi
   });
 </script>
-<style lang="scss">
-  .form-designer {
-    .ant-tabs-content {
-      height: 100%;
-    }
-  }
-  .designer-container {
-    > .ant-modal {
-      > .ant-modal-content {
-        > .ant-modal-header {
-          cursor: default !important;
-        }
-      }
-    }
-    .ant-modal-content {
-      .ant-modal-header {
-        margin-bottom: 0;
-
-        .designer-steps {
-          .ant-steps-item-title {
-            overflow: visible;
-          }
-        }
-      }
-      .ant-modal-body {
-        .scroll-container {
-          padding-top: 0;
-        }
-      }
-      .scrollbar.scroll-container {
-        padding: 0;
-      }
-      .scroll-container .scrollbar__wrap {
-        margin-bottom: 0 !important;
-      }
-    }
-  }
-</style>

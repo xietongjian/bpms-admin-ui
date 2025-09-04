@@ -1,12 +1,10 @@
 <template>
-  <div
-    class="model-info-setting model-info-setting-wrapper flex max-w-[1200px] flex-row"
-  >
+  <div class="border border-y-0 h-full m-auto flex max-w-[1200px] flex-row" >
     <div class="h-full !w-[200px] border-r">
       <Menu
         id="modelInfoSettingMenu"
         v-model:selectedKeys="selectedKeys"
-        class="w-full !border-e-0"
+        class="w-full !border-e-0 [&_li.ant-menu-item]:!rounded-none"
         mode="inline"
         :items="items"
         @click="handleMenuClick"
@@ -15,7 +13,7 @@
     <div
       id="modelInfoSettingScrollId"
       ref="modelInfoSettingScrollRef"
-      class="right h-full overflow-y-auto overflow-x-hidden"
+      class="p-4 w-full h-full overflow-y-auto overflow-x-hidden"
     >
       <BasicForm v-loading="loadingRef">
         <template #basicTitle>
@@ -78,12 +76,12 @@ import { getAppliedRange, getSkipSet } from '#/api/form/form';
 import { getAll } from '#/api/form/authPoint';
 import { getAll as getAllApps } from '#/api/base/app';
 import { message, Menu, Divider } from 'ant-design-vue';
-import { useClipboard } from '@vueuse/core';
+import { useClipboard, useScroll } from '@vueuse/core';
 import { useVbenForm } from '#/adapter/form';
 defineComponent({
   name: 'ModelInfoSetting',
 });
-const { isSupported, copy, copied } = useClipboard({ legacy: true });
+const { copy } = useClipboard({ legacy: true });
 
 const props = defineProps({
   modelId: {
@@ -116,6 +114,7 @@ const showStatusList = [
 const loadingRef = ref(false);
 const selectedKeys = ref<string[]>(['basicTitleId']);
 const modelInfoSettingScrollRef = ref<any>(null);
+const { y } = useScroll(modelInfoSettingScrollRef)
 
 const items = ref([
   {
@@ -139,14 +138,6 @@ watch(
   },
 );
 
-const getScroll = () => {
-  const scroll = unref(modelInfoSettingScrollRef);
-  if (!scroll) {
-    throw new Error('scroll is Null');
-  }
-  return scroll;
-};
-
 const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
     componentProps: {
@@ -155,19 +146,11 @@ const [BasicForm, formApi] = useVbenForm({
     labelWidth: 120,
   },
   showDefaultActions: false,
+  scrollToFirstError: true,
   layout: 'horizontal',
   schema: modelInfoSettingFormSchema,
   wrapperClass: 'grid-cols-1',
 });
-/*
-  const [registerForm, { setFieldsValue, updateSchema, validate, clearValidate, scrollToField }] = useForm({
-    labelWidth: 150,
-    schemas: modelInfoSettingFormSchema,
-    showResetButton: false,
-    showSubmitButton: false,
-    showAdvancedButton: false,
-    scrollToFirstError: true
-  });*/
 
 function handleMenuClick(event) {
   nextTick(() => {
@@ -175,13 +158,13 @@ function handleMenuClick(event) {
       scrollTo(0);
     }
     if (event.key === 'privilegeTitleId') {
-      scrollTo(430);
+      scrollTo(510);
     }
   });
 }
 
 function scrollTo(top: number) {
-  getScroll()?.scrollTo(top);
+  y.value = top;
 }
 
 async function initDefaultData() {
@@ -238,20 +221,6 @@ async function initDefaultData() {
       }
     })
     .finally(() => {});
-  // 加载分类
-  /*getFlowCategories().then(res => {
-        debugger;
-      formApi.updateSchema([
-        {
-          fieldName: 'categoryCode',
-          defaultValue: props.categoryCode || null,
-          componentProps: {
-            treeData: res,
-          },
-        },
-      ]);
-    });*/
-
   if (props.modelId) {
     loadFormData(props.modelId);
   } else {
@@ -310,33 +279,6 @@ function initFormSchema() {
     };
     // 业务表单增加表单验证
     formApi.updateSchema([
-      /*{
-          fieldName: 'modelKey',
-          dynamicRules: () => {
-            return [
-              {
-                required: true,
-                whitespace: true,
-                message: '标识不能为空！',
-              },
-              {
-                pattern: new RegExp(FormValidPatternEnum.FIELD_NAME_SN),
-                type: 'string',
-                message: '请输入英文或数字！',
-              },
-              {
-                max: 40,
-                message: '字符长度不能大于40！',
-              },
-              ...getBaseDynamicRules({
-                id: props.modelId,
-                field: 'modelKey',
-                fieldValue: '',
-                fieldName: '流程标识',
-              }),
-            ];
-          },
-        },*/
       {
         fieldName: 'flowOwnerNo',
         componentProps: {
@@ -465,8 +407,6 @@ async function loadFormData(modelId) {
         res.showStatus = [];
       }
 
-      debugger;
-
       formApi.setValues({
         modelKey: res.modelKey,
         name: res.name,
@@ -504,7 +444,6 @@ async function handleSubmit() {
       return;
     }
     const values = await formApi.getValues();
-    debugger;
     // 适用单位（公司）
     if (values.applyCompanies && values.applyCompanies.length > 0) {
       let applyCompanies = values.applyCompanies.map((item) => {
@@ -591,27 +530,4 @@ defineExpose({
   handleSubmit,
 });
 </script>
-<style lang="scss">
-.model-info-setting {
-  display: flex;
-  height: 100%;
-  margin: auto;
-  border: 1px solid var(--border-color);
-  border-top: 0;
 
-  > .left {
-    width: 200px;
-
-    #modelInfoSettingMenu {
-      border-inline-end: none;
-    }
-  }
-
-  > .right {
-    flex: 1;
-    height: 100%;
-    padding: 16px !important;
-    border-left: 1px solid var(--border-color);
-  }
-}
-</style>

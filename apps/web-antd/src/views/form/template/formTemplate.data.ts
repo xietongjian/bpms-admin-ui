@@ -1,8 +1,9 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-import {OrderNoDefaultEnum} from "#/enums/commonEnum";
-import {getFormCategoryListData} from "#/api/form/formTemplate";
+import {FormValidPatternEnum, OrderNoDefaultEnum} from "#/enums/commonEnum";
+import {checkTemplateCategoryEntityExist, getFormCategoryListData} from "#/api/form/formTemplate";
+import {checkEntityExist} from "#/api/org/company";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -25,7 +26,7 @@ export const columns: VxeGridProps['columns'] = [
     width: 120,
     align: 'center',
     slots: {default: 'status'}
-    
+
   },
   {
     title: '创建时间',
@@ -83,9 +84,39 @@ export const formCategoryFormSchema: FormSchema[] = [
   {
     fieldName: 'code',
     label: '标识',
-    // required: true,
-    rules: 'required',
     component: 'Input',
+    dependencies: {
+      rules(values) {
+        const { id, code } = values;
+        return z
+            .string({
+              required_error: "标识不能为空"
+            })
+            .min(1, "标识不能为空")
+            .max(100, '最多输入100个字符')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
+            .refine(
+                async () => {
+                  let result = false;
+                  try {
+                    result = await checkTemplateCategoryEntityExist({
+                      id: id,
+                      field: 'code',
+                      fieldValue: code || '',
+                      fieldName: '标识',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '编码已存在',
+                },
+            );
+      },
+      triggerFields: ['code'],
+    },
   },
   {
     fieldName: 'orderNo',
@@ -138,11 +169,6 @@ export const formSchema: FormSchema[] = [
       valueField: 'code',
       numberToString: true,
       fieldNames: { title: 'name', key: 'code', children: 'children' }
-      // afterFetch: (dt) => {
-      //   return dt.map(item => {
-      //     return {label: item.name, value: item.code, pid: item.pid}
-      //   });
-      // },
     },
   },
   {
@@ -160,29 +186,5 @@ export const formSchema: FormSchema[] = [
         .trim()
         .min(1, "名称不能为空")
         .max(32, "字符长度不能大于32！")
-    /*rules: [
-      {
-        whitespace: true,
-        required: true,
-        message: '名称不能为空！',
-      },
-      {
-        pattern: new RegExp('^.{1,32}$'),
-        type: 'string',
-        message: '字符长度不能大于32！',
-      },
-    ],*/
-  },
-  /*{
-    fieldName: 'status',
-    label: '状态',
-    component: 'RadioButtonGroup',
-    defaultValue: 0,
-    componentProps: {
-      options: [
-        { label: '未生效', value: 0 },
-        { label: '已生效', value: 1 },
-      ],
-    },
-  },*/
+  }
 ];

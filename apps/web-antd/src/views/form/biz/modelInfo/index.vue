@@ -133,12 +133,8 @@
 
     <CopyModelInfoModal ref="copyModelInfoModalRef" @success="handleSuccess" formType="biz" />
     <BpmnPreviewModal ref="bpmnPreviewModalRef" @success="handleSuccess" />
-    <BizBpmnDesignerModal ref="bizBpmnDesignerModalRef"
-      @success="handleBpmnDesignerModalSuccess"
-    />
-    <BizNoFormBpmnDesignerModal ref="bizNoFormBpmnDesignerModalRef"
-      @success="handleBpmnDesignerModalSuccess"
-    />
+    <BizBpmnDesignerModal ref="bizBpmnDesignerModalRef" @success="handleBpmnDesignerModalSuccess"/>
+    <BizNoFormBpmnDesignerModal ref="bizNoFormBpmnDesignerModalRef" @success="handleBpmnDesignerModalSuccess"/>
   </ColPage>
 </template>
 <script lang="ts" setup>
@@ -217,7 +213,7 @@
       ajax: {
         query: async ({page}, formValues) => {
           currentModelInfo.value = {};
-          formValues.categoryCode = currentCategory.value?.code;
+          formValues.categoryCode = unref(currentCategory)?.code;
           return await getPagerModel({
             query: {
               pageNum: page.currentPage,
@@ -266,14 +262,6 @@
         categoryCode: unref(currentCategory)?.code,
       });
       bizBpmnDesignerModalRef.value.open();
-
-      /*openBpmnDesignerModal(true, {
-        modelKey: '',
-        modelId: '',
-        formType: e.key,
-        categoryCode: unref(currentCategory)?.code,
-      });
-      setDesignerModalProps(setBpmnDesignerModalProps);*/
     } else if (e.key === 'bizNoForm') {
       // 业务流程 - 无表单
       bizNoFormBpmnDesignerModalRef.value.setData({
@@ -283,30 +271,7 @@
         categoryCode: unref(currentCategory)?.code,
       });
       bizNoFormBpmnDesignerModalRef.value.open();
-      // openNoFormBpmnDesignerModal(true, {
-      //   modelKey: '',
-      //   modelId: '',
-      //   formType: e.key,
-      //   categoryCode: unref(currentCategory)?.code,
-      // });
-      // setDesignerModalProps(setNoFormBpmnDesignerModalProps);
     }
-  }
-
-  function setDesignerModalProps(callback) {
-    callback({
-      title: `添加表单`,
-      bodyStyle: { padding: '0px', margin: '0px' },
-      defaultFullscreen: true,
-      maskClosable: false,
-      centered: true,
-      showOkBtn: false,
-      showCancelBtn: false,
-      draggable: false,
-      canFullscreen: false,
-      closable: false,
-      destroyOnClose: true,
-    });
   }
 
   function createActions(record: Recordable<any>) {
@@ -352,9 +317,6 @@
       });
       bizNoFormBpmnDesignerModalRef.value.open();
     }
-    // setDesignerModalProps(
-    //   formType === 1 ? setBpmnDesignerModalProps : setNoFormBpmnDesignerModalProps
-    // );
   }
 
   // 复制
@@ -370,19 +332,6 @@
     copyModelInfoModalRef.value.setState({
       title: '复制【' + selectedRow.name + '】表单、流程',
     });
-
-    /*const selectedRows = getSelectRows();
-    if (selectedRows && selectedRows.length <= 0) {
-      message.warn('请选择行！');
-      return;
-    }
-    openCopyModal(true, {
-      record: selectedRows[0],
-    });
-    setCopyModalProps({
-      title: '复制【' + selectedRows[0].name + '】表单、流程',
-      width: 600,
-    });*/
   }
 
   async function publish(modelKey: string) {
@@ -491,7 +440,7 @@
   }
 
   function handleBpmnDesignerModalSuccess() {
-    tableApi.reload();
+    tableApi.query();
   }
 </script>
 

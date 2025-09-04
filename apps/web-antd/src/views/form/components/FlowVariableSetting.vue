@@ -40,11 +40,9 @@
   } from '#/api/flowable/bpmn/modelInfo';
   import { Tag, Button, message } from 'ant-design-vue';
   import { TableAction } from '#/components/table-action';
-
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import { downloadByUrl } from '#/utils/file/download';
   import FlowVariableFileModal from '#/views/form/components/FlowVariableFileModal.vue';
-  // import { useModal } from '@/components/Modal';
   import type {VxeGridProps} from '#/adapter/vxe-table';
 
   const flowVariableFileModalRef = ref();

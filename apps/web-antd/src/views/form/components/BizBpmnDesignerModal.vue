@@ -5,21 +5,18 @@
         <Row>
           <Col span="8" class="flex items-center">
             <span v-if="!modelBaseInfo.name">新建流程</span>
-            <Tooltip :zIndex="10000" v-else placement="buttom">
-              <template #title>
-                {{ modelBaseInfo.name }}
-              </template>
+            <div v-else>
               编辑流程 -
               <TypographyText @click="doCopyContent(modelBaseInfo.name)">{{
-                modelBaseInfo.name
-              }}</TypographyText>
+                  modelBaseInfo.name
+                }}</TypographyText>
               -
               <TypographyText type="secondary" @click="doCopyContent(processModelKey)">{{
-                processModelKey
-              }}</TypographyText>
+                  processModelKey
+                }}</TypographyText>
               -
               <BpmnModelStatus :status="designerStatus.finallyStatus" :status-name="designerStatus.finallyStatusName"/>
-            </Tooltip>
+            </div>
           </Col>
           <Col span="8">
             <Steps
@@ -210,7 +207,6 @@
   import ModelInfoSetting from '#/views/form/components/ModelInfoSetting.vue';
   import FlowVariableSetting from '#/views/form/components/FlowVariableSetting.vue';
   import FormDesigner from '#/views/components/form/formMaking/index.vue';
-  import BpmnBaseInfo from '#/views/form/components/BpmnBaseInfo.vue';
   import {useAccess} from '@vben/access';
 
   import { PerEnum } from '#/enums/perEnum';
@@ -403,6 +399,9 @@
         settingInfo: false,
         finallyStatus: false,
       };
+      processModelId.value = '';
+      processModelName.value = '';
+      modelKey.value = '';
       emit('success');
     },
     onOpenChange(isOpen: boolean) {
@@ -804,58 +803,9 @@
     handleStepChange(unref(currentStepValue));
   };
 
-  function handleOpenChange(flag) {
-    if (!flag) {
-      processModelId.value = '';
-      processModelName.value = '';
-      modelKey.value = '';
-    }
-  }
-
   function doCopyContent(content) {
     copy(content);
     message.success('已拷贝到剪切板！');
   }
   defineExpose(modalApi);
 </script>
-<style lang="scss">
-  .form-designer {
-    .ant-tabs-content {
-      height: 100%;
-    }
-  }
-  .designer-container {
-    > .ant-modal {
-      > .ant-modal-content {
-        > .ant-modal-header {
-          cursor: default !important;
-        }
-      }
-      > div[aria-hidden='true'] {
-        display: none !important;
-      }
-    }
-    .ant-modal-content {
-      .ant-modal-header {
-        margin-bottom: 0;
-
-        .designer-steps {
-          .ant-steps-item-title {
-            overflow: visible;
-          }
-        }
-      }
-      .ant-modal-body {
-        .scroll-container {
-          padding-top: 0;
-        }
-      }
-      .scrollbar.scroll-container {
-        padding: 0;
-      }
-      .scroll-container .scrollbar__wrap {
-        margin-bottom: 0 !important;
-      }
-    }
-  }
-</style>

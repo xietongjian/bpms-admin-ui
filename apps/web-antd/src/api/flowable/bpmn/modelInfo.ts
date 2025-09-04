@@ -95,9 +95,9 @@ export function downloadVariableTemplate() {
 
 // 上传流程变量文件
 export function uploadVariableTemplate(data: any) {
-  return requestClient.uploadFile(
+  return requestClient.upload(
     Api.UploadVariableTemplate,
-    data,
+    data,{responseReturn: 'body'}
   );
 }
 

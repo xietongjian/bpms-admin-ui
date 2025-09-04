@@ -35,27 +35,27 @@
           >
             <template #title="node">
               <div class="w-full flex flex-row justify-between group">
-                <span>{{ node.name }}</span>
-                <span class="group-hover:block hidden text-right">
-                      <Button @click.stop
-                              size="small"
-                              type="link"
-                              :icon="h(EditOutlined)"
-                              @click="handleUpdateCategory(node)"/>
-                      <Popconfirm
-                        title="确定要删除吗？"
-                        ok-text="确认"
-                        cancel-text="取消"
-                        @confirm="handleDeleteCategory(node)"
-                        :okButtonProps="{danger: true}"
-                      >
-                        <Button @click.stop
-                                size="small"
-                                type="link"
-                                :icon="h(DeleteOutlined)"
-                                danger/>
-                      </Popconfirm>
-                    </span>
+                <span>{{ node.name }}-({{node.code}})</span>
+                <div class="group-hover:block hidden text-right">
+                  <Button @click.stop
+                          size="small"
+                          type="link"
+                          :icon="h(EditOutlined)"
+                          @click="handleUpdateCategory(node)"/>
+                  <Popconfirm
+                    title="确定要删除吗？"
+                    ok-text="确认"
+                    cancel-text="取消"
+                    @confirm="handleDeleteCategory(node)"
+                    :okButtonProps="{danger: true}"
+                  >
+                    <Button @click.stop
+                            size="small"
+                            type="link"
+                            :icon="h(DeleteOutlined)"
+                            danger/>
+                  </Popconfirm>
+                </div>
               </div>
             </template>
           </Tree>
@@ -106,7 +106,7 @@
   import type {VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
-  import {ColPage, Page} from '@vben/common-ui';
+  import {ColPage} from '@vben/common-ui';
   import {TableAction} from '#/components/table-action';
 
   import { columns, searchFormSchema } from './formTemplate.data';

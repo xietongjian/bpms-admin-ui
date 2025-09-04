@@ -1,17 +1,16 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {FormValidPatternEnum} from "#/enums/commonEnum";
-import { z } from '#/adapter/form';
+import {z} from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
-import { Tag } from 'ant-design-vue';
-import { checkEntityExist } from '#/api/form/bizForm';
-
+import {Tag} from 'ant-design-vue';
+import {checkEntityExist} from '#/api/form/bizForm';
 import {getAll} from '#/api/base/app';
-import { getAppliedRange, getSkipSet } from '#/api/form/form';
-import { getAll as getAuthPoints } from '#/api/form/authPoint';
+import {getAppliedRange} from '#/api/form/form';
+import {getAll as getAuthPoints} from '#/api/form/authPoint';
 import pinyin from 'js-pinyin';
-import { h } from 'vue';
-import { OrderNoDefaultEnum } from '#/enums/commonEnum';
-import {getFlowCategories, getFlowCategoryTreeData} from "#/api/base/category";
+import {h} from 'vue';
+import {OrderNoDefaultEnum} from '#/enums/commonEnum';
+import {getFlowCategoryTreeData} from "#/api/base/category";
 
 export const columns: VxeGridProps['columns'] = [
   {
@@ -48,8 +47,8 @@ export const columns: VxeGridProps['columns'] = [
     field: 'statusName',
     width: 70,
     align: 'center',
-    customRender: ({ record }) => {
-      const { status, statusName } = record;
+    customRender: ({record}) => {
+      const {status, statusName} = record;
       let color = '';
       if (~~status === 2) {
         color = 'yellow';
@@ -60,7 +59,7 @@ export const columns: VxeGridProps['columns'] = [
       } else {
         color = 'gray';
       }
-      return h(Tag, { color: color }, () => statusName);
+      return h(Tag, {color: color}, () => statusName);
     },
   },
   {
@@ -157,11 +156,11 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
       show(values) {
         return values.formType !== 0;
       },
-      disabled(values){
+      disabled(values) {
         return !!values.id;
       },
       trigger(values, form) {
-        if (!values.id && values.name){
+        if (!values.id && values.name) {
           // 将空格及特殊字符替换替换
           let value = values.name ? values.name.replace(/[^_|^\d|^\[a-zA-Z\]|^\[\u4e00-\u9fa5\]]/g, '_') : '';
           // 是否统一为小写
@@ -172,39 +171,39 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
       },
       triggerFields: ['modelKey'],
       rules(values) {
-        const { id, modelId, sn } = values;
+        const {id, modelId, sn} = values;
         return z
-            .string({
-              required_error: "标识不能为空"
-            })
-            .min(1, "标识不能为空")
-            .max(60, '字符长度不能大于60！')
-            .regex(new RegExp('^[a-zA-Z_]{1,}[0-9a-zA-Z_]{0,}$'), '请输入英文或数字且以英文或下划线开头！')
-            .refine(
-                async (e) => {
-                  let result = false;
-                  try {
-                    result = await checkEntityExist({
-                      id: modelId,
-                      field: 'modelKey',
-                      fieldValue: '',
-                      fieldName: '流程标识',
-                    });
-                    /**
-                     * id: params.id,
-                     * field: params.field,
-                     * fieldValue: value,
-                     * fieldName: params.fieldName,
-                     */
-                  } catch (e) {
-                    console.error(e);
-                  }
-                  return result;
-                },
-                {
-                  message: '标识已存在',
-                },
-            );
+          .string({
+            required_error: "标识不能为空"
+          })
+          .min(1, "标识不能为空")
+          .max(60, '字符长度不能大于60！')
+          .regex(new RegExp('^[a-zA-Z_]{1,}[0-9a-zA-Z_]{0,}$'), '请输入英文或数字且以英文或下划线开头！')
+          .refine(
+            async (e) => {
+              let result = false;
+              try {
+                result = await checkEntityExist({
+                  id: modelId,
+                  field: 'modelKey',
+                  fieldValue: '',
+                  fieldName: '流程标识',
+                });
+                /**
+                 * id: params.id,
+                 * field: params.field,
+                 * fieldValue: value,
+                 * fieldName: params.fieldName,
+                 */
+              } catch (e) {
+                console.error(e);
+              }
+              return result;
+            },
+            {
+              message: '标识已存在',
+            },
+          );
       },
     }
   },
@@ -227,9 +226,9 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
       show(values) {
         return values.formType !== 0;
       },
-      disabled(values){
+      disabled(values) {
         return values.version > 0;
-      } ,
+      },
       triggerFields: [''],
     },
     wrapperClass: 'w-full'
@@ -304,26 +303,6 @@ export const modelInfoSettingFormSchema: FormSchema[] = [
     },
     wrapperClass: 'w-full'
   },
-  /*{
-    fieldName: 'modelIcon',
-    label: '图标',
-    component: 'ImageUpload',
-    show: true,
-    componentProps: {
-      api: uploadApi,
-      name: 'file',
-      maxCount: 1,
-      listType: 'picture-card',
-      maxSize: 1,
-      maxNumber: 1,
-      multiple: false,
-      helpText: '(仅支持gif,png)大小不超过1M，建议上传尺寸(像素)：200px*200px',
-      accept: ['gif', 'png'],
-    },
-    colProps: {
-      span: 12,
-    },
-  },*/
   {
     fieldName: 'modelIcon',
     label: '图标',
@@ -459,12 +438,12 @@ export const copyModelInfoFormSchema: FormSchema[] = [
     label: '新表单名称',
     component: 'Input',
     rules: z
-        .string({
-          required_error: '名称不能为空',
-        })
-        .trim()
-        .min(1, "名称不能为空")
-        .max(60, "字符长度不能大于60！")
+      .string({
+        required_error: '名称不能为空',
+      })
+      .trim()
+      .min(1, "名称不能为空")
+      .max(60, "字符长度不能大于60！")
   },
   {
     fieldName: 'newCategoryCode',
@@ -496,55 +475,46 @@ export const copyBizModelInfoFormSchema: FormSchema[] = [
     label: '新表单名称',
     component: 'Input',
     rules: z
-        .string({
-          required_error: '名称不能为空',
-        })
-        .trim()
-        .min(1, "名称不能为空")
-        .max(60, "字符长度不能大于60！")
+      .string({
+        required_error: '名称不能为空',
+      })
+      .trim()
+      .min(1, "名称不能为空")
+      .max(60, "字符长度不能大于60！")
   },
   {
     fieldName: 'newModelKey',
     label: '新表单Key',
     component: 'Input',
-    // rules: z
-    //     .string({
-    //       required_error: 'Key不能为空！',
-    //     })
-    //     .trim()
-    //     .min(1, "Key不能为空！")
-    //     .max(60, "字符长度不能大于60！")
-    //     .regex(new RegExp('^[a-zA-Z_]{1,}[0-9a-zA-Z_]{1,}$'),'请输入英文或数字且以英文或下划线开头！'),
     dependencies: {
-        rules(values) {
-            const { id, newModelKey } = values;
-            debugger
-            return z
-                .string({required_error: '编码不能为空！'})
-                .min(1, {message: '编码不能为空！'})
-                .max(100, {message: '字符长度不能大于100！'})
-                .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
-                .refine(
-                    async (e) => {
-                        let result = false;
-                        try {
-                            result = await checkEntityExist({
-                                id: id,
-                                field: 'newModelKey',
-                                fieldValue: newModelKey || '',
-                                fieldName: '新表单Key',
-                            });
-                        } catch (e) {
-                            console.error(e);
-                        }
-                        return result;
-                    },
-                    {
-                        message: '系统标识已存在',
-                    },
-                );
-        },
-        triggerFields: ['newModelKey'],
+      rules(values) {
+        const {id, newModelKey} = values;
+        return z
+          .string({required_error: '编码不能为空！'})
+          .min(1, {message: '编码不能为空！'})
+          .max(100, {message: '字符长度不能大于100！'})
+          .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字')
+          .refine(
+            async (e) => {
+              let result = false;
+              try {
+                result = await checkEntityExist({
+                  id: id,
+                  field: 'newModelKey',
+                  fieldValue: newModelKey || '',
+                  fieldName: '新表单Key',
+                });
+              } catch (e) {
+                console.error(e);
+              }
+              return result;
+            },
+            {
+              message: '系统标识已存在',
+            },
+          );
+      },
+      triggerFields: ['newModelKey'],
     },
   },
   {
@@ -562,7 +532,7 @@ export const copyBizModelInfoFormSchema: FormSchema[] = [
   },
 ];
 
-export const vxeFlowVariableTableColumns: VxeGridProps['columns']  = [
+export const vxeFlowVariableTableColumns: VxeGridProps['columns'] = [
   {
     title: '序号',
     type: 'seq',
@@ -604,60 +574,20 @@ export const vxeFlowVariableTableColumns: VxeGridProps['columns']  = [
     title: '内置变量',
     field: 'innerVariable',
     align: 'center',
-    slots: { default: 'innerVariableRender' },
+    slots: {default: 'innerVariableRender'},
   },
   {
     width: 160,
     title: '操作',
     align: 'center',
-    slots: { default: 'action' },
-  },
-];
-export const flowVariableTableColumns: VxeGridProps['columns'] = [
-  {
-    title: '变量名',
-    width: 200,
-    field: 'name',
-    align: 'left',
-    resizable: true,
-  },
-  {
-    title: '变量标识',
-    field: 'sn',
-    width: 150,
-    align: 'left',
-  },
-  {
-    title: '变量类型',
-    field: 'url',
-    align: 'left',
-  },
-  {
-    title: '内置变量',
-    field: 'status',
-    width: 80,
-    customRender: ({ record }) => {
-      const status = record.status;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '启用' : '停用';
-      return h(Tag, { color: color }, () => text);
-    },
-  },
-  {
-    title: '备注',
-    field: 'note',
-    align: 'left',
+    slots: {default: 'action'},
   },
 ];
 
 export const uploadVariableFileFormSchema: FormSchema[] = [
   {
     fieldName: 'filePath',
-    slot: 'UploadFile',
     label: '变量配置文件',
-    colProps: {
-      span: 24,
-    },
+    component: 'Input'
   },
 ];

@@ -6,100 +6,15 @@
 <script lang="ts" setup>
   import { ref, defineEmits, defineExpose } from 'vue';
   import {message} from 'ant-design-vue';
-
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import { copyModelInfoFormSchema, copyBizModelInfoFormSchema } from './modelInfo.data';
   import { copyCustForm } from '#/api/form/customForm';
-  import { copyBizForm, checkEntityExist } from '#/api/form/bizForm';
-  import {getFlowCategoryTreeData} from "#/api/base/category";
+  import { copyBizForm } from '#/api/form/bizForm';
 
   const emit = defineEmits(['success', 'register']);
 
   const formType = ref('custom');
-
-  /*
-  const getBaseDynamicRules = (params: any) => {
-    return [
-      {
-        trigger: 'blur',
-        validator: (_, value) => {
-          if (value) {
-            return checkEntityExist({
-              id: params.id,
-              field: params.field,
-              fieldValue: value,
-              fieldName: params.fieldName,
-            })
-              .then((res) => {
-                if (res) {
-                  return Promise.resolve();
-                } else {
-                  return Promise.reject(params.fieldName + '已存在，请修改！');
-                }
-              })
-              .catch((res) => {
-                return Promise.reject(res);
-              });
-          } else {
-            return Promise.resolve();
-          }
-        },
-      },
-    ] as Rule[];
-  };
-
-  const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
-    async (data) => {
-      resetFields();
-      changeLoading(true);
-      let formData = data.record;
-
-      if (props.formType === 'biz') {
-        await updateSchema([
-          {
-            field: 'newModelKey',
-            dynamicRules: () => {
-              return [
-                {
-                  required: true,
-                  whitespace: true,
-                  message: '标识不能为空！',
-                },
-                {
-                  pattern: new RegExp(FormValidPatternEnum.SN),
-                  type: 'string',
-                  message: '请输入英文或数字！',
-                },
-                {
-                  max: 40,
-                  message: '字符长度不能大于40！',
-                },
-                ...getBaseDynamicRules({
-                  id: '',
-                  field: 'newModelKey',
-                  fieldValue: '',
-                  fieldName: '流程标识',
-                }),
-              ];
-            },
-          },
-        ]);
-        setFieldsValue({
-          fromModelKey: formData.modelKey,
-          newCategoryCode: formData.categoryCode,
-          newModelName: formData.name + '-copy',
-          newModelKey: formData.modelKey + '_copy',
-        });
-      } else {
-        setFieldsValue({
-          fromModelKey: formData.modelKey,
-          newCategoryCode: formData.categoryCode,
-          newModelName: formData.name + '-copy',
-        });
-      }
-    },
-  );*/
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
