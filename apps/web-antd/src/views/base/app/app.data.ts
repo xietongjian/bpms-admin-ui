@@ -12,11 +12,13 @@ export const listColumns: VxeGridProps['columns'] = [
   {
     field: 'image',
     align: 'center',
+    width: 80,
+    headerAlign: 'center',
     title: '图标',
     slots: {default: 'image'}
   },
 
-  {field: 'name', align: 'left', title: '名称', showOverflow: true},
+  {field: 'name', minWidth: 150, align: 'left', title: '名称', showOverflow: true},
   {field: 'sn', align: 'left', title: '标识', showOverflow: true},
   {field: 'url', align: 'left', title: 'URL'},
   {field: 'indexUrl', align: 'left', title: '首页地址', showHeaderOverflow: true},

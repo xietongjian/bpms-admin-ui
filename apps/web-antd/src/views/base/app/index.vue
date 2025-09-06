@@ -12,6 +12,7 @@ import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import AppModal from './app-modal.vue';
 import AppSecretKeyModal from './app-secret-key-modal.vue';
 import {deleteByIds, getAppListByPage} from '#/api/base/app';
+import {IconifyIcon} from '@vben/icons';
 
 const PerPrefix = "App:";
 
@@ -143,7 +144,8 @@ function createActions(row: Recordable<any>) {
       </template>
 
       <template #image="{ row }">
-        <Image :src="row.image" height="30" width="30"/>
+        <IconifyIcon :icon="row.image || 'ant-design:ellipsis-outlined'" class="size-8 m-auto"/>
+<!--        <Image :src="row.image" height="30" width="30"/>-->
       </template>
 
       <template #status="{ row }">
