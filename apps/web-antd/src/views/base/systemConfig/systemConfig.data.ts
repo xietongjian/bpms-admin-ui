@@ -2,7 +2,7 @@ import { z } from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import { checkEntityExist } from '#/api/base/systemConfig';
-import { OrderNoDefaultEnum, RemarkDefaultEnum } from '#/enums/commonEnum';
+import {FormValidPatternEnum, OrderNoDefaultEnum, RemarkDefaultEnum} from '#/enums/commonEnum';
 
 const END_WITH_IMG = "_IMG"
 const END_WITH_SWITCH = "_SWITCH"
@@ -89,6 +89,10 @@ export const formSchema: FormSchema[] = [
     fieldName: 'configName',
     label: '名称',
     component: 'Input',
+    dependencies: {
+      disabled: (values) => !!values.id,
+      triggerFields: ['configName'],
+    },
     rules: z
         .string({
           required_error: '名称不能为空',
@@ -102,28 +106,94 @@ export const formSchema: FormSchema[] = [
     label: '标识',
     rules: 'required',
     component: 'Input',
+    dependencies: {
+      disabled: (values) => !!values.id,
+      triggerFields: ['configSn'],
+      rules(values) {
+        const { id, configSn } = values;
+        return z
+            .string({
+              required_error: "标识不能为空！"
+            })
+            .min(1, "标识不能为空！")
+            .max(30, '字符长度不能大于30！')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'configSn',
+                      fieldValue: configSn || '',
+                      fieldName: '标识',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '标识已存在',
+                },
+            );
+      },
+    }
   },
   {
     fieldName: 'configKey',
     label: '配置Key',
     rules: 'required',
     component: 'Input',
+    dependencies: {
+      disabled: (values) => !!values.id,
+      triggerFields: ['configKey'],
+      rules(values) {
+        const { id, configKey } = values;
+        return z
+            .string({
+              required_error: "配置Key不能为空！"
+            })
+            .min(1, "配置Key不能为空！")
+            .max(30, '字符长度不能大于30！')
+            .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字且以英文或下划线开头！')
+            .refine(
+                async (e) => {
+                  let result = false;
+                  try {
+                    result = await checkEntityExist({
+                      id: id,
+                      field: 'configKey',
+                      fieldValue: configKey || '',
+                      fieldName: '配置Key',
+                    });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return result;
+                },
+                {
+                  message: '配置Key已存在',
+                },
+            );
+      },
+    }
   },
   {
     fieldName: 'configValue',
     label: '配置Value',
-    component: 'Input',
-    rules: z
-        .string()
-        .max(100, "字符长度不能大于100！")
-        .nullable()
-        .optional()
-    /*rules: [
-      {
-        max: 100,
-        message: '字符长度不能大于100！',
+    component: 'Textarea',
+    componentProps: {
+      autoSize: {
+        minRows: RemarkDefaultEnum.MIN_ROWS,
+        maxRows: RemarkDefaultEnum.MAX_ROWS,
       },
-    ],*/
+    },
+    rules: z
+      .string()
+      .max(1024, "字符长度不能大于1024！")
+      .nullable()
+      .optional()
   },
   {
     fieldName: 'configOrder',
@@ -151,12 +221,6 @@ export const formSchema: FormSchema[] = [
         .max(1024, "字符长度不能大于1024！")
         .nullable()
         .optional()
-    /*rules: [
-      {
-        max: 1024,
-        message: '字符长度不能大于1024！',
-      },
-    ],*/
   },
 ];
 

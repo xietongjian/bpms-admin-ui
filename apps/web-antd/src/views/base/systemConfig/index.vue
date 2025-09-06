@@ -128,7 +128,7 @@ function createActions(row: Recordable<any>) {
 }
 
 const beforeUpload = (record, file) => {
-  setLoading(true);
+  // setLoading(true);
   const reader = new FileReader();
   reader.readAsArrayBuffer(file);
   // 文件读取成功完成后的处理
@@ -146,14 +146,14 @@ const beforeUpload = (record, file) => {
           handleSuccess();
         })
         .finally(() => {
-          setLoading(false);
+          // setLoading(false);
         });
   };
   return false;
 };
 
 const handleRemoveImg = (record) => {
-  createConfirm({
+  /*createConfirm({
     iconType: 'warning',
     content: '确定要删除图片吗？',
     onOk() {
@@ -169,7 +169,7 @@ const handleRemoveImg = (record) => {
     okButtonProps: {
       danger: true,
     },
-  });
+  });*/
 };
 
 const getAccepts = (record) => {
