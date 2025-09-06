@@ -44,11 +44,7 @@
   import { LeftOutlined } from '@ant-design/icons-vue';
   import FramePage from '#/views/components/iframe/index.vue';
   import FormContainer from '#/views/process/components/FormContainer.vue';
-  import ViewActionButtons from '#/views/process/components/ViewActionButtons.vue';
 
-  import ActionButtons from '#/views/process/components/ActionButtons.vue';
-  import BaseActionButtons from '#/views/process/components/BaseActionButtons.vue';
-  import ApproveActionButtons from '#/views/process/components/ApproveActionButtons.vue';
   import ProcessBackButton from '#/views/process/components/ProcessBackButton.vue';
   import ApprovalHistory from '#/views/process/components/ApprovalHistory.vue';
   import CurrentApprover from '#/views/process/components/CurrentApprover.vue';

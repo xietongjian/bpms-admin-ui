@@ -13278,7 +13278,7 @@ const _hoisted_4$R = {
 };
 const _hoisted_5$N = { class: "fm-virtual-table__header" };
 const _hoisted_6$x = { class: "fm-virtual-table__header-content" };
-const _hoisted_7$r = {
+const _hoisted_7$s = {
   key: 0,
   class: "fm-virtual-table__header-cell",
   style: {
@@ -13344,7 +13344,7 @@ function _sfc_render$1X(_ctx, _cache, $props, $setup, $data, $options) {
               width: `calc(${$options.rowWidthCalc})`
             })
           }, [
-            $props.showControl ? (openBlock(), createElementBlock("div", _hoisted_7$r)) : createCommentVNode("", true),
+            $props.showControl ? (openBlock(), createElementBlock("div", _hoisted_7$s)) : createCommentVNode("", true),
             $options.rowLeftWidthCalc != "0px" ? (openBlock(), createElementBlock("div", {
               key: 1,
               class: "fm-virtual-table__header-cell",
@@ -14021,7 +14021,7 @@ const _hoisted_3$W = { key: 1 };
 const _hoisted_4$Q = { class: "scope-index" };
 const _hoisted_5$M = { class: "scope-action" };
 const _hoisted_6$w = { key: 1 };
-const _hoisted_7$q = { class: "form-table-mobile-item__top" };
+const _hoisted_7$r = { class: "form-table-mobile-item__top" };
 const _hoisted_8$k = { class: "form-table-mobile-item__content" };
 function _sfc_render$1U(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_el_table_column = resolveComponent("el-table-column");
@@ -14449,7 +14449,7 @@ function _sfc_render$1U(_ctx, _cache, $props, $setup, $data, $options) {
           class: "form-table-mobile-item",
           key: _ctx.tableData[(_ctx.paging ? _ctx.pageSize * (_ctx.currentPage - 1) : 0) + index2]["fm_key"]
         }, [
-          createElementVNode("div", _hoisted_7$q, [
+          createElementVNode("div", _hoisted_7$r, [
             _ctx.widget.options.selection ? (openBlock(), createBlock(_component_el_checkbox, {
               key: 0,
               modelValue: $data.checkSelectKeys.includes(_ctx.tableData[(_ctx.paging ? _ctx.pageSize * (_ctx.currentPage - 1) : 0) + index2]["fm_key"]),
@@ -27518,7 +27518,7 @@ const _hoisted_3$U = ["id"];
 const _hoisted_4$O = ["onClick"];
 const _hoisted_5$L = { style: { "font-size": "12px" } };
 const _hoisted_6$v = ["onClick"];
-const _hoisted_7$p = { style: { "font-size": "12px" } };
+const _hoisted_7$q = { style: { "font-size": "12px" } };
 const _hoisted_8$j = ["onClick"];
 const _hoisted_9$i = { style: { "padding": "0 5px", "max-width": "50%" } };
 const _hoisted_10$g = { key: 0 };
@@ -27648,7 +27648,7 @@ function _sfc_render$1S(_ctx, _cache, $props, $setup, $data, $options) {
                             }, [
                               createElementVNode("span", null, [
                                 createTextVNode(toDisplayString$1(node.data.name) + " {", 1),
-                                createElementVNode("span", _hoisted_7$p, toDisplayString$1(node.data.id), 1),
+                                createElementVNode("span", _hoisted_7$q, toDisplayString$1(node.data.id), 1),
                                 _cache[2] || (_cache[2] = createTextVNode("}"))
                               ]),
                               createVNode(_component_el_tag, { type: "info" }, {
@@ -28424,7 +28424,7 @@ const _hoisted_6$u = {
   key: 0,
   class: "column-config-parent"
 };
-const _hoisted_7$o = { style: { "display": "flex", "align-items": "center", "height": "28px", "width": "100%" } };
+const _hoisted_7$p = { style: { "display": "flex", "align-items": "center", "height": "28px", "width": "100%" } };
 function _sfc_render$1M(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_el_input = resolveComponent("el-input");
   const _component_columns_config = resolveComponent("columns-config", true);
@@ -28658,7 +28658,7 @@ function _sfc_render$1M(_ctx, _cache, $props, $setup, $data, $options) {
                   label: _ctx.$t("fm.config.widget.columnFixed")
                 }, {
                   default: withCtx(() => [
-                    createElementVNode("div", _hoisted_7$o, [
+                    createElementVNode("div", _hoisted_7$p, [
                       createVNode(_component_el_switch, {
                         modelValue: $data.columnDetail.fixed,
                         "onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => $data.columnDetail.fixed = $event)
@@ -30308,6 +30308,7 @@ const request$1 = axios.create({
 });
 request$1.interceptors.request.use(
   (config) => {
+    config.headers["flowtoken"] = localStorage.getItem("flowtoken");
     return config;
   },
   (error) => {
@@ -31152,7 +31153,7 @@ const _hoisted_6$t = {
   key: 1,
   style: { "display": "flex", "align-items": "center", "margin-bottom": "5px" }
 };
-const _hoisted_7$n = ["onClick"];
+const _hoisted_7$o = ["onClick"];
 const _hoisted_8$i = { style: { "margin-left": "22px" } };
 const _hoisted_9$h = ["onClick"];
 const _hoisted_10$f = { style: { "margin-left": "22px" } };
@@ -33441,7 +33442,7 @@ function _sfc_render$1I(_ctx, _cache, $props, $setup, $data, $options) {
                                       style: { "font-size": "16px", "margin": "0 5px", "cursor": "pointer" }
                                     }, _cache[252] || (_cache[252] = [
                                       createElementVNode("i", { class: "fm-iconfont icon-delete" }, null, -1)
-                                    ]), 8, _hoisted_7$n)
+                                    ]), 8, _hoisted_7$o)
                                   ]))
                                 ]),
                                 _: 1
@@ -35911,7 +35912,7 @@ const _hoisted_6$s = {
   key: 0,
   class: "code-desc"
 };
-const _hoisted_7$m = {
+const _hoisted_7$n = {
   key: 1,
   class: "code-desc"
 };
@@ -36197,7 +36198,7 @@ function _sfc_render$1H(_ctx, _cache, $props, $setup, $data, $options) {
                               }, {
                                 default: withCtx(() => [
                                   _ctx.$i18n.locale == "zh-cn" ? (openBlock(), createElementBlock("div", _hoisted_6$s, "// config: \u53D1\u51FA\u8BF7\u6C42\u7684\u53EF\u7528\u914D\u7F6E\u9009\u9879;")) : createCommentVNode("", true),
-                                  _ctx.$i18n.locale == "zh-cn" ? (openBlock(), createElementBlock("div", _hoisted_7$m, "// \u901A\u8FC7 config.url \u53EF\u4EE5\u66F4\u6539\u8BF7\u6C42\u5730\u5740\uFF0C\u901A\u8FC7 config.headers \u53EF\u4EE5\u66F4\u6539\u8BF7\u6C42\u5934\u90E8")) : createCommentVNode("", true),
+                                  _ctx.$i18n.locale == "zh-cn" ? (openBlock(), createElementBlock("div", _hoisted_7$n, "// \u901A\u8FC7 config.url \u53EF\u4EE5\u66F4\u6539\u8BF7\u6C42\u5730\u5740\uFF0C\u901A\u8FC7 config.headers \u53EF\u4EE5\u66F4\u6539\u8BF7\u6C42\u5934\u90E8")) : createCommentVNode("", true),
                                   _ctx.$i18n.locale == "zh-cn" ? (openBlock(), createElementBlock("div", _hoisted_8$h, "// \u901A\u8FC7 config.data \u53EF\u4EE5\u66F4\u6539\u53D1\u9001\u7684\u6570\u636E\uFF0C\uFF08GET \u8BF7\u6C42\u4E0D\u9002\u7528\uFF0C\u9700\u8981\u66F4\u6539 config.params\uFF09")) : createCommentVNode("", true),
                                   _cache[11] || (_cache[11] = createElementVNode("div", { class: "code-line" }, "(config, args) => {", -1)),
                                   createVNode(_component_code_editor, {
@@ -44413,7 +44414,7 @@ const _hoisted_4$H = {
 };
 const _hoisted_5$F = ["title", "onClick"];
 const _hoisted_6$r = ["title", "onClick"];
-const _hoisted_7$l = ["title", "onClick"];
+const _hoisted_7$m = ["title", "onClick"];
 function _sfc_render$1y(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_el_progress = resolveComponent("el-progress");
   const _component_a_progress = resolveComponent("a-progress");
@@ -44483,7 +44484,7 @@ function _sfc_render$1y(_ctx, _cache, $props, $setup, $data, $options) {
               title: _ctx.$t("fm.upload.delete"),
               onClick: ($event) => $options.handleRemove(item2.key),
               style: normalizeStyle({ "font-size": $options.miniWidth / 8 + "px" })
-            }, null, 12, _hoisted_7$l)) : createCommentVNode("", true)
+            }, null, 12, _hoisted_7$m)) : createCommentVNode("", true)
           ], 4)
         ], 14, _hoisted_2$Y))
       ]),
@@ -45352,7 +45353,7 @@ const _hoisted_6$q = {
   key: 0,
   class: "org-company"
 };
-const _hoisted_7$k = {
+const _hoisted_7$l = {
   key: 1,
   class: "org-dept"
 };
@@ -45426,7 +45427,7 @@ function _sfc_render$1v(_ctx, _cache, $props, $setup, $data, $options) {
                       _: 1
                     }),
                     createTextVNode(" " + toDisplayString$1($props.data.text), 1)
-                  ])) : (openBlock(), createElementBlock("span", _hoisted_7$k, [
+                  ])) : (openBlock(), createElementBlock("span", _hoisted_7$l, [
                     createVNode(_component_el_icon, { style: { "vertical-align": "middle" } }, {
                       default: withCtx(() => [
                         createVNode(_component_OfficeBuilding)
@@ -46003,19 +46004,14 @@ const _sfc_main$1y = {
 };
 const _hoisted_1$13 = {
   slot: "header",
-  style: { "padding": "0" }
+  style: { "padding": "0", "height": "40px" }
 };
-const _hoisted_2$U = { class: "custom-tree-node" };
-const _hoisted_3$H = {
-  key: 0,
-  style: { "color": "#67c23a" }
-};
-const _hoisted_4$F = {
-  key: 1,
-  style: { "color": "#409EFF" }
-};
-const _hoisted_5$D = { key: 2 };
-const _hoisted_6$p = {
+const _hoisted_2$U = { style: { "flex": "1", "overflow": "auto" } };
+const _hoisted_3$H = { class: "custom-tree-node" };
+const _hoisted_4$F = ["title"];
+const _hoisted_5$D = ["title"];
+const _hoisted_6$p = ["title"];
+const _hoisted_7$k = {
   slot: "header",
   style: { "padding": "0" }
 };
@@ -46076,7 +46072,7 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
                 default: withCtx(() => [
                   createVNode(_component_el_card, {
                     shadow: "never",
-                    "body-style": "padding:0;height: 398px;overflow-y:scroll;"
+                    "body-style": "padding:0;height: 398px;display: flex; flex-direction: column;"
                   }, {
                     default: withCtx(() => [
                       createElementVNode("div", _hoisted_1$13, [
@@ -46089,8 +46085,9 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
                           clearable: ""
                         }, null, 8, ["modelValue", "suffix-icon"])
                       ]),
-                      createElementVNode("div", null, [
+                      createElementVNode("div", _hoisted_2$U, [
                         withDirectives((openBlock(), createBlock(_component_el_tree, {
+                          style: { "max-width": "500px", "min-width": "100%", "width": "fit-content" },
                           "highlight-current": "",
                           "default-expanded-keys": $data.defaultExpandedKeys,
                           class: "filter-tree",
@@ -46102,8 +46099,12 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
                           props: $data.orgTreeProps
                         }, {
                           default: withCtx(({ node, data: data2 }) => [
-                            createElementVNode("span", _hoisted_2$U, [
-                              data2.type == "1" ? (openBlock(), createElementBlock("span", _hoisted_3$H, [
+                            createElementVNode("span", _hoisted_3$H, [
+                              data2.type == "1" ? (openBlock(), createElementBlock("span", {
+                                key: 0,
+                                style: { "color": "#67c23a" },
+                                title: node.label
+                              }, [
                                 createVNode(_component_el_icon, { style: { "vertical-align": "middle" } }, {
                                   default: withCtx(() => [
                                     createVNode(_component_OfficeBuilding)
@@ -46111,7 +46112,11 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
                                   _: 1
                                 }),
                                 createTextVNode(" " + toDisplayString$1(node.label), 1)
-                              ])) : data2.type == "2" ? (openBlock(), createElementBlock("span", _hoisted_4$F, [
+                              ], 8, _hoisted_4$F)) : data2.type == "2" ? (openBlock(), createElementBlock("span", {
+                                key: 1,
+                                style: { "color": "#409EFF" },
+                                title: node.label
+                              }, [
                                 createVNode(_component_el_icon, { style: { "vertical-align": "middle" } }, {
                                   default: withCtx(() => [
                                     createVNode(_component_Share)
@@ -46119,7 +46124,10 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
                                   _: 1
                                 }),
                                 createTextVNode(" " + toDisplayString$1(node.label), 1)
-                              ])) : (openBlock(), createElementBlock("span", _hoisted_5$D, toDisplayString$1(node.label), 1))
+                              ], 8, _hoisted_5$D)) : (openBlock(), createElementBlock("span", {
+                                key: 2,
+                                title: node.label
+                              }, toDisplayString$1(node.label), 9, _hoisted_6$p))
                             ])
                           ]),
                           _: 1
@@ -46140,7 +46148,7 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
                     "body-style": "padding:0;height: 397px;overflow-y:hidden;"
                   }, {
                     default: withCtx(() => [
-                      createElementVNode("div", _hoisted_6$p, [
+                      createElementVNode("div", _hoisted_7$k, [
                         createVNode(_component_el_input, {
                           placeholder: "\u8BF7\u8F93\u5165\u5173\u952E\u5B57",
                           size: "default",
@@ -46234,7 +46242,7 @@ function _sfc_render$1s(_ctx, _cache, $props, $setup, $data, $options) {
                           background: "",
                           onSizeChange: $options.handleSizeChange,
                           onCurrentChange: $options.handleCurrentChange,
-                          style: { "text-align": "center", "margin-top": "4px" },
+                          style: { "text-align": "center", "margin-top": "4px", "margin-left": "4px" },
                           "current-page": $data.pager.pageNum,
                           "page-size": $data.pager.pageSize,
                           "page-sizes": $data.pager.sizes,
@@ -52009,7 +52017,7 @@ function _sfc_render$1h(_ctx, _cache, $props, $setup, $data, $options) {
     default: withCtx(() => [
       createVNode(_component_el_container, null, {
         default: withCtx(() => [
-          createVNode(_component_el_header, { style: { "padding": "0", "height": "auto" } }, {
+          createVNode(_component_el_header, { style: { "padding": "0", "min-height": "42px", "height": "auto" } }, {
             default: withCtx(() => [
               createVNode(_component_tag_input, {
                 ref: "tagInputRef",
@@ -52151,7 +52159,7 @@ function _sfc_render$1h(_ctx, _cache, $props, $setup, $data, $options) {
                         background: "",
                         onSizeChange: $options.handleSizeChange,
                         onCurrentChange: $options.handleCurrentChange,
-                        style: { "text-align": "center", "margin-top": "4px" },
+                        style: { "text-align": "center", "margin-top": "4px", "margin-left": "4px" },
                         "current-page": $data.pager.pageNum,
                         "page-size": $data.pager.pageSize,
                         "page-sizes": $data.pager.sizes,

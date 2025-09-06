@@ -34,7 +34,7 @@
 </template>
 <script lang="ts" setup>
   import { ref, unref, computed, nextTick } from 'vue';
-  import { PageWrapper } from '@/components/Page';
+  // import { PageWrapper } from '@/components/Page';
   import { Tabs, Badge } from 'ant-design-vue';
 
   // import { useProcessStore } from '@/store/modules/process';

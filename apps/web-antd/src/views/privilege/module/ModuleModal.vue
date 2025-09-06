@@ -1,28 +1,30 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
+  <BasicModal :title="getTitle" @ok="handleSubmit">
     <BasicForm @register="registerForm" />
   </BasicModal>
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref, defineEmits, defineExpose } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, Rule, useForm } from '@/components/Form/index';
+  // import { BasicModal, useModalInner } from '@/components/Modal';
+  // import { BasicForm, Rule, useForm } from '@/components/Form/index';
   import { formSchema } from './module.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/privilege/module';
-  import { CheckExistParams } from '#/api/model/baseModel';
+  // import { CheckExistParams } from '#/api/model/baseModel';
   import { FormValidPatternEnum } from '#/enums/commonEnum';
 
   const emit = defineEmits(['success', 'register']);
 
   const isUpdate = ref(true);
 
+/*
   const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
     labelWidth: 100,
     schemas: formSchema,
     showActionButtonGroup: false,
   });
+*/
 
-  const getBaseDynamicRules = (params: CheckExistParams) => {
+  /*const getBaseDynamicRules = (params: any) => {
     return [
       {
         trigger: 'blur',
@@ -95,11 +97,11 @@
       });
     }
   });
-
+*/
   const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 
   async function handleSubmit() {
-    try {
+   /* try {
       setModalProps({ confirmLoading: true });
       const values = await validate();
       await saveOrUpdate(values);
@@ -107,6 +109,6 @@
       emit('success');
     } finally {
       setModalProps({ confirmLoading: false });
-    }
+    }*/
   }
 </script>

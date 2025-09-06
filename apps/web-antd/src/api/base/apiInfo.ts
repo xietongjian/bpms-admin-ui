@@ -1,6 +1,6 @@
 import { requestClient } from '#/api/request';
 import {listToTree} from "#/utils/helper/treeHelper";
-import axios from 'axios';
+// import axios from 'axios';
 
 enum Api {
   GetApiCategoryListData = '/flow/simulate/apiCategory/getAll',

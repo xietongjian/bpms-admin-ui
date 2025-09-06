@@ -9,26 +9,10 @@
     </div>
   </PageWrapper>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
   import { defineComponent, ref } from 'vue';
-  import { PageWrapper } from '@/components/Page';
+  // import { PageWrapper } from '@/components/Page';
   import { Divider, Card, Empty, Descriptions} from 'ant-design-vue';
 
-  export default defineComponent({
-    components: {
-      PageWrapper,
-      [Divider.name]: Divider,
-      [Card.name]: Card,
-      AEmpty: Empty,
-      [Descriptions.name]: Descriptions,
-      [Descriptions.Item.name]: Descriptions.Item,
-    },
-    setup() {
-      const currentView = ref("./approve.vue");
-
-      return {
-        currentView
-      };
-    },
-  });
+  const currentView = ref("./approve.vue");
 </script>

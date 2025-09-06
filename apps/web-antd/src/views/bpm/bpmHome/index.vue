@@ -9,7 +9,7 @@
         <QuickNav :loading="loading" class="enter-y"/>
 
         <Card class="!my-4 enter-y" :loading="loading">
-          <img class="xl:h-50 h-30 mx-auto" src="../../../assets/svg/illustration.svg"/>
+<!--          <img class="xl:h-50 h-30 mx-auto" src="../../../assets/svg/illustration.svg"/>-->
         </Card>
 
       </div>
@@ -20,12 +20,12 @@
 import {ref} from 'vue';
 import {Card} from 'ant-design-vue';
 import {Page} from '@vben/common-ui';
-import WorkbenchHeader from './components/WorkbenchHeader.vue';
-import ProjectCard from './components/ProjectCard.vue';
-import CalendarCard from './components/CalendarCard.vue';
+// import WorkbenchHeader from './components/WorkbenchHeader.vue';
+// import ProjectCard from './components/ProjectCard.vue';
+// import CalendarCard from './components/CalendarCard.vue';
 import QuickNav from './components/QuickNav.vue';
 import BpmInfo from './components/BpmInfo.vue';
-import SaleRadar from './components/SaleRadar.vue';
+// import SaleRadar from './components/SaleRadar.vue';
 
 const loading = ref(true);
 

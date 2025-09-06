@@ -1,9 +1,6 @@
 <template>
   <BasicModal
       class="w-[800px]"
-    wrapClassName="dmn-viewer-container "
-    v-bind="$attrs"
-    @cancel="simulatorMode = false"
   >
     <div class="dmn-container">
       <div v-if="controllerBtnVisibility" class="svg-controller">
@@ -215,7 +212,7 @@
   }
 
   async function init(modelId) {
-    changeLoading(true);
+    // changeLoading(true);
 
     dmnViewer && dmnViewer.destroy();
     dmnViewer = new DmnViewer({
@@ -231,7 +228,7 @@
     getByModelId({ modelId }).then((res) => {
       controllerBtnVisibility.value = res.status == 3;
       importXml(res);
-      changeLoading(false);
+      // changeLoading(false);
     });
   }
 
@@ -314,11 +311,11 @@
               },
             };
           });
-          await resetSchema(schemaItems);
+          // await resetSchema(schemaItems);
         }
         simulatorInputParamsLoading.value = false;
       } finally {
-        changeLoading(false);
+        // changeLoading(false);
         simulatorInputParamsLoading.value = false;
       }
     }
@@ -327,8 +324,8 @@
   async function handleSubmit() {
     try {
       simulatorOutputParamsLoading.value = true;
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
+      // setModalProps({ confirmLoading: true });
+      const values = await formApi.validate();
       const datas = { decisionKey: unref(modelKey) };
 
       const inputDataVos = [];
@@ -343,7 +340,7 @@
 
       if (inputDataVos.length <= 0) {
         simulatorOutputParamsLoading.value = false;
-        setModalProps({ confirmLoading: false });
+        // setModalProps({ confirmLoading: false });
         message.warn('输入参数不能为空！');
         return;
       }
@@ -353,15 +350,15 @@
       simulatorOutputParams.value = res;
       simulatorOutputParamsLoading.value = false;
     } finally {
-      changeLoading(false);
-      setModalProps({ confirmLoading: false });
+      // changeLoading(false);
+      // setModalProps({ confirmLoading: false });
       simulatorOutputParamsLoading.value = false;
     }
   }
 </script>
 
 <style lang="scss">
-  @import 'index.scss';
+  /*@import 'index.scss';
   .dmn-viewer-container {
     overflow: visible;
     padding: 10px;
@@ -470,5 +467,5 @@
         }
       }
     }
-  }
+  }*/
 </style>

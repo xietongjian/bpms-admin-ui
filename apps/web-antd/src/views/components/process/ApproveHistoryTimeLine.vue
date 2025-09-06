@@ -133,9 +133,9 @@
   } from '@ant-design/icons-vue';
   import { List, Avatar, Tag, Space, Row, Col, Timeline, Tooltip } from 'ant-design-vue';
   import {EmpInfo} from '#/views/components/EmpInfo';
-  import { getFormatCode } from '@/utils';
+  import { getFormatCode } from '#/utils';
   import { getCommentInfosByProcessInstanceId } from '#/api/flowable/bpmn/modelInfo';
-  import { BasicTitle } from '@/components/Basic';
+  // import { BasicTitle } from '@/components/Basic';
 
   const TimelineItem = Timeline.Item;
 
@@ -185,7 +185,7 @@
     position: absolute;
     right: 0;
     top: 0;
-    background: var(--component-background-color);
+    //background: var(--component-background-color);
     box-shadow: rgba(0, 0, 0, 0.3) -10px -4px 6px -10px;
     z-index: 999999;
 

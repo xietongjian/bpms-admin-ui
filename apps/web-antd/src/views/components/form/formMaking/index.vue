@@ -485,7 +485,7 @@
   });
 </script>
 <style lang="scss">
-  @import './index.scss';
+  @use './index.scss';
   .fm-custom-label{
     font-size: 13px;
     color: rgb(96, 98, 102);

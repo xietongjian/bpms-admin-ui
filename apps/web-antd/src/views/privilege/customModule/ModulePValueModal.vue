@@ -5,8 +5,8 @@
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref, defineEmits } from 'vue';
-  import { BasicModal, useModalInner } from '@/components/Modal';
-  import { BasicForm, useForm } from '@/components/Form/index';
+  // import { BasicModal, useModalInner } from '@/components/Modal';
+  // import { BasicForm, useForm } from '@/components/Form/index';
   import { formSchema } from './module.data';
   import { saveOrUpdate } from '#/api/privilege/module';
 
@@ -14,7 +14,7 @@
 
   const isUpdate = ref(true);
 
-  const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
+  /*const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
     labelWidth: 100,
     schemas: formSchema,
     showActionButtonGroup: false,
@@ -51,12 +51,12 @@
         },
       ]);
     }
-  });
+  });*/
 
   const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
 
   async function handleSubmit() {
-    try {
+    /*try {
       setModalProps({ confirmLoading: true });
       const values = await validate();
       await saveOrUpdate(values);
@@ -64,6 +64,6 @@
       emit('success');
     } finally {
       setModalProps({ confirmLoading: false });
-    }
+    }*/
   }
 </script>

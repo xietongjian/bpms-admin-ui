@@ -7,7 +7,7 @@ const rootDir = process.cwd();
 const CONCURRENCY_LIMIT = 10;
 
 // 需要跳过的目录，避免进入这些目录进行清理
-const SKIP_DIRS = new Set(['.DS_Store', '.git', '.idea', '.vscode']);
+const SKIP_DIRS = new Set(['form-making', '.DS_Store', '.git', '.idea', '.vscode']);
 
 /**
  * 处理单个文件/目录项

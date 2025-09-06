@@ -6,7 +6,7 @@ import { preferences } from '@vben/preferences';
 import { initStores } from '@vben/stores';
 import '@vben/styles';
 import '@vben/styles/antd';
-
+import { QuillEditor } from '@vueup/vue-quill';
 import { useTitle } from '@vueuse/core';
 import ElementPlus from 'element-plus';
 import zhCn from 'element-plus/es/locale/lang/zh-cn';
@@ -77,6 +77,7 @@ async function bootstrap(namespace: string) {
       useTitle(pageTitle);
     }
   });
+  app.component('QuillEditor', QuillEditor);
   app.use(ElementPlus, {
     locale: zhCn,
   });

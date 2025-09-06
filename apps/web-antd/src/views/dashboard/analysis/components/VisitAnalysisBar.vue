@@ -5,7 +5,9 @@
   import { onMounted, ref } from 'vue';
   import type { Ref } from 'vue';
 
-  import { useECharts } from '@/hooks/web/useECharts';
+  // import { useECharts } from '@/hooks/web/useECharts';
+  import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
+
   import { basicProps } from './props';
 
   defineProps({
@@ -13,7 +15,7 @@
   });
 
   const chartRef = ref<HTMLDivElement | null>(null);
-  const { setOptions } = useECharts(chartRef as Ref<HTMLDivElement>);
+  const { setOptions } = useEcharts(chartRef as Ref<HTMLDivElement>);
   onMounted(() => {
     setOptions({
       tooltip: {

@@ -24,7 +24,7 @@
 <script lang="ts" setup>
 import {computed, nextTick, ref} from 'vue';
 import {LoadingOutlined,} from '@ant-design/icons-vue';
-import {BpmnMocker, BpmnPresetViewer} from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
+import {BpmnMocker} from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
 import '#/assets/bpmn/viewer/lib/style.css';
 import {getBpmnByModelKey, getCustomFlowSequenceFlows} from "#/api/process/process";
 import {useUserStore} from '@vben/stores';

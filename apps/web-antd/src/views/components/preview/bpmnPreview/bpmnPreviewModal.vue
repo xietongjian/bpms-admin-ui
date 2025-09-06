@@ -32,7 +32,7 @@
 <script lang="ts" setup>
 import {computed, ref, unref, shallowRef, defineExpose, nextTick} from 'vue';
   import {useVbenModal} from '@vben/common-ui';
-  import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
+  // import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
   // import ApproveHistoryTimeLine from '#/views/components/process/ApproveHistoryTimeLine.vue';
   import BpmnPreviewContainer from './bpmnPreviewContainer.vue';
   import { Button, Space, Dropdown, Menu } from 'ant-design-vue';

@@ -31,107 +31,71 @@
     </div>
   </PageWrapper>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
   import { defineComponent, ref, unref, onMounted, nextTick } from 'vue';
-  import { PageWrapper } from '@/components/Page';
+  // import { PageWrapper } from '@/components/Page';
   import { Divider, Card, Tag, Empty, Button, Descriptions} from 'ant-design-vue';
   import { useRouter } from 'vue-router';
   import { LeftOutlined } from '@ant-design/icons-vue';
   import FormContainer from '#/views/process/components/FormContainer.vue';
 
   import ActionButtons from '#/views/process/components/ActionButtons.vue';
-  import ViewActionButtons from '#/views/process/components/ViewActionButtons.vue';
-  import BaseActionButtons from '#/views/process/components/BaseActionButtons.vue';
   import ProcessBackButton from '#/views/process/components/ProcessBackButton.vue';
-  import ApproveActionButtons from '#/views/process/components/ApproveActionButtons.vue';
   import ApprovalHistory from '#/views/process/components/ApprovalHistory.vue';
   import CurrentApprover from '#/views/process/components/CurrentApprover.vue';
 
-  import { useGo } from '@/hooks/web/usePage';
-  import { useMessage } from '@/hooks/web/useMessage';
+  // import { useGo } from '@/hooks/web/usePage';
+  // import { useMessage } from '@/hooks/web/useMessage';
   import {getProdModelInfoByModelKeyAndProcInstId, getCurrTaskApplyersByBusinessKey} from "#/api/process/process";
-  import {useUserStore} from "@/store/modules/user";
+  // import {useUserStore} from "@/store/modules/user";
   import {EmpInfo} from '#/views/components/EmpInfo';
-  import {isEmpty} from "@/utils/is";
+  // import {isEmpty} from "@/utils/is";
 
-  export default defineComponent({
-    components: {
-      EmpInfo,
-      FormContainer,
-      Button, Tag,
-      LeftOutlined,
-      PageWrapper,
-      [Divider.name]: Divider,
-      [Card.name]: Card,
-      AEmpty: Empty,
-      [Descriptions.name]: Descriptions,
-      [Descriptions.Item.name]: Descriptions.Item,
-      ActionButtons,
-      ViewActionButtons,
-      BaseActionButtons,
-      ApproveActionButtons,
-      ApprovalHistory,
-      CurrentApprover,
-      ProcessBackButton,
-    },
-    setup() {
-      const flowBaseInfo = ref({});
-      const processFormRef = ref<HTMLElement | null>(null);
-      const framePageRef = ref<HTMLElement | null>(null);
-      const approvalHistoryRef = ref<HTMLElement | null>(null);
-      const go = useGo();
-      const { currentRoute } = useRouter();
-      const { params: { modelKey, procInstId, bizId } } = unref(currentRoute);
-      const userStore = useUserStore();
-      const currentApproverList = ref([]);
-      const currentApproverListLoading = ref(false);
-      const { createMessage } = useMessage();
+  const flowBaseInfo = ref({});
+  const processFormRef = ref<HTMLElement | null>(null);
+  const framePageRef = ref<HTMLElement | null>(null);
+  const approvalHistoryRef = ref<HTMLElement | null>(null);
+  // const go = useGo();
+  const { currentRoute } = useRouter();
+  const { params: { modelKey, procInstId, bizId } } = unref(currentRoute);
+  // const userStore = useUserStore();
+  const currentApproverList = ref([]);
+  const currentApproverListLoading = ref(false);
+  // const { createMessage } = useMessage();
 
 
-      // 查询当前待办人
-      currentApproverListLoading.value = true;
-      getCurrTaskApplyersByBusinessKey({bizId: bizId}).then(res=>{
-        currentApproverList.value = res||[];
-      }).finally(()=>{
-        currentApproverListLoading.value = false;
-      });
-
-      onMounted(()=>{
-        const params = {modelKey, procInstId: procInstId==='0'?'':procInstId};
-        // 查询流程基本信息
-        getProdModelInfoByModelKeyAndProcInstId(params).then(res=>{
-          if(res){
-            flowBaseInfo.value = res;
-          }else{
-            createMessage.error("未找到流程定义!");
-            console.error("未找到流程定义!");
-          }
-        });
-        nextTick(()=>{
-          window['currentUser'] = userStore.getUserInfo;
-          window['procInstId'] = procInstId;
-          window['modelKey'] = modelKey;
-          window['bizId'] = bizId;
-        });
-      });
-
-      function refreshApproveHistory(){
-        approvalHistoryRef.value.fetch();
-      }
-
-      return {
-        refreshApproveHistory,
-        framePageRef,
-        approvalHistoryRef,
-        processFormRef,
-        flowBaseInfo,
-        currentApproverList,
-        isEmpty
-      };
-    },
+  // 查询当前待办人
+  currentApproverListLoading.value = true;
+  getCurrTaskApplyersByBusinessKey({bizId: bizId}).then(res=>{
+    currentApproverList.value = res||[];
+  }).finally(()=>{
+    currentApproverListLoading.value = false;
   });
+
+  onMounted(()=>{
+    const params = {modelKey, procInstId: procInstId==='0'?'':procInstId};
+    // 查询流程基本信息
+    getProdModelInfoByModelKeyAndProcInstId(params).then(res=>{
+      if(res){
+        flowBaseInfo.value = res;
+      }else{
+        // createMessage.error("未找到流程定义!");
+        console.error("未找到流程定义!");
+      }
+    });
+    nextTick(()=>{
+      window['currentUser'] = userStore.getUserInfo;
+      window['procInstId'] = procInstId;
+      window['modelKey'] = modelKey;
+      window['bizId'] = bizId;
+    });
+  });
+
+  function refreshApproveHistory(){
+    approvalHistoryRef.value.fetch();
+  }
 </script>
 
 <style lang="scss">
-  @import '../index.less';
+  //@use '../index.less';
 </style>

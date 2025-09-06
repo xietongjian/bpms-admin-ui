@@ -15,9 +15,9 @@
   import { defineComponent, ref, unref, onMounted, nextTick, computed } from 'vue';
   import { Spin } from 'ant-design-vue';
   import { getViewportOffset } from '#/utils/domUtils';
-  import { useWindowSizeFn } from '@vben/hooks';
-  import { propTypes } from '@/utils/propTypes';
-  import { useDesign } from '@/hooks/web/useDesign';
+  // import { useWindowSizeFn } from '@vben/hooks';
+  // import { propTypes } from '@/utils/propTypes';
+  // import { useDesign } from '@/hooks/web/useDesign';
 
   const defaultHeight = 200;
 
@@ -136,7 +136,7 @@
   }
 </style>
 <style lang="scss" scoped>
-  @prefix-cls: ~'@{namespace}-iframe-page';
+  /*@prefix-cls: ~'@{namespace}-iframe-page';
 
   .@{prefix-cls} {
     .ant-spin-nested-loading {
@@ -166,5 +166,5 @@
       border: 0;
       box-sizing: border-box;
     }
-  }
+  }*/
 </style>

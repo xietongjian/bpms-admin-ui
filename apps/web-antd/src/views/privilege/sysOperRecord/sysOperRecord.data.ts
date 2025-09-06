@@ -1,11 +1,10 @@
-import { BasicColumn, FormSchema } from '@/components/Table';
 import { h } from 'vue';
 
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
 // import { DescItem } from '@/components/Description';
-import { formatToDateTime } from '#/utils/dateUtil';
+// import { formatToDateTime } from '#/utils/dateUtil';
 import { CodeEditor } from '#/components/CodeEditor';
 
 export const columns: VxeGridProps['columns'] = [
@@ -82,7 +81,7 @@ export const searchFormSchema: FormSchema[] = [
   },
 ];
 
-export const descriptionSchema: DescItem[] = [
+export const descriptionSchema: any[] = [
   {
     field: 'ip',
     label: '访问ip',
