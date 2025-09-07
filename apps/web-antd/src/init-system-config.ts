@@ -117,6 +117,7 @@ function refreshSystemConfig(config: any) {
       SYS_COM_WORKBENCH_LAYOUT
     } = config;
 
+    debugger;
     if(SYS_FAVICON_IMG){
       const link = window.document.querySelector("link[rel*='icon']") || window.document.createElement('link');
       link.type = 'image/x-icon';
