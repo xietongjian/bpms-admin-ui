@@ -4,7 +4,7 @@
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import {defineEmits, defineExpose } from 'vue';
+  import {defineEmits, defineExpose, nextTick } from 'vue';
   import {useVbenModal} from '@vben/common-ui';
   import { setGroupFormSchema } from './account.data';
   import { allocationRoles } from '#/api/privilege/account';
@@ -18,11 +18,13 @@
     onCancel() {
       modalApi.close();
     },
-    onOpenChange(isOpen: boolean) {
+    async onOpenChange(isOpen: boolean) {
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
           const groups = values.groups.map(item => item.id);
+          await nextTick();
+          debugger;
           baseFormApi.setValues({...values, groups: groups});
           modalApi.setState({loading: false, confirmLoading: false});
         }

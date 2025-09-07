@@ -342,7 +342,7 @@ export const setGroupFormSchema: FormSchema[] = [
       api: getAllList,
       mode: 'multiple',
       fieldNames: {
-        value: 'sn',
+        value: 'id',
         label: 'name'
       },
       class: 'w-full',
