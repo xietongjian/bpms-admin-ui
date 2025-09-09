@@ -1,15 +1,14 @@
 <template>
   <BasicModal
-    wrapClassName="bpmn-viewer-container "
-    v-bind="$attrs"
+    class="bpmn-viewer-container w-1/2 h-150"
     @cancel="onCloseBpmnPreviewModal"
   >
     <template #title>
       {{ getTitle }}
       <LoadingOutlined v-if="modelName === ''"/>
     </template>
-    <div class="bpmn-container">
-      <div class="containers" ref="container">
+    <div class="bpmn-container h-full">
+      <div class="containers h-full" ref="container">
         <BpmnMocker
           ref="bpmnMockerRef"
           :theme="getTheme"
@@ -22,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, nextTick, ref} from 'vue';
+import {computed, nextTick, ref, defineExpose} from 'vue';
 import {LoadingOutlined,} from '@ant-design/icons-vue';
 import {BpmnMocker} from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
 // import '#/assets/bpmn/viewer/lib/bpmn-viewer.css';
@@ -54,7 +53,6 @@ const [BasicModal, modalApi] = useVbenModal({
     if (isOpen) {
       const values = modalApi.getData<Record<string, any>>();
       if (values) {
-        // baseFormApi.setValues(values);
         modalApi.setState({loading: false, confirmLoading: false});
         await nextTick();
         const {modelKey, procInstId, formData} = values;
@@ -62,7 +60,7 @@ const [BasicModal, modalApi] = useVbenModal({
           modelKey,
           dataJson: JSON.stringify(formData),
           procInstId,
-          userCode: userStore?.getUserInfo?.userNo
+          userCode: userStore?.userInfo?.userNo
         };
 
         const modelInfo = await getBpmnByModelKey({modelKey});
@@ -79,8 +77,6 @@ const [BasicModal, modalApi] = useVbenModal({
         } finally {
           // changeLoading(false);
         }
-
-
       }
     }
   },
@@ -111,7 +107,7 @@ const [registerModal, {setModalProps, changeLoading}] = useModalInner(async (dat
     modelKey,
     dataJson: JSON.stringify(formData),
     procInstId,
-    userCode: userStore?.getUserInfo?.userNo
+    userCode: userStore?.userInfo?.userNo
   };
 
   const modelInfo = await getBpmnByModelKey({modelKey});
@@ -138,6 +134,7 @@ function onCloseBpmnPreviewModal() {
   modelName.value = '';
 }
 
+defineExpose(modalApi)
 </script>
 
 <style lang="scss">

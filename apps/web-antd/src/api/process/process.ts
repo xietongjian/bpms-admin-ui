@@ -24,7 +24,7 @@ enum Api {
   GetCommentInfosByProcessInstanceId = '/flow/flowable/commentInfo/getCommentInfosByProcessInstanceId',
   GetHighLightedNodeVoByProcessInstanceId = '/flow/query/getHighLightedNodeVoByProcessInstanceId',
   // /loadBpmnXmlByModelKey/{modelKey}
-  LoadBpmnXmlByModelKey = '/flow/front/query/loadBpmnXmlByModelKey',
+  LoadBpmnXmlByModelKey = '/flow/query/loadBpmnXmlByModelKey',
   GetAppingTaskCount = '/flow/query/getAppingTaskCount',
   GetPagerModelModelInfo = '/flow/query/getPagerModelModelInfo',
   GetBackToStepNodes = '/flow/front/query/findBackNodesByTaskId',
@@ -36,7 +36,7 @@ enum Api {
   ///flow/form/biz/getBizInfoByModelKey
   GetDraftPageList = '/flow/query/getFormDraftPagerModelByQuery',
   GetMyCommonlyList = '/flow/query/getMyCommonlyProcess',
-  GetCustomFlowSequenceFlows = '/flow/front/query/getCustomFlowSequenceFlows',
+  GetCustomFlowSequenceFlows = '/flow/api/public/getCustomFlowSequenceFlows',
   DelFormDraftById = '/flow/front/form/process/delFormDraftById',
   GetCustomApproveSettings = '/flow/front/query/getUserTaskNextSequenceUser',
   CheckFetchBack = '/flow/front/query/checkFetchBack',

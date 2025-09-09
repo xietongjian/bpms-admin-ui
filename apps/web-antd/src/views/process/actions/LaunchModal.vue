@@ -61,7 +61,7 @@
       <ApprovalHistory ref="approvalHistoryRef" />
     </div>
 
-    <!--    <BpmnSimulatorModal @register="registerBpmnSimulatorModal" />-->
+    <BpmnMocker ref="bpmnMockerRef" />
   </BasicModal>
 </template>
 <script lang="ts" setup>
@@ -81,12 +81,15 @@
   import {EmpInfo} from '#/views/components/EmpInfo';
   import { useUserStore } from '@vben/stores';
   import {changeURLPar} from "#/utils/domUtils";
+  import BpmnMocker from '#/views/components/preview/bpmnMocker/index.vue';
+
+
   const emit = defineEmits(['success'])
   const userStore = useUserStore();
 
   const flowBaseInfo = ref({});
   const processBaseInfo = ref({});
-  const formContainerRef = ref();
+  const formContainerRef = ref(), bpmnMockerRef = ref();
   const launchHeaderAfixed = ref(false);
   const submitLoading = ref(false);
   const actionButtonsRef = ref();
@@ -361,11 +364,17 @@
 
   async function doSimulation() {
     //unref(actionButtonsRef).setActionLoading(true);
+
+
     openFullLoading();
     await unref(formContainerRef)
       .getFormData(true)
       .then((res) => {
-        openBpmnSimulatorModal(true, {
+        bpmnMockerRef.value.setData({
+            modelKey: unref(processBaseInfo).modelKey,
+            formData: res
+        }).open();
+        /*openBpmnSimulatorModal(true, {
           modelKey: modelKey,
           formData: res,
           // procInstId: (!procInstId||procInstId==='0')?'':procInstId,    // 参数空时传过来的是0
@@ -380,7 +389,7 @@
           showOkBtn: false,
           showCancelBtn: true,
           cancelText: '关闭',
-        });
+        });*/
       })
       .finally(() => {
         closeFullLoading();

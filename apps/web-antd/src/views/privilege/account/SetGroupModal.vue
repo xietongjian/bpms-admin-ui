@@ -24,7 +24,6 @@
         if (values) {
           const groups = values.groups.map(item => item.id);
           await nextTick();
-          debugger;
           baseFormApi.setValues({...values, groups: groups});
           modalApi.setState({loading: false, confirmLoading: false});
         }

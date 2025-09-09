@@ -116,7 +116,7 @@ const [registerModal, {setModalProps, changeLoading}] = useModalInner(async (dat
     modelKey,
     dataJson: JSON.stringify(formData),
     procInstId,
-    userCode: userStore?.getUserInfo?.userNo
+    userCode: userStore?.userInfo?.userNo
   };
 
   const modelInfo = await getBpmnByModelKey({modelKey});
