@@ -9,9 +9,9 @@
         <Button type="link" @click="handleToMore()" size="small">更多</Button>
       </div>
     </div>
-    <div class="x-content flex-1 p-2 flex flex-row flex-wrap justify-between !overflow-y-auto">
+    <div class="x-content flex-1 p-2 flex flex-row flex-wrap justify-start items-stretch overflow-hidden !overflow-y-auto">
       <div v-if="!dataLoading && dataList.length > 0"
-           class="w-30 grow"
+           class="w-40 grow"
            v-for="item in dataList" :key="item">
         <TypographyLink @click="handleLaunch(item)" class="block m-2 rounded-2 hover:bg-gray-500/20">
           <div class="min-h-[60px] rounded-md p-2 w-full text-left flex items-center flex-col cursor-pointer">
@@ -49,6 +49,7 @@ import {computed, onMounted, ref} from 'vue';
 
   const router = useRouter();
   const loading = ref(true);
+  const dataLoading = ref(false);
 
   const launchModalRef = ref();
   const dataList = ref([]);

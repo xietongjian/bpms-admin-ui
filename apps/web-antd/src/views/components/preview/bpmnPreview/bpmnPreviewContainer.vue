@@ -247,6 +247,10 @@ import {computed, onMounted, ref, unref, shallowRef, defineProps, defineEmits, d
     }
     overflow: visible;
 
+    g.layer-djs-grid-line{
+      opacity: 0.1;
+    }
+
     .bpmn-container {
       padding: 0 10px;
       position: absolute;

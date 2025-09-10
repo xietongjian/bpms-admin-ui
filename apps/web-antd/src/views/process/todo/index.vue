@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height>
-    <BasicTable>
+    <BasicTable table-title="我的待办" >
       <template #formName="{ row }">
         <Tooltip placement="top" title="流程图预览">
           <TypographyLink @click="handleBpmnPreview(row.processDefinitionKey, row.processInstanceId)">

@@ -1,21 +1,20 @@
 <template>
   <BasicModal
-    class="bpmn-viewer-container w-1/2 h-150"
-    @cancel="onCloseBpmnPreviewModal"
+      class="bpmn-mocker-container w-1/2 h-[600px]"
+      content-class="overflow-hidden"
+      @cancel="onCloseBpmnPreviewModal"
   >
     <template #title>
       {{ getTitle }}
       <LoadingOutlined v-if="modelName === ''"/>
     </template>
-    <div class="bpmn-container h-full">
-      <div class="containers h-full" ref="container">
-        <BpmnMocker
+    <div class="containers h-full" ref="container">
+      <BpmnMocker
           ref="bpmnMockerRef"
           :theme="getTheme"
           local="zh_CN"
           translate-prefix="bpmn.information."
-        />
-      </div>
+      />
     </div>
   </BasicModal>
 </template>
@@ -81,8 +80,6 @@ const [BasicModal, modalApi] = useVbenModal({
     }
   },
   onConfirm() {
-    // await baseFormApi.submitForm();
-    // handleSubmit();
   },
 });
 
@@ -93,38 +90,6 @@ const modelName = ref('');
 
 const processInstanceId = ref('');
 const processModelKey = ref('');
-/*
-const [registerModal, {setModalProps, changeLoading}] = useModalInner(async (data) => {
-  changeLoading(true);
-  setModalProps({
-    width: 1100,
-    minHeight: 450,
-  });
-
-  await nextTick();
-  const {modelKey, procInstId, formData} = data;
-  const flowData = {
-    modelKey,
-    dataJson: JSON.stringify(formData),
-    procInstId,
-    userCode: userStore?.userInfo?.userNo
-  };
-
-  const modelInfo = await getBpmnByModelKey({modelKey});
-
-  modelName.value = modelInfo.name;
-  bpmnMockerRef.value?.createNewProcess(modelInfo?.modelEditorXml);
-
-  try {
-    const sequenceFlows = await getCustomFlowSequenceFlows(flowData);
-
-    bpmnMockerRef.value?.setSequenceFlows(sequenceFlows);
-  } catch (e) {
-    changeLoading(false);
-  } finally {
-    changeLoading(false);
-  }
-});*/
 
 const getTitle = computed(() => '流程图-' + modelName.value);
 
@@ -140,39 +105,19 @@ defineExpose(modalApi)
 <style lang="scss">
 //@import '#/assets/bpmn/viewer/lib/style.css';
 
-.bpmn-viewer-container {
+.bpmn-mocker-container {
   .bpmn-viewer__toolbar {
     display: none;
   }
-
   overflow: visible;
 
-  .ant-modal {
-    .ant-modal-content {
-      .ant-modal-body {
-        .scroll-container {
-          overflow: visible;
-          padding: 0;
-        }
-
-        .scrollbar__wrap {
-          overflow: visible;
-        }
-
-        &:hover {
-          .svg-controller {
-            bottom: 5px;
-            opacity: 1;
-            z-index: 9;
-          }
-        }
-      }
-    }
+  g.layer-djs-grid-line{
+    opacity: 0.1;
   }
-}
 
-.bjs-powered-by,
-.bjs-breadcrumbs {
-  display: none;
+  .bjs-powered-by,
+  .bjs-breadcrumbs {
+    display: none;
+  }
 }
 </style>

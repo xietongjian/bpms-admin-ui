@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height>
-    <BasicTable table-title="列表">
+    <BasicTable table-title="我发起的">
       <template #toolbar-tools>
         <!--        <Button @click="handleExport" type="primary">导出</Button>-->
       </template>
