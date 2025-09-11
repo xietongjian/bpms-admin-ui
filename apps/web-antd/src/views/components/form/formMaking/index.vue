@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full bg-card overflow-hidden making-form-container" >
+  <div class="h-full bg-card overflow-hidden making-form-container" v-loading="loading">
     <MakingForm ref="makingFormRef" preview class="h-full [&_.el-footer]:hidden">
       <template #widgetconfig="{ type, data, customProps }">
         <div v-if="formType === 'custom' && useInFlowTypes.includes(type)" class="m-2">
@@ -188,7 +188,6 @@
   });
 
   function setFormJson(formJson) {
-    debugger
     if (formJson) {
       if (typeof formJson === 'string') {
         formJson = JSON.parse(formJson);

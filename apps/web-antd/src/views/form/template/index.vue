@@ -11,7 +11,7 @@
       content-class="h-full">
     <template #left class="h-full bg-card">
       <div class="flex flex-col bg-card h-full p-2">
-        <div class="h-10 flex flex-row justify-between border border-solid border-b-px border-x-0 border-t-0">
+        <div class="h-10 flex flex-row items-center justify-between border border-solid border-b-px border-x-0 border-t-0">
           <span>模板分类</span>
           <Button v-access:code="PerPrefix+PerEnum.ADD"
                   size="small"
@@ -35,9 +35,11 @@
           >
             <template #title="node">
               <div class="w-full flex flex-row justify-between group">
-                <span>{{ node.name }}-({{node.code}})</span>
-                <div class="group-hover:block hidden text-right">
-                  <Button @click.stop
+                <Tooltip :title="`${node.name}-${node.code}`">
+                  <span class="break-all">{{ node.name }}</span>
+                </Tooltip>
+                <div v-access:code="[PerPrefix+PerEnum.UPDATE, PerPrefix+PerEnum.DELETE]" class="group-hover:visible min-w-12 invisible text-right">
+                  <Button v-access:code="PerPrefix+PerEnum.UPDATE" @click.stop
                           size="small"
                           type="link"
                           :icon="h(EditOutlined)"
@@ -49,7 +51,7 @@
                     @confirm="handleDeleteCategory(node)"
                     :okButtonProps="{danger: true}"
                   >
-                    <Button @click.stop
+                    <Button v-access:code="PerPrefix+PerEnum.DELETE" @click.stop
                             size="small"
                             type="link"
                             :icon="h(DeleteOutlined)"
@@ -113,7 +115,7 @@
   import FormTemplateModal from './FormTemplateModal.vue';
 
   import { getFormTemplateList, deleteById, getFormCategoryListData, deleteFormCategoryById, updateStatusById } from '#/api/form/formTemplate';
-  import {Button, Tree, Col, Popconfirm, Row, Tooltip, message, Switch} from "ant-design-vue";
+  import {Button, Tree, Popconfirm, Tooltip, message, Switch} from "ant-design-vue";
 
   import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons-vue";
   import {listToTree} from "#/utils/helper/treeHelper";

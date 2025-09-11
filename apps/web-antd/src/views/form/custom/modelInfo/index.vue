@@ -103,7 +103,7 @@ import {useRouter} from 'vue-router';
 
 const PerPrefix = 'Custom:';
 const router = useRouter();
-debugger
+
 const bpmnDesignerModalRef = ref(),
     copyModelInfoModalRef = ref(),
     bpmnPreviewModalRef = ref();
