@@ -16,7 +16,7 @@
       </div>
     </template>
     <div class="bg-card h-full">
-      <BasicTable >
+      <BasicTable table-title="流程模板管理" >
         <template #action="{row}">
           <TableAction :actions="createMainActions(row)"/>
         </template>

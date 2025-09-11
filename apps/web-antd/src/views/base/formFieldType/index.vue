@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height>
-    <BasicTable>
+    <BasicTable table-title="表单字段类型配置">
       <template #toolbar-tools >
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>

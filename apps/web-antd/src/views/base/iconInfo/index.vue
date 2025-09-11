@@ -36,26 +36,26 @@
             <template #title="node">
               <div class="w-full flex flex-row justify-between group">
                 <span>{{ node.name }}</span>
-                <span class="group-hover:block hidden text-right">
-                      <Button @click.stop
-                              size="small"
-                              type="link"
-                              :icon="h(EditOutlined)"
-                              @click="handleUpdateCategory(node)"/>
-                      <Popconfirm
-                        title="确定要删除吗？"
-                        ok-text="确认"
-                        cancel-text="取消"
-                        @confirm="handleDeleteCategory(node)"
-                        :okButtonProps="{danger: true}"
-                      >
-                        <Button @click.stop
-                                size="small"
-                                type="link"
-                                :icon="h(DeleteOutlined)"
-                                danger/>
-                      </Popconfirm>
-                    </span>
+                <div class="group-hover:block hidden text-right">
+                  <Button @click.stop
+                          size="small"
+                          type="link"
+                          :icon="h(EditOutlined)"
+                          @click="handleUpdateCategory(node)"/>
+                  <Popconfirm
+                      title="确定要删除吗？"
+                      ok-text="确认"
+                      cancel-text="取消"
+                      @confirm="handleDeleteCategory(node)"
+                      :okButtonProps="{danger: true}"
+                  >
+                    <Button @click.stop
+                            size="small"
+                            type="link"
+                            :icon="h(DeleteOutlined)"
+                            danger/>
+                  </Popconfirm>
+                </div>
               </div>
             </template>
           </Tree>

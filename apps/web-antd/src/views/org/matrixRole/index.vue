@@ -21,7 +21,7 @@
       </div>
     </template>
     <div class="h-full">
-      <BasicTable class="!pt-0 !pl-0 !pr-0 !pb-0">
+      <BasicTable table-title="矩阵角色" class="!pt-0 !pl-0 !pr-0 !pb-0">
         <template #toolbar-tools>
           <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
         </template>

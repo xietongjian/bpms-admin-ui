@@ -49,7 +49,7 @@ export const loadFormBpmnStatus = (params: any) => {
     params.formType === 'custom'
       ? Api.GetCustomFormStatusVoByModelId
       : Api.GetBizFormStatusVoByModelId;
-  return requestClient.get<any>(statusUrl,{ modelId: params.modelId }).then((res) => {
+  return requestClient.get<any>(statusUrl,{ params: {modelId: params.modelId} }).then((res) => {
     const { formStatus, processStatus, extendStatus, minStatus, minStatusName } = res;
     return Promise.resolve({
       formDesignerStatus: formStatus,

@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height>
-    <BasicTable>
+    <BasicTable table-title="常用系统管理">
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>
@@ -31,7 +31,6 @@ import { Button, message, Image} from 'ant-design-vue';
 import {columns, searchFormSchema} from './systemInfo.data';
 import SystemInfoModal from './SystemInfoModal.vue';
 import {TableAction} from '#/components/table-action';
-import {UserOutlined} from "@ant-design/icons-vue";
 import {useVbenVxeGrid} from "#/adapter/vxe-table";
 import {Page} from "@vben/common-ui";
 

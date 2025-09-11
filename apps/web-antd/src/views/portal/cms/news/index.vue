@@ -33,7 +33,7 @@
         />-->
       </div>
     </template>
-    <BasicTable class="ml-2 w-full" :searchInfo="searchInfo">
+    <BasicTable class="ml-2 w-full" table-title="新闻管理">
       <template #toolbar-tools>
         <!--        <Authority :value="'News' + PerEnum.ADD">-->
         <Button type="primary" @click="handleCreate"> 新增</Button>
@@ -112,7 +112,6 @@
   const publishStatusMap = ref({});
 
   const treeData = ref<any[]>([]);
-  const searchInfo = reactive<Recordable>({});
 
   const formOptions: VbenFormProps = {
     showCollapseButton: false,

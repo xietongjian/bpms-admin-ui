@@ -98,7 +98,7 @@ function createActions(record: Recordable<any>) {
 
 <template>
   <Page auto-content-height>
-    <BasicTable table-title="数据列表" >
+    <BasicTable table-title="权限值列表" >
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增 </Button>
       </template>

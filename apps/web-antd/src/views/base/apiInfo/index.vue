@@ -317,7 +317,7 @@ function createActions(record: Recordable<any>) {
         </Tree>-->
       </div>
     </template>
-    <BasicTable >
+    <BasicTable table-title="Api列表" >
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate">
           新增

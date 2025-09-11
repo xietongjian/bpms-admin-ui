@@ -1,7 +1,7 @@
 <template>
   <Page auto-content-height>
     <BasicTable
-      table-title="列表"
+      table-title="公司矩阵角色列表"
       ref="companyMatrixTable"
       tableTitleHelp="点击单元格给角色设置人员"
       class="matrix-list"

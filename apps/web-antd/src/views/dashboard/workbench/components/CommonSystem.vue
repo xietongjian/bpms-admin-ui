@@ -7,7 +7,7 @@
         <span class="font-size-[14px] text-gray-400">(跨平台统一入口)</span>
       </div>
       <div>
-        <a-button type="link" @click="handleMore" size="small">更多</a-button>
+        <Button type="link" @click="handleMore" size="small">更多</Button>
       </div>
     </div>
     <div class="x-content p-1 flex flex-row flex-wrap justify-start overflow-hidden overflow-y-auto">

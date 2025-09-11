@@ -13,7 +13,7 @@
       <CompanyTree @select="handleSelect" class="h-full" />
     </template>
     <BasicTable
-        table-title="列表"
+        table-title="部门矩阵角色列表"
         tableTitleHelp="点击单元格给角色设置人员"
         class="matrix-list !pt-0 !pl-0 !pr-0 !pb-0 !h-full"
     >

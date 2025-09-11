@@ -16,28 +16,30 @@
       <BasicTable >
         <template #toolbar-tools>
           <div class="flex flex-row gap-2">
-            <Dropdown v-access:code="PerPrefix+PerEnum.ADD" >
-              <Button type="primary" @click.prevent>
-                新增
-                <DownOutlined/>
-              </Button>
-              <template #overlay>
-                <Menu @click="handleCreate">
-                  <MenuItem key="0">
-                    <template #icon>
-                      <InsertRowAboveOutlined style="color: #108ee9"/>
-                    </template>
-                    决策表
-                  </MenuItem>
-                  <MenuItem key="1">
-                    <template #icon>
-                      <ClusterOutlined style="color: purple"/>
-                    </template>
-                    决策服务
-                  </MenuItem>
-                </Menu>
-              </template>
-            </Dropdown>
+            <div v-access:code="PerPrefix+PerEnum.ADD">
+              <Dropdown>
+                <Button type="primary" @click.prevent>
+                  新增
+                  <DownOutlined/>
+                </Button>
+                <template #overlay>
+                  <Menu @click="handleCreate">
+                    <MenuItem key="0">
+                      <template #icon>
+                        <InsertRowAboveOutlined style="color: #108ee9"/>
+                      </template>
+                      决策表
+                    </MenuItem>
+                    <MenuItem key="1">
+                      <template #icon>
+                        <ClusterOutlined style="color: purple"/>
+                      </template>
+                      决策服务
+                    </MenuItem>
+                  </Menu>
+                </template>
+              </Dropdown>
+            </div>
 
             <Tooltip placement="bottom">
               <template #title>

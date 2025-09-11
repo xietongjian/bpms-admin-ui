@@ -20,37 +20,6 @@ const [modal, contextHolder] = Modal.useModal();
 const loginLogModalRef = ref();
 const PerPrefix = 'SysOperRecord:';
 
-/*const { createMessage, createConfirm } = useMessage();
-const [registerModal, { openModal, setModalProps }] = useModal();
-const [registerTable, { reload, getSelectRows }] = useTable({
-  title: '列表',
-  api: getListByPage,
-  columns,
-  formConfig: {
-    labelWidth: 120,
-    schemas: searchFormSchema,
-    showAdvancedButton: false,
-    showResetButton: false,
-    autoSubmitOnEnter: true,
-    fieldMapToTime: [['dateRange', ['startTime', 'endTime'], 'YYYY-MM-DD']],
-  },
-  rowSelection: {
-    type: 'checkbox',
-    columnWidth: 30,
-  },
-  canColDrag: true,
-  useSearchForm: true,
-  bordered: true,
-  showIndexColumn: false,
-  actionColumn: {
-    width: 60,
-    title: '操作',
-    dataIndex: 'action',
-    fixed: false,
-  },
-});*/
-
-
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
   submitOnEnter: true,
@@ -122,11 +91,6 @@ function createActions(row: Recordable<any>) {
   ];
 }
 
-function handleCreate() {
-  loginLogModalRef.value.setData({});
-  loginLogModalRef.value.open();
-}
-
 function handleDetail(record: Recordable<any>) {
   loginLogModalRef.value.setData(record);
   loginLogModalRef.value.open();
@@ -178,7 +142,7 @@ function handleSuccess() {
 </script>
 <template>
   <Page auto-content-height>
-    <BasicTable>
+    <BasicTable table-title="操作日志列表">
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.DELETE" type="danger" @click="handleDeleteAll"> 删除</Button>
       </template>

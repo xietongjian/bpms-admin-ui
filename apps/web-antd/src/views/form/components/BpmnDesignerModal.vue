@@ -52,26 +52,28 @@
           </Col>
           <Col span="8" style="text-align: right">
             <Space>
-              <Popconfirm v-access:code="PerPrefix+PerEnum.PUBLISH" v-if="publishBtnVisibility" @confirm="handlePublish">
-                <template #title>
-                  <div style="max-width: 300px; word-wrap: break-word; white-space: break-spaces">
-                    确定要发布【{{ modelBaseInfo.name }}】流程吗？
-                  </div>
-                </template>
-                <Button color="success" :disabled="saveLoading">发布</Button>
-              </Popconfirm>
+              <div v-access:code="PerPrefix+PerEnum.PUBLISH" v-if="publishBtnVisibility">
+                <Popconfirm @confirm="handlePublish">
+                  <template #title>
+                    <div style="max-width: 300px; word-wrap: break-word; white-space: break-spaces">
+                      确定要发布【{{ modelBaseInfo.name }}】流程吗？
+                    </div>
+                  </template>
+                  <Button type="primary" color="success" :disabled="saveLoading">发布</Button>
+                </Popconfirm>
+              </div>
 
-              <Popconfirm
-                v-if="designerStatus.finallyStatus === 3 && currentStepValue !== 3"
-                @confirm="handleSave"
-              >
-                <template #title>
-                  <div style="max-width: 300px; word-wrap: break-word; white-space: break-spaces">
-                    该流程【{{ modelBaseInfo.name }}】已经发布，<br />修改后需要重新发布，请确认？
-                  </div>
-                </template>
-                <Button type="primary" :disabled="saveLoading">保存</Button>
-              </Popconfirm>
+              <div v-if="designerStatus.finallyStatus === 3 && currentStepValue !== 3">
+                <Popconfirm @confirm="handleSave" >
+                  <template #title>
+                    <div style="max-width: 300px; word-wrap: break-word; white-space: break-spaces">
+                      该流程【{{ modelBaseInfo.name }}】已经发布，<br />修改后需要重新发布，请确认？
+                    </div>
+                  </template>
+                  <Button type="primary" :disabled="saveLoading">保存</Button>
+                </Popconfirm>
+              </div>
+
               <Button
                 v-else-if="currentStepValue !== 3"
                 type="primary"
@@ -320,11 +322,11 @@
     },
   });
 
-  function changeLoading(loading) {
+  function changeLoading(loading: boolean) {
     modalApi.setState({loading: loading, confirmLoading: loading});
   }
 
-  async function publish(modelKey) {
+  async function publish(modelKey: string) {
     changeLoading(true);
     saveLoading.value = true;
     try {
@@ -337,6 +339,8 @@
       } else {
         message.error({content: msg, style: {marginTop: '40px'}});
       }
+    } catch (e) {
+      console.error(e);
     } finally {
       saveLoading.value = false;
       changeLoading(false);

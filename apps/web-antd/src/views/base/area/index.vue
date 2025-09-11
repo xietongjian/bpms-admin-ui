@@ -144,7 +144,7 @@ function handleSuccess() {
 
 <template>
   <Page auto-content-height>
-    <BasicTable>
+    <BasicTable table-title="区域列表">
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>

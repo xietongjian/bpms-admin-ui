@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height>
-    <BasicTable class="custom-listener-table">
+    <BasicTable table-title="流程监听列表" class="custom-listener-table">
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新增 </Button>
       </template>

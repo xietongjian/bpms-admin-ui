@@ -265,7 +265,7 @@ function handleSelect(node: any) {
       <CompanyTree class="h-full" @select="handleSelect" />
     </template>
     <div class="flex-1 h-full">
-      <BasicTable >
+      <BasicTable table-title="角色管理" >
         <template #toolbar-tools>
           <Button v-access:code="PerPrefix+PerEnum.ADD" class="ml-2" type="primary" @click="handleCreate">新增</Button>
         </template>

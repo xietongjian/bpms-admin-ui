@@ -59,16 +59,16 @@
           </Col>
           <Col span="8" style="text-align: right">
             <Space>
-              <Authority :value="privilegeSn + ':' + PerEnum.PUBLISH">
-                <Popconfirm v-if="publishBtnVisibility" @confirm="handlePublish">
+              <div v-if="publishBtnVisibility" v-access:code="privilegeSn + ':' + PerEnum.PUBLISH">
+                <Popconfirm @confirm="handlePublish">
                   <template #title>
                     <div style="max-width: 300px; word-wrap: break-word; white-space: break-spaces">
                       确定要发布【{{ modelBaseInfo.name }}】流程吗？
                     </div>
                   </template>
-                  <Button color="success" :disabled="saveLoading">发布</Button>
+                  <Button type="primary" color="success" :disabled="saveLoading">发布</Button>
                 </Popconfirm>
-              </Authority>
+              </div>
 
               <Tag
                 v-if="autoSaveStatus !== -1 &&
@@ -121,7 +121,7 @@
     </template>
     <div class="w-full h-full">
       <!-- 基本配置 -->
-      <div v-show="currentStepValue === 0" style="height: 100%">
+      <div v-show="currentStepValue === 0" class="!h-full">
         <ModelInfoSetting
           v-if="stepLoadStatus.settingInfo"
           :modelId="processModelId"
@@ -131,7 +131,7 @@
       </div>
 
       <!-- 变量设置 -->
-      <div v-show="currentStepValue === 1" style="height: 100%">
+      <div v-show="currentStepValue === 1" class="!h-full">
         <FlowVariableSetting
           v-if="stepLoadStatus.flowVariable"
           :modelId="processModelId"
@@ -143,7 +143,7 @@
       </div>
 
       <!-- 表单设计 -->
-      <div v-show="currentStepValue === 2" style="height: 100%">
+      <div v-show="currentStepValue === 2" class="!h-full">
         <FormDesigner
           :id="modelId"
           ref="formDesignerRef"
@@ -156,7 +156,7 @@
       </div>
 
       <!-- 流程设计 -->
-      <div v-show="currentStepValue === 3" style="height: 100%">
+      <div v-show="currentStepValue === 3" class="!h-full">
         <BpmnDesigner
           v-if="stepLoadStatus.bpmnDesigner"
           :modelId="processModelId"
@@ -803,7 +803,7 @@
     handleStepChange(unref(currentStepValue));
   };
 
-  function doCopyContent(content) {
+  function doCopyContent(content: string) {
     copy(content);
     message.success('已拷贝到剪切板！');
   }

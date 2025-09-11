@@ -154,7 +154,7 @@ function handleRemoveGroupUser(){
 
 <template>
   <Page auto-content-height>
-    <BasicTable table-title="列表">
+    <BasicTable table-title="用户组管理">
       <template #toolbar-tools>
         <Space>
           <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleAdd">新建</Button>

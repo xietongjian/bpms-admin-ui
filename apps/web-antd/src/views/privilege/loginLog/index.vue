@@ -102,9 +102,6 @@ function handleDeleteAll() {
   });
 }
 
-function handleSuccess() {
-  tableApi.reload();
-}
 
 function createActions(row: Recordable<any>): any[] {
   return [
@@ -127,7 +124,7 @@ function createActions(row: Recordable<any>): any[] {
 
 <template>
   <Page auto-content-height>
-    <BasicTable>
+    <BasicTable table-title="登录日志列表">
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.DELETE"
                 type="primary" danger

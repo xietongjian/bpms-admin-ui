@@ -165,7 +165,7 @@ function createActions(record: Recordable<any>) {
     <template #left>
       <PositionSeqTree @select="handleSelect"/>
     </template>
-    <BasicTable class="ml-2">
+    <BasicTable table-title="岗位管理" class="ml-2">
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>

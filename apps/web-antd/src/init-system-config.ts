@@ -75,7 +75,6 @@ async function loadSystemConfig(version: string, config?: any){
  * @param config
  */
 function refreshSystemConfig(config: any) {
-  console.log(config);
   if(config){
     const {
       SYS_FAVICON_IMG,
@@ -117,16 +116,13 @@ function refreshSystemConfig(config: any) {
       SYS_COM_WORKBENCH_LAYOUT
     } = config;
 
-    debugger;
     if(SYS_FAVICON_IMG){
       const link = window.document.querySelector("link[rel*='icon']") || window.document.createElement('link');
       link.type = 'image/x-icon';
       link.rel = 'icon';
       link.href = SYS_FAVICON_IMG;
     }
-    debugger;
 
-    console.log(preferences);
     updatePreferences({
       app: {
         name: SYS_APP_NAME,
@@ -146,7 +142,7 @@ function refreshSystemConfig(config: any) {
         enablePreferences: COM_APP_enablePreferences,
         layout: COM_APP_layout,
         enableCheckUpdates: false,
-        workbenchLayout: SYS_COM_WORKBENCH_LAYOUT
+        workbenchLayout: SYS_COM_WORKBENCH_LAYOUT,
       },
       theme: {
         builtinType: COM_THME_builtinType,

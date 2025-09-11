@@ -216,7 +216,6 @@ const changeDesignerTheme = (iframe) => {
     } else {
       iframeWindow.document.body.removeAttribute('arco-theme');
     }
-    debugger;
     iframeWindow.toggleLang('zh_CN');
   }
 };

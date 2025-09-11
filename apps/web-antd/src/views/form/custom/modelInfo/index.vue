@@ -16,32 +16,37 @@
       <BasicTable>
         <template #toolbar-tools>
           <div class="flex flex-row gap-2">
-            <Popconfirm
-                :title="`确定要发布【${currentModelInfo.name}】流程吗？`"
-                @confirm="handlePublish"
-                :disabled="!showPublishBtn"
-            >
-              <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH" placement="bottom">
+            <div v-access:code="PerPrefix+PerEnum.PUBLISH">
+              <Tooltip placement="bottom">
                 <template #title>
                   <span>只有状态为【待发布】的数据才能发布</span>
                 </template>
-                <Button :disabled="!showPublishBtn" type="primary">发布</Button>
+                <Popconfirm
+                  :title="`确定要发布【${currentModelInfo.name}】流程吗？`"
+                  @confirm="handlePublish"
+                  :disabled="!showPublishBtn"
+                >
+                  <Button :disabled="!showPublishBtn" type="primary">发布</Button>
+                </Popconfirm>
               </Tooltip>
-            </Popconfirm>
+            </div>
 
-            <Popconfirm
-                :title="`确定要停用【${currentModelInfo.name}】流程吗？`"
-                @confirm="handleStop"
-                :disabled="!showStopBtn"
-                :okButtonProps="{ danger: true }"
-            >
-              <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH" placement="bottom">
+            <div v-access:code="PerPrefix+PerEnum.PUBLISH">
+              <Tooltip placement="bottom">
                 <template #title>
                   <span>只有状态为【待发布/已发布】的数据才能停用</span>
                 </template>
-                <Button :disabled="!showStopBtn" type="primary" danger>停用</Button>
+                <Popconfirm
+                  :title="`确定要停用【${currentModelInfo.name}】流程吗？`"
+                  @confirm="handleStop"
+                  :disabled="!showStopBtn"
+                  :okButtonProps="{ danger: true }"
+                >
+                  <Button :disabled="!showStopBtn" type="primary" danger>停用</Button>
+                </Popconfirm>
               </Tooltip>
-            </Popconfirm>
+            </div>
+
             <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate"> 新建</Button>
             <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCopy"> 复制</Button>
           </div>
@@ -80,18 +85,13 @@ import {ref, unref, watch} from 'vue';
 import {PerEnum} from '#/enums/perEnum';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
-
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import type {Recordable} from '@vben/types';
 import {ColPage} from '@vben/common-ui';
 import {TableAction} from '#/components/table-action';
-
-import {getModelInfoByModelKey} from '#/api/flowable/bpmn/modelInfo';
 import {getCustomPagerModel, deployForm, stopForm} from '#/api/form/customForm';
-import {getTaskFormInfoByModelKey} from '#/api/form/customTaskForm';
 import FlowCategoryTree from '#/views/components/leftTree/FlowCategoryTree.vue';
 import {PictureFilled} from '@ant-design/icons-vue';
-
 import CopyModelInfoModal from '#/views/form/components/CopyModelInfoModal.vue';
 import {BpmnPreviewModal} from '#/views/components/preview';
 import TaskFormDesignerModal from '#/views/form/components/TaskFormDesignerModal.vue';
@@ -99,56 +99,19 @@ import BpmnDesignerModal from '#/views/form/components/BpmnDesignerModal.vue';
 import {Avatar, Button, Popconfirm, Tooltip, message} from 'ant-design-vue';
 import {columns, searchFormSchema} from './modelInfo.data';
 import BpmnModelStatus from "#/views/components/common/widgets/BpmnModelStatus.vue";
+import {useRouter} from 'vue-router';
 
 const PerPrefix = 'Custom:';
-
-
+const router = useRouter();
+debugger
 const bpmnDesignerModalRef = ref(),
     copyModelInfoModalRef = ref(),
     bpmnPreviewModalRef = ref();
 
-const formTableLoading = ref(false);
-const taskFormData = ref<object>({});
-
-const expandedRowKeys = ref([]);
 const currentModelInfo = ref<Recordable<any>>({});
 const currentCategory = ref<Recordable<any>>({});
-const loadingRef = ref(false);
 const showPublishBtn = ref(false);
 const showStopBtn = ref(false);
-/*
-  const [
-    registerTable,
-    { reload, getForm, updateTableDataRecord, getSelectRows, clearSelectedRowKeys },
-  ] = useTable({
-    title: '列表',
-    api: getCustomPagerModel,
-    columns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    clearSelectOnPageChange: true,
-    rowSelection: { type: 'radio', columnWidth: 40 },
-    afterFetch: (t) => {
-      if (unref(currentModelInfo) && unref(currentModelInfo).modelKey) {
-        reloadTaskForm(unref(currentModelInfo).modelKey);
-      }
-    },
-    useSearchForm: true,
-    showIndexColumn: false,
-    bordered: true,
-    rowKey: 'id',
-    actionColumn: {
-      width: 100,
-      align: 'left',
-      title: '操作',
-      dataIndex: 'action',
-    },
-  });*/
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -219,18 +182,6 @@ watch(
     },
 );
 
-function reloadTaskForm(modelKey: string) {
-  formTableLoading.value = true;
-  taskFormData.value[unref(currentModelInfo).id] = [];
-  getTaskFormInfoByModelKey({modelKey: modelKey})
-      .then((res) => {
-        taskFormData.value[unref(currentModelInfo).id] = res;
-      })
-      .finally(() => {
-        formTableLoading.value = false;
-      });
-}
-
 function handleCreate() {
   if (!unref(currentCategory).code) {
     message.warning('请选择分类！', 2);
@@ -244,27 +195,6 @@ function handleCreate() {
     categoryCode: unref(currentCategory).code,
   });
   bpmnDesignerModalRef.value.open();
-}
-
-function handleCloseFunc() {
-  // 避免页面抖动
-  /*setTimeout(() => {
-    // 关闭时刷新子表单
-    reloadTaskForm(unref(currentModelInfo).modelKey);
-    // 关闭表单编辑弹窗时刷新单条数据
-    getModelInfoByModelKey({modelKey: unref(currentModelInfo).modelKey}).then((res) => {
-      updateTableDataRecord(unref(currentModelInfo).id, {
-        ...unref(currentModelInfo),
-        showStatus: res.showStatus,
-        status: res.status,
-        statusName: res.statusName,
-      });
-      // 关闭后展开当前行
-      expandedRowKeys.value = [unref(currentModelInfo).id];
-    });
-  }, 200);*/
-
-  return Promise.resolve(true);
 }
 
 function createActions(record: Recordable<any>) {
@@ -286,8 +216,7 @@ function createActions(record: Recordable<any>) {
 }
 
 function handleBpmnPreview(modelKey: string) {
-  bpmnPreviewModalRef.value.setData({modelKey});
-  bpmnPreviewModalRef.value.open();
+  bpmnPreviewModalRef.value.setData({modelKey}).open();
 }
 
 function handleEdit(record: Recordable<any>) {
@@ -397,27 +326,9 @@ function clickRow(row: Recordable<any>) {
   }
 }
 
-function fetchSuccess(e) {
-  // clearSelectedRowKeys();
-  const selectedRow = tableApi.grid.getRadioRecord();
-  if (!selectedRow) {
-    currentModelInfo.value = selectedRow;
-  } else {
-    currentModelInfo.value = {};
-  }
-}
-
-function changeSelection({keys, rows}) {
-  if (!rows[0]) {
-    return;
-  }
-  currentModelInfo.value = rows[0];
-  changePublishStopBtnShow(rows[0].status);
-}
-
 async function handleSelect(node: any) {
   currentCategory.value = node;
-  tableApi.reload({categoryCode: node?.code});
+  tableApi.reload();
 }
 
 function handleTaskFormSuccess() {

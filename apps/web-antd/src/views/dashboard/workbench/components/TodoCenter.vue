@@ -162,7 +162,7 @@
 </template>
 <script lang="ts" setup>
 import {ref, onMounted, shallowRef} from 'vue';
-import {Card, List, Button, Tabs, Space, Badge, TypographyLink, Popover} from 'ant-design-vue';
+import {Card, List, Button, Tabs, Space, Badge, TypographyLink, Tooltip, Popover} from 'ant-design-vue';
 import {EmpInfo} from '#/views/components/EmpInfo';
 import {
   findMyProcessinstancesPagerModel,

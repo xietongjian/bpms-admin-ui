@@ -14,7 +14,7 @@
         <OrgTree class="h-full" @select="handleSelect" />
       </div>
     </template>
-    <BasicTable class="w-full ml-2" >
+    <BasicTable class="w-full ml-2" table-title="人员管理">
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="link" @click="handleExportTemplate">导出模板</Button>
 <!--        <ImpExcel v-if="hasAccessByCodes([PerPrefix + PerEnum.ADD])" @success="loadDataSuccess" dateFormat="xlsx">

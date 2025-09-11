@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height>
-    <BasicTable>
+    <BasicTable table-title="流程任务列表">
       <template #action="{ row }">
         <TableAction
             :actions="createActions(row)"

@@ -13,7 +13,7 @@
     <NoticeInfo v-else-if="options.field === 'NoticeInfo'" />
     <WorkbenchHeader v-else-if="options.field === 'WorkbenchHeader'" />
     <InstAndTaskAnalysis v-else-if="options.field === 'InstAndTaskAnalysis'" />
-    <ProcessStatistics v-else-if="options.field === 'ProcessStatistics'" />
+<!--    <ProcessStatistics v-else-if="options.field === 'ProcessStatistics'" />-->
   </div>
 </template>
 <script lang="ts" setup>
@@ -24,7 +24,7 @@
   import NoticeInfo from '#/views/dashboard/workbench/components/NoticeInfo.vue';
   import WorkbenchHeader from '#/views/dashboard/workbench/components/WorkbenchHeader.vue';
   import GrowCard from "#/views/dashboard/workbench/components/GrowCard.vue";
-  // import BannerInfo from "#/views/dashboard/workbench/components/BannerInfo.vue";
+  import BannerInfo from "#/views/dashboard/workbench/components/BannerInfo.vue";
   import InstAndTaskAnalysis from "#/views/dashboard/analysis/components/InstAndTaskAnalysis.vue";
   // import ProcessStatistics from "#/views/dashboard/workbench/components/ProcessStatistics.vue";
 

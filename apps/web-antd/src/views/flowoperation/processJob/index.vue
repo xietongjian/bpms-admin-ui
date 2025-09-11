@@ -3,16 +3,18 @@
     <ProcInstJobTable>
       <template #toolbar-actions>
         <RadioGroup v-model:value="jobType" button-style="solid" @change="handleChangeJobType">
-          <Badge class="z-10" :overflow-count="99999999" :number-style="{ backgroundColor: '#52c41a' }" :count="dataCount.timerJobCount" >
-            <RadioButton value="timer">
+          <RadioButton value="timer">
+            <div class="flex items-center gap-1">
               延时队列
-            </RadioButton>
-          </Badge>
-          <Badge :overflow-count="99999999" :count="dataCount.deadLetterJobCount">
-            <RadioButton value="deadLetter">
+              <Badge size="middule" class="z-10" :overflow-count="99999999" :number-style="{ backgroundColor: '#52c41a' }" :count="dataCount.timerJobCount" />
+            </div>
+          </RadioButton>
+          <RadioButton value="deadLetter">
+            <div class="flex items-center gap-1">
               死信队列
-            </RadioButton>
-          </Badge>
+              <Badge size="middule" class="z-10" :overflow-count="99999999" :count="dataCount.deadLetterJobCount" />
+            </div>
+          </RadioButton>
         </RadioGroup>
       </template>
       <template #toolbar-tools>
@@ -55,9 +57,9 @@
         <TypographyLink @click="handleViewForm(row)">{{ row.processName||'-' }}</TypographyLink>
       </template>
     </ProcInstJobTable>
-    <ApproveHistoryModal ref="approveHistoryModalRef" @register="registerApproveHistoryModal" />
-    <FlowPropertiesModal ref="flowPropertiesModalRef" @register="registerFlowPropertiesModal" />
-    <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" />
+    <ApproveHistoryModal ref="approveHistoryModalRef" />
+    <FlowPropertiesModal ref="flowPropertiesModalRef" />
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" />
     <TimerJobEditModal ref="timerJobEditModalRef" @success="handleRefresh" />
     <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
   </Page>
@@ -95,7 +97,7 @@
   const jobType = ref('timer');
   const PerPrefix = 'ProcessJob:';
 
-  const dataCount = ref<object>({ timerJobCount: 0, DeadLetterJobCount: 0 });
+  const dataCount = ref<any>({ timerJobCount: 0, deadLetterJobCount: 0 });
   const selectedRowsCount = ref(0);
   const appObjs = ref({});
 
@@ -223,9 +225,9 @@
   nextTick(async () => {
     dataCount.value = await getJobsCount();
     const appList = await getAll();
-    const appObjsTemp = {};
+    const appObjsTemp = {} as any;
     if (appList) {
-      appList.forEach((item) => {
+      appList.forEach((item: any) => {
         appObjsTemp[item.sn] = item.name;
       });
     }
@@ -311,7 +313,7 @@
     bpmnPreviewModalRef.value.open();
   }
 
-  async function doCopyContent(content) {
+  async function doCopyContent(content: string) {
     await copy(content);
     message.success('已拷贝到剪切板！');
   }

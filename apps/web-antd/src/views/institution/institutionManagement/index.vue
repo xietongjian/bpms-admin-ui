@@ -139,7 +139,7 @@ function createActions(record) {
       </div>
     </template>
 
-    <BasicTable class="ml-2 w-full">
+    <BasicTable table-title="制度管理" class="ml-2 w-full">
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>

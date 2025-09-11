@@ -117,7 +117,7 @@ function createActions(record: Recordable<any>) {
 </script>
 <template>
   <Page auto-content-height>
-    <BasicTable>
+    <BasicTable table-title="职级分类管理">
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate"> 新增</Button>
       </template>

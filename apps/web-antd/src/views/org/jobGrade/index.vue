@@ -14,7 +14,7 @@
         <JobGradeTypeList class="w-full" @select="handleSelect"/>
       </div>
     </template>
-    <BasicTable>
+    <BasicTable table-title="职级管理">
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>

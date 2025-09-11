@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height>
-    <BasicTable>
+    <BasicTable table-title="三方接口认证管理">
       <template #toolbar-tools>
         <Button type="primary" @click="handleCreate">新增</Button>
       </template>

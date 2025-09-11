@@ -16,77 +16,85 @@
       <BasicTable >
         <template #toolbar-tools >
           <div class="flex flex-row gap-2">
-            <Popconfirm
-                :title="`确定要发布【${currentModelInfo.name}】流程吗？`"
-                @confirm="handlePublish"
-                :disabled="!showPublishBtn"
-            >
-              <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH" placement="bottom">
+            <div v-access:code="PerPrefix+PerEnum.PUBLISH">
+              <Tooltip placement="bottom">
                 <template #title>
                   <span>只有状态为【待发布】的数据才能发布</span>
                 </template>
-                <Button :disabled="!showPublishBtn" type="primary">发布</Button>
+                <Popconfirm
+                  :title="`确定要发布【${currentModelInfo.name}】流程吗？`"
+                  @confirm="handlePublish"
+                  :disabled="!showPublishBtn"
+                >
+                  <Button :disabled="!showPublishBtn" type="primary">发布</Button>
+                </Popconfirm>
               </Tooltip>
-            </Popconfirm>
+            </div>
 
-            <Popconfirm
-                :title="`确定要停用【${currentModelInfo.name}】流程吗？`"
-                @confirm="handleStop"
-                :disabled="!showStopBtn"
-                :okButtonProps="{ danger: true }"
-            >
-              <Tooltip v-access:code="PerPrefix+PerEnum.PUBLISH"
-                       placement="bottom">
+            <div v-access:code="PerPrefix+PerEnum.PUBLISH">
+              <Tooltip placement="bottom">
                 <template #title>
                   <span>只有状态为【待发布/已发布】的数据才能停用</span>
                 </template>
-                <Button :disabled="!showStopBtn" type="primary" danger>停用</Button>
+                <Popconfirm
+                  :title="`确定要停用【${currentModelInfo.name}】流程吗？`"
+                  @confirm="handleStop"
+                  :disabled="!showStopBtn"
+                  :okButtonProps="{ danger: true }"
+                >
+                  <Button :disabled="!showStopBtn" type="primary" danger>停用</Button>
+                </Popconfirm>
               </Tooltip>
-            </Popconfirm>
-            <Dropdown v-access:code="PerPrefix+PerEnum.ADD" placement="bottom">
-              <template #overlay>
-                <Menu @click="handleCreate">
-                  <MenuItem key="bizNoForm">
-                    <template #icon>
-                      <PartitionOutlined :style="{ fontSize: '26px', color: 'purple' }" />
-                    </template>
-                    <div style="width: 200px">
-                      <TypographyText strong>无表单流程</TypographyText>
-                      <br />
-                      <TypographyText type="secondary">
-                        流程不包含表单，适用于服务编排流程
-                      </TypographyText>
-                    </div>
-                  </MenuItem>
-                  <MenuItem key="biz">
-                    <template #icon>
-                      <ProfileOutlined :style="{ fontSize: '26px', color: '#2db7f5' }" />
-                    </template>
-                    <div style="width: 200px">
-                      <TypographyText strong>有表单流程</TypographyText>
-                      <br />
-                      <TypographyText type="secondary">
-                        流程默认绑定表单，适用于需要用户参与查看表单数据的流程
-                      </TypographyText>
-                    </div>
-                  </MenuItem>
-                </Menu>
-              </template>
-              <Button type="primary">
-                新建
-                <DownOutlined />
-              </Button>
-            </Dropdown>
+            </div>
+
+            <div v-access:code="PerPrefix+PerEnum.ADD">
+              <Dropdown placement="bottom">
+                <template #overlay>
+                  <Menu @click="handleCreate">
+                    <MenuItem key="bizNoForm">
+                      <template #icon>
+                        <PartitionOutlined :style="{ fontSize: '26px', color: 'purple' }" />
+                      </template>
+                      <div style="width: 200px">
+                        <TypographyText strong>无表单流程</TypographyText>
+                        <br />
+                        <TypographyText type="secondary">
+                          流程不包含表单，适用于服务编排流程
+                        </TypographyText>
+                      </div>
+                    </MenuItem>
+                    <MenuItem key="biz">
+                      <template #icon>
+                        <ProfileOutlined :style="{ fontSize: '26px', color: '#2db7f5' }" />
+                      </template>
+                      <div style="width: 200px">
+                        <TypographyText strong>有表单流程</TypographyText>
+                        <br />
+                        <TypographyText type="secondary">
+                          流程默认绑定表单，适用于需要用户参与查看表单数据的流程
+                        </TypographyText>
+                      </div>
+                    </MenuItem>
+                  </Menu>
+                </template>
+                <Button type="primary">
+                  新建
+                  <DownOutlined />
+                </Button>
+              </Dropdown>
+            </div>
             <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCopy">复制</Button>
           </div>
         </template>
         <template #name="{row}">
           <Badge>
             <template #count>
-              <Tooltip :title="row.formType === 1 ? '有表单流程' : '无表单流程'" placement="top" :mouseEnterDelay="0.3">
-                <ProfileOutlined v-if="row.formType === 1" style="color: #2db7f5; font-size: 12px" />
-                <PartitionOutlined v-else style="color: purple; font-size: 12px" />
-              </Tooltip>
+              <div>
+                  <Tooltip :title="row.formType === 1 ? '有表单流程' : '无表单流程'" placement="top" :mouseEnterDelay="0.3">
+                      <ProfileOutlined v-if="row.formType === 1" style="color: #2db7f5; font-size: 12px" />
+                      <PartitionOutlined v-else style="color: purple; font-size: 12px" />
+                  </Tooltip>
+              </div>
             </template>
             <Avatar :src="row.modelIcon">
               <template #icon>
@@ -292,13 +300,10 @@
     ];
   }
   function handleBpmnPreview(modelKey: string) {
-    bpmnPreviewModalRef.value.setData({modelKey});
-    bpmnPreviewModalRef.value.open();
+    bpmnPreviewModalRef.value.setData({modelKey}).open();
   }
 
   function handleEdit(record: Recordable<any>) {
-    debugger;
-
     const { modelKey, modelId, categoryCode, formType } = record;
     const query = {
       modelKey,

@@ -14,7 +14,7 @@
         <CompanyTree @select="handleSelect" class="h-full"/>
       </div>
     </template>
-    <BasicTable class="ml-2">
+    <BasicTable table-title="通用角色列表" class="ml-2">
       <template #action="{row}">
         <TableAction :actions="createMainActions(row)"/>
       </template>
