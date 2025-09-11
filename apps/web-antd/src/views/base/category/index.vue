@@ -229,7 +229,7 @@
   });
 
   function handleCreate() {
-    categoryModalRef.value.setData({});
+    categoryModalRef.value.setData({frontShow: 1});
     categoryModalRef.value.open();
     categoryModalRef.value.setState({
       title: '新增流程分类'
@@ -265,7 +265,7 @@
     }
     const {success, msg} = await deleteByIds([record.id]);
     if (success) {
-      tableApi.reload();
+      reloadData();
       message.success(msg);
     } else {
       message.error(msg);
@@ -273,7 +273,7 @@
   }
 
   function handleSuccess() {
-    tableApi.reload();
+    reloadData();
   }
 </script>
 
@@ -294,8 +294,8 @@
         {{ companiesMap[row.companyId]?.shortName }}
       </template>
       <template #frontShow="{ row }">
-        <Tag v-if="row.frontShow === 1" class="text-green-500">显示</Tag>
-        <Tag v-else class="text-gray-500" >隐藏</Tag>
+        <Tag v-if="row.frontShow === 1" color="#87d068">显示</Tag>
+        <Tag v-else >隐藏</Tag>
       </template>
     </BasicTable>
     <CategoryModal ref="categoryModalRef" @success="handleSuccess" />

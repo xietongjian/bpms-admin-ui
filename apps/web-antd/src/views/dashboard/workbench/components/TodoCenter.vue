@@ -235,30 +235,14 @@ function handleProcessFormVisibleChange() {
   }
 }
 
-/*  function handleViewForm(record: Recordable<any>) {
-    record.allowsOperation = activeKey.value === 'todo';
-    openProcessFormModal(true, {
-      record,
-    });
-    setProcessFormModalProps({
-      width: 1000,
-      title: `查看流程【${record.formName}】的表单`,
-      showOkBtn: false,
-      centered: true,
-      cancelText: '关闭',
-      maskClosable: true,
-    });
-  }*/
-
 function handleViewForm(record: Recordable<any>) {
   processFormPreviewDrawerRef.value.setData({
     ...record,
     procInstId: record.processInstanceId,
     modelKey: record.processDefinitionKey,
     showOperation: activeKey.value === 'todo',
-  });
-  processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.formName}】的表单`});
-  processFormPreviewDrawerRef.value.open();
+    viewFormTitle: record.formName,
+  }).open();
 }
 
 function handleToMore() {

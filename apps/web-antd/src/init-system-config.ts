@@ -110,7 +110,7 @@ function refreshSystemConfig(config: any) {
       COM_APP_contentPaddingTop,
       COM_APP_defaultAvatar,
       COM_APP_defaultHomePath,
-      COM_APP_dynamicTitle,
+      COM_APP_dynamicTitle_SWITCH,
       COM_APP_enablePreferences,
       COM_APP_layout,
       SYS_COM_WORKBENCH_LAYOUT
@@ -138,7 +138,7 @@ function refreshSystemConfig(config: any) {
         contentPaddingTop: COM_APP_contentPaddingTop,
         defaultAvatar: COM_APP_defaultAvatar,
         defaultHomePath: COM_APP_defaultHomePath,
-        dynamicTitle: COM_APP_dynamicTitle,
+        dynamicTitle: COM_APP_dynamicTitle_SWITCH === '1',
         enablePreferences: COM_APP_enablePreferences,
         layout: COM_APP_layout,
         enableCheckUpdates: false,

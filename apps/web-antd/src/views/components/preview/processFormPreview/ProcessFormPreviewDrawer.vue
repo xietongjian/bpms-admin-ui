@@ -1,13 +1,25 @@
 <template>
-  <BasicDrawer content-class="py-0 form-preview-container">
+  <BasicDrawer content-class="py-0 form-preview-container" >
+    <template v-if="!!viewFormTitle" #title>
+      <div class="flex items-center gap-2">
+        <span>查看流程【{{viewFormTitle}}】的表单</span>
+        <Tooltip title="复制标题">
+          <TypographyLink class="cursor-pointer" @click="doCopyContent()">
+            <CopyOutlined />
+          </TypographyLink>
+        </Tooltip>
+      </div>
+    </template>
     <template #extra>
       <div>
-        <Button
-          @click="handleFullScreen"
-          type="text"
-          shape="circle"
-          :icon="h(isFullScreen ? ShrinkOutlined : ArrowsAltOutlined)"
-          class="mr-2" />
+        <Tooltip :title="isFullScreen ? '还原' : '全屏'">
+          <Button
+            @click="handleFullScreen"
+            type="text"
+            shape="circle"
+            :icon="h(isFullScreen ? ShrinkOutlined : ArrowsAltOutlined)"
+            class="mr-2" />
+        </Tooltip>
       </div>
     </template>
     <div class="h-full w-full flex flex-row">
@@ -132,8 +144,10 @@
 <script lang="ts" setup>
   import { h, ref, unref, reactive, onMounted, watch, computed, defineEmits, defineExpose, nextTick, shallowRef } from 'vue';
   import { useVbenDrawer} from '@vben/common-ui';
-
+  import { useClipboard } from '@vueuse/core';
   import {
+    TypographyLink,
+    Tooltip,
     Button,
     Dropdown,
     Menu,
@@ -161,6 +175,7 @@
     DownOutlined,
     ArrowsAltOutlined,
     ShrinkOutlined,
+    CopyOutlined
   } from '@ant-design/icons-vue';
   import { updateCustomFormData } from '#/api/process/customForm';
 
@@ -176,6 +191,7 @@
   const turnReadAuthPointer = ref(null);
   const revokeAuthPointer = ref(null);
   const revokeVisible = ref<boolean>(false);
+  const { copy } = useClipboard({ legacy: true });
 
   const isFullScreen = ref(false);
 
@@ -212,6 +228,7 @@
   const processViewType = ref('view');
   ///////////////////////////////////////
   const procInstInfo = ref<any>({});
+  const viewFormTitle = ref<string>("");
 
   watch(activeViewKey, (val) => {
     if (val === 'viewFlow') {
@@ -244,7 +261,7 @@
         const values = drawerApi.getData<Record<string, any>>();
         procInstInfo.value = values;
         showOperation.value = values?.showOperation
-
+        viewFormTitle.value = values.viewFormTitle;
         if (values) {
           // formApi.setValues(values);
           drawerApi.setState({footer: values?.showOperation, loading: false, confirmLoading: false});
@@ -800,7 +817,10 @@
         });
     }
   }
-
+  function doCopyContent() {
+    copy(viewFormTitle.value);
+    message.success('已拷贝到剪切板！');
+  }
   defineExpose(drawerApi)
 </script>
 

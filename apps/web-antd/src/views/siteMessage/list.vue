@@ -102,9 +102,8 @@ function handleViewForm(record: Recordable<any>) {
     procInstId: record.processInstanceId,
     modelKey: record.processDefinitionId.split(":")[0],
     showOperation: false,
-  });
-  processFormPreviewDrawerRef.value.open();
-  processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.title}】的表单`});
+    viewFormTitle: record.title,
+  }).open();
 }
 
 function handleBpmnPreview(modelKey: string, procInstId: string) {

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {ref, computed, unref, defineEmits, defineExpose} from 'vue';
+import {defineEmits, defineExpose} from 'vue';
 import {useVbenModal} from '@vben/common-ui';
 import {useVbenForm} from '#/adapter/form';
 import {message} from 'ant-design-vue';
@@ -7,7 +7,6 @@ import {message} from 'ant-design-vue';
 import {propertiesFormSchema} from './listener.data';
 import {saveOrUpdateProperties} from '#/api/base/flowListener';
 
-const isUpdate = ref(true);
 const emit = defineEmits(['success'])
 let expressionTypes = [
   {label: '字符串', value: 'string'},
@@ -71,58 +70,6 @@ const [BasicForm, formApi] = useVbenForm({
   wrapperClass: 'grid-cols-1',
 });
 
-/*
-const [registerForm, { resetFields, updateSchema, setFieldsValue, validate }] = useForm({
-  labelWidth: 100,
-  schemas: propertiesFormSchema,
-  showActionButtonGroup: false,
-});
-
-const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
-  await resetFields();
-  setModalProps({ confirmLoading: false });
-  isUpdate.value = !!data?.isUpdate;
-  let formData = data.record;
-  await updateSchema([
-    {
-      field: 'value',
-      label: expressionTypeMap[formData.type],
-    },
-    {
-      field: 'type',
-      componentProps: {
-        options: expressionTypes,
-        onChange: (e) => {
-          let v = typeof e == 'string' ? e : e.target.value;
-          updateSchema({
-            field: 'value',
-            label: expressionTypeMap[v],
-          });
-        },
-      },
-    },
-    {
-      field: 'name',
-      dynamicRules: () => {
-        return [
-          {
-            required: true,
-            whitespace: true,
-            message: '标识不能为空！',
-          },
-          {
-            max: 80,
-            message: '字符长度不能大于80！',
-          },
-        ];
-      },
-    },
-  ]);
-  setFieldsValue({
-    ...data.record,
-  });
-});*/
-
 async function handleSubmit() {
   try {
     modalApi.setState({loading: true, confirmLoading: true});
@@ -134,7 +81,7 @@ async function handleSubmit() {
     const {success, msg} = await saveOrUpdateProperties(values);
     if (success) {
       message.success(msg);
-      modalApi.close();
+      await modalApi.close();
       emit('success');
     } else {
       message.error(msg);

@@ -247,9 +247,8 @@
       ...record,
       procInstId: record.processInstanceId,
       modelKey: record.modelKey,
-    });
-    processFormPreviewDrawerRef.value.open();
-    processFormPreviewDrawerRef.value.setState({title: `查看流程【${record.processName}】的表单`});
+      viewFormTitle: record.processName,
+    }).open();
   }
 
   function handleChangeProcInstType(e: Event) {

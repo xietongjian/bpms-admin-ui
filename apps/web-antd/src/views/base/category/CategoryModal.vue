@@ -22,6 +22,7 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
+          values.frontShow = values.frontShow === 1;
           formApi.setValues(values);
           modalApi.setState({loading: false, confirmLoading: false});
         }
@@ -57,7 +58,7 @@
       values.frontShow = values.frontShow ? 1 : 0;
       const {success, msg} = await saveOrUpdate(values);
       if(success){
-        modalApi.close();
+        await modalApi.close();
         message.success(msg);
         emit('success');
       } else{

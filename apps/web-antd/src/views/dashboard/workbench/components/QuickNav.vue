@@ -33,25 +33,26 @@
       </div>
     </div>
 
-    <LaunchModal ref="launchModalRef" @success="handleSuccess" />
+    <ProcessFormLaunchModal ref="processFormLaunchModalRef" @success="handleLaunchSuccess" />
   </div>
 </template>
 <script lang="ts" setup>
-import {computed, onMounted, ref} from 'vue';
+import {computed, onMounted, ref, shallowRef} from 'vue';
   import {Avatar, Tooltip, Empty, Button, Card, Col, Row, TypographyLink} from 'ant-design-vue';
   import { getMyCommonlyList } from '#/api/process/process';
   import {StarFilled, PictureFilled} from "@ant-design/icons-vue";
-  import LaunchModal from '#/views/process/actions/LaunchModal.vue';
-  import { useAccessStore, useUserStore } from '@vben/stores';
+import ProcessFormLaunchModal from '#/views/process/actions/LaunchModal.vue';
+
+import { useAccessStore, useUserStore } from '@vben/stores';
   import { useRouter } from 'vue-router';
+import {changeURLPar} from "#/utils/domUtils";
 
   const userStore = useUserStore();
 
   const router = useRouter();
   const loading = ref(true);
   const dataLoading = ref(false);
-
-  const launchModalRef = ref();
+const processFormLaunchModalRef = ref();
   const dataList = ref([]);
 
   onMounted(()=> {
@@ -70,8 +71,18 @@ import {computed, onMounted, ref} from 'vue';
     }
   }
 
-  function handleLaunch(record) {
-    openLaunchModal(true, {
+  function handleLaunch(record: any) {
+    processFormLaunchModalRef.value.setData({
+      modelKey: record.modelKey,
+      businessKey: record.businessKey || '',
+      viewType: 'launch',
+      title: record.name,
+    });
+    processFormLaunchModalRef.value.setState({title: `查看流程【${record.name}】的表单`});
+    processFormLaunchModalRef.value.open();
+
+    changeLaunchUrl(record.modelKey, record.businessKey || '');
+    /*openLaunchModal(true, {
       modelKey: record.modelKey,
       businessKey: record.businessKey || '',
       viewType: 'launch',
@@ -88,7 +99,7 @@ import {computed, onMounted, ref} from 'vue';
       canFullscreen: false,
       closable: false,
       destroyOnClose: true,
-    });
+    });*/
   }
 
   function handleSuccess() {
@@ -98,6 +109,17 @@ import {computed, onMounted, ref} from 'vue';
   function handleToMore() {
     router.push({ name: 'Launch' });
   }
+  function handleLaunchSuccess() {
+    changeLaunchUrl('', '');
+    router.push({ name: 'Launched' });
+  }
+  function changeLaunchUrl(modelKey, businessKey) {
+    let newUrl = changeURLPar(window.location.href, 'modelKey', modelKey);
+    newUrl = changeURLPar(newUrl, 'viewType', 'launch');
+    newUrl = changeURLPar(newUrl, 'businessKey', businessKey);
+    window.history.replaceState({ path: newUrl }, '', newUrl);
+  }
+
 </script>
 <style lang="scss" scoped>
 @use '../index.scss';

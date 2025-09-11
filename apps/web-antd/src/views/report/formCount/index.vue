@@ -206,12 +206,8 @@ function handleViewForm(record: Recordable<any>) {
   record.procInstId = record.proc_inst_id;
   record.businessKey = record.code;
   record.modelKey = record.model_key;
-
-  processFormPreviewDrawerRef.value.setData(record);
-  processFormPreviewDrawerRef.value.setState({
-    title: `查看流程【${record.title}】的表单`,
-  });
-  processFormPreviewDrawerRef.value.open();
+  record.viewFormTitle = record.title;
+  processFormPreviewDrawerRef.value.setData(record).open();
 }
 
 function handlePreview(record: Recordable<any>) {
