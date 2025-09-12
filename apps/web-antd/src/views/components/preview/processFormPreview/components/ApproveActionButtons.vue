@@ -2,51 +2,53 @@
   <div class="ml-2 mt-2" v-loading="approveActionLoading">
     <div v-if="authPoints && authPoints.length > 0" class="relative">
       <BasicForm/>
-      <Spin :spinning="authPoints.length <= 0">
-        <Space class="approve-ctrl-btns">
-          <!-- "[\"addsign\", \"claim\", \"turn_do\", \"refuse\", \"approve\", \"turn_read\", \"reject\", \"revoke\"]" -->
-          <!-- ["approve", "claim", "turn_do", "addsign", "reject", "revoke", "turn_read", "delegate" ] -->
-          <template v-for="item in authPoints">
-            <Button type="primary" v-if="item.sn === 'approve'" :title="item.name" @click="doApprove">
-              {{ item.name }}
-            </Button>
-            <Button type="primary" v-if="item.sn === 'claim'" :title="item.name" @click="doClaimTask">
-              {{ item.name }}
-            </Button>
-            <Button type="primary" v-if="item.sn === 'hold_task'" :title="item.name" @click="doHoldTask">
-              {{ item.name }}
-            </Button>
-            <Button type="primary" v-if="item.sn === 'un_claim'" :title="item.name" @click="doUnClaimTask">
-              {{ item.name }}
-            </Button>
-            <Button type="error" v-if="item.sn === 'stop'" :title="item.name" @click="doStop">
-              {{ item.name }}
-            </Button>
-            <Button type="primary" v-if="item.sn === 'delegate'" :title="item.name"
-                    @click="doApproveSelectPersonal('delegateTask', false)">
-              {{ item.name }}
-            </Button>
-            <Button type="primary" v-if="item.sn === 'turn_do'" :title="item.name"
-                    @click="doApproveSelectPersonal('turnTask', false)">
-              {{ item.name }}
-            </Button>
-            <!--          <Button type="primary" v-else-if="item.sn === 'after_addsign'" :title="item.name" @click="doApproveSelectPersonal('afterAddSign', true)">
-                        {{item.name}}
-                      </Button>-->
-            <Button type="primary" v-if="item.sn === 'addsign'" :title="item.name"
-                    @click="doApproveSelectPersonal('addsign', true)">
-              {{ item.name }}
-            </Button>
-            <Button danger v-if="item.sn === 'reject'" :title="item.name" @click="doBackToStep">
-              {{ item.name }}
-            </Button>
-            <!-- 拒绝操作 -->
-            <Button type="error" v-if="item.sn === 'refuse'" :title="item.name" @click="doRefuseTask">
-              {{ item.name }}
-            </Button>
-          </template>
-        </Space>
-      </Spin>
+      <div class="approve-ctrl-btns">
+        <Spin :spinning="authPoints.length <= 0 || approveActionLoading" >
+          <Space>
+            <!-- "[\"addsign\", \"claim\", \"turn_do\", \"refuse\", \"approve\", \"turn_read\", \"reject\", \"revoke\"]" -->
+            <!-- ["approve", "claim", "turn_do", "addsign", "reject", "revoke", "turn_read", "delegate" ] -->
+            <template v-for="item in authPoints">
+              <Button type="primary" v-if="item.sn === 'approve'" :title="item.name" @click="doApprove">
+                {{ item.name }}
+              </Button>
+              <Button type="primary" v-if="item.sn === 'claim'" :title="item.name" @click="doClaimTask">
+                {{ item.name }}
+              </Button>
+              <Button type="primary" v-if="item.sn === 'hold_task'" :title="item.name" @click="doHoldTask">
+                {{ item.name }}
+              </Button>
+              <Button type="primary" v-if="item.sn === 'un_claim'" :title="item.name" @click="doUnClaimTask">
+                {{ item.name }}
+              </Button>
+              <Button type="error" v-if="item.sn === 'stop'" :title="item.name" @click="doStop">
+                {{ item.name }}
+              </Button>
+              <Button type="primary" v-if="item.sn === 'delegate'" :title="item.name"
+                      @click="doApproveSelectPersonal('delegateTask', false)">
+                {{ item.name }}
+              </Button>
+              <Button type="primary" v-if="item.sn === 'turn_do'" :title="item.name"
+                      @click="doApproveSelectPersonal('turnTask', false)">
+                {{ item.name }}
+              </Button>
+              <!--          <Button type="primary" v-else-if="item.sn === 'after_addsign'" :title="item.name" @click="doApproveSelectPersonal('afterAddSign', true)">
+                          {{item.name}}
+                        </Button>-->
+              <Button type="primary" v-if="item.sn === 'addsign'" :title="item.name"
+                      @click="doApproveSelectPersonal('addsign', true)">
+                {{ item.name }}
+              </Button>
+              <Button danger v-if="item.sn === 'reject'" :title="item.name" @click="doBackToStep">
+                {{ item.name }}
+              </Button>
+              <!-- 拒绝操作 -->
+              <Button type="error" v-if="item.sn === 'refuse'" :title="item.name" @click="doRefuseTask">
+                {{ item.name }}
+              </Button>
+            </template>
+          </Space>
+        </Spin>
+      </div>
     </div>
     <div v-else class="w-full"> 无操作权限</div>
   </div>

@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <div class="flex items-center h-8 bg-white/50">
+    <div class="flex items-center flex-wrap gap-y-1">
       <Tag v-for="item in commonApproveMsgList" class="cursor-pointer" color="processing" @click="handleSelect(item)">
         {{item.msg}}
       </Tag>

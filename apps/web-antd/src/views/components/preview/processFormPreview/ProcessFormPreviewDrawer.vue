@@ -109,7 +109,13 @@
         </Tabs>
       </div>
 
-      <div class="w-[400px]" v-if="procInstInfo?.showOperation && isFullScreen">
+      <div class="
+      w-[400px]
+      [&_.approve-common-approve-msg-wrapper]:!-bottom-6
+      [&_.approve-common-approve-msg-wrapper]:!left-0
+      [&_.approve-common-approve-msg-wrapper>div]:!overflow-visible
+      [&_.approve-ctrl-btns]:!relative
+      [&_.approve-ctrl-btns]:!-bottom-14 " v-if="procInstInfo?.showOperation && isFullScreen">
         <ApproveActionButtons
           ref="rightApproveActionButtonsRef"
           v-if="procInstInfo?.showOperation"
@@ -130,7 +136,6 @@
       <div class="flex-1 pb-2 pr-4">
         <ApproveActionButtons
           ref="footerApproveActionButtonsRef"
-          v-if="procInstInfo?.showOperation"
           @change-loading="changeModalLoading"
           :authPoints="flowBaseInfo?.authPoints"
           :params="params"

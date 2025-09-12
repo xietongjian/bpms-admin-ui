@@ -66,8 +66,8 @@ export const approveMsgSchemas: FormSchema[] = [
       },
       triggerFields: ['commonApproveMsg'],
     },
-    wrapperClass: 'approve-sign-wrapper',
-    formItemClass: 'absolute bottom-[35px] left-[10px] z-10',
+    wrapperClass: '',
+    formItemClass: 'approve-common-approve-msg-wrapper absolute bottom-[35px] left-[10px] z-10',
   },
 ];
 
