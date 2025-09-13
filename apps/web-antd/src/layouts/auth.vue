@@ -9,7 +9,7 @@ import {getSysConfig} from "#/api/sys/user";
 
 const appName = computed(() => preferences.app.name);
 const logo = computed(() => preferences.logo.source);
-const sloganImage = ref();
+const sloganImage = computed(() => preferences.app.sloganImage);
 
 </script>
 

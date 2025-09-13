@@ -77,6 +77,16 @@ interface AppPreferences {
   watermark: boolean;
   /** z-index */
   zIndex: number;
+
+  /**
+   * 工作台布局配置
+   */
+  workbenchLayout: string;
+
+  /**
+   * 登录页面slogan图片
+   */
+  sloganImage: string;
 }
 
 interface BreadcrumbPreferences {

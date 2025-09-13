@@ -113,7 +113,8 @@ function refreshSystemConfig(config: any) {
       COM_APP_dynamicTitle_SWITCH,
       COM_APP_enablePreferences,
       COM_APP_layout,
-      SYS_COM_WORKBENCH_LAYOUT
+      SYS_COM_WORKBENCH_LAYOUT,
+      COM_APP_sloganImage_IMG,
     } = config;
 
     if(SYS_FAVICON_IMG){
@@ -143,6 +144,7 @@ function refreshSystemConfig(config: any) {
         layout: COM_APP_layout,
         enableCheckUpdates: false,
         workbenchLayout: SYS_COM_WORKBENCH_LAYOUT,
+        sloganImage: COM_APP_sloganImage_IMG,
       },
       theme: {
         builtinType: COM_THME_builtinType,
