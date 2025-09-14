@@ -34,6 +34,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '图片',
     field: 'image',
     align: 'center',
+    slots: {default: 'image'}
   },
   {
     title: '备注',

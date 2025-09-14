@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height >
-    <BasicTable >
+    <BasicTable table-title="系统变量管理">
       <template #toolbar-tools>
         <Button v-access:code="PerPrefix + PerEnum.ADD" type="primary" @click="handleCreate">新增</Button>
       </template>
@@ -10,7 +10,11 @@
 
       <template #image="{ row }">
         <div v-if="showUploadBtn(row)" class="view-img-wrapper">
-          <TableImg :size="80" :simpleShow="true" :imgList="[row.imageBase64]"/>
+<!--          <TableImg :size="80" :simpleShow="true" :imgList="[row.imageBase64]"/>-->
+          <div class="size-20 flex items-center justify-center m-auto" v-if="!row.imageBase64">
+            暂无图片
+          </div>
+          <Image v-else :src="row.imageBase64" class="!size-20 m-auto object-contain" />
           <div class="config-img-tool" v-access:code="PerPrefix+PerEnum.UPDATE" >
             <Space>
               <Upload
@@ -46,7 +50,7 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import {PerEnum} from '#/enums/perEnum';
 import {getSystemConfigListByPage, deleteByIds, saveOrUpdate} from '#/api/base/systemConfig';
-import {Upload, Tooltip, Space, message, Button} from 'ant-design-vue';
+import {Upload, Tooltip, Space, message, Button, Image, Modal} from 'ant-design-vue';
 import {columns, searchFormSchema} from './systemConfig.data';
 import SystemConfigModal from './SystemConfigModal.vue';
 import {UploadOutlined, DeleteOutlined} from '@ant-design/icons-vue';
@@ -84,6 +88,7 @@ const gridOptions: VxeGridProps = {
   keepSource: true,
   border: false,
   stripe: true,
+  showOverflow: false,
   proxyConfig: {
     ajax: {
       query: async ({page}, formValues) => {
@@ -152,27 +157,31 @@ const beforeUpload = (record, file) => {
   return false;
 };
 
-const handleRemoveImg = (record) => {
-  /*createConfirm({
+const handleRemoveImg = (record: any) => {
+  Modal.confirm({
     iconType: 'warning',
-    content: '确定要删除图片吗？',
-    onOk() {
-      saveOrUpdate({id: record.id, image: []})
-          .then((res) => {
-            message.success('删除成功，按Ctrl+F5强制刷新页面才能生效');
-            handleSuccess();
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-    },
+    title: '温馨提示',
+    content: `确定要删除图片吗？`,
     okButtonProps: {
       danger: true,
     },
-  });*/
+    onOk: async () => {
+      try {
+        const { success, msg, data } = await saveOrUpdate({id: record.id, image: []});
+        if (success) {
+          message.success('删除成功，按Ctrl+F5强制刷新页面才能生效');
+          handleSuccess();
+        } else {
+          message.error(msg);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    },
+  });
 };
 
-const getAccepts = (record) => {
+const getAccepts = (record: any) => {
   if (record.configSn === 'SYS_FAVICON_IMG') {
     return '.ico';
   }
