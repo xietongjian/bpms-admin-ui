@@ -130,7 +130,7 @@
   const ListItem = List.Item;
   const ListItemMeta = List.Item.Meta;
 
-  const historyList = ref([]);
+  const historyList = ref<any>([]);
   const approvalHistoryLoading = ref(false);
   watch(
     () => props.historyList, //监听
@@ -138,7 +138,7 @@
       const res = props.historyList || [];
       const result = [];
       for (let i = 0; i < res.length; i++) {
-        let item = res[i];
+        let item = res[i] as any;
         result.push(item);
         if (item.type === 'LCZZ') {
           break;
