@@ -99,39 +99,6 @@
     approveHistoryModalRef = ref(),
     processFormPreviewDrawerRef = ref();
 
-  /*const [registerTable, { getForm, reload }] = useTable({
-    title: '',
-    size: 'small',
-    api: getPagerModelRunTasks,
-    columns,
-    formConfig: {
-      labelWidth: 90,
-      schemas: searchFormSchema,
-      showAdvancedButton: true,
-      showResetButton: true,
-      autoAdvancedLine: 1,
-      alwaysShowLines: 1,
-      autoSubmitOnEnter: true,
-      // fieldMapToTime: [['pickerVal', ['startTime', 'endTime'], 'YYYY-MM-DD']],
-    },
-    beforeFetch: (values) => {
-      if (values.userCode && values.userCode.length > 0) {
-        values.userCode = values.userCode[0].code;
-      }
-      return values;
-    },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: true,
-    showIndexColumn: true,
-    canResize: true,
-    actionColumn: {
-      width: 160,
-      title: '操作',
-      dataIndex: 'action',
-    },
-  });*/
-
   const formOptions: VbenFormProps = {
     showCollapseButton: true,
     collapsed: true,

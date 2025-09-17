@@ -68,9 +68,6 @@
   import { ref, unref, onMounted, defineExpose, nextTick } from 'vue';
   import { Space, Button, Tag, Row, Col, Modal, Affix, message } from 'ant-design-vue';
   import FormContainer from '#/views/process/components/FormContainer.vue';
-  // import BpmnSimulatorModal from '#/views/components/preview/bpmnSimulator/index.vue';
-
-  // import ActionButtons from '#/views/process/components/ActionButtons.vue';
   import BaseActionButtons from '#/views/process/components/BaseActionButtons.vue';
   import {
     getProdModelInfoByModelKeyAndProcInstId,
@@ -87,7 +84,7 @@
   const emit = defineEmits(['success'])
   const userStore = useUserStore();
 
-  const flowBaseInfo = ref({});
+  const flowBaseInfo = ref<any>({});
   const processBaseInfo = ref({});
   const formContainerRef = ref(), bpmnMockerRef = ref();
   const launchHeaderAfixed = ref(false);
@@ -341,7 +338,7 @@
         changeSubmitLoading(false);
         message.success(msg);
         // 发起流程成功后关闭
-        modalApi.close();
+        await modalApi.close();
         // 关闭后跳转到我发起的流程页面
         // go({name: 'Launched'});
         // 关闭后跳转到我发起的流程页面
@@ -364,8 +361,6 @@
 
   async function doSimulation() {
     //unref(actionButtonsRef).setActionLoading(true);
-
-
     openFullLoading();
     await unref(formContainerRef)
       .getFormData(true)
@@ -374,35 +369,10 @@
             modelKey: unref(processBaseInfo).modelKey,
             formData: res
         }).open();
-        /*openBpmnSimulatorModal(true, {
-          modelKey: modelKey,
-          formData: res,
-          // procInstId: (!procInstId||procInstId==='0')?'':procInstId,    // 参数空时传过来的是0
-          isUpdate: true,
-        });
-        setBpmnSimulatorProps({
-          title: '模拟',
-          draggable: false,
-          bodyStyle: { padding: '0px', margin: '0px' },
-          width: 900,
-          height: 450,
-          showOkBtn: false,
-          showCancelBtn: true,
-          cancelText: '关闭',
-        });*/
       })
       .finally(() => {
         closeFullLoading();
-        //unref(actionButtonsRef).setActionLoading(false);
       });
-
-    // 调用子组件内部的方法进行提交
-    // unref(formContainerRef).submitFlowForm(status).then(res=>{
-    //   setTimeout(()=>{
-    //     closeFullLoading();
-    //     saveBtnLoading.value = false;
-    //   }, 100);
-    // });
   }
 
   function handleAffixChange(affixed) {

@@ -23,44 +23,55 @@
       </div>
     </template>
     <div class="h-full w-full flex flex-row">
-      <div ref="allInfoId" class="h-full flex-1">
+      <div class="h-full flex-1">
         <Tabs v-model:activeKey="activeViewKey" size="small" class="h-full">
           <TabPane key="viewForm" tab="查看表单">
-            <ProcessStatus
-                class="text-lg absolute right-0 top-0"
-                :status="procInstInfo.processStatus"
-                :status-name="procInstInfo.processStatusName"
-                type="icon"/>
-            <div id="applyInfoId" class="w-full h-full">
-              <Collapse size="small" collapsible="header" default-active-key="1" class="mb-2">
-                <CollapsePanel key="1" header="基本信息">
-                  <ProcessHeaderInfo :proc-inst-id="procInstInfo.procInstId"/>
-                </CollapsePanel>
-              </Collapse>
+            <div id="allInfoId">
+              <ProcessStatus
+                  ref="processStatusRef"
+                  class="text-lg absolute right-0 top-0"
+                  :class="{'top-20': printRead}"
+                  :status="procInstInfo.processStatus"
+                  :status-name="procInstInfo.processStatusName"
+                  type="icon"/>
+              <div class="w-full h-full">
+                <div id="applyInfoId">
+                  <Collapse size="small" collapsible="header" default-active-key="1" class="mb-2 [&_.ant-collapse-header-text]:!flex-1">
+                    <CollapsePanel key="1">
+                      <template #header>
+                        <div class="">
+                          基本信息
+                        </div>
+                      </template>
+                      <ProcessHeaderInfo :proc-inst-id="procInstInfo.procInstId"/>
+                    </CollapsePanel>
+                  </Collapse>
 
-              <Collapse size="small" collapsible="header" default-active-key="1" class="mb-2">
-                <CollapsePanel key="1" header="表单信息">
-                  <ProcessFormInfo
-                      :procInstId="procInstInfo?.procInstId"
-                      :bizId="procInstInfo?.businessKey"
-                      :taskId="procInstInfo?.taskId"
-                      :print-read="printRead"
-                      :modelKey="procInstInfo?.modelKey"
-                      :show-operation="showOperation"
-                  />
-                </CollapsePanel>
-              </Collapse>
+                  <Collapse size="small" collapsible="header" default-active-key="1" class="[&_.ant-collapse-header-text]:!flex-1">
+                    <CollapsePanel key="1" header="表单信息">
+                      <div ref="generateFormId">
+                        <ProcessFormInfo
+                            :procInstId="procInstInfo?.procInstId"
+                            :bizId="procInstInfo?.businessKey"
+                            :taskId="procInstInfo?.taskId"
+                            :print-read="printRead"
+                            :modelKey="procInstInfo?.modelKey"
+                            :show-operation="showOperation"
+                        />
+                      </div>
+                    </CollapsePanel>
+                  </Collapse>
+                </div>
 
-              <Collapse size="small" collapsible="header" default-active-key="1">
-                <CollapsePanel key="1" header="审批信息">
-                  <ProcessApproveHistoryInfo
-                      :procInstId="procInstInfo?.procInstId"
-                  />
-                </CollapsePanel>
-              </Collapse>
+                <Collapse size="small" collapsible="header" default-active-key="1" class="mt-2 [&_.ant-collapse-header-text]:!flex-1">
+                  <CollapsePanel key="1" header="审批信息">
+                    <ProcessApproveHistoryInfo :procInstId="procInstInfo?.procInstId" />
+                  </CollapsePanel>
+                </Collapse>
 
-              <div v-if="currentApproverList.length > 0" class="mt-2 desc-wrap">
-                <CurrentApprover :approverList="currentApproverList" ></CurrentApprover>
+                <div v-if="currentApproverList.length > 0" class="desc-wrap">
+                  <CurrentApprover :approverList="currentApproverList" ></CurrentApprover>
+                </div>
               </div>
             </div>
           </TabPane>
@@ -538,12 +549,13 @@
       headerStyle: 'text-align: center; padding-bottom: 20px;',
       maxWidth: 1500,
       targetStyles: ['*'],
+      ignoreElements: [],
     });
   }
 
   function handlePrintAllInfo(printable) {
     if (!printable) {
-      printable = unref(allInfoId);
+      printable = 'allInfoId';
     }
     const { procInstName, name } = unref(flowBaseInfo);
     printRead.value = true;

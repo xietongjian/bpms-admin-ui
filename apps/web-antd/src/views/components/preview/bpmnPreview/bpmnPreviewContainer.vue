@@ -52,9 +52,8 @@
 </template>
 
 <script lang="ts" setup>
-import {i18n, useI18n } from '@vben/locales';
-
-import {computed, onMounted, ref, unref, shallowRef, defineProps, defineEmits, defineExpose, watch} from 'vue';
+  import {i18n, useI18n } from '@vben/locales';
+  import {computed, onMounted, ref, unref, shallowRef, defineProps, defineEmits, defineExpose, watch} from 'vue';
   import { Button, Space } from 'ant-design-vue';
   import {
     CompressOutlined,
@@ -64,8 +63,8 @@ import {computed, onMounted, ref, unref, shallowRef, defineProps, defineEmits, d
   } from '@ant-design/icons-vue';
   import { BpmnPresetViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
   import { useElementSize  } from '@vueuse/core'
-
   import { usePreferences } from '@vben/preferences';
+
   const emit = defineEmits(['data-change']);
   const { isDark } = usePreferences();
   const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));

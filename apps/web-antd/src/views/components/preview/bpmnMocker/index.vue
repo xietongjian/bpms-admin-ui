@@ -1,6 +1,6 @@
 <template>
   <BasicModal
-      class="bpmn-mocker-container w-1/2 h-[600px]"
+      class="bpmn-mocker-container w-[1000px] h-full"
       content-class="overflow-hidden"
       @cancel="onCloseBpmnPreviewModal"
   >
@@ -23,7 +23,6 @@
 import {computed, nextTick, ref, defineExpose} from 'vue';
 import {LoadingOutlined,} from '@ant-design/icons-vue';
 import {BpmnMocker} from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
-// import '#/assets/bpmn/viewer/lib/bpmn-viewer.css';
 import {getBpmnByModelKey, getCustomFlowSequenceFlows} from "#/api/process/process";
 import {useUserStore} from '@vben/stores';
 import {useVbenModal} from '@vben/common-ui';
@@ -31,7 +30,6 @@ import {usePreferences} from '@vben/preferences';
 
 const {isDark} = usePreferences();
 const userStore = useUserStore();
-
 
 const getTheme = computed(() => (isDark.value ? 'dark' : 'light'));
 
@@ -103,12 +101,7 @@ defineExpose(modalApi)
 </script>
 
 <style lang="scss">
-//@import '#/assets/bpmn/viewer/lib/style.css';
-
 .bpmn-mocker-container {
-  .bpmn-viewer__toolbar {
-    display: none;
-  }
   overflow: visible;
 
   g.layer-djs-grid-line{

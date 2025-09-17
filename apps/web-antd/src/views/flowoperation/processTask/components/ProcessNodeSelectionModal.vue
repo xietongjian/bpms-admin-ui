@@ -1,22 +1,13 @@
 <script setup lang="ts">
   import { defineExpose, computed, defineEmits, ref, shallowRef } from 'vue';
-  // import { BasicModal, useModalInner } from '@/components/Modal';
   import {useVbenModal} from '@vben/common-ui';
-
   import { BpmnViewer } from '#/assets/bpmn/viewer/lib/bpmn-viewer.js';
-  // import { useDarkModeTheme } from '@/hooks/setting/useDarkModeTheme';
   import { Row, Col, message } from 'ant-design-vue';
   import NavigatedViewer from 'bpmn-js/lib/NavigatedViewer';
-  import {
-    getBpmnByModelKey,
-    getHighLightedNodeVoByProcessInstanceId,
-  } from '#/api/flowable/bpmn/modelInfo';
-  // import { BasicForm, useForm } from '@/components/Form';
   import { processNodeSelectionFormSchema } from '#/views/flowoperation/processInst/processInst.data';
   import { is } from 'bpmn-js/lib/util/ModelUtil';
   import {useVbenForm} from "#/adapter/form";
   import { usePreferences } from '@vben/preferences';
-
 
   defineOptions({ name: 'ProcessNodeSelectionModal' });
 
@@ -87,15 +78,6 @@
     selection.select([element]);
     selectedActivityIds.value = [element.id];
   }
-
-/*  const [registerForm, { setFieldsValue, resetFields, validate, updateSchema }] = useForm({
-    labelWidth: 100,
-    schemas: processNodeSelectionFormSchema,
-    showActionButtonGroup: false,
-    actionColOptions: {
-      span: 24,
-    },
-  });*/
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {

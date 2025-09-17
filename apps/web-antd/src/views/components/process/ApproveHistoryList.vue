@@ -21,27 +21,27 @@
             </div>
           </template>
           <template #title>
-            <Row type="flex">
-              <Col flex="1 1 200px">
-                <Space>
-                  <span class="font-bold">
+            <div class="flex">
+              <div class="flex flex-1 items-center">
+                <div class="font-bold flex items-center">
+                  <div class="whitespace-nowrap">
                     {{ item.personalName }}
-                    <span v-if="item.orgLevel" class="font-size-[10px] font-thin ml-1">
-                      ({{ item.orgLevel }})
-                    </span>
-                    <span class="font-normal text-gray-500" v-if="item.activityName">
-                      （{{ item.activityName }}）
-                    </span>
-                  </span>
-                  <Tag :color="item.type === 'BH' || item.type === 'LCZZ' ? 'error' : 'success'">
-                    <span class="font-bold">{{ item.typeName }}</span>
-                  </Tag>
-                </Space>
-              </Col>
-              <Col flex="0 1 200px" class="text-right">
-                <span>{{ item.time }}</span>
-              </Col>
-            </Row>
+                  </div>
+                  <div v-if="item.orgLevel" class="font-size-[10px] font-thin ml-1">
+                    ({{ item.orgLevel }})
+                  </div>
+                  <div class="font-normal text-gray-500" v-if="item.activityName">
+                    （{{ item.activityName }}）
+                  </div>
+                </div>
+                <Tag :color="item.type === 'BH' || item.type === 'LCZZ' ? 'error' : 'success'">
+                  <span class="font-bold">{{ item.typeName }}</span>
+                </Tag>
+              </div>
+              <div class="w-60 text-right">
+                {{ item.time }}
+              </div>
+            </div>
           </template>
           <template #avatar>
             <!-- 判断如果是终止或结束，则显示终止/办结图标 -->
