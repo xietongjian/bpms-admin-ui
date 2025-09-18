@@ -1,4 +1,5 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+import {getFlowCategoryTreeData} from "#/api/base/category";
 
 export const customFormSchema: FormSchema[] = [
   {
@@ -14,7 +15,7 @@ export const customFormSchema: FormSchema[] = [
   {
     fieldName: 'sourceModel',
     label: '源流程',
-    component: 'ModelInfoSelector',
+    component: 'FlowModelSelector',
     // required: true,
     componentProps: {
       title: '选择流程',
@@ -27,10 +28,13 @@ export const customFormSchema: FormSchema[] = [
     fieldName: 'categoryCode',
     label: '目标分类',
     rules: 'selectRequired',
-    component: 'TreeSelect',
+    component: 'ApiTreeSelect',
     componentProps: {
-      treeNodeFilterProp: 'title',
-      getPopupContainer: () => document.body,
+      class: 'w-full',
+      labelField: 'label',
+      valueField: 'value',
+      childrenField: 'children',
+      api: getFlowCategoryTreeData,
     },
   },
 ];
@@ -49,7 +53,7 @@ export const bizFormSchema: FormSchema[] = [
   {
     fieldName: 'sourceModel',
     label: '源流程',
-    component: 'ModelInfoSelector',
+    component: 'FlowModelSelector',
     // required: true,
     componentProps: {
       title: '选择流程',
@@ -62,10 +66,13 @@ export const bizFormSchema: FormSchema[] = [
     fieldName: 'categoryCode',
     label: '目标分类',
     rules: 'selectRequired',
-    component: 'TreeSelect',
+    component: 'ApiTreeSelect',
     componentProps: {
-      treeNodeFilterProp: 'title',
-      getPopupContainer: () => document.body,
+      class: 'w-full',
+      labelField: 'label',
+      valueField: 'value',
+      childrenField: 'children',
+      api: getFlowCategoryTreeData,
     },
   },
   {

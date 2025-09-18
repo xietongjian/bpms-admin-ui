@@ -46,7 +46,7 @@ export const getEnv = () => {
 
 export const copyCustomProcess = (params: any) => {
   return requestClient.post<any>(Api.CopyCustomProcess, params,
-    { isReturnNativeResponse: true },
+    { responseReturn: 'body' },
   );
 };
 
@@ -57,7 +57,7 @@ export const copyCustomTaskProcess = (params: any) => {
 };
 
 export const copyBizProcess = (params: any) => {
-  return requestClient.post<any>(Api.CopyBizProcess, params, { isReturnNativeResponse: true });
+  return requestClient.post<any>(Api.CopyBizProcess, params, { responseReturn: 'body' });
 };
 
 /**

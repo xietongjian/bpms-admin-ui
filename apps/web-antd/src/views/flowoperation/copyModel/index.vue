@@ -1,6 +1,6 @@
 <template>
   <Page auto-content-height title="不同环境的流程、表单拷贝">
-    <Alert type="warning" show-icon>
+    <Alert type="warning" show-icon class="mb-2">
       <template #icon>
         <HeatMapOutlined style="color: orangered" />
       </template>
@@ -30,72 +30,81 @@
       </template>
     </Alert>
 
-    <CollapseContainer class="mt-4">
-      <template #title>
-        <Space>
-          <span>自定义流程：</span>
-          <span class="font-bold">{{ envConst[currentEnv] }}</span>
-          <ArrowRightOutlined />
-          <span class="font-bold">{{ envConst[targetEnv] }}</span>
-        </Space>
-      </template>
-      <CustomForm />
+    <Collapse size="small"
+              collapsible="header"
+              default-active-key="1"
+              class="mb-2 [&_.ant-collapse-header-text]:!flex-1">
+      <CollapsePanel key="1">
+        <template #header>
+          <Space>
+            <span>自定义流程：</span>
+            <span class="font-bold">{{ envConst[currentEnv] }}</span>
+            <ArrowRightOutlined />
+            <span class="font-bold">{{ envConst[targetEnv] }}</span>
+          </Space>
+        </template>
+        <CustomForm />
 
-      <div class="p-4" style="padding-top: 0; padding-left: 100px">
-        <Progress
-          v-if="customCopyPercent > 0 && customCopyPercent !== 100"
-          :percent="customCopyPercent"
-        />
-        <Alert
-          style="margin-bottom: 0.5rem"
-          v-if="customCopyPercent === 100"
-          :message="customResult.msg"
-          :type="customResult.code === '100' ? 'success' : 'error'"
-          closable
-        />
-        <Authority :value="'CopyModel:' + PerEnum.UPDATE">
+        <div class="p-4 pl-24">
+          <Progress
+              v-if="customCopyPercent > 0 && customCopyPercent !== 100"
+              :percent="customCopyPercent"
+          />
+          <Alert
+              style="margin-bottom: 0.5rem"
+              v-if="customCopyPercent === 100"
+              :message="customResult.msg"
+              :type="customResult.code === '100' ? 'success' : 'error'"
+              closable
+          />
           <Button
-            :loading="customCopyPercent !== 100 && customCopyPercent !== 0"
-            type="error"
-            @click="handleCopyCustomForm"
-            >开始拷贝</Button
-          >
-        </Authority>
-      </div>
-    </CollapseContainer>
+              v-access:code="PerPrefix+PerEnum.UPDATE"
+              :loading="customCopyPercent !== 100 && customCopyPercent !== 0"
+              type="primary" danger
+              @click="handleCopyCustomForm" >
+            开始拷贝
+          </Button>
+        </div>
+      </CollapsePanel>
+    </Collapse>
 
-    <CollapseContainer class="mt-4">
-      <template #title>
-        <Space>
-          <span>异构流程：</span>
-          <span class="font-bold">{{ envConst[currentEnv] }}</span>
-          <ArrowRightOutlined />
-          <span class="font-bold">{{ envConst[targetEnv] }}</span>
-        </Space>
-      </template>
-      <BizForm />
+    <Collapse size="small"
+              collapsible="header"
+              default-active-key="1"
+              class="mb-2 [&_.ant-collapse-header-text]:!flex-1">
+      <CollapsePanel key="1">
+        <template #header>
+          <Space>
+            <span>异构流程：</span>
+            <span class="font-bold">{{ envConst[currentEnv] }}</span>
+            <ArrowRightOutlined />
+            <span class="font-bold">{{ envConst[targetEnv] }}</span>
+          </Space>
+        </template>
+        <BizForm />
 
-      <div class="p-4" style="padding-top: 0; padding-left: 100px">
-        <Progress v-if="bizCopyPercent > 0 && bizCopyPercent !== 100" :percent="bizCopyPercent" />
-        <Alert
-          style="margin-bottom: 0.5rem"
-          v-if="bizCopyPercent === 100"
-          :message="bizResult.msg"
-          :type="bizResult.code === '100' ? 'success' : 'error'"
-          closable
-        />
-        <Button v-access:code="PerPrefix+PerEnum.UPDATE"
-            :loading="bizCopyPercent !== 100 && bizCopyPercent !== 0"
-            type="error"
-            @click="handleCopyBizForm"
-        >开始拷贝</Button
-        >
-      </div>
-    </CollapseContainer>
+        <div class="p-4" style="padding-top: 0; padding-left: 100px">
+          <Progress v-if="bizCopyPercent > 0 && bizCopyPercent !== 100" :percent="bizCopyPercent" />
+          <Alert
+              style="margin-bottom: 0.5rem"
+              v-if="bizCopyPercent === 100"
+              :message="bizResult.msg"
+              :type="bizResult.code === '100' ? 'success' : 'error'"
+              closable
+          />
+          <Button v-access:code="PerPrefix+PerEnum.UPDATE"
+                  :loading="bizCopyPercent !== 100 && bizCopyPercent !== 0"
+                  type="primary" danger
+                  @click="handleCopyBizForm">
+            开始拷贝
+          </Button>
+        </div>
+      </CollapsePanel>
+    </Collapse>
   </Page>
 </template>
 <script lang="ts" setup>
-  import { ref, unref, onMounted, nextTick } from 'vue';
+  import { ref, unref, onMounted, nextTick, createVNode } from 'vue';
   import { PerEnum } from '#/enums/perEnum';
   import type {Recordable} from '@vben/types';
   import type {VbenFormProps} from '@vben/common-ui';
@@ -108,8 +117,8 @@
   // import { BasicForm, useForm } from '@/components/Form/index';
   // import { CollapseContainer } from '@/components/Container/index';
   import { customFormSchema, bizFormSchema } from './copyModel.data';
-  import {Alert, Progress, Tag, Space, message, Button} from 'ant-design-vue';
-  import { ArrowRightOutlined, HeatMapOutlined } from '@ant-design/icons-vue';
+  import {Alert, Progress, Tag, Space, message, Collapse, CollapsePanel, Modal, Button} from 'ant-design-vue';
+  import {ArrowRightOutlined, HeatMapOutlined, QuestionCircleOutlined} from '@ant-design/icons-vue';
 
   import {
     getSyncCategories,
@@ -138,8 +147,6 @@
   const copyCustomLoading = ref<boolean>(false);
   const copyBizLoading = ref<boolean>(false);
   const syncCategories = ref([]);
-
-
 
   const [CustomForm, customFormApi] = useVbenForm({
     commonConfig: {
@@ -315,67 +322,78 @@
 
   async function handleCopyCustomForm() {
     customCopyPercent.value = 0;
-    const values = await validateCustomForm();
+    const {valid} = await customFormApi.validate();
+    if(!valid){
+      return;
+    }
+    const values = await customFormApi.getValues();
     const modelInfo = values.sourceModel[0];
-    createConfirm({
-      iconType: 'warning',
+
+    debugger;
+    Modal.confirm({
+      icon: createVNode(QuestionCircleOutlined),
       title: '警告',
-      content: `此操作将会在目标【${envConst[unref(targetEnv)]}】中创建名为【${modelInfo.name}】的流程，是否继续？`,
-      okButtonProps: {
-        type: 'error',
-      },
-      onOk: async () => {
+      iconType: 'warning',
+      content: `此操作将会在目标【${envConst[unref(targetEnv)]}】中创建名为【${modelInfo.label}】的流程，是否继续？`,
+      onOk() {
         const customInterval = setInterval(() => {
-          customCopyPercent.value += getRandomIntInclusive(1, 5);
+          customCopyPercent.value += getRandomIntInclusive(0, 5);
           if (unref(customCopyPercent) >= 100) {
-            clearInterval(customInterval);
             customCopyPercent.value = 100;
-            resetCustomFields();
+            clearInterval(customInterval);
+            customFormApi.resetForm();
           }
-        }, 50);
-        values.modelKey = modelInfo.modelKey;
+        }, 100);
+        values.modelKey = modelInfo.value;
         delete values.sourceModel;
         copyCustomLoading.value = true;
         copyCustomProcess(values)
-          .then((res) => {
-            const resData = res.data;
-            // message.success(resData.msg);
-            // resetCustomFields();
-            customResult.value = resData;
-          })
-          .catch((e) => {
-            customCopyPercent.value = 100;
-            customResult.value = { code: '101', msg: `服务器异常，请稍后再试！${e.message}` };
-          })
-          .finally(() => {
-            // copyCustomLoading.value = false;
-          });
+            .then((res) => {
+              const resData = res.data;
+              // message.success(resData.msg);
+              // resetCustomFields();
+              customResult.value = resData;
+            })
+            .catch((e) => {
+              // customCopyPercent.value = 100;
+              customResult.value = { code: '101', msg: `服务器异常，请稍后再试！${e.message}` };
+            })
+            .finally(() => {
+              // copyCustomLoading.value = false;
+            });
+      },
+      okType: 'primary',
+      okButtonProps: {
+        danger: true,
       },
     });
   }
 
   async function handleCopyBizForm() {
     bizCopyPercent.value = 0;
-    const values = await validateBizForm();
-    const { modelKey, name } = values.sourceModel[0];
-    let msgContent = `流程【${name}(${modelKey})】在【${envConst[unref(targetEnv)]}】中不存在，是否创建？`;
-    if (values.targetModelInfo) {
-      msgContent = `流程【${name}(${modelKey})】在【${envConst[unref(targetEnv)]}】中已经存在，是否覆盖？`;
+    const {valid} = await bizFormApi.validate();
+    if(!valid){
+      return;
     }
-    createConfirm({
-      iconType: 'warning',
+    const values = await bizFormApi.getValues();
+    const { value, label } = values.sourceModel[0];
+    let msgContent = `流程【${label}(${value})】在【${envConst[unref(targetEnv)]}】中不存在，是否创建？`;
+    if (values.targetModelInfo) {
+      msgContent = `流程【${label}(${value})】在【${envConst[unref(targetEnv)]}】中已经存在，是否覆盖？`;
+    }
+
+    Modal.confirm({
+      icon: createVNode(QuestionCircleOutlined),
       title: '警告',
+      iconType: 'warning',
       content: msgContent,
-      okButtonProps: {
-        type: 'error',
-      },
-      onOk: async () => {
+      onOk() {
         const bizInterval = setInterval(() => {
           bizCopyPercent.value += getRandomIntInclusive(1, 5);
           if (unref(bizCopyPercent) >= 100) {
             clearInterval(bizInterval);
             bizCopyPercent.value = 100;
-            resetBizFields();
+            bizFormApi.resetForm();
           }
         }, 50);
 
@@ -386,19 +404,23 @@
         const node = findNode(unref(syncCategories), (item) => item.id === values.categoryCode);
         values.categoryCode = node.code;
         copyBizProcess(values)
-          .then((res) => {
-            const resData = res.data;
-            bizResult.value = resData;
-            // message.success(resData.msg);
-            // resetBizFields();
-          })
-          .catch((e) => {
-            bizCopyPercent.value = 100;
-            bizResult.value = { code: '101', msg: `服务器异常，请稍后再试！${e.message}` };
-          })
-          .finally(() => {
-            // copyBizLoading.value = false;
-          });
+            .then((res) => {
+              const resData = res.data;
+              bizResult.value = resData;
+              // message.success(resData.msg);
+              // resetBizFields();
+            })
+            .catch((e) => {
+              bizCopyPercent.value = 100;
+              bizResult.value = { code: '101', msg: `服务器异常，请稍后再试！${e.message}` };
+            })
+            .finally(() => {
+              // copyBizLoading.value = false;
+            });
+      },
+      okType: 'primary',
+      okButtonProps: {
+        danger: true,
       },
     });
   }
