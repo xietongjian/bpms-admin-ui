@@ -140,11 +140,11 @@ async function onSubmit(params: Recordable<any>) {
 <template>
   <AuthenticationLogin
       ref="loginRef"
-      :showCodeLogin="false"
+      :showCodeLogin="true"
       :showForgetPassword="false"
-      :showQrcodeLogin="false"
+      :showQrcodeLogin="true"
       :showRegister="false"
-      :showThirdPartyLogin="false"
+      :showThirdPartyLogin="true"
       subTitle=""
       title="飞流数智化"
     :form-schema="formSchema"

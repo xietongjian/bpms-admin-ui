@@ -56,6 +56,7 @@ const {
         <MdiGoogle />
       </VbenIconButton>
       <DingdingLogin
+        :redirect-uri="dingdingAuthConfig.redirectUri"
         v-if="dingdingAuthConfig"
         :corp-id="dingdingAuthConfig.corpId"
         :client-id="dingdingAuthConfig.clientId"
