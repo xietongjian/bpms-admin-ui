@@ -76,6 +76,10 @@ interface AppPreferences {
   /** 偏好设置按钮位置 */
   preferencesButtonPosition: PreferencesButtonPositionType;
   /**
+   * 登录页面slogan图片
+   */
+  sloganImage: string;
+  /**
    * @zh_CN 是否开启水印
    */
   watermark: boolean;
@@ -83,18 +87,14 @@ interface AppPreferences {
    * @zh_CN 水印文案
    */
   watermarkContent: string;
-  /** z-index */
-  zIndex: number;
 
   /**
    * 工作台布局配置
    */
   workbenchLayout: string;
 
-  /**
-   * 登录页面slogan图片
-   */
-  sloganImage: string;
+  /** z-index */
+  zIndex: number;
 }
 
 interface BreadcrumbPreferences {
@@ -156,6 +156,8 @@ interface LogoPreferences {
   fit: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
   /** logo地址 */
   source: string;
+  /** 暗色主题logo地址 (可选，若不设置则使用 source) */
+  sourceDark?: string;
 }
 
 interface NavigationPreferences {
@@ -285,6 +287,8 @@ interface WidgetPreferences {
   sidebarToggle: boolean;
   /** 是否显示主题切换部件 */
   themeToggle: boolean;
+  /** 是否显示时区部件 */
+  timezone: boolean;
 }
 
 interface Preferences {

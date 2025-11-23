@@ -1,6 +1,7 @@
 import { defineConfig } from '@vben/vite-config';
-const targetBasePath = 'http://47.106.196.177:8888';
+// const targetBasePath = 'http://47.106.196.177:8888';
 // const targetBasePath = 'http://localhost:8888';
+const targetBasePath = 'http://10.0.0.38:8888';
 export default defineConfig(async () => {
   return {
     application: {},
