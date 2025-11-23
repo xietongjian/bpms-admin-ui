@@ -3,6 +3,7 @@ import {listToTree} from "#/utils/helper/treeHelper";
 
 enum Api {
   GetFlowCategories = '/flow/base/category/getCategories',
+  GetCategoriesByLoginUser = '/flow/form/modelInfo/getCategorysByLoginUser',
   SaveOrUpdate = '/flow/base/category/saveOrUpdate',
   Delete = '/flow/base/category/delete',
   CheckEntityExist = '/flow/base/category/checkEntityExist',
@@ -10,6 +11,10 @@ enum Api {
 
 export async function getFlowCategories (params = {}){
   return requestClient.post<any>(Api.GetFlowCategories, params);
+}
+
+export function getCategoriesByLoginUser(params?: any) {
+  return requestClient.get<any>(Api.GetCategoriesByLoginUser, params);
 }
 
 export async function getFlowCategoryTreeData (params?: any){

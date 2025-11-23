@@ -352,13 +352,13 @@ async function loadFormData(modelId) {
       }
 
       const applyCompanies = JSON.parse(res.applyCompanies || '[]') || [];
-      applyCompanies &&
-        applyCompanies.forEach((item) => {
-          item.shortName = item.name;
-          item.id = item.id;
-          item.key = item.id;
-          item.label = item.name;
-        });
+      applyCompanies && applyCompanies.forEach((item) => {
+        item.shortName = item.orgName;
+        item.id = item.orgId;
+        item.key = item.orgId;
+        item.label = item.orgName;
+        item.sourceType = item.orgType;
+      });
 
       const superuser = res.superuser ? JSON.parse(res.superuser) : [];
       superuser &&

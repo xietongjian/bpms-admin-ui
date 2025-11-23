@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { nextTick, ref, unref, shallowRef, onMounted } from 'vue';
-
 import { Page, ColPage } from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
-
+import { saveCommonlyProcess,cancelCommonlyProcess } from '#/api/process/process';
 import {
   DeleteOutlined,
   PartitionOutlined,
@@ -11,15 +10,12 @@ import {
 } from '@ant-design/icons-vue';
 import {
   Avatar,
-  Col,
   Divider,
   Empty,
   Input,
   List,
   Popconfirm,
-  Row,
   Space,
-  Spin,
   Tooltip,
   Tree,
   TypographyLink,
@@ -28,7 +24,7 @@ import {
 import {BpmnPreviewModal, ProcessFormPreviewDrawer} from '#/views/components/preview';
 import ProcessFormLaunchModal from '#/views/process/actions/LaunchModal.vue';
 
-import { getFlowCategories } from '#/api/base/category';
+import { getFlowCategories, getCategoriesByLoginUser } from '#/api/base/category';
 import {
   delFormDraftById,
   getDraftPageList,
@@ -181,7 +177,7 @@ onMounted(() => {
 
 async function fetch() {
   // treeLoading.value = true;
-  const categories = await getFlowCategories();
+  const categories = await getCategoriesByLoginUser();
   allCategoriesList.value = JSON.parse(JSON.stringify(categories));
   // 所有的类别根据sn属性转换成map对象
   const tempAllCategoryMap = {};
@@ -351,19 +347,19 @@ function handleLaunchSuccess() {
                 </h1>
               </Divider>
               <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-4">
-                <div v-for="item in values" class="hover:bg-primary/10 rounded-sm hover:shadow-sm p-1 gap-1 flex items-center text-nowrap overflow-hidden text-ellipsis">
-                  <Avatar :src="item.modelIcon" class="model-icon bg-primary/20">
+                <div v-for="item in values" class="hover:bg-primary/5 rounded-sm hover:shadow-sm p-1 gap-1 flex items-center justify-start text-nowrap overflow-hidden">
+                  <Avatar :src="item.modelIcon" class="model-icon bg-primary/20 grow-0 shrink-0">
                     <template #icon>
                       <PictureFilled />
                     </template>
                   </Avatar>
-                  <Tooltip placement="top" title="流程图预览">
+                  <Tooltip placement="top" title="流程图预览" >
                     <PartitionOutlined
-                      class="flow-diagram-icon text-primary"
+                      class="text-primary grow-0 shrink-0"
                       @click="handleBpmnPreview(item.modelKey, '')"
                     />
                   </Tooltip>
-                  <TypographyLink class="flex-1" @click="handleLaunch(item)">
+                  <TypographyLink :title="item.name" class="flex-1 text-nowrap overflow-hidden text-ellipsis" @click="handleLaunch(item)">
                     {{ item.name }}
                   </TypographyLink>
                 </div>
@@ -410,7 +406,7 @@ function handleLaunchSuccess() {
 
                     <Tooltip placement="top" title="流程图预览">
                       <PartitionOutlined
-                        class="flow-diagram-icon cursor-pointer"
+                        class="cursor-pointer"
                         @click="handleBpmnPreview(item.modelKey)"
                       />
                     </Tooltip>

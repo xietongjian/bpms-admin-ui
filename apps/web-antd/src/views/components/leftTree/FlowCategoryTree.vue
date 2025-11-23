@@ -3,7 +3,7 @@
     <div class="flex items-center p-2 border-b">
       流程分类
     </div>
-    <div v-loading="treeLoading" class="h-full">
+    <div v-loading="treeLoading" class="h-full overflow-auto">
       <Tree
         class="overflow-auto"
         toolbar

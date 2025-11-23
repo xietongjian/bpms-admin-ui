@@ -15,7 +15,7 @@ enum Api {
   AfterAddSign = '/flow/front/operate/afterAddSign',  // 后加签
   BeforeAddSign = '/flow/front/operate/beforeAddSign',  // 前加签
   BackToStep = '/flow/front/operate/backToStep',  // 驳回
-  RevokeProcess = '/flow/front/operate/revokeProcess',    // 撤回
+  RevokeProcess = '/flow/operate/revokeProcess',    // 撤回
   BackToSubmitter = '/flow/front/operate/backToSubmitter',  // 驳回到提交人
   ReviewTask = '/flow/front/operate/transferTask',  // 转阅
   // /getOneActivityVoByProcessInstanceIdAndActivityId/{processInstanceId}/{activityId}
@@ -45,7 +45,8 @@ enum Api {
   UpdateCommentInfo = '/flow/front/operate/updateCommentInfo',
   CheckRevokeProcess = '/flow/query/checkRevokeProcess',
   ReminderTask = '/flow/operate/reminderTask',
-
+  SaveCommonlyProcess = '/flow/commonlyProcess/saveCommonlyProcess',
+  CancelCommonlyProcess = '/flow/commonlyProcess/deleteCommonlyProcessByModelKey/',
 }
 
 // 发起流程
@@ -318,4 +319,14 @@ export const getInitBpmnXml = (params: any) => {
   </bpmn:definitions>
   `;
   return Promise.resolve(initBpmnXml);
+}
+
+// 加入常用流程
+export function saveCommonlyProcess(params: any) {
+  return requestClient.post(Api.SaveCommonlyProcess, params, {responseReturn: 'body'});
+}
+
+// 删除常用流程
+export function cancelCommonlyProcess(params: any) {
+  return requestClient.post(Api.CancelCommonlyProcess + '/' + params.modelKey, {}, {responseReturn: 'body'});
 }
