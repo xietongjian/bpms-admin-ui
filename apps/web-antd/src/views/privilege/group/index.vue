@@ -4,7 +4,7 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormProps} from '@vben/common-ui';
 import type {Recordable} from '@vben/types';
 import {Page} from '@vben/common-ui';
-import {Button, Space, Image, Tag, message, Popconfirm} from 'ant-design-vue';
+import {Button, Space, Image, Tag, message, Popconfirm, TypographyLink} from 'ant-design-vue';
 import {useVbenVxeGrid} from '#/adapter/vxe-table';
 import {TableAction} from '#/components/table-action';
 import {getGroupListByPage, deleteByIds} from '#/api/privilege/group';
@@ -16,7 +16,7 @@ import SetAccountModal from './SetAccountModal.vue';
 import {PerEnum} from "#/enums/perEnum";
 
 const PerPrefix = "Group:";
-const setAccountModalRef = ref(), setAclModalRef = ref(), groupModalRef = ref();
+const groupAccountListModalRef = ref(), setAclModalRef = ref(), groupModalRef = ref();
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -99,10 +99,10 @@ async function handleDelete(record: any) {
   }
 }
 function handleAddUser(record: Recordable<any>) {
-  setAccountModalRef.value.setData(record);
-  setAccountModalRef.value.open();
-  setAccountModalRef.value.setState({
-    title: '给组【' + record.name + '(' + record.sn + ')】分配用户'
+  groupAccountListModalRef.value.setData({...record, isUpdate: true});
+  groupAccountListModalRef.value.open();
+  setAclModalRef.value.setState({
+    title: '查看【' + record.name + '(' + record.sn + ')】已分配的用户'
   });
 }
 function createActions(record: Recordable<any>): any[] {
@@ -116,7 +116,7 @@ function createActions(record: Recordable<any>): any[] {
     {
       auth: [PerPrefix + PerEnum.AUTH],
       tooltip: '分配用户',
-      icon: 'ant-design:user-add-outlined',
+      icon: 'ant-design:usergroup-add',
       onClick: handleAddUser.bind(null, record),
     },
     {
@@ -141,13 +141,13 @@ function createActions(record: Recordable<any>): any[] {
     },
   ];
 }
-function handleSetAccountSuccess() {
-  setTimeout(() => {
-    tableApi.reload();
-  }, 200);
-}
-function handleRemoveGroupUser(){
 
+function handleViewUsers(record: Recordable<any>) {
+  groupAccountListModalRef.value.setData({...record, isUpdate: false});
+  groupAccountListModalRef.value.open();
+  setAclModalRef.value.setState({
+    title: '设置【' + record.name + '(' + record.sn + ')】的用户'
+  });
 }
 
 </script>
@@ -169,29 +169,20 @@ function handleRemoveGroupUser(){
         <Image :src="row.image" class="w-[20px] h-[20px]" :height="40" :width="40"/>
       </template>
 
+      <template #users="{ row }">
+        <TypographyLink href="javascript:void(0)"  @click="handleViewUsers(row)">
+          查看用户
+        </TypographyLink>
+      </template>
+
       <template #status="{ row }">
         <Tag v-if="row.status===1" color="green">启用</Tag>
         <Tag v-else color="red">禁用</Tag>
       </template>
-
-      <template #users="{ row }">
-        <div class="max-h-50 overflow-y-auto" v-if="row.users">
-          <EmpInfo v-for="item in row.users" :no="item.username" :name="item.realName" >
-            <Tag class="my-1" color="green">
-              {{ item.realName }}
-<!--              <template #closeIcon>
-                <Popconfirm title="确定要移除该用户吗?" :okButtonProps="{danger: true}" @confirm="handleRemoveGroupUser(row, item)">
-                  <CloseOutlined />
-                </Popconfirm>
-              </template>-->
-            </Tag>
-          </EmpInfo>
-        </div>
-        <span class="text-gray-500" v-else>未分配</span>
-      </template>
     </BasicTable>
     <GroupModal ref="groupModalRef" @onSuccess="tableApi.reload()"/>
-    <SetAccountModal ref="setAccountModalRef" @success="handleSetAccountSuccess" />
+<!--    <SetAccountModal ref="setAccountModalRef" @success="handleSetAccountSuccess" />-->
     <SetAclModal ref="setAclModalRef" />
+    <GroupAccountListModal ref="groupAccountListModalRef" />
   </Page>
 </template>

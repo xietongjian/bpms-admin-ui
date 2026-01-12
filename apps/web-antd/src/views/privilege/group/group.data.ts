@@ -187,3 +187,105 @@ export const setAccountFormSchema: FormSchema[] = [
     },
   },
 ];
+
+export const searchGroupAccountListFormSchema: FormSchema[] = [
+  {
+    fieldName: 'keyword',
+    label: '关键字',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入账号名/姓名/工号/手机号',
+    },
+    labelWidth: 60,
+  },
+];
+
+export const groupUserListColumns: VxeGridProps['columns'] = [
+  {
+    title: '账号登录名',
+    field: 'userName',
+    align: 'left',
+  },
+  {
+    title: '姓名',
+    field: 'realName',
+    width: 180,
+    align: 'left',
+  },
+  {
+    title: '工号',
+    field: 'userNo',
+    width: 180,
+    align: 'left',
+  },
+  {
+    title: '有效期',
+    field: 'validMonth',
+    align: 'left',
+  },
+];
+
+
+export const accountListColumns: VxeGridProps['columns'] = [
+  {
+    title: '头像',
+    field: 'image',
+    width: 80,
+    align: 'center',
+  },
+  {
+    title: '用户类型',
+    field: 'type',
+    width: 120,
+    align: 'center',
+  },
+  {
+    title: '用户名',
+    field: 'username',
+    width: 120,
+    align: 'left',
+  },
+  {
+    title: '姓名',
+    field: 'realName',
+    width: 120,
+    align: 'left',
+  },
+  {
+    title: '工号',
+    field: 'userNo',
+    width: 120,
+    align: 'left',
+  },
+  {
+    title: '手机',
+    field: 'mobile',
+    width: 120,
+    align: 'left',
+  },
+  {
+    title: '邮箱',
+    field: 'email',
+    width: 120,
+    align: 'left',
+  },
+  {
+    title: '性别',
+    field: 'sex',
+    width: 60,
+  },
+];
+export const searchUserFormSchema: FormSchema[] = [
+  {
+    fieldName: 'keyword',
+    label: '关键字',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入账号名/姓名/工号/手机号',
+    },
+    labelWidth: 60,
+    colProps: {
+      span: 12
+    },
+  },
+];
