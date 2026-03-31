@@ -40,10 +40,10 @@ type DragAction =
 // DOM 引用
 const containerRef = ref<HTMLDivElement | null>(null);
 const bgImageRef = ref<HTMLImageElement | null>(null);
-const maskRef = ref<HTMLDivElement | null>(null);
+// const maskRef = ref<HTMLDivElement | null>(null);
 const maskViewRef = ref<HTMLDivElement | null>(null);
 const cropperRef = ref<HTMLDivElement | null>(null);
-const cropperViewRef = ref<HTMLDivElement | null>(null);
+// const cropperViewRef = ref<HTMLDivElement | null>(null);
 
 // 响应式数据
 const isCropperVisible = ref<boolean>(false);
@@ -523,20 +523,25 @@ const handleImageLoad = () => {
  * 裁剪图片
  * @param {'image/jpeg' | 'image/png'} format - 输出图片格式
  * @param {number} quality - 压缩质量（0-1）
+ * @param {'blob' | 'base64'} outputType - 输出类型
  * @param {number} targetWidth - 目标宽度（可选，不传则为原始裁剪宽度）
  * @param {number} targetHeight - 目标高度（可选，不传则为原始裁剪高度）
  */
 const getCropImage = async (
-  format: 'image/jpeg' | 'image/png' = 'image/jpeg',
+  format: 'image/jpeg' | 'image/png' = 'image/png',
   quality: number = 0.92,
+  outputType: 'base64' | 'blob' = 'blob',
   targetWidth?: number,
   targetHeight?: number,
-): Promise<string | undefined> => {
+): Promise<Blob | string | undefined> => {
   if (!props.img || !bgImageRef.value || !containerRef.value) return;
+
+  // 质量参数边界修正：强制限制在 0-1 区间，防止传入非法值报错
+  const validQuality = Math.max(0, Math.min(1, quality));
 
   // 创建临时图片对象获取原始尺寸
   const tempImg = new Image();
-  // Only set crossOrigin for cross-origin URLs that need CORS
+  // 跨域图片处理：仅对非同源的网络图片设置跨域匿名
   if (props.img.startsWith('http://') || props.img.startsWith('https://')) {
     try {
       const url = new URL(props.img);
@@ -544,7 +549,7 @@ const getCropImage = async (
         tempImg.crossOrigin = 'anonymous';
       }
     } catch {
-      // Invalid URL, proceed without crossOrigin
+      // Invalid URL，跳过跨域配置，不中断执行
     }
   }
 
@@ -553,7 +558,7 @@ const getCropImage = async (
     const timeout = setTimeout(() => {
       tempImg.removeEventListener('load', handleLoad);
       tempImg.removeEventListener('error', handleError);
-      reject(new Error('图片加载超时'));
+      reject(new Error('图片加载超时，超时时间10秒'));
     }, 10_000);
     const handleLoad = () => {
       clearTimeout(timeout);
@@ -571,7 +576,6 @@ const getCropImage = async (
 
     tempImg.addEventListener('load', handleLoad);
     tempImg.addEventListener('error', handleError);
-
     tempImg.src = props.img;
   });
 
@@ -595,11 +599,11 @@ const getCropImage = async (
   const cropOnImgX = cropLeft - imgOffsetX;
   const cropOnImgY = cropTop - imgOffsetY;
 
-  // 4. 计算渲染图片到原始图片的缩放比例（关键：保留原始像素）
+  // 4. 计算渲染图片到原始图片的缩放比例（保留原始像素）
   const scaleX = tempImg.width / renderedImgWidth;
   const scaleY = tempImg.height / renderedImgHeight;
 
-  // 5. 映射到原始图片的裁剪区域（精确到原始像素）
+  // 5. 映射到原始图片的裁剪区域（精确到原始像素，防止越界）
   const originalCropX = Math.max(0, Math.floor(cropOnImgX * scaleX));
   const originalCropY = Math.max(0, Math.floor(cropOnImgY * scaleY));
   const originalCropWidth = Math.min(
@@ -611,27 +615,32 @@ const getCropImage = async (
     tempImg.height - originalCropY,
   );
 
-  // 6. 处理高清屏适配（关键：解决Retina屏模糊）
+  // 边界校验：裁剪尺寸非法则返回
+  if (originalCropWidth <= 0 || originalCropHeight <= 0) return;
+
+  // 6. 处理高清屏适配（解决Retina屏模糊）
   const dpr = window.devicePixelRatio || 1;
 
-  // 最终画布尺寸（优先使用原始裁剪尺寸，或目标尺寸）
-  const finalWidth = targetWidth || originalCropWidth;
-  const finalHeight = targetHeight || originalCropHeight;
+  // 最终画布尺寸（优先使用传入的目标尺寸，无则用原始裁剪尺寸）
+  const finalWidth = targetWidth ? Math.max(1, targetWidth) : originalCropWidth;
+  const finalHeight = targetHeight
+    ? Math.max(1, targetHeight)
+    : originalCropHeight;
 
-  // 创建画布（乘以设备像素比，保证高清）
+  // 创建画布并获取绘制上下文
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
-  // 画布物理尺寸（适配高清屏）
+  // 画布物理尺寸（乘以设备像素比，保证高清无模糊）
   canvas.width = finalWidth * dpr;
   canvas.height = finalHeight * dpr;
 
-  // 画布显示尺寸（视觉尺寸）
+  // 画布显示尺寸（视觉尺寸，和最终展示一致）
   canvas.style.width = `${finalWidth}px`;
   canvas.style.height = `${finalHeight}px`;
 
-  // 缩放上下文（适配DPR）
+  // 缩放画布上下文，适配高清屏DPR
   ctx.scale(dpr, dpr);
 
   // 7. 绘制裁剪后的图片（使用原始像素绘制，保证清晰度）
@@ -647,8 +656,22 @@ const getCropImage = async (
     finalHeight, // 画布绘制高度（目标尺寸）
   );
 
-  // 8. 导出图片（指定质量，平衡清晰度和体积）
-  return canvas.toDataURL(format, quality);
+  try {
+    return outputType === 'base64'
+      ? canvas.toDataURL(format, validQuality)
+      : new Promise<Blob>((resolve) => {
+          canvas.toBlob(
+            (blob) => {
+              // 兜底：如果blob生成失败，返回空Blob（防止null）
+              resolve(blob || new Blob([], { type: format }));
+            },
+            format,
+            validQuality,
+          );
+        });
+  } catch (error) {
+    console.error('图片导出失败:', error);
+  }
 };
 
 // 监听比例变化，重新调整裁剪框
@@ -716,7 +739,6 @@ defineExpose({ getCropImage });
 
       <!-- 遮罩层 -->
       <div
-        ref="maskRef"
         class="cropper-mask"
         :style="{
           display: isCropperVisible ? 'block' : 'none',
@@ -750,7 +772,6 @@ defineExpose({ getCropImage });
         }"
       >
         <div
-          ref="cropperViewRef"
           class="cropper-view"
           :style="{
             inset: `${currentDimension[0]}px ${currentDimension[1]}px ${currentDimension[2]}px ${currentDimension[3]}px`,
@@ -830,21 +851,25 @@ defineExpose({ getCropImage });
 </template>
 
 <style scoped>
+@reference "@vben/tailwind-config/theme";
+
 .cropper-action-wrapper {
   @apply box-border flex items-center justify-center;
+
+  background-color: transparent;
+
   /* 马赛克背景 */
   background-image:
     linear-gradient(45deg, #ccc 25%, transparent 25%),
     linear-gradient(-45deg, #ccc 25%, transparent 25%),
     linear-gradient(45deg, transparent 75%, #ccc 75%),
     linear-gradient(-45deg, transparent 75%, #ccc 75%);
-  background-size: 20px 20px;
   background-position:
     0 0,
     0 10px,
     10px -10px,
     -10px 0;
-  background-color: transparent;
+  background-size: 20px 20px;
 }
 
 .cropper-container {
@@ -857,34 +882,34 @@ defineExpose({ getCropImage });
 
 /* 遮罩层 */
 .cropper-mask {
-  @apply absolute left-0 top-0 bg-black/50;
+  @apply absolute top-0 left-0 bg-black/50;
 }
 
 .cropper-mask-view {
-  @apply absolute left-0 top-0;
+  @apply absolute top-0 left-0;
 }
 
 /* 裁剪框 */
 .cropper-box {
-  @apply absolute left-0 top-0 z-10;
+  @apply absolute top-0 left-0 z-10;
 }
 
 .cropper-view {
-  @apply absolute bottom-0 left-0 right-0 top-0 select-none outline outline-1 outline-blue-500;
+  @apply absolute top-0 right-0 bottom-0 left-0 outline-1 outline-blue-500 select-none;
 }
 
 /* 裁剪框辅助线 */
 .cropper-dashed-h {
-  @apply absolute left-0 top-1/3 block h-1/3 w-full border-b border-t border-dashed border-gray-200/50;
+  @apply absolute top-1/3 left-0 block h-1/3 w-full border-t border-b border-dashed border-gray-200/50;
 }
 
 .cropper-dashed-v {
-  @apply absolute left-1/3 top-0 block h-full w-1/3 border-l border-r border-dashed border-gray-200/50;
+  @apply absolute top-0 left-1/3 block h-full w-1/3 border-r border-l border-dashed border-gray-200/50;
 }
 
 /* 裁剪框拖拽区域 */
 .cropper-move-area {
-  @apply absolute left-0 top-0 block h-full w-full cursor-move bg-white/10;
+  @apply absolute top-0 left-0 block h-full w-full cursor-move bg-white/10;
 }
 
 /* 边框拖拽线 */
@@ -896,19 +921,19 @@ defineExpose({ getCropImage });
 }
 
 .cropper-line-e {
-  @apply right-[-3px] top-0 h-full w-1;
+  @apply top-0 -right-0.75 h-full w-1;
 }
 
 .cropper-line-n {
-  @apply left-0 top-[-3px] h-1 w-full;
+  @apply -top-0.75 left-0 h-1 w-full;
 }
 
 .cropper-line-w {
-  @apply left-[-3px] top-0 h-full w-1;
+  @apply top-0 -left-0.75 h-full w-1;
 }
 
 .cropper-line-s {
-  @apply bottom-[-3px] left-0 h-1 w-full;
+  @apply -bottom-0.75 left-0 h-1 w-full;
 }
 
 /* 拖拽点 */
@@ -922,35 +947,35 @@ defineExpose({ getCropImage });
 
 /* 边角拖拽点位置和光标 */
 .cropper-point-ne {
-  @apply right-[-5px] top-[-5px] cursor-ne-resize;
+  @apply -top-1.25 -right-1.25 cursor-ne-resize;
 }
 
 .cropper-point-nw {
-  @apply left-[-5px] top-[-5px] cursor-nw-resize;
+  @apply -top-1.25 -left-1.25 cursor-nw-resize;
 }
 
 .cropper-point-sw {
-  @apply bottom-[-5px] left-[-5px] cursor-sw-resize;
+  @apply -bottom-1.25 -left-1.25 cursor-sw-resize;
 }
 
 .cropper-point-se {
-  @apply bottom-[-5px] right-[-5px] cursor-se-resize;
+  @apply -right-1.25 -bottom-1.25 cursor-se-resize;
 }
 
 /* 边中点拖拽点位置和光标 */
 .cropper-point-e {
-  @apply right-[-5px] top-1/2 -mt-1 cursor-e-resize;
+  @apply top-1/2 -right-1.25 -mt-1 cursor-e-resize;
 }
 
 .cropper-point-n {
-  @apply left-1/2 top-[-5px] -ml-1 cursor-n-resize;
+  @apply -top-1.25 left-1/2 -ml-1 cursor-n-resize;
 }
 
 .cropper-point-w {
-  @apply left-[-5px] top-1/2 -mt-1 cursor-w-resize;
+  @apply top-1/2 -left-1.25 -mt-1 cursor-w-resize;
 }
 
 .cropper-point-s {
-  @apply bottom-[-5px] left-1/2 -ml-1 cursor-s-resize;
+  @apply -bottom-1.25 left-1/2 -ml-1 cursor-s-resize;
 }
 </style>
