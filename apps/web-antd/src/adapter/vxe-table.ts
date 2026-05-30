@@ -3,6 +3,8 @@ import type { Recordable } from '@vben/types';
 
 import type { ComponentType } from './component';
 
+import type { ComponentPropsMap, ComponentType } from './component';
+
 import { h } from 'vue';
 
 import { IconifyIcon } from '@vben/icons';
@@ -317,8 +319,8 @@ setupVbenVxeTable({
 });
 
 export const useVbenVxeGrid = <T extends Record<string, any>>(
-  ...rest: Parameters<typeof useGrid<T, ComponentType>>
-) => useGrid<T, ComponentType>(...rest);
+  ...rest: Parameters<typeof useGrid<T, ComponentType, ComponentPropsMap>>
+) => useGrid<T, ComponentType, ComponentPropsMap>(...rest);
 
 export type OnActionClickParams<T = Recordable<any>> = {
   code: string;
