@@ -25,6 +25,25 @@ export function getVerifyCode() {
   return requestClient.get<any>(
     '/flow/verify/getVerifyCode',{});
 }
+
+/**
+ * @description: getVerifyCaptcha
+ */
+export function getVerifyCaptcha() {
+  return requestClient.get<any>(
+    '/flow/verify/generate');
+}
+
+/**
+ * 滚动验证码校验
+ * @param data
+ */
+export function checkVerifyCaptcha(data: any) {
+  return requestClient.post('/flow/verify/check', data, { responseReturn: "body" });
+}
+
+
+
 /**
  * 登录
  */
