@@ -1,8 +1,6 @@
 import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
 import type { Recordable } from '@vben/types';
 
-import type { ComponentType } from './component';
-
 import type { ComponentPropsMap, ComponentType } from './component';
 
 import { h } from 'vue';
@@ -22,15 +20,16 @@ import { $t } from '#/locales';
 
 import { useVbenForm } from './form';
 
-import { globalShareState } from '@vben/common-ui';
-import VxeUIPluginExportXLSX from '@vxe-ui/plugin-export-xlsx';
-import { omit } from '#/utils';
 setupVbenVxeTable({
   configVxeTable: (vxeUI) => {
     vxeUI.setConfig({
       grid: {
         align: 'center',
         border: false,
+        columnConfig: {
+          resizable: true,
+        },
+        minHeight: 180,
         formConfig: {
           // 全局禁用vxe-table的表单配置，使用formOptions
           enabled: false,

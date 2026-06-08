@@ -3,7 +3,7 @@ import { h } from 'vue';
 
 import { Page } from '@vben/common-ui';
 
-import { Card } from 'antdv-next';
+import { Card } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 

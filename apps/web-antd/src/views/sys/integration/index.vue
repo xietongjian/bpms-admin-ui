@@ -32,8 +32,8 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/dark.css';
 import 'highlight.js/styles/github.css';
 
-import {Marked} from 'marked'
-import {markedHighlight} from "marked-highlight";
+// import {Marked} from 'marked'
+// import {markedHighlight} from "marked-highlight";
 // import { VMarkdownView } from 'vue3-markdown'
 import 'highlight.js/styles/atom-one-dark.css'
 
@@ -75,7 +75,7 @@ onMounted(async () => {
   await nextTick();
   await loadDocContent();
 });
-const marked = new Marked(
+/*const marked = new Marked(
     markedHighlight({
       langPrefix: 'hljs language-',
       highlight(code, lang) {
@@ -83,7 +83,7 @@ const marked = new Marked(
         return hljs.highlight(code, {language}).value
       }
     })
-)
+)*/
 /*
 * markedHighlight({
       emptyLangClass: 'hljs',
@@ -145,9 +145,9 @@ function switchHighlightTheme(newTheme) {
 </script>
 
 <style scoped lang="scss">
-@import 'github-markdown-css/github-markdown.css';
-@import 'github-markdown-css/github-markdown-dark.css';
-@import 'github-markdown-css/github-markdown-light.css';
+//@import 'github-markdown-css/github-markdown.css';
+//@import 'github-markdown-css/github-markdown-dark.css';
+//@import 'github-markdown-css/github-markdown-light.css';
 
 .markdown-body {
   box-sizing: border-box;

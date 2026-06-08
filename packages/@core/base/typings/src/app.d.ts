@@ -10,17 +10,12 @@ type LayoutType =
 type ThemeModeType = 'auto' | 'dark' | 'light';
 
 /**
- * 按钮位置
- * user-dropdown 用户的下拉弹出框中
+ * 偏好设置按钮位置
  * fixed 固定在右侧
  * header 顶栏
  * auto 自动
  */
-type PreferencesButtonPositionType =
-  | 'auto'
-  | 'fixed'
-  | 'header'
-  | 'user-dropdown';
+type PreferencesButtonPositionType = 'auto' | 'fixed' | 'header';
 
 type BuiltinThemeType =
   | 'custom'

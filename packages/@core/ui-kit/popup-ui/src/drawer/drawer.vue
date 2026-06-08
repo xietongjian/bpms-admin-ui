@@ -54,7 +54,8 @@ const components = globalShareState.getComponents();
 const id = useId();
 provide('DISMISSABLE_DRAWER_ID', id);
 
-// const wrapperRef = ref<HTMLElement>();
+// @ts-expect-error unused
+const wrapperRef = ref<HTMLElement>();
 const { $t } = useSimpleLocale();
 const { isMobile } = useIsMobile();
 
@@ -184,16 +185,11 @@ const getForceMount = computed(() => {
     <SheetContent
       :append-to="getAppendTo"
       :class="
-        cn(
-          'flex w-130 flex-col',
-          {
-            'w-full!':
-              isMobile || placement === 'bottom' || placement === 'top',
-            'max-h-screen': placement === 'bottom' || placement === 'top',
-            hidden: isClosed,
-          },
-          drawerClass,
-        )
+        cn('flex w-130 flex-col', drawerClass, {
+          'w-full!': isMobile || placement === 'bottom' || placement === 'top',
+          'max-h-screen': placement === 'bottom' || placement === 'top',
+          hidden: isClosed,
+        })
       "
       :modal="modal"
       :open="state?.isOpen"
@@ -285,8 +281,8 @@ const getForceMount = computed(() => {
           <SheetDescription />
         </VisuallyHidden>
       </template>
-      <!-- 注释掉的部分 <div ref="wrapperRef" -->
       <div
+        ref="wrapperRef"
         :class="
           cn('relative flex-1 overflow-y-auto p-3', contentClass, {
             'pointer-events-none': showLoading || submitting,

@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { Page, VbenContextMenu } from '@vben/common-ui';
+import { Page } from '@vben/common-ui';
 
-import { Button, Card, message } from 'antdv-next';
+import { VbenContextMenu } from '@vben-core/shadcn-ui';
+
+import { Button, Card, message } from 'ant-design-vue';
 
 const needHidden = (role: string) => {
   return role === 'user';

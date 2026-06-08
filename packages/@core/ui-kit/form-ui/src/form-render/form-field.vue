@@ -1,30 +1,17 @@
 <script setup lang="ts">
 import type { ZodType } from 'zod';
 
-import type {
-  FormActions,
-  FormFieldProps,
-  MaybeComponentProps,
-} from '../types';
+import type { FormActions, FormSchema, MaybeComponentProps } from '../types';
 
-import {
-  computed,
-  nextTick,
-  onUnmounted,
-  ref,
-  useTemplateRef,
-  watch,
-} from 'vue';
+import { computed, nextTick, onUnmounted, useTemplateRef, watch } from 'vue';
 
-import { ChevronsDown, CircleAlert } from '@vben-core/icons';
+import { CircleAlert } from '@vben-core/icons';
 import {
-  Button,
   FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormMessage,
-  VbenCollapsible,
   VbenRenderContent,
   VbenTooltip,
 } from '@vben-core/shadcn-ui';
@@ -39,7 +26,7 @@ import useDependencies from './dependencies';
 import FormLabel from './form-label.vue';
 import { isEventObjectLike } from './helper';
 
-interface Props extends FormFieldProps {}
+interface Props extends FormSchema {}
 
 const {
   colon,
@@ -62,8 +49,6 @@ const {
   renderComponentContent,
   rules,
   help,
-  collapsible,
-  defaultCollapsed = false,
 } = defineProps<
   Props & {
     commonComponentProps: MaybeComponentProps;
@@ -78,7 +63,6 @@ const fieldComponentRef = useTemplateRef<HTMLInputElement>('fieldComponentRef');
 const formApi = formRenderProps.form;
 const compact = computed(() => formRenderProps.compact);
 const isInValid = computed(() => errors.value?.length > 0);
-const collapseOpen = ref(!defaultCollapsed);
 
 function getFormApi(): FormActions {
   if (!formApi) {
@@ -308,15 +292,6 @@ function autofocus() {
     fieldComponentRef.value?.focus?.();
   }
 }
-
-const shouldCollapsible = computed(() => {
-  return collapsible; /* && isVertical.value; */
-});
-
-function toggleCollapsed() {
-  collapseOpen.value = !collapseOpen.value;
-}
-
 const componentRefMap = injectComponentRefMap();
 watch(fieldComponentRef, (componentRef) => {
   componentRefMap?.set(fieldName, componentRef);
@@ -356,7 +331,6 @@ onUnmounted(() => {
             {
               'mr-2 shrink-0 justify-end': !isVertical,
               'mb-1 flex-row': isVertical,
-              'self-start': shouldCollapsible && !isVertical,
             },
             labelClass,
           )
@@ -370,87 +344,65 @@ onUnmounted(() => {
         <template v-if="label">
           <VbenRenderContent :content="label" />
         </template>
-        <template #extra>
-          <Button
-            class="ml-0.5"
-            variant="icon"
-            size="icon"
-            @click.prevent="toggleCollapsed"
-            v-if="shouldCollapsible"
-          >
-            <ChevronsDown
-              :size="16"
-              class="transition-transform"
-              :class="{
-                'rotate-180': !collapseOpen,
-              }"
-            />
-          </Button>
-        </template>
       </FormLabel>
       <div class="flex-auto overflow-hidden p-px">
-        <VbenCollapsible :show-trigger="false" v-model:open="collapseOpen">
-          <template #collapsibleContent>
-            <div :class="cn('relative flex w-full items-center', wrapperClass)">
-              <FormControl :class="cn(controlClass)">
-                <slot
-                  v-bind="{
-                    ...slotProps,
-                    ...createComponentProps(slotProps),
-                    disabled: shouldDisabled,
+        <div :class="cn('relative flex w-full items-center', wrapperClass)">
+          <FormControl :class="cn(controlClass)">
+            <slot
+              v-bind="{
+                ...slotProps,
+                ...createComponentProps(slotProps),
+                disabled: shouldDisabled,
+                isInValid,
+              }"
+            >
+              <component
+                :is="FieldComponent"
+                ref="fieldComponentRef"
+                :class="{
+                  'border-destructive hover:border-destructive/80 focus:border-destructive focus:shadow-[0_0_0_2px_rgba(255,38,5,0.06)]':
                     isInValid,
-                  }"
+                }"
+                v-bind="createComponentProps(slotProps)"
+                :disabled="shouldDisabled"
+              >
+                <template
+                  v-for="name in renderContentKey"
+                  :key="name"
+                  #[name]="renderSlotProps"
                 >
-                  <component
-                    :is="FieldComponent"
-                    ref="fieldComponentRef"
-                    :class="{
-                      'border-destructive hover:border-destructive/80 focus:border-destructive focus:shadow-[0_0_0_2px_rgba(255,38,5,0.06)]':
-                        isInValid,
-                    }"
-                    v-bind="createComponentProps(slotProps)"
-                    :disabled="shouldDisabled"
-                  >
-                    <template
-                      v-for="name in renderContentKey"
-                      :key="name"
-                      #[name]="renderSlotProps"
-                    >
-                      <VbenRenderContent
-                        :content="customContentRender[name]"
-                        v-bind="{ ...renderSlotProps, formContext: slotProps }"
-                      />
-                    </template>
-                    <!-- <slot></slot> -->
-                  </component>
-                  <VbenTooltip
-                    v-if="compact && isInValid"
-                    :delay-duration="300"
-                    side="left"
-                  >
-                    <template #trigger>
-                      <slot name="trigger">
-                        <CircleAlert
-                          :class="
-                            cn(
-                              'inline-flex size-5 cursor-pointer text-foreground/80 hover:text-foreground',
-                            )
-                          "
-                        />
-                      </slot>
-                    </template>
-                    <FormMessage />
-                  </VbenTooltip>
-                </slot>
-              </FormControl>
-              <!-- 自定义后缀 -->
-              <div v-if="suffix" class="ml-1">
-                <VbenRenderContent :content="suffix" />
-              </div>
-            </div>
-          </template>
-        </VbenCollapsible>
-
+                  <VbenRenderContent
+                    :content="customContentRender[name]"
+                    v-bind="{ ...renderSlotProps, formContext: slotProps }"
+                  />
+                </template>
+                <!-- <slot></slot> -->
+              </component>
+              <VbenTooltip
+                v-if="compact && isInValid"
+                :delay-duration="300"
+                side="left"
+              >
+                <template #trigger>
+                  <slot name="trigger">
+                    <CircleAlert
+                      :class="
+                        cn(
+                          'inline-flex size-5 cursor-pointer text-foreground/80 hover:text-foreground',
+                        )
+                      "
+                    />
+                  </slot>
+                </template>
+                <FormMessage />
+              </VbenTooltip>
+            </slot>
+          </FormControl>
+          <!-- 自定义后缀 -->
+          <div v-if="suffix" class="ml-1">
+            <VbenRenderContent :content="suffix" />
+          </div>
+        </div>
         <FormDescription v-if="description" class="text-xs">
           <VbenRenderContent :content="description" />
         </FormDescription>

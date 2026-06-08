@@ -303,7 +303,7 @@ async function handleDetails(node: Recordable<any>) {
 <style lang="scss">
 @import '#/assets/logicflow/style.css';
 @import '#/assets/hilight-js/index.css';
-@import '#/assets/bpmn/viewer/lib/style.css';
+@import '#/assets/bpmn/viewer/lib/bpmn-viewer.css';
 </style>
 <style lang="scss" scoped>
 .content-container {

@@ -12,11 +12,8 @@ defineOptions({
   name: 'Page',
 });
 
-const {
-  autoContentHeight = false,
-  heightOffset = 0,
-  footerFixed = false,
-} = defineProps<PageProps>();
+const { autoContentHeight = false, heightOffset = 0 } =
+  defineProps<PageProps>();
 
 const headerHeight = ref(0);
 const footerHeight = ref(0);
@@ -39,12 +36,9 @@ async function calcContentHeight() {
   if (!autoContentHeight) {
     return;
   }
-  shouldAutoHeight.value = false;
   await nextTick();
   headerHeight.value = headerRef.value?.offsetHeight || 0;
-
-  footerHeight.value = footerFixed ? 0 : footerRef.value?.offsetHeight || 0;
-
+  footerHeight.value = footerRef.value?.offsetHeight || 0;
   setTimeout(() => {
     shouldAutoHeight.value = true;
   }, 30);

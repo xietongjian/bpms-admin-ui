@@ -6,7 +6,7 @@ import { preferences } from '@vben/preferences';
 import { initStores } from '@vben/stores';
 import '@vben/styles';
 import '@vben/styles/antd';
-import { QuillEditor } from '@vueup/vue-quill';
+
 import { useTitle } from '@vueuse/core';
 import ElementPlus from 'element-plus';
 import zhCn from 'element-plus/es/locale/lang/zh-cn';
@@ -22,7 +22,6 @@ import { router } from './router';
 import 'element-plus/dist/index.css';
 import 'element-plus/theme-chalk/dark/css-vars.css';
 import '../public/static/form-making/dist/index.css';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 async function bootstrap(namespace: string) {
   // 初始化组件适配器
@@ -77,7 +76,6 @@ async function bootstrap(namespace: string) {
       useTitle(pageTitle);
     }
   });
-  app.component('QuillEditor', QuillEditor);
   app.use(ElementPlus, {
     locale: zhCn,
   });

@@ -53,14 +53,6 @@ function parseSvg(svgData: string): IconifyIconStructure {
  * <Icon icon="svg:avatar"></Icon>
  */
 async function loadSvgIcons() {
-  if (
-    typeof DOMParser === 'undefined' ||
-    typeof Node === 'undefined' ||
-    typeof XMLSerializer === 'undefined'
-  ) {
-    return;
-  }
-
   const svgEagers = import.meta.glob('./icons/**', {
     eager: true,
     query: '?raw',
@@ -68,7 +60,7 @@ async function loadSvgIcons() {
 
   await Promise.all(
     Object.entries(svgEagers).map((svg) => {
-      const [key, body] = svg as [string, { default: string } | string];
+      const [key, body] = svg as [string, string | { default: string }];
 
       // ./icons/xxxx.svg => xxxxxx
       const start = key.lastIndexOf('/') + 1;

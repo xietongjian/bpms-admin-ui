@@ -1,7 +1,7 @@
 {
   "name": "form-making-v3",
   "private": true,
-  "version": "3.9.1",
+  "version": "3.9.2",
   "files": [
     "dist"
   ],

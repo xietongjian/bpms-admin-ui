@@ -1,7 +1,5 @@
 import type { OxlintConfig } from 'oxlint';
 
-import { fileURLToPath } from 'node:url';
-
 import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss';
 import { getDefaultSelectors } from 'eslint-plugin-better-tailwindcss/defaults';
 import { SelectorKind } from 'eslint-plugin-better-tailwindcss/types';
@@ -15,12 +13,8 @@ const selectors = [
   },
 ];
 
-const entryPoint = fileURLToPath(
-  new URL('../../../../tailwind-config/src/theme.css', import.meta.url),
-);
-
 const settings = {
-  entryPoint,
+  entryPoint: 'internal/tailwind-config/src/theme.css',
   selectors,
 };
 

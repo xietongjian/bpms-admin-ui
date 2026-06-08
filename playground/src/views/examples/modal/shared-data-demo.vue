@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 
-import { message } from 'antdv-next';
+import { message } from 'ant-design-vue';
 
 const data = ref();
 

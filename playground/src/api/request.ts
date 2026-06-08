@@ -14,7 +14,7 @@ import {
 import { useAccessStore } from '@vben/stores';
 import { cloneDeep } from '@vben/utils';
 
-import { message } from 'antdv-next';
+import { message } from 'ant-design-vue';
 import JSONBigInt from 'json-bigint';
 
 import { useAuthStore } from '#/store';

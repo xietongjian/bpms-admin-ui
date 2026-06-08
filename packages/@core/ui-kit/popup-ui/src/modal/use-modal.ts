@@ -10,7 +10,6 @@ import {
   ref,
 } from 'vue';
 
-import { usePreferences } from '@vben-core/preferences';
 import { useStore } from '@vben-core/shared/store';
 
 import { ModalApi } from './modal-api';
@@ -18,10 +17,6 @@ import VbenModal from './modal.vue';
 
 const USER_MODAL_INJECT_KEY = Symbol('VBEN_MODAL_INJECT');
 
-const { globalEscapeShortcutKey } = usePreferences();
-/**
- * 默认配置
- */
 const DEFAULT_MODAL_PROPS: Partial<ModalProps> = {};
 
 export function setDefaultModalProps(props: Partial<ModalProps>) {
@@ -34,10 +29,6 @@ export function useVbenModal<TParentModalProps extends ModalProps = ModalProps>(
   // Modal一般会抽离出来，所以如果有传入 connectedComponent，则表示为外部调用，与内部组件进行连接
   // 外部的Modal通过provide/inject传递api
 
-  const defaultOptions = {
-    closeOnPressEscape: globalEscapeShortcutKey.value, // 全局Esc快捷键配置
-    ...options,
-  };
   const { connectedComponent } = options;
   if (connectedComponent) {
     const extendedApi = reactive({});
@@ -51,7 +42,7 @@ export function useVbenModal<TParentModalProps extends ModalProps = ModalProps>(
             Object.setPrototypeOf(extendedApi, api);
           },
           consumed: false,
-          options: defaultOptions,
+          options,
           async reCreateModal() {
             isModalReady.value = false;
             await nextTick();
@@ -94,7 +85,7 @@ export function useVbenModal<TParentModalProps extends ModalProps = ModalProps>(
   const mergedOptions = {
     ...DEFAULT_MODAL_PROPS,
     ...injectData.options,
-    ...defaultOptions,
+    ...options,
   } as ModalApiOptions;
 
   mergedOptions.onOpenChange = (isOpen: boolean) => {

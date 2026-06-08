@@ -5,7 +5,8 @@
    * @since 2024/10/11 15:46
    */
 
-  import { nextTick, Ref, ref, shallowRef, watch } from 'vue';
+  import { nextTick, ref, shallowRef, watch } from 'vue';
+  import type { Ref } from 'vue'
   import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
   import OneDayLine from '#/views/report/processInstanceCount/components/OneDayLine.vue';
   import {

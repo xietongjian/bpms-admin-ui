@@ -2,7 +2,7 @@
 import { VBEN_DOC_URL } from '@vben/constants';
 import { openWindow } from '@vben/utils';
 
-import { Button } from 'antdv-next';
+import { Button } from 'ant-design-vue';
 
 const props = defineProps<{ path: string }>();
 

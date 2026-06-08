@@ -47,8 +47,5 @@
     "@vben-core/typings": "workspace:*",
     "@vueuse/core": "catalog:",
     "vue": "catalog:"
-  },
-  "devDependencies": {
-    "unplugin-vue": "catalog:"
   }
 }

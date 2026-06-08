@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useVbenModal } from '@vben/common-ui';
 
-import { message } from 'antdv-next';
+import { message } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 

@@ -30,7 +30,6 @@ const defaultPreferences: Preferences = {
     loginExpiredMode: 'page',
     name: 'Vben Admin',
     preferencesButtonPosition: 'auto',
-    timezone: 'Asia/Shanghai',
     watermark: false,
     watermarkContent: '',
     zIndex: 200,
@@ -76,7 +75,6 @@ const defaultPreferences: Preferences = {
   },
   shortcutKeys: {
     enable: true,
-    globalEscape: false,
     globalLockScreen: true,
     globalLogout: true,
     globalPreferences: true,

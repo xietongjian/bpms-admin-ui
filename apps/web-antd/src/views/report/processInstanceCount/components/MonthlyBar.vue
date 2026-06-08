@@ -4,8 +4,8 @@
    * @author DragonTeam <https://www.bpmport.com>
    * @since 2024/10/11 15:47
    */
-
-  import { nextTick, Ref, ref, shallowRef, watch } from 'vue';
+  import type { Ref } from 'vue'
+  import { nextTick, ref, shallowRef, watch } from 'vue';
   import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
   import {
     getInstanceCountsForOneMonth,

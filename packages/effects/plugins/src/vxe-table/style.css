@@ -100,14 +100,10 @@
   padding: 0;
 }
 
-/** 关闭搜索表单 */
-.vxe-grid:not(.vxe-grid--form-wrapper form) .vxe-toolbar {
-  padding: 0.6em 0 !important;
-}
-
-/** 开启搜索表单 */
-.vxe-grid:has(.vxe-grid--form-wrapper form) .vxe-toolbar {
-  padding: 0 0 0.6em !important;
+.vxe-buttons--wrapper:not(:empty),
+.vxe-tools--operate:not(:empty),
+.vxe-tools--wrapper:not(:empty) {
+  padding: 0.6em 0;
 }
 
 .vxe-tools--operate:not(:has(button)) {
@@ -120,13 +116,4 @@
 
 .vxe-grid--layout-body-content-wrapper {
   overflow: hidden;
-}
-
-/* 已读行默认样式 */
-.vxe-row--viewed {
-  color: hsl(var(--foreground) / 50%);
-
-  .vxe-body--column {
-    opacity: 0.9;
-  }
 }

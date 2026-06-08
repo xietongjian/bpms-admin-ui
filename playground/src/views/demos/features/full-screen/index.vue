@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import { Page } from '@vben/common-ui';
 
 import { useFullscreen } from '@vueuse/core';
-import { Button, Card } from 'antdv-next';
+import { Button, Card } from 'ant-design-vue';
 
 const domRef = ref<HTMLElement>();
 

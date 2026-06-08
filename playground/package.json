@@ -32,6 +32,7 @@
     "@tanstack/vue-query": "catalog:",
     "@vben-core/design": "workspace:*",
     "@vben-core/menu-ui": "workspace:*",
+    "@vben-core/shadcn-ui": "workspace:*",
     "@vben/access": "workspace:*",
     "@vben/common-ui": "workspace:*",
     "@vben/constants": "workspace:*",
@@ -47,7 +48,7 @@
     "@vben/types": "workspace:*",
     "@vben/utils": "workspace:*",
     "@vueuse/core": "catalog:",
-    "antdv-next": "catalog:",
+    "ant-design-vue": "catalog:",
     "dayjs": "catalog:",
     "json-bigint": "catalog:",
     "pinia": "catalog:",
@@ -55,7 +56,6 @@
     "vue-router": "catalog:"
   },
   "devDependencies": {
-    "@playwright/test": "catalog:",
     "@types/json-bigint": "catalog:"
   }
 }

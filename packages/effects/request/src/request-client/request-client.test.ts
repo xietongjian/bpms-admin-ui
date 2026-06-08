@@ -50,18 +50,24 @@ describe('requestClient', () => {
 
   it('should handle network errors', async () => {
     mock.onGet('/test/error').networkError();
-    await expect(requestClient.get('/test/error')).rejects.toMatchObject({
-      isAxiosError: true,
-      message: 'Network Error',
-    });
+    try {
+      await requestClient.get('/test/error');
+      expect(true).toBe(false);
+    } catch (error: any) {
+      expect(error.isAxiosError).toBe(true);
+      expect(error.message).toBe('Network Error');
+    }
   });
 
   it('should handle timeout', async () => {
     mock.onGet('/test/timeout').timeout();
-    await expect(requestClient.get('/test/timeout')).rejects.toMatchObject({
-      isAxiosError: true,
-      code: 'ECONNABORTED',
-    });
+    try {
+      await requestClient.get('/test/timeout');
+      expect(true).toBe(false);
+    } catch (error: any) {
+      expect(error.isAxiosError).toBe(true);
+      expect(error.code).toBe('ECONNABORTED');
+    }
   });
 
   it('should successfully upload a file', async () => {
@@ -86,7 +92,7 @@ describe('requestClient', () => {
 
     mock.onGet('/test/download').reply(200, mockFileContent);
 
-    const res = await requestClient.download<any>('/test/download');
+    const res = await requestClient.download('/test/download');
 
     expect(res.data).toBeInstanceOf(Blob);
   });

@@ -14,7 +14,6 @@
     "basic": "Basic Form",
     "layout": "Custom Layout",
     "query": "Query Form",
-    "valueFormat": "Value Format",
     "rules": "Form Rules",
     "dynamic": "Dynamic Form",
     "custom": "Custom Component",
@@ -25,8 +24,7 @@
     "upload-urls": "Urls after file upload",
     "file": "file",
     "crop-image": "Crop image",
-    "upload-image": "Click to upload image",
-    "collapsible": "Collapsible Form Field"
+    "upload-image": "Click to upload image"
   },
   "vxeTable": {
     "title": "Vxe Table",
@@ -38,8 +36,7 @@
     "editCell": "Edit Cell",
     "editRow": "Edit Row",
     "custom-cell": "Custom Cell",
-    "form": "Form Table",
-    "viewed": "Row Marker"
+    "form": "Form Table"
   },
   "captcha": {
     "title": "Captcha",
@@ -82,8 +79,5 @@
   },
   "cropper": {
     "title": "Cropper"
-  },
-  "tiptap": {
-    "title": "Rich Text Editor"
   }
 }

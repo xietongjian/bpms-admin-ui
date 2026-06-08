@@ -17,7 +17,6 @@ const test: OxlintConfig = {
     'vitest/no-import-node-test': 'error',
     'vitest/prefer-hooks-in-order': 'error',
     'vitest/prefer-lowercase-title': 'error',
-    'vitest/require-mock-type-parameters': 'off',
   },
 };
 

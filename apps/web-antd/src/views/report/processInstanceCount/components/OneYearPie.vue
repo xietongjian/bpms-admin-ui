@@ -1,6 +1,7 @@
 <script setup lang="ts">
+  import type { Ref } from 'vue'
   import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
-  import { nextTick, ref, Ref, shallowRef, watch } from 'vue';
+  import { nextTick, ref, shallowRef, watch } from 'vue';
   import {
     getInstanceCountsForMonths,
     getTaskCountsForMonths,

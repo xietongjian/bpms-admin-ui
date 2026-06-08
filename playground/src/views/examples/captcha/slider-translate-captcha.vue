@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Page, SliderTranslateCaptcha } from '@vben/common-ui';
 
-import { Card, message } from 'antdv-next';
+import { Card, message } from 'ant-design-vue';
 
 function handleSuccess() {
   message.success('success!');

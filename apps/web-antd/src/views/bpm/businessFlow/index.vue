@@ -153,7 +153,7 @@
     PlusOutlined,
     EditOutlined
   } from '@ant-design/icons-vue';
-  import { detailSchema } from '#/views/bpm/businessFlow/businessFlowApply.data';
+  // import { detailSchema } from '#/views/bpm/businessFlow/businessFlowApply.data';
 
   import BpmFrameWorkTree from '#/views/bpm/components/BpmFrameWorkTree.vue';
   import { usePreferences } from '@vben/preferences';
@@ -368,7 +368,7 @@
 <style lang="scss" scoped>
   @import '#/assets/logicflow/style.css';
   @import '#/assets/hilight-js/index.css';
-  @import '#/assets/bpmn/viewer/lib/style.css';
+  @import '#/assets/bpmn/viewer/lib/bpmn-viewer.css';
 </style>
 <style lang="scss" scoped>
 /*  .content-container {

@@ -20,7 +20,7 @@ export function useMenuScroll(
     if (!isEnabled) return;
 
     const activeElement = document.querySelector(
-      `aside a[role=menuitem].is-active`,
+      `aside li[role=menuitem].is-active`,
     );
     if (activeElement) {
       activeElement.scrollIntoView({

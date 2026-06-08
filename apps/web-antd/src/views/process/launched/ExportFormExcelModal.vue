@@ -13,11 +13,11 @@
 </template>
 <script lang="ts" setup>
   import { ref, defineEmits, defineExpose, defineProps } from 'vue';
-  import {useVbenModal, VbenFormProps} from '@vben/common-ui';
+  import {useVbenModal} from '@vben/common-ui';
   import {message} from 'ant-design-vue';
   import {useVbenForm} from '#/adapter/form';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
-  import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
+  import type {VbenFormSchema as FormSchema, VbenFormProps} from '@vben/common-ui';
 
   // import { BasicModal, useModalInner } from '@/components/Modal';
   // import { FormSchema } from '@/components/Form/index';

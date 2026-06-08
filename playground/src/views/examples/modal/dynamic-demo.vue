@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useVbenModal } from '@vben/common-ui';
 
-import { Button, message } from 'antdv-next';
+import { Button, message } from 'ant-design-vue';
 
 const [Modal, modalApi] = useVbenModal({
   draggable: true,

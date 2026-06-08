@@ -632,7 +632,7 @@ export type ComponentType =
   | 'TreeSelect'
   | 'Upload'
   | BaseFormComponentType
-  | CustomComponentType;
+  // | CustomComponentType;
 
 /**
  * 与 {@link ComponentType} 中注册的组件名一一对应，便于 Schema 上 `component` + `componentProps` 联动提示

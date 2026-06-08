@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
 import { useVbenDrawer } from '@vben/common-ui';
 
-import { Input, message } from 'antdv-next';
+import { Input, message } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 

@@ -6,7 +6,7 @@ import type { AnyFunction } from '@vben/types';
 import { computed, useTemplateRef, watch } from 'vue';
 
 import { useHoverToggle } from '@vben/hooks';
-import { LockKeyhole, LogOut, Settings } from '@vben/icons';
+import { LockKeyhole, LogOut } from '@vben/icons';
 import { $t } from '@vben/locales';
 import { preferences, usePreferences } from '@vben/preferences';
 import { useAccessStore } from '@vben/stores';
@@ -29,7 +29,6 @@ import {
 import { useMagicKeys, whenever } from '@vueuse/core';
 
 import { LockScreenModal } from '../lock-screen';
-import { Preferences } from '../preferences';
 
 interface Props {
   /**
@@ -83,13 +82,10 @@ const props = withDefaults(defineProps<Props>(), {
   hoverDelay: 500,
 });
 
-const emit = defineEmits<{ clearPreferencesAndLogout: []; logout: [] }>();
+const emit = defineEmits<{ logout: [] }>();
 
-const {
-  globalLockScreenShortcutKey,
-  globalLogoutShortcutKey,
-  preferencesButtonPosition,
-} = usePreferences();
+const { globalLockScreenShortcutKey, globalLogoutShortcutKey } =
+  usePreferences();
 const accessStore = useAccessStore();
 const [LockModal, lockModalApi] = useVbenModal({
   connectedComponent: LockScreenModal,
@@ -102,7 +98,6 @@ const [LogoutModal, logoutModalApi] = useVbenModal({
 
 const refTrigger = useTemplateRef('refTrigger');
 const refContent = useTemplateRef('refContent');
-const refPreferences = useTemplateRef('refPreferences');
 const [openPopover, hoverWatcher] = useHoverToggle(
   [refTrigger, refContent],
   () => props.hoverDelay,
@@ -156,11 +151,6 @@ function handleSubmitLogout() {
   logoutModalApi.close();
 }
 
-// 设置 - 打开偏好设置抽屉
-function handleOpenSettings() {
-  refPreferences.value?.open();
-}
-
 if (enableShortcutKey.value) {
   const keys = useMagicKeys();
   const logoutKey = keys['Alt+KeyQ'];
@@ -204,13 +194,6 @@ if (enableShortcutKey.value) {
   >
     {{ $t('ui.widgets.logoutTip') }}
   </LogoutModal>
-
-  <Preferences
-    v-if="preferencesButtonPosition.userDropdown"
-    ref="refPreferences"
-    :show-button="false"
-    @clear-preferences-and-logout="emit('clearPreferencesAndLogout')"
-  />
 
   <DropdownMenu v-model:open="openPopover">
     <DropdownMenuTrigger ref="refTrigger" :disabled="props.trigger === 'hover'">
@@ -258,14 +241,6 @@ if (enableShortcutKey.value) {
           {{ menu.text }}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          v-if="preferencesButtonPosition.userDropdown"
-          class="mx-1 flex cursor-pointer items-center rounded-sm py-1 leading-8"
-          @click="handleOpenSettings"
-        >
-          <Settings class="mr-2 size-4" />
-          {{ $t('preferences.title') }}
-        </DropdownMenuItem>
         <DropdownMenuItem
           v-if="preferences.widget.lockScreen"
           class="mx-1 flex cursor-pointer items-center rounded-sm py-1 leading-8"

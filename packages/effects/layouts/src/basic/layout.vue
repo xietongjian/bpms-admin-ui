@@ -43,7 +43,6 @@ const {
   isHeaderNav,
   isMixedNav,
   isMobile,
-  isSideMode,
   isSideMixedNav,
   isHeaderMixedNav,
   isHeaderSidebarNav,
@@ -107,15 +106,6 @@ const showHeaderNav = computed(() => {
     !isMobile.value &&
     (isHeaderNav.value || isMixedNav.value || isHeaderMixedNav.value)
   );
-});
-
-const logoTheme = computed(() => {
-  const showLogoInHeader =
-    !isSideMode.value ||
-    isHeaderSidebarNav.value ||
-    isMixedNav.value ||
-    isMobile.value;
-  return showLogoInHeader ? headerTheme.value : sidebarTheme.value;
 });
 
 const {
@@ -292,7 +282,7 @@ const headerSlots = computed(() => {
         :src="preferences.logo.source"
         :src-dark="preferences.logo.sourceDark"
         :text="preferences.app.name"
-        :theme="logoTheme"
+        :theme="showHeaderNav ? headerTheme : theme"
         @click="clickLogo"
       >
         <template v-if="$slots['logo-text']" #text>

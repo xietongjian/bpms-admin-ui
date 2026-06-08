@@ -11,12 +11,7 @@ import { mapTree, traverseTreeValues, uniqueByField } from '@vben/utils';
 import { VbenIcon, VbenScrollbar } from '@vben-core/shadcn-ui';
 import { isHttpUrl } from '@vben-core/shared/utils';
 
-import {
-  onKeyStroke,
-  useEventListener,
-  useLocalStorage,
-  useThrottleFn,
-} from '@vueuse/core';
+import { onKeyStroke, useLocalStorage, useThrottleFn } from '@vueuse/core';
 
 defineOptions({
   name: 'SearchPanel',
@@ -39,7 +34,6 @@ const searchHistory = useLocalStorage<MenuRecordRaw[]>(
 const activeIndex = ref(-1);
 const searchItems = shallowRef<MenuRecordRaw[]>([]);
 const searchResults = ref<MenuRecordRaw[]>([]);
-const isNavigating = ref(false);
 
 const handleSearch = useThrottleFn(search, 200);
 
@@ -53,8 +47,6 @@ function search(searchKey: string) {
     searchResults.value = [];
     return;
   }
-  // 将搜索关键词转换为小写，确保大小写不敏感的搜索
-  searchKey = searchKey.toLowerCase();
 
   // 使用搜索关键词创建正则表达式
   const reg = createSearchReg(searchKey);
@@ -122,7 +114,6 @@ function handleUp() {
   if (searchResults.value.length === 0) {
     return;
   }
-  isNavigating.value = true;
   activeIndex.value--;
   if (activeIndex.value < 0) {
     activeIndex.value = searchResults.value.length - 1;
@@ -135,7 +126,6 @@ function handleDown() {
   if (searchResults.value.length === 0) {
     return;
   }
-  isNavigating.value = true;
   activeIndex.value++;
   if (activeIndex.value > searchResults.value.length - 1) {
     activeIndex.value = 0;
@@ -151,7 +141,6 @@ function handleClose() {
 
 // Activate when the mouse moves to a certain line
 function handleMouseenter(e: MouseEvent) {
-  if (isNavigating.value) return;
   const index = (e.target as HTMLElement)?.dataset.index;
   activeIndex.value = Number(index);
 }
@@ -229,10 +218,6 @@ onMounted(() => {
   onKeyStroke('ArrowDown', handleDown);
   // esc close
   onKeyStroke('Escape', handleClose);
-});
-
-useEventListener('mousemove', () => {
-  isNavigating.value = false;
 });
 </script>
 

@@ -18,7 +18,7 @@ import {
   SvgWeChatIcon,
 } from '@vben/icons';
 
-import { Card, Input } from 'antdv-next';
+import { Card, Input } from 'ant-design-vue';
 
 const iconValue1 = ref('ant-design:trademark-outlined');
 const iconValue2 = ref('svg:avatar-1');

@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 
-import { Input, message } from 'antdv-next';
+import { Input, message } from 'ant-design-vue';
 
 const [Modal, modalApi] = useVbenModal({
   destroyOnClose: false,
