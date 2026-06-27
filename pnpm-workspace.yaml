@@ -253,5 +253,6 @@ allowBuilds:
   '@parcel/watcher': true
   core-js: true
   esbuild: true
+  inferno: set this to true or false
   lefthook: true
   vue-demi: true
