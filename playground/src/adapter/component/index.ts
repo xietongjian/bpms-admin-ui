@@ -242,7 +242,7 @@ async function previewImage(
         return h(
           PreviewGroupComponent,
           {
-            class: 'hidden',
+            classes: { popup: { root: '!z-2000' } },
             preview: {
               visible: visible.value,
               current: currentIndex,
@@ -326,6 +326,7 @@ function cropImage(file: File, aspectRatio: string | undefined) {
               ]),
               centered: true,
               width: 548,
+              zIndex: 9999,
               keyboard: false,
               maskClosable: false,
               closable: false,

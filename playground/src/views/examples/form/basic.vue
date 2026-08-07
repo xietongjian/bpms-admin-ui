@@ -1,12 +1,13 @@
 <script lang="ts" setup>
-import type { UploadFile } from 'ant-design-vue';
+import type { UploadFile } from 'antdv-next';
+import type { Dayjs } from 'dayjs';
 
 import { h, ref, toRaw } from 'vue';
 
 import { Page } from '@vben/common-ui';
 
 import { useDebounceFn } from '@vueuse/core';
-import { Button, Card, message, Spin, Tag } from 'ant-design-vue';
+import { Button, Card, message, Spin, Tag } from 'antdv-next';
 import dayjs from 'dayjs';
 
 import { useVbenForm, z } from '#/adapter/form';
@@ -18,6 +19,36 @@ import DocButton from '../doc-button.vue';
 
 const keyword = ref('');
 const fetching = ref(false);
+
+interface BasicFormValues extends Record<string, any> {
+  cropImage?: UploadFile[];
+  files?: UploadFile[];
+  rangePicker?: [Dayjs, Dayjs];
+}
+
+function encodeBasicFormValues(values: Readonly<BasicFormValues>) {
+  const { rangePicker, ...formValues } = values;
+  return {
+    ...formValues,
+    endTime: rangePicker?.[1]?.format('YYYY-MM-DD'),
+    startTime: rangePicker?.[0]?.format('YYYY-MM-DD'),
+  };
+}
+
+type BasicSubmitValues = ReturnType<typeof encodeBasicFormValues>;
+
+function decodeBasicFormValues(
+  values: Readonly<BasicSubmitValues>,
+): BasicFormValues {
+  const { endTime, startTime, ...formValues } = values;
+  return {
+    ...formValues,
+    ...(startTime && endTime
+      ? { rangePicker: [dayjs(startTime), dayjs(endTime)] }
+      : {}),
+  };
+}
+
 // 模拟远程获取数据
 function fetchRemoteOptions({ keyword = '选项' }: Record<string, any>) {
   fetching.value = true;
@@ -34,6 +65,10 @@ function fetchRemoteOptions({ keyword = '选项' }: Record<string, any>) {
 }
 
 const [BaseForm, baseFormApi] = useVbenForm({
+  codec: {
+    decode: decodeBasicFormValues,
+    encode: encodeBasicFormValues,
+  },
   // 所有表单项共用，可单独在表单内覆盖
   commonConfig: {
     // 在label后显示一个冒号
@@ -43,7 +78,6 @@ const [BaseForm, baseFormApi] = useVbenForm({
       class: 'w-full',
     },
   },
-  fieldMappingTime: [['rangePicker', ['startTime', 'endTime'], 'YYYY-MM-DD']],
   // 提交函数
   handleSubmit: onSubmit,
   handleValuesChange(_values, fieldsChanged) {
@@ -285,11 +319,16 @@ const [BaseForm, baseFormApi] = useVbenForm({
     },
     {
       component: 'DatePicker',
+      dependencies: {
+        resolve: ({ values }) => ({
+          help: () =>
+            [`这是一个可输出其他字段值的帮助信息${values.rate}`].map((value) =>
+              h('p', value),
+            ),
+        }),
+        triggerFields: ['rate'],
+      },
       fieldName: 'datePicker',
-      help: (values) =>
-        [`这是一个可输出其他字段值的帮助信息${values?.rate}`].map((v) =>
-          h('p', v),
-        ),
       label: '日期选择框',
     },
     {
@@ -409,13 +448,19 @@ const [BaseForm, baseFormApi] = useVbenForm({
       },
       rules: 'selectRequired',
     },
+    {
+      component: 'RichEditor',
+      fieldName: 'richEditor',
+      label: '富文本',
+      formItemClass: 'col-span-3 items-baseline',
+    },
   ],
   // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个
   wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
 });
 
-function onSubmit(values: Record<string, any>) {
-  const files = toRaw(values.files) as UploadFile[];
+function onSubmit(values: BasicSubmitValues) {
+  const files = (toRaw(values.files) ?? []) as UploadFile[];
   const cropImage = (toRaw(values.cropImage) ?? []) as UploadFile[];
   const doneFiles = files.filter((file) => file.status === 'done');
   const failedFiles = files.filter((file) => file.status !== 'done');
@@ -485,6 +530,12 @@ function handleSetFormValue() {
     timePicker: dayjs('2022-01-01 12:00:00'),
     treeSelect: 'leaf1',
     username: '1',
+    richEditor: `
+      <h1>Vben Tiptap</h1>
+      <p>这个编辑器已经被封装在 <code>packages/effects/plugins/src/tiptap</code> 中。</p>
+      <p>你可以直接在各个 app 里通过 <code>@vben/plugins/tiptap</code> 引入。</p>
+      <blockquote>默认内置 StarterKit、Underline、TextAlign、Placeholder。</blockquote>
+    `,
   });
 
   // 设置单个表单值

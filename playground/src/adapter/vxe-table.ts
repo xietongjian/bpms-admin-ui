@@ -1,8 +1,8 @@
-import type { TableActionProps } from '@vben/common-ui';
+import type { FormValues, TableActionProps } from '@vben/common-ui';
 import type { VxeTableGridOptions } from '@vben/plugins/vxe-table';
 import type { Recordable } from '@vben/types';
 
-import type { ComponentType } from './component';
+import type { ComponentPropsMap, ComponentType } from './component';
 
 import { defineComponent, h } from 'vue';
 
@@ -17,7 +17,7 @@ import {
 import { get, isFunction, isString } from '@vben/utils';
 
 import { objectOmit } from '@vueuse/core';
-import { Button, Image, Popconfirm, Switch, Tag } from 'ant-design-vue';
+import { Button, Image, Popconfirm, Switch, Tag } from 'antdv-next';
 
 import { $t } from '#/locales';
 
@@ -287,9 +287,24 @@ setupVbenVxeTable({
   },
 });
 
-export const useVbenVxeGrid = <T extends Record<string, any>>(
-  ...rest: Parameters<typeof useGrid<T, ComponentType>>
-) => useGrid<T, ComponentType>(...rest);
+export const useVbenVxeGrid = <
+  T extends Record<string, any>,
+  TFormValues extends FormValues = FormValues,
+  TSubmitValues extends FormValues = TFormValues,
+>(
+  ...rest: Parameters<
+    typeof useGrid<
+      T,
+      ComponentType,
+      ComponentPropsMap,
+      TFormValues,
+      TSubmitValues
+    >
+  >
+) =>
+  useGrid<T, ComponentType, ComponentPropsMap, TFormValues, TSubmitValues>(
+    ...rest,
+  );
 
 /**
  * 表格操作按钮组件

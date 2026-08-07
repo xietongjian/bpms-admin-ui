@@ -193,8 +193,11 @@ onBeforeMount(() => {
 
 <template>
   <BasicLayout
+    :avatar
+    :text="userStore.userInfo?.realName"
     @clear-preferences-and-logout="handleLogout"
     @click-logo="handleClickLogo"
+    @logout="handleLogout"
   >
     <template #user-dropdown>
       <UserDropdown
