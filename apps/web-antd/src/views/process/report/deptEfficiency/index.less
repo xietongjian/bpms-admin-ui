@@ -1,0 +1,53 @@
+.dept-efficiency {
+  padding: 16px;
+
+  .analysis-chart {
+    display: grid;
+    gap: 16px;
+    margin-top: 16px;
+
+    .chart-card {
+      background: var(--el-bg-color);
+      border: 1px solid var(--el-border-color);
+      border-radius: 4px;
+      padding: 16px;
+    }
+
+    .top-row {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .middle-row {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 2fr 1fr;
+    }
+
+    .bottom-row {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .chart-title {
+      color: var(--el-text-color-primary);
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+
+    .chart-subtitle {
+      color: var(--el-text-color-secondary);
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .summary-value {
+      color: var(--el-color-primary);
+      font-size: 24px;
+      font-weight: bold;
+    }
+  }
+}
