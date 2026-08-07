@@ -125,9 +125,6 @@ const getTableActions = (record: Recordable<any>) => [
       title: '是否确认删除',
       confirm: () => handleDelete(record),
       placement: 'left',
-      okButtonProps: {
-        danger: true
-      }
     },
   },
 ];

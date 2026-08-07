@@ -64,7 +64,6 @@ function handleDelete(record: Recordable<any>) {
   deleteByIds([record.id]).then((res) => {
     tableApi.reload();
   });
-  console.log(record);
 }
 
 function handleSuccess() {

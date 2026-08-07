@@ -15,6 +15,8 @@ enum Api {
 
   GetFormInfoByModelKey = '/flow/api/public/getFormInfoByModelKey',
   GetFormTemplates = '/flow/form/template/getAll',
+  UpdateProcessNameByProcInstId = '/flow/form/custom/updateProcessNameByProcInstId',
+  GetActivityFormItemDefByFormDefId = '/flow/form/custom/getActivityFormItemDefByFormDefId',
 }
 
 export const getCustomPagerModel = (params: any) => {
@@ -63,3 +65,9 @@ export const getFormInfoByModelKey = (params: any) =>
   requestClient.post( Api.GetFormInfoByModelKey + '/' + params.modelKey);
 
 export const getFormTemplates = (params: any) => requestClient.post( Api.GetFormTemplates );
+
+export const updateProcessNameByProcInstId = (params: any) =>
+  requestClient.post(Api.UpdateProcessNameByProcInstId, params, {isReturnNativeResponse: true});
+
+export const getActivityFormItemDefByFormDefId = (params: any) =>
+  requestClient.get(Api.GetActivityFormItemDefByFormDefId, { params });

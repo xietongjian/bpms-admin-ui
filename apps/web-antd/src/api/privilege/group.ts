@@ -10,6 +10,7 @@ enum Api {
   GetUserGroupByGroupIdAndUserIdList = '/flow/privilege/group/getUserGroupByGroupIdAndUserIdList',
   Delete = '/flow/privilege/group/delete',
   CheckEntityExist = '/flow/privilege/group/checkEntityExist',
+  GetDataPermissionVos = '/flow/privilege/group/getDataPermissionVos',
 }
 
 export const getGroupListByPage = (params: any) => {
@@ -48,3 +49,5 @@ export const deleteByIds = (params: Array<string>) =>
 
 export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
+
+export const getDataPermissionVos = () => requestClient.get<any>(Api.GetDataPermissionVos);

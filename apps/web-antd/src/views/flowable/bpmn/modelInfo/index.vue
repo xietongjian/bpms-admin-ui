@@ -132,20 +132,17 @@ function createActions(record: Recordable<any>) {
     {
       icon: 'ant-design:partition-outlined',
       tooltip: '流程图预览',
-      label: '',
       onClick: handlePreview.bind(null, record),
     },
     {
       icon: 'ant-design:code-outlined',
       tooltip: '查看XML',
-      label: '',
       onClick: handlePreviewXml.bind(null, record),
     },
     {
       auth: [PerPrefix + PerEnum.PUBLISH],
       icon: 'ant-design:play-circle-filled',
       tooltip: '发布',
-      label: '',
       popConfirm: {
         title: '确认发布吗?',
         placement: 'left',
@@ -157,15 +154,11 @@ function createActions(record: Recordable<any>) {
       auth: [PerPrefix + PerEnum.PUBLISH],
       icon: 'ant-design:stop-twotone',
       tooltip: '停用',
-      label: '',
       danger: true,
       popConfirm: {
         title: '确认停用吗?',
         confirm: handleStop.bind(null, record),
         placement: 'left',
-        okButtonProps: {
-          danger: true,
-        },
       },
       ifShow: status === 3 || status === 2,
     },
@@ -173,7 +166,6 @@ function createActions(record: Recordable<any>) {
       auth: [PerPrefix + PerEnum.UPDATE],
       icon: 'ant-design:form-outlined',
       tooltip: '修改',
-      label: '',
       onClick: handleEdit.bind(null, record),
       ifShow: false,
     },
@@ -182,15 +174,11 @@ function createActions(record: Recordable<any>) {
       icon: 'ant-design:delete-outlined',
       danger: true,
       tooltip: '删除',
-      label: '',
       popConfirm: {
         title: '是否确认删除',
         confirm: handleDelete.bind(null, record),
       },
       ifShow: false,
-      okButtonProps: {
-        danger: true,
-      }
     },
   ];
 }

@@ -18,7 +18,7 @@
         </Upload>
       </template>
       <template #action="{ row }">
-        <TableAction outside :actions="createActions(row)" />
+        <TableAction :actions="createActions(row)" />
       </template>
       <template #canDown="{ row }">
         <Switch v-model:checked="row.canDown" />
@@ -75,7 +75,8 @@
   const createActions = (record: any) => {
     const actions: any[] = [
       {
-        label: '删除',
+        tooltip: '删除',
+        icon: 'ant-design:delete-outlined',
         danger: true,
         popConfirm: {
           title: '是否确认删除',
@@ -84,7 +85,6 @@
             const idx = fileList.value.findIndex(item => item.filePath === record.filePath)
             fileList.value.splice(idx, 1)
           },
-          okButtonProps: { danger: true },
         },
       },
     ];

@@ -19,7 +19,7 @@
   import { ref, unref, nextTick } from 'vue';
 
   import type {Recordable} from '@vben/types';
-  import type {VbenFormProps} from '@vben/common-ui';
+  import type {ActionItem, VbenFormProps} from '@vben/common-ui';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
@@ -98,13 +98,11 @@
       {
         icon: 'ant-design:partition-outlined',
         tooltip: '流程图预览',
-        label: '',
         onClick: handlePreview.bind(null, record),
       },
       {
         icon: 'ant-design:play-circle-filled',
         tooltip: '发布',
-        label: '',
         popConfirm: {
           title: '确认发布吗?',
           confirm: handlePublish.bind(null, record),
@@ -114,31 +112,24 @@
       {
         icon: 'ant-design:stop-twotone',
         tooltip: '停用',
-        label: '',
         popConfirm: {
           title: '确认停用吗?',
           confirm: handleStop.bind(null, record),
-          okButtonProps: {
-            danger: true,
-          },
         },
         ifShow: status === 3 || status === 2,
       },
       {
         icon: 'ant-design:form-outlined',
         tooltip: '修改',
-        label: '',
         onClick: handleEdit.bind(null, record),
       },
       {
         icon: 'ant-design:delete-outlined',
         danger: true,
         tooltip: '删除',
-        label: '',
         popConfirm: {
           title: '是否确认删除',
           confirm: handleDelete.bind(null, record),
-          okButtonProps: { danger: true },
         },
       },
     ];

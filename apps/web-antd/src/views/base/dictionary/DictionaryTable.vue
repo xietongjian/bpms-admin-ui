@@ -16,8 +16,8 @@
 <script lang="ts" setup>
   import { ref, defineExpose } from 'vue';
   import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
-  import type {VbenFormProps} from '@vben/common-ui';
-  import type {Recordable} from '@vben/types';
+import type {VbenFormProps} from '@vben/common-ui';
+import type {Recordable} from '@vben/types';
   import {TableAction} from '#/components/table-action';
   import { PerEnum } from '#/enums/perEnum';
   import { dictionaryPageList, deleteByIds } from '#/api/base/dictionary';
@@ -104,10 +104,7 @@
         popConfirm: {
           title: '是否确认删除',
           confirm: handleDelete.bind(null, row),
-          okButtonProps: {
-            danger: true
-          }
-        },
+          },
       },
     ];
   }

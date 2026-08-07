@@ -205,7 +205,6 @@
   function createActions(record: Recordable<any>) {
     return [
       {
-        label: '',
         tooltip: '查看表单',
         icon: 'ant-design:pic-right-outlined',
         onClick: handleViewForm.bind(null, record),

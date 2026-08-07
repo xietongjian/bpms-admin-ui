@@ -168,9 +168,6 @@ function createActions(record: Recordable<any>) {
         placement: 'left',
         title: '是否确认删除',
         confirm: handleDelete.bind(null, record),
-        okButtonProps: {
-          danger: true,
-        },
       },
     },
   ];

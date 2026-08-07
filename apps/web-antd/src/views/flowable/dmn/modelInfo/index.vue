@@ -75,7 +75,7 @@
           </div>
         </template>
         <template #action="{row}">
-          <TableAction :stopButtonPropagation="true" :actions="createActions(row)"/>
+          <TableAction :actions="createActions(row)"/>
         </template>
         <template #name="{row}">
           <!-- 0决策表1决策服务 -->
@@ -299,14 +299,12 @@ function createActions(record: Recordable<any>){
     {
       icon: 'ant-design:eye-outlined',
       tooltip: '预览',
-      label: '',
       onClick: handlePreview.bind(null, record),
     },
     {
       auth: [PerPrefix + PerEnum.UPDATE],
       icon: 'ant-design:form-outlined',
       tooltip: '编辑决策',
-      label: '',
       onClick: handleEditDmn.bind(null, record),
     },
     /*{
@@ -319,7 +317,6 @@ function createActions(record: Recordable<any>){
     {
       icon: 'ant-design:code-outlined',
       tooltip: '查看XML',
-      label: '',
       onClick: handleViewXml.bind(null, record),
     },
     /*{

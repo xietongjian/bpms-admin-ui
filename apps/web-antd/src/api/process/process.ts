@@ -36,7 +36,6 @@ enum Api {
   ///flow/form/biz/getBizInfoByModelKey
   GetDraftPageList = '/flow/query/getFormDraftPagerModelByQuery',
   GetMyCommonlyList = '/flow/query/getMyCommonlyProcess',
-  GetCustomFlowSequenceFlows = '/flow/api/public/getCustomFlowSequenceFlows',
   DelFormDraftById = '/flow/front/form/process/delFormDraftById',
   GetCustomApproveSettings = '/flow/front/query/getUserTaskNextSequenceUser',
   CheckFetchBack = '/flow/front/query/checkFetchBack',
@@ -47,6 +46,32 @@ enum Api {
   ReminderTask = '/flow/operate/reminderTask',
   SaveCommonlyProcess = '/flow/commonlyProcess/saveCommonlyProcess',
   CancelCommonlyProcess = '/flow/commonlyProcess/deleteCommonlyProcessByModelKey/',
+  GetCustomFlowSequenceFlows = '/flow/api/public/getCustomFlowSequenceFlows',
+  GetPlusActivityInfosByStartFormProcessVo = '/flow/api/public/getPlusActivityInfosByStartFormProcessVo',
+  CheckCancelProcess = '/flow/query/checkCancelProcess',
+  CountUserTask = '/flow/mongo/count/task/countUserTask',
+  CountUserTaskEfficiency = '/flow/mongo/count/task/countUserTaskEfficiency',
+  GetApprovalMessageListByLoginUser = '/flow/base/approvalMessage/getListByLoginUser',
+  SaveOrUpdateApprovalMessage = '/flow/base/approvalMessage/saveOrUpdate',
+  DeleteApprovalMessageById = '/flow/base/approvalMessage/deleteById',
+  QueryApplyedModelInfoList = '/flow/query/queryApplyedModelInfoList',
+  QueryMyProcessinstancesModelInfoList = '/flow/query/queryMyProcessinstancesModelInfoList',
+  QueryAppingModelInfoList = '/flow/query/queryAppingModelInfoList',
+  QueryApplyedAppList = '/flow/query/queryApplyedAppList',
+  GetActivitySignPermission = '/flow/query/getActivitySignPermission',
+  GetSequenceFlowsByTaskId = '/flow/query/getSequenceFlowsByTaskId',
+  GetSequenceFlowsByProcInstId = '/flow/query/getSequenceFlowsByProcInstId',
+  GetWspActivityPersonalsByProcInstId = '/flow/query/getWspActivityPersonalsByProcInstId',
+  ExportMyProcessinstancesList = '/flow/form/record/exportMyProcessinstancesList',
+  ExportMyProcessinstancesFormDataList = '/flow/form/record/exportMyProcessinstancesFormDataList',
+  ExportApprovedTaskInstVoList = '/flow/form/record/exportApprovedTaskInstVoList',
+  ExportApprovedTaskInstVoFormDataList = '/flow/form/record/exportApprovedTaskInstVoFormDataList',
+  ProcessHistoryDeleteById = '/flow/flowable/commentInfo/deleteById',
+  DeleteCommentAttachmentById = '/flow/flowable/commentInfo/deleteCommentAttachmentById',
+  UpdateCommentNoteById = '/flow/flowable/commentInfo/updateCommentNoteById',
+  RemoveFileByFileId = '/flow/api/public/removeFileByFileId',
+  FindAllBackNodesByProcessInstanceId = '/flow/query/findAllBackNodesByProcessInstanceId',
+  GetProductAndProjList = '/flow/query/getProductAndProjList',
 }
 
 // 发起流程
@@ -329,4 +354,176 @@ export function saveCommonlyProcess(params: any) {
 // 删除常用流程
 export function cancelCommonlyProcess(params: any) {
   return requestClient.post(Api.CancelCommonlyProcess + '/' + params.modelKey, {}, {responseReturn: 'body'});
+}
+
+// 通过表单信息获取模拟流程的节点信息
+export function getPlusActivityInfosByStartFormProcessVo(params: any) {
+  return requestClient.post(Api.GetPlusActivityInfosByStartFormProcessVo, params);
+}
+
+// 判断是否可以终止（作废）
+export function checkStopProcess(params: any) {
+  return requestClient.post(Api.CheckCancelProcess, params, {responseReturn: 'body'});
+}
+
+// 获取效率仪表盘评语
+export function countUserTask(params: any) {
+  return requestClient.get(Api.CountUserTask);
+}
+
+// 获取效率仪数据
+export function countUserTaskEfficiency(params: any) {
+  return requestClient.post(Api.CountUserTaskEfficiency, params);
+}
+
+// 获取常用意见列表
+export function getApprovalMessageListByLoginUser(params: any) {
+  return requestClient.get(Api.GetApprovalMessageListByLoginUser);
+}
+
+// 添加或修改常用意见
+export function saveOrUpdateApprovalMessage(params: any) {
+  return requestClient.post(Api.SaveOrUpdateApprovalMessage, params);
+}
+
+// 删除常用意见
+export function deleteApprovalMessageById(params: any) {
+  return requestClient.post(Api.DeleteApprovalMessageById + '/' + params.id);
+}
+
+// 查询我的已办模板列表
+export function queryApplyedModelInfoList() {
+  return requestClient.get(Api.QueryApplyedModelInfoList);
+}
+
+// 查询我的发起的模板列表
+export function queryMyProcessinstancesModelInfoList() {
+  return requestClient.get(Api.QueryMyProcessinstancesModelInfoList);
+}
+
+// 查询我的待办模板列表
+export function queryAppingModelInfoList() {
+  return requestClient.get(Api.QueryAppingModelInfoList);
+}
+
+// 查询我的已办模板列表
+export function queryApplyedAppList() {
+  return requestClient.get(Api.QueryApplyedAppList);
+}
+
+// 获取任务是否需要手写签章配置
+export function getActivitySignPermission(params: any) {
+  return requestClient.get(Api.GetActivitySignPermission, { params });
+}
+
+// 根据任务ID获取流程的流转线
+export function getSequenceFlowsByTaskId(params: any) {
+  return requestClient.get(Api.GetSequenceFlowsByTaskId, { params });
+}
+
+// 根据流程实例ID获取流程的流转线
+export function getSequenceFlowsByProcInstId(params: any) {
+  return requestClient.get(Api.GetSequenceFlowsByProcInstId, { params });
+}
+
+// 根据流程实例ID获取流程的活动办理人
+export function getWspActivityPersonalsByProcInstId(params: any) {
+  return requestClient.get(Api.GetWspActivityPersonalsByProcInstId + '/' + params.procInstId);
+}
+
+// 导出我的发起
+export function exportMyProcessinstancesList(params: any) {
+  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
+  const entity = params || {};
+  if (entity.dateRange) {
+    entity['processStartTime'] = params.dateRange[0].substring(0, 10);
+    entity['processEndTime'] = params.dateRange[1].substring(0, 10);
+  }
+  if (entity) {
+    delete entity['pageNum'];
+    delete entity['pageSize'];
+    delete entity['dateRange'];
+  }
+  const queryParam = { query, entity };
+  return requestClient.post(Api.ExportMyProcessinstancesList, queryParam, { responseReturn: 'body' });
+}
+
+// 导出我的发起-表单数据
+export function exportMyProcessinstancesFormDataList(params: any) {
+  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
+  const entity = params || {};
+  if (entity.dateRange) {
+    entity['processStartTime'] = params.dateRange[0].substring(0, 10);
+    entity['processEndTime'] = params.dateRange[1].substring(0, 10);
+  }
+  if (entity) {
+    delete entity['pageNum'];
+    delete entity['pageSize'];
+    delete entity['dateRange'];
+  }
+  const queryParam = { query, entity };
+  return requestClient.post(Api.ExportMyProcessinstancesFormDataList, queryParam, { responseReturn: 'body' });
+}
+
+// 导出已办列表台账
+export function exportApprovedTaskInstVoList(params: any) {
+  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
+  const entity = params || {};
+  if (entity.dateRange) {
+    entity['processStartTime'] = params.dateRange[0].substring(0, 10);
+    entity['processEndTime'] = params.dateRange[1].substring(0, 10);
+  }
+  if (entity) {
+    delete entity['pageNum'];
+    delete entity['pageSize'];
+    delete entity['dateRange'];
+  }
+  const queryParam = { query, entity };
+  return requestClient.post(Api.ExportApprovedTaskInstVoList, queryParam, { responseReturn: 'body' });
+}
+
+// 导出已办数据列表台账
+export function exportApprovedTaskInstVoFormDataList(params: any) {
+  const query = params && { pageNum: params.pageNum, pageSize: params.pageSize };
+  const entity = params || {};
+  if (entity.dateRange) {
+    entity['processStartTime'] = params.dateRange[0].substring(0, 10);
+    entity['processEndTime'] = params.dateRange[1].substring(0, 10);
+  }
+  if (entity) {
+    delete entity['pageNum'];
+    delete entity['pageSize'];
+    delete entity['dateRange'];
+  }
+  const queryParam = { query, entity };
+  return requestClient.post(Api.ExportApprovedTaskInstVoFormDataList, queryParam, { responseReturn: 'body' });
+}
+
+// 删除审批记录
+export function processHistoryDeleteById(params: any) {
+  return requestClient.post(Api.ProcessHistoryDeleteById + '/' + params.id);
+}
+
+// 删除审批记录附件
+export function deleteCommentAttachmentById(params: any) {
+  return requestClient.post(Api.DeleteCommentAttachmentById + '/' + params.id);
+}
+
+// 编辑审批记录message
+export function updateCommentNoteById(params: any) {
+  return requestClient.post(Api.UpdateCommentNoteById, params, {isReturnNativeResponse: true});
+}
+
+export function removeFileByFileId(params: any) {
+  return requestClient.post(Api.RemoveFileByFileId + '/' + params.id);
+}
+
+// 获取所有的节点信息
+export function findAllBackNodesByProcessInstanceId(params: any) {
+  return requestClient.get(Api.FindAllBackNodesByProcessInstanceId + '/' + params.processInstanceId);
+}
+
+// 获取产品和项目列表
+export function getProductAndProjList(params: any) {
+  return requestClient.get(Api.GetProductAndProjList, { params });
 }

@@ -18,6 +18,12 @@ export const columns: VxeGridProps['columns'] = [
     align: 'left',
   },
   {
+    title: '类型',
+    field: 'typeName',
+    width: 120,
+    align: 'left',
+  },
+  {
     title: '用户',
     field: 'users',
     align: 'left',
@@ -34,7 +40,7 @@ export const columns: VxeGridProps['columns'] = [
     fixed: 'right',
     slots: {default: 'action'},
     title: '操作',
-    width: 140,
+    width: 180,
   },
 ];
 
@@ -102,6 +108,15 @@ export const formSchema: FormSchema[] = [
         .trim()
         .min(1, "名称不能为空")
         .max(64, "字符长度不能大于64")
+  },
+  {
+    fieldName: 'type',
+    label: '类型',
+    component: 'Select',
+    componentProps: {
+      allowClear: true,
+      placeholder: '请选择类型',
+    },
   },
   {
     fieldName: 'sn',

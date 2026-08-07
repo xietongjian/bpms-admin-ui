@@ -1,4 +1,5 @@
 import { requestClient } from '#/api/request';
+import { forEach, listToTree } from '#/utils/helper/treeHelper';
 
 enum Api {
   ModuleList = '/flow/privilege/module/getModules',
@@ -9,7 +10,19 @@ enum Api {
 }
 
 export const getModules = (params?: any) => {
-  return requestClient.post<any>(Api.ModuleList, params);
+  return requestClient.post<any>(Api.ModuleList, params).then((res: any) => {
+    const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
+    forEach(
+      treeData,
+      (node) => {
+        if (node.children.length === 0) {
+          delete node.children;
+        }
+      },
+      { id: 'id', children: 'children', pid: 'pid' },
+    );
+    return treeData;
+  });
 };
 
 export const saveOrUpdate = (params: any) => requestClient.post<any>(Api.SaveOrUpdate, params);

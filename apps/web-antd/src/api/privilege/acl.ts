@@ -1,6 +1,12 @@
 import { requestClient } from '#/api/request';
 
 import { forEach, listToTree } from '#/utils/helper/treeHelper';
+import type {
+  AclInfo,
+  AclSaveByGroupModuleParam,
+  AclSaveByModuleParam,
+} from './model/aclModel';
+import { ModuleInfo, ModuleParams } from './model/moduleModel';
 
 enum Api {
   SetAcl = '/flow/privilege/acl/setAcl',
@@ -11,9 +17,7 @@ enum Api {
 }
 
 export const getModuleAclsByGroupId = (params: any) => {
-  return requestClient.get<any>(Api.GetModuleAclsByGroupId + '/' + params.groupId);
-
-  /*return Promise.resolve(result).then((res: any) => {
+  return requestClient.get<any>(Api.GetModuleAclsByGroupId + '/' + params.groupId).then((res: any) => {
     const treeData = listToTree(res, { id: 'id', children: 'children', pid: 'pid' });
     forEach(
       treeData,
@@ -25,17 +29,17 @@ export const getModuleAclsByGroupId = (params: any) => {
       { id: 'id', children: 'children', pid: 'pid' },
     );
     return treeData;
-  });*/
+  });
 };
 
-export const setAcl = (params: any) =>
+export const setAcl = (params: AclSaveByModuleParam) =>
   requestClient.post<any>(Api.SetAcl + '/' + params.position + '/' + params.checked, params.aclInfo);
 
-export const setAllAcl = (params: any) =>
+export const setAllAcl = (params: AclSaveByModuleParam) =>
   requestClient.post<any>(Api.SetAllAcl + `/${params.checked}`, params.aclInfo);
 
-export const setAclByModule = (params: any) =>
+export const setAclByModule = (params: AclSaveByModuleParam) =>
   requestClient.post<any>(Api.SetAclByModule + '/' + params.checked, params.aclInfo);
 
-export const setAclModuleList = (params: any) =>
+export const setAclModuleList = (params: AclSaveByGroupModuleParam) =>
   requestClient.post<any>(Api.SetAclModuleList + `/${params.moduleId}/${params.groupId}`, params.aclList);

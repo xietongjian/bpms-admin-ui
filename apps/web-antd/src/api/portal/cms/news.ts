@@ -4,6 +4,8 @@ import { Base64 } from 'js-base64';
 enum Api {
   NewsPageList = '/flow/portal/cms/news/getPagerModel',
   GetNewsById = '/flow/portal/cms/news/getById',
+  GetNewsDetailById = '/flow/portal/cms/news/getDetailById',
+  GetFrontNewsPagerList = '/flow/portal/cms/news/getFrontNewsPagerList',
   Insert = '/flow/portal/cms/news/insert',
   Update = '/flow/portal/cms/news/update',
   Publish = '/flow/portal/cms/news/publish',
@@ -57,3 +59,11 @@ export const checkEntityExist = (params) =>
 export const deleteByIds = (params?: Array<string>) => requestClient.post(Api.Delete, params, { responseReturn: 'body' });
 
 export const getPublishStatus = () => requestClient.get(Api.GetPublishStatus);
+
+export const getNewsDetailById = (params: any) => {
+  return requestClient.get(Api.GetNewsDetailById, { params });
+};
+
+export const getFrontNewsPagerList = (params: any) => {
+  return requestClient.post(Api.GetFrontNewsPagerList, params);
+};

@@ -155,12 +155,7 @@ function handleSetGroupSuccess() {
   handlePasswordSuccess();
 }
 
-function previewImageHandle(headImg) {
-  if (headImg) {
-    previewImage.value = headImg;
-    previewImageVisible.value = true;
-  }
-}
+
 </script>
 
 <template>
@@ -170,7 +165,7 @@ function previewImageHandle(headImg) {
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleAdd">新建</Button>
       </template>
       <template #image="{ row }">
-        <Avatar :src="row.image" @click="previewImageHandle(row.image)">
+        <Avatar :src="row.image">
           <template #icon>
             <UserOutlined/>
           </template>
@@ -193,6 +188,10 @@ function previewImageHandle(headImg) {
         <Tag v-else>普通用户</Tag>
       </template>
 
+      <template #status="{ row }">
+        <Tag v-if="~~row.status === 1" color="green">启用</Tag>
+        <Tag v-else color="red">禁用</Tag>
+      </template>
       <template #action="{row}">
         <TableAction :actions="createActions(row)"/>
       </template>

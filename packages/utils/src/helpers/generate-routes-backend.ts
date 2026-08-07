@@ -64,6 +64,9 @@ function convertRoutes(
   layoutMap: ComponentRecordType,
   pageMap: ComponentRecordType,
 ): RouteRecordRaw[] {
+  console.log('[convertRoutes] pageMap keys (前10个):', Object.keys(pageMap).slice(0, 10));
+  console.log('[convertRoutes] pageMap total count:', Object.keys(pageMap).length);
+  
   return mapTree(routes, (node) => {
     const route = node as unknown as RouteRecordRaw;
     const { component, name } = node;
@@ -83,8 +86,14 @@ function convertRoutes(
         : `${normalizePath}.vue`;
       if (pageMap[pageKey]) {
         route.component = pageMap[pageKey];
+        if (name === 'Workbench') {
+          console.log('[convertRoutes] Workbench 组件匹配成功:', { pageKey, component });
+        }
       } else {
         console.error(`route component is invalid: ${pageKey}`, route);
+        if (name === 'Workbench') {
+          console.error('[convertRoutes] Workbench 组件匹配失败!');
+        }
         route.component = pageMap['/_core/fallback/not-found.vue'];
       }
     }

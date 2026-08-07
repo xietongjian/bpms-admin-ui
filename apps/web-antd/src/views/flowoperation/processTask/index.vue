@@ -4,7 +4,7 @@
       <template #action="{ row }">
         <TableAction
             :actions="createActions(row)"
-            :dropDownActions="createDropDownActions(row)"
+            :dropdown-actions="createDropDownActions(row)"
         />
       </template>
 
@@ -62,8 +62,8 @@
   import { useVbenVxeGrid } from '#/adapter/vxe-table';
   import type {Recordable} from '@vben/types';
   import type {VxeGridProps} from '#/adapter/vxe-table';
-  import type {VbenFormProps} from '@vben/common-ui';
-  import {Page} from '@vben/common-ui';
+import type {VbenFormProps} from '@vben/common-ui';
+import {Page} from '@vben/common-ui';
   import {
     completeBackStage,
     getPagerModelRunTasks,
@@ -247,7 +247,6 @@
   function createActions (row: Recordable<any>) {
     return [
       {
-        label: '',
         tooltip: '查看表单',
         icon: 'ant-design:pic-right-outlined',
         onClick: handleViewForm.bind(null, row),
@@ -261,14 +260,10 @@
         auth: [PerPrefix + PerEnum.UPDATE],
         icon: 'ant-design:play-circle-filled',
         tooltip: '执行',
-        label: '',
         popConfirm: {
           title: '确认执行吗?',
           placement: 'left',
           confirm: handleExe.bind(null, row),
-          okButtonProps: {
-
-          }
         },
       },
     ];
@@ -277,12 +272,10 @@
   function createDropDownActions (row: Recordable<any>) {
     return [
       {
-        label: '审批变量',
         icon: 'ant-design:profile-outlined',
         onClick: handleViewFlowProperties.bind(null, row),
       },
       {
-        label: '审批记录',
         icon: 'ant-design:history-outlined',
         onClick: handleViewApproveHistory.bind(null, row),
       },
@@ -290,12 +283,8 @@
         auth: [PerPrefix + PerEnum.UPDATE],
         icon: 'ant-design:stop-twotone',
         tooltip: '终止',
-        label: '终止',
         danger: true,
         onClick: handleStop.bind(null, row),
-        okButtonProps: {
-          danger: true
-        }
       },
     ];
   }

@@ -13,7 +13,7 @@ import {
   getApiCategoryListData,
   getApiInfoListByPage
 } from '#/api/base/apiInfo';
-import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons-vue";
+import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons-vue";
 import {Button, Row, message, Popconfirm, Tooltip, Tree} from "ant-design-vue";
 import {TableAction} from '#/components/table-action';
 import {listToTree} from "#/utils/helper/treeHelper";
@@ -21,6 +21,7 @@ import { BasicTree } from '#/components/tree';
 
 import ApiCategoryModal from "./api-category-modal.vue";
 import ApiInfoDrawer from "./api-info-drawer.vue";
+import ApiInfoPreviewDrawer from "./ApiInfoPreviewDrawer.vue";
 import {columns, searchFormSchema} from "./apiInfo.data";
 import {useElementSize} from "@vueuse/core";
 const basicTreeRef = ref(null);
@@ -193,6 +194,20 @@ function handleEdit(record: Recordable<any>) {
   });
 }
 
+function handlePreview(record: Recordable<any>) {
+  apiInfoPreviewDrawerRef.value.setData({batch: false, record});
+  apiInfoPreviewDrawerRef.value.setState({title: `接口预览-${record.name}`});
+  apiInfoPreviewDrawerRef.value.open();
+}
+
+function handlePreviewBatch() {
+  apiInfoPreviewDrawerRef.value.setData({batch: true});
+  apiInfoPreviewDrawerRef.value.setState({title: '接口预览'});
+  apiInfoPreviewDrawerRef.value.open();
+}
+
+const apiInfoPreviewDrawerRef = ref();
+
 function handleDeleteApiInfo(record: Recordable<any>) {
   deleteApiInfoById(record.id).then(() => {
     tableApi.reload();
@@ -234,6 +249,11 @@ async function handleSelect(node: any) {
 function createActions(record: Recordable<any>) {
   return [
     {
+      tooltip: '预览',
+      icon: 'ant-design:eye-outlined',
+      onClick: handlePreview.bind(null, record),
+    },
+    {
       auth: [PerPrefix + PerEnum.UPDATE],
       tooltip: '修改',
       icon: 'ant-design:form-outlined',
@@ -244,11 +264,10 @@ function createActions(record: Recordable<any>) {
       tooltip: '删除',
       icon: 'ant-design:delete-outlined',
       danger: true,
-      popConfirm: {
+        popConfirm: {
         placement: 'left',
         title: '是否确认删除',
         confirm: handleDeleteApiInfo.bind(null, record),
-        okButtonProps: {danger: true}
       },
     },
   ];
@@ -319,6 +338,10 @@ function createActions(record: Recordable<any>) {
     </template>
     <BasicTable table-title="Api列表" >
       <template #toolbar-tools>
+        <Button type="primary" @click="handlePreviewBatch" class="mr-2">
+          <template #icon><EyeOutlined /></template>
+          批下载预览
+        </Button>
         <Button v-access:code="PerPrefix+PerEnum.ADD" type="primary" @click="handleCreate">
           新增
         </Button>
@@ -332,5 +355,6 @@ function createActions(record: Recordable<any>) {
     </BasicTable>
     <ApiInfoDrawer ref="apiInfoDrawerRef" @success="handleSuccess"/>
     <ApiCategoryModal ref="apiCategoryModalRef" @success="handleCategorySuccess"/>
+    <ApiInfoPreviewDrawer ref="apiInfoPreviewDrawerRef"/>
   </ColPage>
 </template>

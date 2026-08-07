@@ -1,25 +1,40 @@
-import type {VxeGridProps} from '#/adapter/vxe-table';
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import {z} from "@vben/common-ui";
 import Esign from "#/views/components/common/widgets/esign/index.vue";
 import Upload from "#/views/components/common/widgets/upload/index.vue";
 import { h, markRaw } from 'vue';
 
-export const backToStepTableColumns: VxeGridProps['columns'] = [
+export const approveMsgSchemas: FormSchema[] = [
+  {
+    fieldName: 'approveMsg',
+    label: '审批意见',
+    component: 'Textarea',
+    componentProps: {
+      allowClear: true,
+      placeholder: '请输入审批意见！',
+      autoSize: {
+        minRows: 2,
+        maxRows: 4,
+      },
+    },
+  },
+];
+
+export const backToStepTableColumns = [
   {
     title: '节点名称',
-    field: 'nodeName',
+    dataIndex: 'nodeName',
     align: 'left',
   },
   {
     title: '审批人姓名',
-    field: 'userName',
+    dataIndex: 'userName',
     width: 120,
     align: 'left',
   },
   {
     title: '审批人工号',
-    field: 'userCode',
+    dataIndex: 'userCode',
     width: 120,
     align: 'left',
   },

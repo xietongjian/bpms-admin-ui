@@ -66,7 +66,7 @@ function onCancel() {
       </div>
       <div class="flex justify-end gap-2">
         <VbenButton size="default" variant="outline" @click="onCancel">
-          {{ action.popConfirm.cancelText ?? 'Cancel' }}
+          {{ action.popConfirm.cancelText ?? '取消' }}
         </VbenButton>
         <VbenButton
           :variant="action.danger ? 'destructive' : 'default'"
@@ -74,7 +74,7 @@ function onCancel() {
           class="p-2"
           @click="onConfirm"
         >
-          {{ action.popConfirm.okText ?? 'OK' }}
+          {{ action.popConfirm.okText ?? '确认' }}
         </VbenButton>
       </div>
     </PopoverContent>

@@ -12,11 +12,13 @@ import {EmpInfo} from '#/views/components/EmpInfo';
 import GroupModal from './group-modal.vue';
 import {columns, searchFormSchema} from "./group.data";
 import SetAclModal from './SetAclModal.vue';
-import SetAccountModal from './SetAccountModal.vue';
+import GroupAccountListModal from './GroupAccountListModal.vue';
+import SetAppModal from './SetAppModal.vue';
+import SetDataAclModal from './SetDataAclModal.vue';
 import {PerEnum} from "#/enums/perEnum";
 
 const PerPrefix = "Group:";
-const groupAccountListModalRef = ref(), setAclModalRef = ref(), groupModalRef = ref();
+const groupAccountListModalRef = ref(), setAclModalRef = ref(), groupModalRef = ref(), setAppModalRef = ref(), setDataAclModalRef = ref();
 
 const formOptions: VbenFormProps = {
   showCollapseButton: false,
@@ -98,10 +100,31 @@ async function handleDelete(record: any) {
     message.error(e);
   }
 }
+function handleSetDataAcl(record: Recordable<any>) {
+  setDataAclModalRef.value.setData(record);
+  setDataAclModalRef.value.open();
+  setDataAclModalRef.value.setState({
+    title: `给组【${record.name}(${record.sn})】设置数据权限`,
+    width: 1000,
+    minHeight: 700,
+  });
+}
+
+function handleSetApp(record: Recordable<any>) {
+  setAppModalRef.value.setData(record);
+  setAppModalRef.value.open();
+  setAppModalRef.value.setState({
+    title: `给组【${record.name}(${record.sn})】分配应用`,
+    width: 600,
+    showOkBtn: false,
+    cancelText: '关闭',
+  });
+}
+
 function handleAddUser(record: Recordable<any>) {
   groupAccountListModalRef.value.setData({...record, isUpdate: true});
   groupAccountListModalRef.value.open();
-  setAclModalRef.value.setState({
+  groupAccountListModalRef.value.setState({
     title: '查看【' + record.name + '(' + record.sn + ')】已分配的用户'
   });
 }
@@ -120,6 +143,18 @@ function createActions(record: Recordable<any>): any[] {
       onClick: handleAddUser.bind(null, record),
     },
     {
+      auth: [PerPrefix + PerEnum.AUTH],
+      tooltip: '分配数据权限',
+      icon: 'ant-design:database-outlined',
+      onClick: handleSetDataAcl.bind(null, record),
+    },
+    {
+      auth: [PerPrefix + PerEnum.AUTH],
+      tooltip: '分配应用',
+      icon: 'ant-design:appstore-add-outlined',
+      onClick: handleSetApp.bind(null, record),
+    },
+    {
       auth: [PerPrefix + PerEnum.UPDATE],
       tooltip: '修改',
       icon: 'ant-design:form-outlined',
@@ -134,9 +169,6 @@ function createActions(record: Recordable<any>): any[] {
         title: '是否确认删除',
         confirm: handleDelete.bind(null, record),
         placement: 'left',
-        okButtonProps: {
-          danger: true
-        },
       },
     },
   ];
@@ -145,8 +177,8 @@ function createActions(record: Recordable<any>): any[] {
 function handleViewUsers(record: Recordable<any>) {
   groupAccountListModalRef.value.setData({...record, isUpdate: false});
   groupAccountListModalRef.value.open();
-  setAclModalRef.value.setState({
-    title: '设置【' + record.name + '(' + record.sn + ')】的用户'
+  groupAccountListModalRef.value.setState({
+    title: '查看【' + record.name + '(' + record.sn + ')】已分配的用户'
   });
 }
 
@@ -183,6 +215,8 @@ function handleViewUsers(record: Recordable<any>) {
     <GroupModal ref="groupModalRef" @onSuccess="tableApi.reload()"/>
 <!--    <SetAccountModal ref="setAccountModalRef" @success="handleSetAccountSuccess" />-->
     <SetAclModal ref="setAclModalRef" />
+    <SetAppModal ref="setAppModalRef" />
+    <SetDataAclModal ref="setDataAclModalRef" />
     <GroupAccountListModal ref="groupAccountListModalRef" />
   </Page>
 </template>

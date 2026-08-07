@@ -6,8 +6,7 @@ import type {VbenFormProps} from '@vben/common-ui';
 import {PerEnum} from "#/enums/perEnum";
 import {Page} from '@vben/common-ui';
 import {Button, Image, Tag, message} from 'ant-design-vue';
-import {useVbenVxeGrid} from '#/adapter/vxe-table';
-import { TableAction } from '#/components/table-action';
+import {useVbenVxeGrid, VbenTableAction} from '#/adapter/vxe-table';
 import {listColumns, searchFormSchema} from "#/views/base/app/app.data";
 import AppModal from './app-modal.vue';
 import AppSecretKeyModal from './app-secret-key-modal.vue';
@@ -106,30 +105,26 @@ function createActions(row: Recordable<any>) {
   return [
     {
       auth: [PerPrefix + PerEnum.QUERY],
-      tooltip: '查看密钥',
+      text: '查看密钥',
       icon: 'ant-design:key-outlined',
       onClick: handleViewSecretKey.bind(null, row),
     },
     {
-      label: '',
-      type: 'link',
-      tooltip: '编辑',
+      text: '编辑',
       icon: 'ant-design:form-outlined',
-      size: 'small',
       auth: [PerPrefix + PerEnum.UPDATE],
       onClick: handleEdit.bind(null, row),
     },
     {
-      label: '',
       icon: 'ant-design:delete-outlined',
       danger: true,
       auth: [PerPrefix + PerEnum.UPDATE],
-      tooltip: '删除',
+      text: '删除',
       popConfirm: {
         title: '确定删除吗？',
         confirm: handleDelete.bind(null, row),
-        placement: 'left',
-        okButtonProps: {danger: true}
+        okText: '确定',
+        cancelText: '取消',
       },
     },
   ];
@@ -159,7 +154,7 @@ function createActions(row: Recordable<any>) {
       </template>
 
       <template #action="{ row }">
-        <TableAction :actions="createActions(row)"/>
+        <VbenTableAction align="center" :actions="createActions(row)"/>
       </template>
     </BasicTable>
     <AppModal ref="appModalRef" @onSuccess="tableApi.reload()"/>

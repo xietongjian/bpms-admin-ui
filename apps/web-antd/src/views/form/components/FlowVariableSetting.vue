@@ -6,7 +6,7 @@
     </div>
     <BasicTable :loading="true" class="variable-table" ref="tableRef" v-bind="gridOptions">
       <template #action="{ row }">
-        <TableAction outside :actions="createActions(row)" />
+        <TableAction :actions="createActions(row)" />
       </template>
       <template #innerVariableRender="{ row }">
         <Tag v-if="row.innerVariable" color="#87d068">是</Tag>
@@ -39,6 +39,7 @@
     saveOrUpdateProcessVariable,
   } from '#/api/flowable/bpmn/modelInfo';
   import { Tag, Button, message } from 'ant-design-vue';
+  import type {ActionItem} from '@vben/common-ui';
   import { TableAction } from '#/components/table-action';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import { downloadByUrl } from '#/utils/file/download';
@@ -203,16 +204,16 @@
   }
 
   const createActions = (record) => {
-    const actions: any[] = [
+    const actions: ActionItem[] = [
       {
-        label: '删除',
+        icon: 'ant-design:delete-outlined',
+        tooltip: '删除',
         danger: true,
         popConfirm: {
           title: '是否确认删除',
           confirm: () => {
             tableApi.grid?.remove(record);
           },
-          okButtonProps: { danger: true },
         },
       },
     ];

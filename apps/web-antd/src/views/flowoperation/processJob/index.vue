@@ -68,8 +68,8 @@
   import { nextTick, ref } from 'vue';
   import { PerEnum } from '#/enums/perEnum';
   import type {Recordable} from '@vben/types';
-  import type {VbenFormProps} from '@vben/common-ui';
-  import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
+import type {VbenFormProps} from '@vben/common-ui';
+import type {VxeGridProps, VxeGridListeners} from '#/adapter/vxe-table';
   import { useClipboard } from '@vueuse/core';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
@@ -183,22 +183,17 @@
         auth: [PerPrefix + PerEnum.UPDATE],
         icon: 'ant-design:play-circle-filled',
         tooltip: '执行',
-        label: '',
-        danger: true,
+          danger: true,
         ifShow: () => jobType.value === 'deadLetter',
         popConfirm: {
           title: '确认执行吗?',
           confirm: handleExe.bind(null, record),
-          okButtonProps:{
-            danger: true
-          }
         },
       },
       {
         icon: 'ant-design:partition-outlined',
         tooltip: '流程图预览',
-        label: '',
-        onClick: handlePreview.bind(null, record),
+          onClick: handlePreview.bind(null, record),
       },
       {
         tooltip: '审批记录',

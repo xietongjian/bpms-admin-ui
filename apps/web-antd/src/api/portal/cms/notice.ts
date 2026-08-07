@@ -13,6 +13,7 @@ enum Api {
   NoticeList = '/flow/portal/cms/notice/list',
   GetSigner = '/flow/portal/cms/notice/getSigner',
   Sync = '/flow/portal/cms/notice/sync',
+  GetFrontNoticePagerList = '/flow/portal/cms/notice/getFrontNoticePagerList',
 }
 
 export const getAllNotice = (params: any) => {
@@ -51,3 +52,7 @@ export const checkEntityExist = (params: any) =>
 export const deleteByIds = (params: Array<string>) => requestClient.delete(Api.Delete, {data: params, responseReturn: 'body'});
 
 export const SyncNotice = () => requestClient.post(Api.Sync );
+
+export const getFrontNoticePagerList = (params: any) => {
+  return requestClient.post(Api.GetFrontNoticePagerList, params);
+};

@@ -38,7 +38,7 @@ export const listColumns: VxeGridProps['columns'] = [
     fixed: 'right',
     slots: {default: 'action'},
     title: '操作',
-    width: 120,
+    width: 280,
   },
 ];
 

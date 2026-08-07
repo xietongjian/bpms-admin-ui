@@ -1,6 +1,6 @@
 import { requestClient } from '#/api/request';
 
-enum Api {
+enum API {
   GetPagerModel = '/flow/auth/authFlowInfo/getPagerModel',
   SaveOrUpdate = '/flow/auth/authFlowInfo/saveOrUpdate',
   Delete = '/flow/auth/authFlowInfo/deleteById',
@@ -8,7 +8,7 @@ enum Api {
 }
 
 export const getAuthPointListByPage = (params: any) => {
-  return requestClient.post<any>(Api.GetPagerModel, params).then((res) => {
+  return requestClient.post<any>(API.GetPagerModel, params).then((res) => {
     if (res.rows.length > 0) {
       res.rows.forEach((item) => {
         if (item.authFlowKeys) {
@@ -21,10 +21,10 @@ export const getAuthPointListByPage = (params: any) => {
 };
 
 export const saveOrUpdate = (params: any) =>
-  requestClient.post<any>(Api.SaveOrUpdate, params, { responseReturn: 'body' });
+  requestClient.post<any>(API.SaveOrUpdate, params, { responseReturn: 'body' });
 
 export const checkEntityExist = (params: any) =>
-  requestClient.post<boolean>(Api.CheckEntityExist, params);
+  requestClient.post<boolean>(API.CheckEntityExist, params);
 
 export const deleteByIds = (params: any) =>
-  requestClient.get(Api.Delete + '/' + params.id, {});
+  requestClient.get(API.Delete + '/' + params.id, {});

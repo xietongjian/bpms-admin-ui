@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onErrorCaptured, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import CustomConfigRender from "#/views/base/systemConfig/components/WorkbenchLayoutRender.vue";
 
@@ -15,31 +15,33 @@ import CalendarCard from './components/CalendarCard.vue';
 import CommonSystem from './components/CommonSystem.vue';
 import NoticeInfo from './components/NoticeInfo.vue';
 
+console.log('[Workbench] 组件模块已加载');
+
 const userStore = useUserStore();
 
 const router = useRouter();
+
+const renderError = ref<Error | null>(null);
+
+onErrorCaptured((err) => {
+  console.error('[Workbench] 子组件渲染错误:', err);
+  renderError.value = err as Error;
+  return false; // 阻止错误继续传播
+});
+
+onMounted(() => {
+  console.log('[Workbench] 组件已挂载');
+});
 
 </script>
 
 <template>
   <div class="w-full h-full overflow-y-auto">
-    <CustomConfigRender />
-
-
-<!--    <div class="flex gap-4 flex-col lg:flex-row">
-      <div class="lg:w-1/3">
-        <GrowCard />
-        <TodoCenter class="!mb-4 enter-y" />
-      </div>
-      <div class="lg:w-1/3">
-        <QuickNav class="enter-y mb-4" />
-        <CommonSystem class="enter-y" />
-      </div>
-      <div class="lg:w-1/3">
-        <WorkbenchHeader class="w-full mb-4" />
-        <CalendarCard class="w-full mb-4" />
-        <NoticeInfo class="w-full "/>
-      </div>
-    </div>-->
+    <div v-if="renderError" style="padding: 20px; color: red;">
+      <h3>Workbench 渲染错误:</h3>
+      <pre>{{ renderError.message }}</pre>
+      <pre>{{ renderError.stack }}</pre>
+    </div>
+    <CustomConfigRender v-else />
   </div>
 </template>

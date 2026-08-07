@@ -212,10 +212,7 @@
           title: '是否确认删除',
           confirm: handleDelete.bind(null, row),
           placement: 'left',
-          okButtonProps: {
-            danger: true,
-          }
-        },
+          },
       },
     ];
   }

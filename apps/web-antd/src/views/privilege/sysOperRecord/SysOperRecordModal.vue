@@ -1,15 +1,38 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal">
-    <Descriptions @register="registerDescription" class="operation-desc"/>
+  <BasicModal class="w-[850px]">
+    <Descriptions bordered :column="1" size="small" class="operation-desc">
+      <DescriptionsItem
+        v-for="item in descriptionSchema"
+        :key="item.field"
+        :label="item.label"
+        :span="item.span || 1"
+        :labelStyle="{'min-width': item.labelMinWidth ? item.labelMinWidth + 'px' : undefined}"
+      >
+        <CodeEditor
+          v-if="item.field === 'operContent' && currentRecord"
+          style="max-height: 500px; overflow: auto;"
+          :value="currentRecord[item.field]"
+          readonly
+          mode="application/json"
+          auto-format
+        />
+        <span v-else-if="item.field === 'userName' && currentRecord">
+          {{ currentRecord.userName }} - [{{ currentRecord.userCode }}]
+        </span>
+        <span v-else-if="currentRecord">{{ currentRecord[item.field] }}</span>
+      </DescriptionsItem>
+    </Descriptions>
   </BasicModal>
 </template>
 <script lang="ts" setup>
-import {ref, computed, unref, defineEmits, defineExpose} from 'vue';
+import {ref, defineEmits, defineExpose} from 'vue';
 import {descriptionSchema} from './sysOperRecord.data';
 import {useVbenModal} from '@vben/common-ui';
+import {Descriptions} from 'ant-design-vue';
+import {CodeEditor} from '#/components/CodeEditor';
 
-// import { Description, useDescription } from '@/components/Description/index';
-import {message, Descriptions} from 'ant-design-vue';
+const emit = defineEmits(['success', 'register']);
+const currentRecord = ref<Record<string, any>>();
 
 const [BasicModal, modalApi] = useVbenModal({
   draggable: true,
@@ -18,37 +41,11 @@ const [BasicModal, modalApi] = useVbenModal({
   },
   onOpenChange(isOpen: boolean) {
     if (isOpen) {
-      const values = modalApi.getData<Record<string, any>>();
-      if (values) {
-        // formApi.setValues(values);
-        modalApi.setState({loading: false, confirmLoading: false});
-      }
+      currentRecord.value = modalApi.getData<Record<string, any>>();
+      modalApi.setState({loading: false, confirmLoading: false});
     }
-  },
-  onConfirm() {
-    // handleSubmit();
   },
 });
 
-/*export default defineComponent({
-  name: 'LoginLogModal',
-  components: { BasicModal, Description },
-  emits: ['success', 'register'],
-  setup(_, { emit }) {
-    const [registerDescription, { setDescProps }] = useDescription({
-      title: '',
-      column: 1,
-      schema: descriptionSchema,
-    });
-
-    const [registerModal] = useModalInner(async (data) => {
-      setDescProps({
-        data: data.record,
-      });
-    });
-
-    return { registerDescription, registerModal };
-  },
-});*/
 defineExpose(modalApi);
 </script>

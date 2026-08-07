@@ -4,7 +4,7 @@ import {useVbenModal} from '@vben/common-ui';
 import {message} from 'ant-design-vue';
 import {formSchema} from './group.data';
 import {useVbenForm} from '#/adapter/form';
-import { saveOrUpdate } from '#/api/privilege/group';
+import { saveOrUpdate, getDataPermissionVos } from '#/api/privilege/group';
 
 const emit = defineEmits<{
   onSuccess: [void];
@@ -28,8 +28,17 @@ const [BasicModal, modalApi] = useVbenModal({
   onCancel() {
     modalApi.close();
   },
-  onOpenChange(isOpen: boolean) {
+  async onOpenChange(isOpen: boolean) {
     if (isOpen) {
+      const groupTypes = (await getDataPermissionVos()) || [];
+      formApi.setSchema([
+        {
+          fieldName: 'type',
+          componentProps: {
+            options: groupTypes.map((item: any) => ({ value: item.code, label: item.name })),
+          },
+        },
+      ]);
       const values = modalApi.getData<Record<string, any>>();
       if (values) {
         formApi.setValues(values);

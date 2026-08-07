@@ -14,7 +14,7 @@ export const overridesPreferences = defineOverridesPreferences({
     loginExpiredMode: 'modal',
     dynamicTitle: true,
     layout: "mixed-nav",
-    accessMode: 'backend',
+    accessMode: 'mixed',
     name: import.meta.env.VITE_APP_TITLE,
     // 是否开启检查更新
     enableCheckUpdates: true,

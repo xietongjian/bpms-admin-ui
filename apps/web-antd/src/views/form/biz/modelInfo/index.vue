@@ -288,13 +288,11 @@
         auth: [PerPrefix + PerEnum.UPDATE],
         icon: 'ant-design:form-outlined',
         tooltip: '编辑',
-        label: '',
         onClick: handleEdit.bind(null, record),
       },
       {
         icon: 'ant-design:partition-outlined',
         tooltip: '流程图预览',
-        label: '',
         onClick: handleBpmnPreview.bind(null, record.modelKey),
       },
     ];

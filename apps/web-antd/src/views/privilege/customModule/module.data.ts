@@ -1,8 +1,5 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 
-import { h } from 'vue';
-import { Tag } from 'ant-design-vue';
-// import Icon from '@/components/Icon/Icon.vue';
 import { OrderNoDefaultEnum } from '#/enums/commonEnum';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 
@@ -11,12 +8,10 @@ export const columns: VxeGridProps['columns'] = [
     title: '标题',
     field: 'name',
     align: 'left',
-    width: 300,
+    minWidth: 250,
     resizable: true,
-    customRender: ({ record }) => {
-      return h('span', {}, [h(Icon, { icon: record.image }), h('span', record.name)]);
-      // return h(Icon, { icon: record.image });
-    },
+    treeNode: true,
+    slots: { default: 'name' },
   },
   {
     title: 'URL',
@@ -24,67 +19,44 @@ export const columns: VxeGridProps['columns'] = [
     align: 'left',
     width: 180,
   },
- /* {
-    resizable: true,
-    title: '标识',
-    field: 'sn',
-    align: 'left',
-    width: 120,
-  },
-  {
-    resizable: true,
-    width: 200,
-    title: '组件',
-    field: 'component',
-    align: 'left',
-  },*/
   {
     title: '菜单类型',
-    field: 'component',
+    field: 'componentType',
     width: 100,
-    customRender: ({ record }) => {
-      const isDictionary = record.component === 'LAYOUT';
-      const color = isDictionary ? 'blue' : 'green';
-      const text = isDictionary ? '目录' : '菜单';
-      return h(Tag, { color: color }, () => text);
-    },
+    slots: { default: 'componentType' },
   },
   {
     title: '状态',
     field: 'status',
     width: 60,
-    customRender: ({ record }) => {
-      const status = record.status;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'red';
-      const text = enable ? '启用' : '停用';
-      return h(Tag, { color: color }, () => text);
-    },
+    slots: { default: 'status' },
   },
   {
     title: '是否显示',
     field: 'showStatus',
     width: 100,
-    customRender: ({ record }) => {
-      const status = record.showStatus;
-      const enable = ~~status === 1;
-      const color = enable ? 'green' : 'gray';
-      const text = enable ? '显示' : '隐藏';
-      return h(Tag, { color: color }, () => text);
-    },
+    slots: { default: 'showStatus' },
   },
-/*  {
+  {
     title: '权限值',
     field: 'pvs',
     align: 'left',
-    width: 300,
+    minWidth: 200,
     resizable: true,
-  },*/
+    slots: { default: 'pvs' },
+  },
   {
     title: '排序',
     field: 'orderNo',
     width: 60,
     align: 'right',
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: { default: 'action' },
+    title: '操作',
+    width: 150,
   },
 ];
 

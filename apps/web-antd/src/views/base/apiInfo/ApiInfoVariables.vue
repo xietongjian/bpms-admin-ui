@@ -2,7 +2,7 @@
   <div class="w-full h-auto flex flex-col">
     <BasicTable ref="tableRef" class="flex-1">
       <template #action="{ row }">
-        <TableAction outside :actions="createActions(row)" />
+        <TableAction :actions="createActions(row)" />
       </template>
       <template #requiredOpen="{ row }">
         <Switch v-model:checked="row.required" />
@@ -161,7 +161,8 @@ function handleAddRow() {
 const createActions = (record) => {
   const actions: any[] = [
     {
-      label: '删除',
+      tooltip: '删除',
+      icon: 'ant-design:delete-outlined',
       danger: true,
       popConfirm: {
         placement: 'left',
@@ -169,9 +170,6 @@ const createActions = (record) => {
         confirm: () => {
           return tableApi.grid?.remove(record);
         },
-        okButtonProps: {
-          danger: true
-        }
       },
     },
   ];

@@ -105,11 +105,10 @@ function createActions(mainRow, row) {
       icon: 'ant-design:delete-outlined',
       danger: true,
       tooltip: '删除',
-      popConfirm: {
-        title: '是否确认删除',
-        confirm: handleDeletePersonal.bind(null, mainRow, row),
-        okButtonProps: {danger: true},
-      },
+        popConfirm: {
+          title: '是否确认删除',
+          confirm: handleDeletePersonal.bind(null, mainRow, row),
+        },
     },
   ];
 }

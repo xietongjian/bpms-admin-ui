@@ -6,8 +6,6 @@
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {Page} from '@vben/common-ui';
-  import {TableAction} from '#/components/table-action';
-
   import { DatePicker, Modal } from 'ant-design-vue';
   // import { CollapseContainer } from '@/components/Container';
   import { createVNode, ref } from 'vue';

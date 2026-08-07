@@ -39,7 +39,9 @@ export function getVerifyCaptcha() {
  * @param data
  */
 export function checkVerifyCaptcha(data: any) {
-  return requestClient.post('/flow/verify/check', data, { responseReturn: "body" });
+  return requestClient.post('/flow/verify/check', data, { responseReturn: "body" }).then((res) => {
+    return { success: res?.code === '100' || res?.success === true };
+  });
 }
 
 

@@ -20,7 +20,7 @@ import viteVueDevTools from 'vite-plugin-vue-devtools';
 import { viteArchiverPlugin } from './archiver';
 import { viteDayjsPlugin } from './dayjs';
 import { viteExtraAppConfigPlugin } from './extra-app-config';
-import { viteHtmlPlugin } from './html';
+import { viteHtmlPlugin, viteMinifyPlugin } from './html';
 import { viteImportMapPlugin } from './importmap';
 import { viteInjectAppLoadingPlugin } from './inject-app-loading';
 import { viteMetadataPlugin } from './inject-metadata';
@@ -200,8 +200,12 @@ async function loadApplicationPlugins(
       },
     },
     {
+      condition: true,
+      plugins: () => [viteHtmlPlugin()],
+    },
+    {
       condition: !!html,
-      plugins: () => [viteHtmlPlugin(typeof html === 'object' ? html : {})],
+      plugins: () => [viteMinifyPlugin(typeof html === 'object' ? html : {})],
     },
     {
       condition: isBuild && importmap,
@@ -256,6 +260,7 @@ export {
   viteDayjsPlugin,
   viteDtsPlugin,
   viteHtmlPlugin,
+  viteMinifyPlugin,
   viteVisualizerPlugin,
   viteVxeTableImportsPlugin,
 };

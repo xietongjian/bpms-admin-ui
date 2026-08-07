@@ -264,13 +264,11 @@ function createSubActions(record: Recordable<any>, itemRecord: Recordable<any>) 
       popConfirm: {
         title: '是否确认挂起',
         confirm: handleSuspend.bind(null, record, itemRecord),
-        okButtonProps: { danger: true },
       },
     },
     {
       auth: [PerPrefix + PerEnum.UPDATE],
       icon: 'ant-design:play-circle-outlined',
-      color: 'success',
       tooltip: '激活',
       ifShow: itemRecord.suspensionState === 2,
       popConfirm: {

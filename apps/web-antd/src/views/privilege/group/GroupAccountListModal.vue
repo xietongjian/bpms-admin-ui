@@ -19,14 +19,11 @@
                 auth: 'Group:' + PerEnum.DELETE,
                 tooltip: '移除',
                 icon: 'ant-design:delete-outlined',
-                color: 'error',
+                danger: true,
                 popConfirm: {
                   title: '是否确认移除',
                   confirm: handleDelete.bind(null, record),
                   placement: 'left',
-                  okButtonProps: {
-                    danger: true
-                  }
                 },
               },
             ]"

@@ -204,21 +204,18 @@ function createSubActions(mainRecord: Recordable<any>, record: Recordable<any>) 
     {
       auth: [PerPrefix + PerEnum.UPDATE],
       icon: 'ant-design:form-outlined',
-      title: '编辑',
+      tooltip: '编辑',
       onClick: handleEditProperties.bind(null, mainRecord, record),
     },
     {
       auth: [PerPrefix + PerEnum.DELETE],
       icon: 'ant-design:delete-outlined',
       danger: true,
-      title: '删除',
+      tooltip: '删除',
       popConfirm: {
         title: '是否确认删除',
         confirm: handleDeleteProperty.bind(null, mainRecord, record),
         placement: 'right',
-        okButtonProps: {
-          danger: true
-        }
       },
     },
   ];
@@ -250,9 +247,6 @@ function createActions(record: Recordable<any>) {
         title: '是否确认删除',
         confirm: handleDelete.bind(null, record),
         placement: 'left',
-        okButtonProps: {
-          danger: true,
-        }
       },
     },
   ];

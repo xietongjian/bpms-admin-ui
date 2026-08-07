@@ -15,8 +15,8 @@
   import { ref, defineExpose } from 'vue';
   import { PerEnum } from '#/enums/perEnum';
   import type {VxeGridProps} from '#/adapter/vxe-table';
-  import type {VbenFormProps} from '@vben/common-ui';
-  import type {Recordable} from '@vben/types';
+import type {VbenFormProps} from '@vben/common-ui';
+import type {Recordable} from '@vben/types';
   import { TableAction } from '#/components/table-action';
   import {useVbenVxeGrid} from "#/adapter/vxe-table";
   import {Button, message} from 'ant-design-vue';
@@ -104,10 +104,7 @@
           title: '是否确认删除',
           confirm: handleDelete.bind(null, record),
           placement: 'left',
-          okButtonProps: {
-            danger: true
-          }
-        },
+          },
       },
     ];
   }

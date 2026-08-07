@@ -263,6 +263,19 @@ export const apiInfoFormSchema: FormSchema[] = [
     }, '请输入正确的参数格式，如{"a": "123"}').optional(),
   },
   {
+    fieldName: 'requestBodyFieldDescription',
+    label: '请求体字段描述',
+    component: 'Textarea',
+    wrapperClass: 'border',
+    formItemClass: 'items-start',
+    componentProps: {
+      autoSize: {
+        minRows: RemarkDefaultEnum.MIN_ROWS,
+        maxRows: RemarkDefaultEnum.MAX_ROWS,
+      },
+    },
+  },
+  {
     fieldName: 'responseBodyCase',
     label: '响应示例',
     component: markRaw(CodeEditor),
@@ -275,6 +288,19 @@ export const apiInfoFormSchema: FormSchema[] = [
         width: '100%', minHeight: '100px'
       },
       placeholder: '请输入有效的JSON对象数据格式：如{"a": "123"}',
+    },
+  },
+  {
+    fieldName: 'responseFieldDescription',
+    label: '响应字段描述',
+    component: 'Textarea',
+    wrapperClass: 'border',
+    formItemClass: 'items-start',
+    componentProps: {
+      autoSize: {
+        minRows: RemarkDefaultEnum.MIN_ROWS,
+        maxRows: RemarkDefaultEnum.MAX_ROWS,
+      },
     },
   },
 ];

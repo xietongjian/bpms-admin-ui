@@ -153,6 +153,7 @@ function createActions(record: Recordable<any>) {
       tooltip: '添加子菜单',
       icon: 'ant-design:plus-outlined',
       onClick: handleCreateChild.bind(null, record),
+      ifShow: record.component === 'LAYOUT',
     },
     {
       auth: [PerPrefix + PerEnum.AUTH],
@@ -178,9 +179,6 @@ function createActions(record: Recordable<any>) {
         placement: 'left',
         title: '是否确认删除',
         confirm: handleDelete.bind(null, record),
-        okButtonProps: {
-          danger: true,
-        }
       },
     },
   ];

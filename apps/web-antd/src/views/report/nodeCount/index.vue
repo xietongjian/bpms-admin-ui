@@ -109,7 +109,6 @@
       {
         icon: 'ant-design:partition-outlined',
         tooltip: '流程图预览',
-        label: '',
         onClick: handlePreview.bind(null, row),
       },
       /*{

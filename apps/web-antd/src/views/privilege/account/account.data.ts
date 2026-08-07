@@ -73,6 +73,13 @@ export const columns: VxeGridProps['columns'] = [
     slots: {default: 'sex'}
   },
   {
+    title: '状态',
+    field: 'status',
+    width: 80,
+    align: 'center',
+    slots: {default: 'status'},
+  },
+  {
     title: '所属组',
     field: 'groups',
     align: 'left',
@@ -158,6 +165,7 @@ export const accountFormSchema: FormSchema[] = [
           const currentPersonal = values.realNameSelector[0];
           currentPersonal&&form.setFieldValue('username', (values.id && values.username) ?? currentPersonal.value, true);
           currentPersonal&&form.setFieldValue('userNo', currentPersonal.value, true);
+          currentPersonal&&form.setFieldValue('realName', currentPersonal.label, true);
         }
       },
     }
@@ -215,6 +223,7 @@ export const accountFormSchema: FormSchema[] = [
           })
           .min(1, "用户名不能为空！")
           .max(30, '字符长度不能大于30！')
+          .regex(new RegExp(FormValidPatternEnum.SN), '请输入英文或数字（以英文或下划线开头）！')
           .refine(
             async (e) => {
               let result = false;
@@ -262,15 +271,64 @@ export const accountFormSchema: FormSchema[] = [
     label: '手机',
     fieldName: 'mobile',
     component: 'Input',
-    rules: "required",
     formItemClass: 'col-span-2',
+    dependencies: {
+      rules(values) {
+        return z
+          .string({
+            required_error: '手机不能为空！'
+          })
+          .min(1, '手机不能为空！')
+          .max(32, '字符长度不能大于32！')
+          .regex(new RegExp(FormValidPatternEnum.MOBILE), '请输入正确的手机号！')
+          .refine(async (v) => {
+            if (!v) return true;
+            let result = false;
+            try {
+              result = await checkEntityExist({
+                id: values.id,
+                field: 'mobile',
+                fieldValue: values.mobile || '',
+                fieldName: '手机号',
+              });
+            } catch (_e) {
+              console.error(_e);
+            }
+            return result;
+          }, { message: '手机号已存在' });
+      },
+      triggerFields: ['mobile'],
+    },
   },
   {
     label: '邮箱',
     fieldName: 'email',
     component: 'Input',
-    rules: "required",
     formItemClass: 'col-span-3',
+    dependencies: {
+      rules(values) {
+        return z
+          .string()
+          .regex(new RegExp(FormValidPatternEnum.EMAIL), '请输入正确的邮箱地址！')
+          .max(256, '字符长度不能大于256！')
+          .refine(async (v) => {
+            if (!v) return true;
+            let result = false;
+            try {
+              result = await checkEntityExist({
+                id: values.id,
+                field: 'email',
+                fieldValue: values.email || '',
+                fieldName: '邮箱',
+              });
+            } catch (_e) {
+              console.error(_e);
+            }
+            return result;
+          }, { message: '邮箱已存在' });
+      },
+      triggerFields: ['email'],
+    },
   },
 ];
 

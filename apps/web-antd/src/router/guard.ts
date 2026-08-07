@@ -96,12 +96,27 @@ function setupAccessGuard(router: Router) {
     const userRoles = userInfo.roles ?? [];
 
     // 生成菜单和路由
-    const { accessibleMenus, accessibleRoutes } = await generateAccess({
-      roles: userRoles,
-      router,
-      // 则会在菜单中显示，但是访问会被重定向到403
-      routes: accessRoutes,
-    });
+    console.log('[Guard] 开始生成动态路由...');
+    let accessibleMenus, accessibleRoutes;
+    try {
+      const result = await generateAccess({
+        roles: userRoles,
+        router,
+        // 则会在菜单中显示，但是访问会被重定向到403
+        routes: accessRoutes,
+      });
+      accessibleMenus = result.accessibleMenus;
+      accessibleRoutes = result.accessibleRoutes;
+      console.log('[Guard] 动态路由生成成功:', { 
+        menusCount: accessibleMenus?.length, 
+        routesCount: accessibleRoutes?.length,
+        routeNames: accessibleRoutes?.map((r: any) => r.name),
+        routePaths: accessibleRoutes?.map((r: any) => r.path),
+      });
+    } catch (e) {
+      console.error('[Guard] 动态路由生成失败:', e);
+      throw e;
+    }
 
     // 保存菜单信息和路由信息
     accessStore.setAccessMenus(accessibleMenus);
@@ -111,6 +126,10 @@ function setupAccessGuard(router: Router) {
       (to.path === preferences.app.defaultHomePath
         ? userInfo.homePath || preferences.app.defaultHomePath
         : to.fullPath)) as string;
+
+    console.log('[Guard] 重定向路径:', redirectPath);
+    console.log('[Guard] homePath:', userInfo.homePath, 'defaultHomePath:', preferences.app.defaultHomePath);
+    console.log('[Guard] router.getRoutes():', router.getRoutes().map(r => ({name: r.name, path: r.path})));
 
     return {
       ...router.resolve(decodeURIComponent(redirectPath)),

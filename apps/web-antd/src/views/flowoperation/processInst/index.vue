@@ -12,7 +12,7 @@
         </RadioGroup>
       </template>
       <template #action="{row}">
-        <TableAction :actions="getTableActions(row)" :dropDownActions="getTableDownActions(row)"/>
+        <TableAction :actions="getTableActions(row)" :dropdown-actions="getTableDownActions(row)"/>
       </template>
       <template #processInstanceId="{row}">
         <a @click="doCopyContent(row.processInstanceId)"><CopyOutlined /></a>
@@ -66,8 +66,8 @@
   import { createVNode, ref } from 'vue';
   import { PerEnum } from '#/enums/perEnum';
   import type {Recordable} from '@vben/types';
-  import type {VbenFormProps} from '@vben/common-ui';
-  import type {VxeGridProps} from '#/adapter/vxe-table';
+import type {VbenFormProps} from '@vben/common-ui';
+import type {VxeGridProps} from '#/adapter/vxe-table';
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {Page} from '@vben/common-ui';
@@ -395,7 +395,6 @@
   function getTableActions(record: Recordable<any>) {
     return [
       {
-        label: '',
         tooltip: '查看表单',
         icon: 'ant-design:pic-right-outlined',
         onClick: () => handleViewForm(record),
@@ -403,7 +402,6 @@
       {
         icon: 'ant-design:partition-outlined',
         tooltip: '流程图预览',
-        label: '',
         onClick: () => handlePreview(record),
       },
       {
@@ -423,7 +421,6 @@
       {
         auth: ['ProcessInst:' + PerEnum.UPDATE],
         icon: 'ant-design:stop-twotone',
-        label: '终止',
         danger: true,
         ifShow: record.processStatus !== 'end' && record.processStatus !== 'zz',
         onClick: () => handleStop(record),
@@ -435,7 +432,6 @@
           record.suspensionState === 1
             ? 'ant-design:pause-circle-filled'
             : 'ant-design:play-circle-filled',
-        label: record.suspensionState === 1 ? '挂起' : '激活',
         danger: true,
         onClick: () => handleChangePState(record),
       },
@@ -446,28 +442,24 @@
         {
           auth: [PerPrefix + PerEnum.UPDATE],
           icon: 'clarity:fast-forward-line',
-          label: '执行',
           danger: true,
           onClick: () => execute(record),
         },
         {
           auth: [PerPrefix + PerEnum.UPDATE],
           icon: 'ant-design:rollback-outlined',
-          label: '干预',
           danger: true,
           onClick: () => handleIntervention(record),
         },
         {
           auth: [PerPrefix + PerEnum.UPDATE],
           icon: 'ant-design:branches-outlined',
-          label: '切换版本',
           danger: true,
           onClick: () => handleChangeVersion(record),
         },
         {
           auth: [PerPrefix + PerEnum.UPDATE],
           icon: 'clarity:code-outline-badged',
-          label: '变量补偿',
           danger: true,
           onClick: () => handleChangeVariable(record),
         }
@@ -480,7 +472,6 @@
         auth: [PerPrefix + PerEnum.UPDATE],
         icon: 'ant-design:medicine-box-outlined',
         tooltip: '复活',
-        label: '复活',
         danger: true,
         onClick: () => handleRevival(record),
       });

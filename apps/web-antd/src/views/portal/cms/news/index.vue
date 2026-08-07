@@ -298,9 +298,6 @@
         popConfirm: {
           title: '是否确认下架',
           confirm: handleDown.bind(null, record),
-          okButtonProps: {
-            danger: true
-          }
         },
       },
       {
@@ -328,7 +325,6 @@
           title: '是否确认删除',
           placement: 'left',
           confirm: handleDelete.bind(null, record),
-          okButtonProps: { danger: true },
         },
       },
     ];

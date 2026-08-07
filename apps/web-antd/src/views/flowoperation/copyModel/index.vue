@@ -112,8 +112,6 @@
 
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {ColPage, Page} from '@vben/common-ui';
-  import {TableAction} from '#/components/table-action';
-
   // import { BasicForm, useForm } from '@/components/Form/index';
   // import { CollapseContainer } from '@/components/Container/index';
   import { customFormSchema, bizFormSchema } from './copyModel.data';

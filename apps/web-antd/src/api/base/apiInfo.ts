@@ -10,6 +10,7 @@ enum Api {
   SaveOrUpdateApiCategory = '/flow/simulate/apiCategory/saveOrUpdate',
   DeleteApiCategoryById = '/flow/simulate/apiCategory/delete',
   DeleteApiInfoById = '/flow/simulate/apiInfo/delete',
+  GetApiInfoById = '/flow/simulate/apiInfo/getApiInfoById',
 }
 
 export const apiTesting = (params: any) => {
@@ -25,7 +26,7 @@ export const apiTesting = (params: any) => {
     method: params.method,
     data: params.requestBody,
     params: params.params,
-    timeout: 10000,
+    timeout: 30000,
   };
   if(/^http/.test(params.url)){
     return axios.request(reqConfig);
@@ -86,3 +87,5 @@ export const saveOrUpdateApiCategory = (params: any) => requestClient.post(Api.S
 export const deleteApiCategoryById = (id: any) => requestClient.post(Api.DeleteApiCategoryById, [id], {responseReturn: 'body'});
 
 export const deleteApiInfoById = (id: any) => requestClient.post(Api.DeleteApiInfoById, [id], {responseReturn: 'body'});
+
+export const getApiInfoById = (id: any) => requestClient.post(Api.GetApiInfoById, {id}).then((res: any) => res);
