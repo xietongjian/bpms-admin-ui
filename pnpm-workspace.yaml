@@ -211,6 +211,60 @@ catalog:
   yaml-eslint-parser: ^2.1.0
   zod: ^4.4.3
   zod-defaults: ^0.2.3
+  '@ant-design/icons-vue': ^7.0.1
+  '@antv/g2': ^4.2.0
+  '@codemirror/lang-json': ^6.0.2
+  '@codemirror/lang-markdown': ^6.5.0
+  '@codemirror/lang-vue': ^0.1.3
+  '@codemirror/lang-xml': ^6.1.0
+  '@codemirror/state': ^6.7.1
+  '@codemirror/theme-one-dark': ^6.1.3
+  '@codemirror/view': ^6.43.6
+  '@rollup/plugin-commonjs': ^21.0.2
+  '@tinymce/tinymce-vue': ^5.1.1
+  '@typescript-eslint/eslint-plugin': ^8.60.1
+  '@vee-validate/zod': ^4.15.1
+  '@vueup/vue-quill': ^1.0.0-beta.8
+  bpmn-js: ^18.13.1
+  bpmn-js-create-append-anything: ^1.1.0
+  bpmn-js-i18n-zh: ^1.1.0
+  bpmn-js-token-simulation: ^0.38.2
+  bpmn-moddle: ^9.0.1
+  clipboard: ^2.0.10
+  codemirror: ^6.0.2
+  core-js: ^3.8.3
+  diagram-js: ^15.5.0
+  diagram-js-grid-bg: ^1.0.4
+  diagram-js-minimap: ^5.2.0
+  dmn-js: ^16.8.2
+  eslint-plugin-unicorn: ^64.0.0
+  exceljs: ^4.4.0
+  form-making: ^1.2.11
+  github-markdown-css: ^5.5.0
+  grid-layout-plus: ^1.1.0
+  highlight.js: ^11.10.0
+  ids: ^1.0.5
+  js-base64: ^3.7.7
+  js-pinyin: 0.1.9
+  jspdf: ^2.5.1
+  less: ^4.1.2
+  lodash: ^4.17.21
+  lodash-es: ^4.17.21
+  marked: ^15.0.6
+  marked-highlight: ^2.2.1
+  normalize.css: ^8.0.1
+  print-js: ^1.6.0
+  qiniu-js: ^3.4.0
+  tinymce: ^5.10.9
+  vant: ^4.9.9
+  vditor: ^3.10.4
+  vee-validate: ^4.15.1
+  viewerjs: ^1.10.4
+  vue-codemirror: ^6.1.1
+  vue-esign: ^1.1.4
+  vue3-markdown: ^1.1.9
+  vue3-markdown-it: ^1.0.10
+  vuedraggable: ^4.1.0
 
 allowBuilds:
   '@parcel/watcher': true
