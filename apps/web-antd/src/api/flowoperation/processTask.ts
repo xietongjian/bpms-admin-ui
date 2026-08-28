@@ -149,7 +149,7 @@ export function getBizInfoVoByModelKey(params) {
         params.bizId +
         '&procInstId=' +
         params.procInstId,
-    { isReturnNativeResponse: true },
+    { responseReturn: 'raw' },
   );
 }
 // 驳回 => 流程干预
@@ -166,7 +166,7 @@ export function restartProcessInstance(processInstanceId: string, activityIds: s
 }
 // 驳回到提交人
 export function backToSubmitter(params: any) {
-  return requestClient.post(Api.BackToSubmitter, params, { isReturnNativeResponse: true });
+  return requestClient.post(Api.BackToSubmitter, params, { responseReturn: 'body' });
 }
 // 获取可驳回的节点
 export function getBackToStepNodes(params: any) {

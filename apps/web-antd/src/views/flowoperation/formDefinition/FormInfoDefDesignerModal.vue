@@ -1,16 +1,16 @@
 <template>
   <BasicModal :destroyOnClose="true">
     <template #title>
-      <div class="form-def-designer-header">
-        <Space>
+      <div class="flex w-full items-center justify-between gap-2">
+        <Space class="min-w-0">
           <span>
             编辑表单 -
             <Tooltip placement="leftBottom">
               <template #title>{{ formName }}</template>
-              <TypographyText @click="handleCopy(formName)" class="cursor-pointer">{{ formName }}</TypographyText>
+              <TypographyText class="cursor-pointer" @click="handleCopy(formName)">{{ formName }}</TypographyText>
             </Tooltip>
             <span class="mx-1">-</span>
-            <TypographyText type="secondary" @click="handleCopy(modelKey)" class="cursor-pointer">{{ modelKey }}</TypographyText>
+            <TypographyText class="cursor-pointer" type="secondary" @click="handleCopy(modelKey)">{{ modelKey }}</TypographyText>
             <span class="mx-1">- 版本：</span>
             <span>{{ version }}</span>
             <span class="mx-1">-</span>
@@ -19,7 +19,7 @@
             </Tag>
           </span>
         </Space>
-        <Space>
+        <Space class="shrink-0">
           <Popconfirm
             :title="`该表单【${formName}】版本【${version}】已经发布，修改后将影响所有该版本发起的流程表单，请确认？`"
             @confirm="handleSave"
@@ -30,7 +30,7 @@
         </Space>
       </div>
     </template>
-    <div v-if="loaded" class="form-def-designer-modal">
+    <div v-if="loaded" class="h-full">
       <MakingForm ref="makingFormRef" preview key="formDefMaking" class="h-[calc(100vh-140px)]" />
     </div>
   </BasicModal>
@@ -112,13 +112,13 @@
     }
   };
 
-  const [BasicModal, modalApi] = useVbenModal({
+  const [BasicModal, modalApi] = useVbenModal<Record<string, any>>({
     fullscreen: true,
     closable: false,
     fullscreenButton: false,
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
-        const data = modalApi.getData<Record<string, any>>() || {};
+        const data = modalApi.getData() || {};
         loadFormDef(data);
       }
     },
@@ -162,16 +162,3 @@
     }
   };
 </script>
-
-<style lang="scss" scoped>
-  .form-def-designer-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-  }
-
-  .form-def-designer-modal {
-    height: 100%;
-  }
-</style>

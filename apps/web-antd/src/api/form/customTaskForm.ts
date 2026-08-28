@@ -47,15 +47,15 @@ export const createTaskProcess = (params: any) =>
   requestClient.post(Api.CreateTaskProcess, params);
 
 export const deployFlow = (params: any) =>
-  requestClient.post( Api.DeployFlow + '/' + params,{}, { isReturnNativeResponse: true });
+  requestClient.post( Api.DeployFlow + '/' + params,{}, { responseReturn: 'body' });
 
 export const stopFlow = (params: any) =>
-  requestClient.post( Api.StopFlow + '/' + params ,{}, { isReturnNativeResponse: true });
+  requestClient.post( Api.StopFlow + '/' + params ,{}, { responseReturn: 'body' });
 
 export const getById = (params: any) => requestClient.get(Api.GetById + '/' + params);
 
 export const deleteFormById = (params: any) =>
-  requestClient.post( Api.DeleteFormById + '/' + params.id, {}, { isReturnNativeResponse: true });
+  requestClient.post( Api.DeleteFormById + '/' + params.id, {}, { responseReturn: 'body' });
 
 export const deleteByIds = (params?: Array<string>) => requestClient.post(Api.Delete, params);
 

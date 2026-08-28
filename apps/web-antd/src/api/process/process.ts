@@ -86,7 +86,7 @@ export function getCustomFlowSequenceFlows(params: any) {
 
 // 审批
 export function complete(params: any) {
-  return requestClient.post(Api.Complete, params, {isReturnNativeResponse: true});
+  return requestClient.post(Api.Complete, params, { responseReturn: 'raw' });
 }
 
 // 催办
@@ -96,7 +96,7 @@ export function reminderTask(params: any) {
 
 // 通过任务ID查询自定义审批配置项
 export function getCustomApproveSettings(params: any) {
-  return requestClient.get(Api.GetCustomApproveSettings + "/" + params.taskId ,{}, {isReturnNativeResponse: true});
+  return requestClient.get(Api.GetCustomApproveSettings + "/" + params.taskId ,{}, { responseReturn: 'raw' });
 }
 
 // 通过业务单据ID获取当前审批人
@@ -115,47 +115,47 @@ export function stopProcess(params: any) {
 }
 // 反签收
 export function unClaimTask(params: any) {
-  return requestClient.post(Api.UnClaimTask, params , {isReturnNativeResponse: true});
+  return requestClient.post(Api.UnClaimTask, params , { responseReturn: 'raw' });
 }
 // 签收
 export function claimTask(params: any) {
-  return requestClient.post(Api.ClaimTask, params , {isReturnNativeResponse: true});
+  return requestClient.post(Api.ClaimTask, params , { responseReturn: 'raw' });
 }
 // 委派
 export function delegateTask(params: any) {
-  return requestClient.post(Api.DelegateTask, params , {isReturnNativeResponse: true});
+  return requestClient.post(Api.DelegateTask, params , { responseReturn: 'raw' });
 }
 // 暂存
 export function holdTask(params: any) {
-  return requestClient.post(Api.HoldTask, params , {isReturnNativeResponse: true});
+  return requestClient.post(Api.HoldTask, params , { responseReturn: 'raw' });
 }
 // 转办
 export function turnTask(params: any) {
-  return requestClient.post(Api.TurnTask, params, {isReturnNativeResponse: true});
+  return requestClient.post(Api.TurnTask, params, { responseReturn: 'raw' });
 }
 // 前加签
 export function afterAddSign(params: any) {
-  return requestClient.post(Api.AfterAddSign, params, {isReturnNativeResponse: true});
+  return requestClient.post(Api.AfterAddSign, params, { responseReturn: 'raw' });
 }
 // 后加签
 export function beforeAddSign(params: any) {
-  return requestClient.post(Api.BeforeAddSign, params, {isReturnNativeResponse: true});
+  return requestClient.post(Api.BeforeAddSign, params, { responseReturn: 'raw' });
 }
 // 驳回
 export function backToStep(params: any) {
-  return requestClient.post(Api.BackToStep, params, {isReturnNativeResponse: true});
+  return requestClient.post(Api.BackToStep, params, { responseReturn: 'raw' });
 }
 // 驳回到提交人
 export function backToSubmitter(params: any) {
-  return requestClient.post(Api.BackToSubmitter, params, {isReturnNativeResponse: true});
+  return requestClient.post(Api.BackToSubmitter, params, { responseReturn: 'raw' });
 }
 // 撤回接口
 export function revokeProcess(params: any) {
-  return requestClient.post(Api.RevokeProcess, params, {isReturnNativeResponse: true});
+  return requestClient.post(Api.RevokeProcess, params, { responseReturn: 'body' });
 }
 // 转阅
 export function reviewTask(params: any) {
-  return requestClient.post(Api.ReviewTask, params , {isReturnNativeResponse: true});
+  return requestClient.post(Api.ReviewTask, params , { responseReturn: 'raw' });
 }
 // 加载XML
 export function getBpmnByModelKey(params: any) {
@@ -259,7 +259,7 @@ export function getCustomFormInfoVoByModelKeyAndBusinessKey(params: any) {
 }
 export function getBizInfoVoByModelKey(params: any) {
   const url = Api.GetBizInfoVoByModelKey;
-  return requestClient.get<any>(url + '/' + params.modelKey+'?businessKey='+params.bizId+'&procInstId='+params.procInstId,{}, {isReturnNativeResponse: true});
+  return requestClient.get<any>(url + '/' + params.modelKey+'?businessKey='+params.bizId+'&procInstId='+params.procInstId,{}, { responseReturn: 'raw' });
 }
 
 /**
@@ -296,7 +296,7 @@ export function delFormDraftById(params: any) {
 
 // 检测已办任务是否可以取回审批记录
 export function checkFetchBack(params: any) {
-  return requestClient.get(Api.CheckFetchBack + '/' + params.taskId, {}, {isReturnNativeResponse: true});
+  return requestClient.get(Api.CheckFetchBack + '/' + params.taskId, {}, { responseReturn: 'raw' });
 }
 
 // 根据任务ID获取审批记录
@@ -306,7 +306,7 @@ export function getCommentInfoByTaskId(params: any) {
 
 // 取回审批记录 - 更新审批记录
 export function updateCommentInfo(params: any) {
-  return requestClient.post(Api.UpdateCommentInfo, params , {isReturnNativeResponse: true});
+  return requestClient.post(Api.UpdateCommentInfo, params , { responseReturn: 'raw' });
 }
 
 /**
@@ -511,7 +511,7 @@ export function deleteCommentAttachmentById(params: any) {
 
 // 编辑审批记录message
 export function updateCommentNoteById(params: any) {
-  return requestClient.post(Api.UpdateCommentNoteById, params, {isReturnNativeResponse: true});
+  return requestClient.post(Api.UpdateCommentNoteById, params, { responseReturn: 'raw' });
 }
 
 export function removeFileByFileId(params: any) {

@@ -18,7 +18,7 @@ enum Api {
  * @description: change pwd
  */
 export function restSetPassword(params: any) {
-  return requestClient.post(Api.RestSetPassword, params, { isReturnNativeResponse: true });
+  return requestClient.post(Api.RestSetPassword, params, { responseReturn: 'body' });
 }
 
 /**
@@ -40,7 +40,7 @@ export function getSysConfigVersion() {
  */
 export function getVerifyCode() {
   return requestClient.get<any>(Api.GetVerifyCode,
-    { isReturnNativeResponse: true });
+    { responseReturn: 'body' });
 }
 
 

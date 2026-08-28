@@ -72,10 +72,10 @@ export const saveFormInfo = (params: any) => {
 };
 
 export const deployForm = (params: any) =>
-  requestClient.post(Api.DeployForm + '/' + params, {},{ isReturnNativeResponse: true });
+  requestClient.post(Api.DeployForm + '/' + params, {}, { responseReturn: 'body' });
 
 export const stopForm = (params: any) =>
-  requestClient.post(Api.StopForm + '/' + params , {}, { isReturnNativeResponse: true });
+  requestClient.post(Api.StopForm + '/' + params, {}, { responseReturn: 'body' });
 
 export const copyBizForm = (params: any) =>
   requestClient.post(Api.CopyForm, params, { responseReturn: 'body' });

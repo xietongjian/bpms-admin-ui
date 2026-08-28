@@ -98,7 +98,7 @@ export const getFormInfoByModelKey = (params: any) =>
 export const getFormTemplates = (params: any) => requestClient.post( Api.GetFormTemplates );
 
 export const updateProcessNameByProcInstId = (params: any) =>
-  requestClient.post(Api.UpdateProcessNameByProcInstId, params, {isReturnNativeResponse: true});
+  requestClient.post(Api.UpdateProcessNameByProcInstId, params, { responseReturn: 'body' });
 
 export const getActivityFormItemDefByFormDefId = (params: any) =>
   requestClient.get(Api.GetActivityFormItemDefByFormDefId, { params });

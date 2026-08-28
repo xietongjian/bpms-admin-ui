@@ -27,7 +27,7 @@ export const getFormInfoById = (params: any) =>
   requestClient.get(Api.GetFormInfoById + "/" + params);
 
 export const updateCustomFormData = (params: any) =>
-  requestClient.post(Api.UpdateCustomFormData, params, {isReturnNativeResponse: true});
+  requestClient.post(Api.UpdateCustomFormData, params, { responseReturn: 'raw' });
 
 export const getFormItemShowsByTaskId = (params: any) => {
   return requestClient.post(Api.GetFormItemShowsByTaskId + '/' + params.formType + '/' + params.taskId);

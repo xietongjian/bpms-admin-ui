@@ -52,7 +52,7 @@ export const copyCustomProcess = (params: any) => {
 
 export const copyCustomTaskProcess = (params: any) => {
   return requestClient.post<any>(Api.CopyCustomTaskProcess, params,
-    { isReturnNativeResponse: true },
+    { responseReturn: 'body' },
   );
 };
 

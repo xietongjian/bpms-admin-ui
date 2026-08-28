@@ -121,5 +121,5 @@ export const changeProcInstActive = (params: any) => {
       : Api.ActivateProcessInstanceById) +
     '/' +
     params.procInstId;
-  return requestClient.post<any>(url, {}, { isReturnNativeResponse: true });
+  return requestClient.post<any>(url, {}, { responseReturn: 'body' });
 };

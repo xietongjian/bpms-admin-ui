@@ -89,7 +89,7 @@ export function downloadVariableTemplate() {
   return requestClient.post(
     Api.DownloadVariableTemplate,
     {},
-    { responseType: 'blob', isReturnNativeResponse: true },
+    { responseType: 'blob', responseReturn: 'raw' },
   );
 }
 

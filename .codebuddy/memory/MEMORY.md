@@ -25,8 +25,47 @@
 ### Modal 组件模式
 - `useVbenModal` 返回 `[BasicModal, modalApi]`
 - `defineExpose(modalApi)` 暴露 API
-- `modalApi.getData<T>()` 获取传入数据
+- 数据类型泛型传在 `useVbenModal<TData>()` 上，**不能**传给 `getData()`:
+  - ✅ `useVbenModal<Record<string, any>>({...})` + `modalApi.getData()`
+  - ❌ `modalApi.getData<Record<string, any>>()` → 报 `Expected 0 type arguments, but got 1`
+  - 原因: `getData(): TData | undefined` 不接受类型参数 (`modal-api.ts:109`)
+- `modalApi.getData() || {}` — 必须加 `|| {}` fallback，未 `setData()` 时返回 undefined
 - 父组件通过 `ref.setData()`, `ref.open()`, `ref.setState()` 控制
+
+### Modal 常用状态配置 (ModalApiOptions)
+- `fullscreen: true` — 打开即全屏（⚠️ 无 `defaultFullscreen` 这个 key）
+- `closable: false` — 隐藏右上角默认关闭按钮
+- `fullscreenButton: false` — 隐藏右上角全屏切换按钮
+- `destroyOnClose: true` — 关闭时销毁内容
+- `#title` 插槽可替换 Modal 默认标题栏
+
+### requestClient 响应返回方式（⚠️ vben2 → vben5 重大变更）
+- vben5 只有 `responseReturn?: 'body' | 'data' | 'raw'`（`packages/effects/request/src/request-client/types.ts:28`）
+- **vben2 的 `isReturnNativeResponse` / `isTransformResponse` 在 vben5 中已不存在**，见到就要替换：
+  - `isReturnNativeResponse: true`（返回原始 AxiosResponse）→ 通常应改为 `responseReturn: 'body'`
+  - 判据：看调用方解构什么。若 `const {success, msg} = await api()` → 用 `'body'`
+  - 若用 `'raw'`，调用方拿到的是 AxiosResponse，需再取 `.data`，通常不符合预期
+- 本项目全局默认 `responseReturn: 'data'`，`successCode: '100'`，`codeField: 'code'`（`api/request.ts:115`）
+- 后端返回 `{success, msg}` 而非 `{code, data}` 结构的接口，必须用 `'body'` 跳过 code 校验
+- **⚠️ 不能一刀切替换，必须逐个查调用方**：
+  - `const res = await x(); res.data.success` → `'raw'`
+  - `const {success, msg} = await x()` → `'body'`
+  - 无调用 → 跟随同文件已迁移函数的风格
+- **blob 下载必须 `'raw'`**：`{ responseType: 'blob', responseReturn: 'raw' }`。改 `'body'` 会对 Blob 取 `codeField` 直接报错
+- **同名函数可能分属两个模块且风格相反**（迁移时极易搞混）：
+  - `#/api/process/process` = RAW 派，被 `views/process/components/` 调用
+  - `#/api/flowoperation/processTask` = BODY 派，被 `views/components/preview/processFormPreview/` 调用
+  - 改之前先确认调用方 import 自哪个模块
+- 同一文件内也可能风格分裂（如 `process/process.ts` 的 `revokeProcess` 是 BODY，其余同批是 RAW），
+  所以 `replace_all` 之前要先把例外项单独改掉
+- 状态：截至 2026-08-29，`src/api` 目录 `isReturnNativeResponse` 已全部清零
+
+### 样式约定：Tailwind CSS v4
+- 版本：`tailwindcss: ^4.3.3` + `@tailwindcss/vite: ^4.3.3`（`pnpm-workspace.yaml` catalog）
+- **v4 是 CSS-first 配置：项目里没有 `tailwind.config.js`**，不要去找/建它；主题通过 CSS 的 `@theme` 定义
+- 业务代码优先用 Tailwind 工具类，**避免 `<style scoped>`**（新写/重构时把 scss 类改成工具类）
+- Vue 属性顺序：`class` 等 OTHER_ATTR 要排在 `@click` 等 EVENTS **之前**（`vue/attributes-order` 规则）
+- ⚠️ `truncate` 对 inline 元素（如 `<span>`）无效，需 block/inline-block 或 flex item，且父级链要有 `min-w-0`
 
 ### 导入路径约定
 - `#/adapter/vxe-table` - 表格相关
