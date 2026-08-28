@@ -167,7 +167,7 @@ export const formSchema: FormSchema[] = [
       api: getCompanyTypes,
       placeholder: '请选择公司类型',
       getPopupContainer: () => document.body,
-      treeDataSimpleMode: { id: "id", pId: "pid", rootPId: null },
+      treeDataSimpleMode: { id: 'value', pId: 'pid', rootPId: null },
       // 菜单接口转options格式
       labelField: 'name',
       valueField: 'id',

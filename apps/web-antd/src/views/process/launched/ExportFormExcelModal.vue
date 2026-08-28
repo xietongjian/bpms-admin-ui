@@ -1,12 +1,9 @@
 <template>
   <BasicModal
     wrapClassName="export-form-data-modal"
-    v-bind="$attrs"
     :title="t('component.excel.exportModalTitle')"
-    @ok="handleOk"
-    @register="registerModal"
   >
-    <BasicTable @register="registerFormDataTable">
+    <BasicTable>
 
     </BasicTable>
   </BasicModal>
@@ -153,7 +150,7 @@
         return null;
       }
       modalApi.setState({loading: true, confirmLoading: true});
-      const values = modalApi.getData();
+      const values = modalApi.getData() || {};
       // await formApi.setValues(values);
       tableApi.setTableData([]);
       modalApi.setState({loading: false, confirmLoading: false});

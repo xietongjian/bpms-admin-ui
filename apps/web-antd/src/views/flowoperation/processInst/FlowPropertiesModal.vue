@@ -55,7 +55,7 @@
     },
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
-        const values = modalApi.getData<Record<string, any>>();
+        const values = modalApi.getData<Record<string, any>>() || {};
         if (values) {
           const { processInstanceId: procInstId } = values;
           getVariablesByProcessInstanceId({ processInstanceId: procInstId })

@@ -126,7 +126,7 @@ async function handleDelete(record: Recordable<any>) {
   }
 }
 
-function handleCreateChild(record: Recordable<any>, e) {
+function handleCreateChild(record: Recordable<any>) {
   const title = `新增【${record.name}】的子菜单`
   record = {
     pid: record.id,
@@ -172,9 +172,7 @@ function createActions(record: Recordable<any>) {
       tooltip: '删除',
       icon: 'ant-design:delete-outlined',
       danger: true,
-      onClick: (e) => {
-        e.stopPropagation();
-      },
+      onClick: () => {},
       popConfirm: {
         placement: 'left',
         title: '是否确认删除',

@@ -1,263 +1,181 @@
-<template>
-  <BasicModal>
-    <BasicTable>
-      <template #toolbar-tools>
-      </template>
-      <template #action="{ row }">
-        <TableAction
-            :actions="[
-              {
-                auth: 'Group:' + PerEnum.ADD,
-                tooltip: row.added ? '已添加' : '选择',
-                icon: 'ant-design:plus-outlined',
-                onClick: handleAdd.bind(null, row),
-                disabled: row.added,
-              },
-            ]"
-        />
-      </template>
-      <template #image="{ row }">
-        <Avatar :src="row.image">
-          <template #icon>
-            <UserOutlined/>
-          </template>
-        </Avatar>
-      </template>
-      <template #type="{ row }">
-        <Tag v-if="~~row.type === 1" color="#10AEFF">管理员</Tag>
-        <Tag v-else>普通用户</Tag>
-      </template>
-    </BasicTable>
-  </BasicModal>
-</template>
 <script lang="ts" setup>
-import {defineEmits, defineExpose, ref} from 'vue';
-import type { VxeGridProps } from '#/adapter/vxe-table';
-import type {VbenFormProps} from '@vben/common-ui';
-import {columns, searchFormSchema, setAccountFormSchema} from './group.data';
-import {addUserGroups, getGroupListByPage} from '#/api/privilege/group';
-import {useVbenForm} from "#/adapter/form";
-import {useVbenModal} from '@vben/common-ui';
-import {TableAction} from '#/components/table-action';
+import { ref, watch } from 'vue';
 
-import {
-  accountListColumns,
-  searchUserFormSchema,
-} from './group.data';
-import {getAccountPageList, getAllList} from '#/api/privilege/account';
-import {addGroupUsers, getUserGroupByGroupIdAndUserIdList} from '#/api/privilege/group';
-import {PerEnum} from "#/enums/perEnum";
-import {Avatar, Tag, message} from "ant-design-vue";
-import {UserOutlined} from "@ant-design/icons-vue";
-import {useVbenVxeGrid} from "#/adapter/vxe-table";
+import { useVbenModal } from '@vben/common-ui';
+import { useVbenVxeGrid, type VxeGridProps } from '#/adapter/vxe-table';
 
+import { addGroupUsers, getUserGroupByGroupIdAndUserIdList } from '#/api/privilege/group';
+import { getAccountPageList } from '#/api/privilege/account';
+import OrgTree from '#/views/components/leftTree/OrgTree.vue';
 
-const emit = defineEmits(['success', 'register']);
+const emit = defineEmits(['success']);
 
-const isUpdate = ref(true);
-const currentGroup = ref<any>(null);
+const loading = ref(false);
+const groupId = ref('');
+const selectNodes = ref<(string | number)[]>([]);
+const currentNode = ref<Record<string, any>>({});
+const selectRows = ref<any[]>([]);
+const addedUserIds = ref<string[]>([]);
 
+function handleCheckboxChange({ records }: { records: any[] }) {
+  selectRows.value = [...records];
+}
+
+function handleSelect(_keys: (string | number)[], node: any) {
+  currentNode.value = node;
+  selectNodes.value = _keys;
+  tableApi.query();
+}
 
 const [BasicModal, modalApi] = useVbenModal({
-  draggable: true,
-  onCancel() {
-    modalApi.close();
-  },
-  onOpenChange(isOpen: boolean) {
+  title: '添加人员',
+  class: 'w-[800px]',
+  onOpenChange: async (isOpen: boolean) => {
     if (isOpen) {
-      modalApi.setState({loading: true, confirmLoading: true});
+      const data = modalApi.getData<Record<string, any>>() || {};
+      groupId.value = data.groupId || '';
+      selectNodes.value = [];
+      currentNode.value = {};
+      selectRows.value = [];
+      addedUserIds.value = [];
 
-      const values = modalApi.getData<Record<string, any>>();
-      if (values) {
-        // const users = values.users?.map(item => {
-        //   return item.id
-        // });
-
-        // setTimeout(() => {
-        //   formApi.setValues({...values, users});
-        //   modalApi.setState({loading: false, confirmLoading: false});
-        // }, 500)
+      if (groupId.value) {
+        try {
+          const res = await getUserGroupByGroupIdAndUserIdList({
+            groupId: groupId.value,
+            userIdList: [],
+          });
+          addedUserIds.value = (res || []).map((item: any) => item.userId);
+        } catch {
+          // ignore
+        }
       }
+      setTimeout(() => {
+        tableApi.query();
+      }, 100);
     }
   },
-  onConfirm() {
-    // await baseFormApi.submitForm();
-    handleSubmit();
-  },
+  onConfirm: handleSubmit,
+  confirmLoading: loading,
 });
 
-const formOptions: VbenFormProps = {
-  showCollapseButton: false,
-  submitOnEnter: true,
-  commonConfig: {
-    labelWidth: 60,
-  },
-  wrapperClass: 'grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
-  actionWrapperClass: 'pl-2 !justify-end md:!justify-start',
-  actionPosition: 'left',
-  actionLayout: 'inline',
-  resetButtonOptions: {
-    show: false,
-  },
-  schema: searchUserFormSchema,
-};
+function handleSubmit() {
+  if (selectRows.value.length === 0) {
+    return;
+  }
+  loading.value = true;
+  const users = selectRows.value.map((item: any) => ({
+    userId: item.id,
+    username: item.username,
+  }));
+  addGroupUsers({ groupId: groupId.value, users })
+    .then(() => {
+      emit('success');
+      modalApi.close();
+    })
+    .catch(() => {})
+    .finally(() => {
+      loading.value = false;
+    });
+}
 
-const gridOptions: VxeGridProps = {
-  columns: accountListColumns,
-  columnConfig: {resizable: true},
-  showOverflow: false,
-  height: 'auto',
-  keepSource: true,
-  border: false,
-  stripe: true,
+const gridOptions: VxeGridProps<any> = {
+  columns: [
+    { type: 'checkbox', width: 50 },
+    { title: '账号', field: 'username', minWidth: 120 },
+    { title: '姓名', field: 'nickname', minWidth: 120 },
+    { title: '邮箱', field: 'email', minWidth: 150 },
+    { title: '电话', field: 'tel', minWidth: 120 },
+    { title: '手机', field: 'mobile', minWidth: 120 },
+    { title: '组织', field: 'orgName', minWidth: 150 },
+  ],
+  border: true,
+  showOverflow: true,
+  height: 400,
+  rowConfig: { keyField: 'id', isHover: true },
+  checkboxConfig: {
+    highlight: true,
+    labelField: 'nickname',
+    checkMethod: ({ row }: { row: any }) =>
+      !addedUserIds.value.includes(row.id),
+  },
   proxyConfig: {
     ajax: {
-      query: async ({page}, formValues) => {
-        return getAccountPageList({
-          query: {
-            pageNum: page.currentPage,
-            pageSize: page.pageSize,
-          },
-          entity: formValues || {},
-        });
+      query: async ({ page }: any) => {
+        const params: any = {
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+        };
+        const node = currentNode.value;
+        if (node?.type === 'company') {
+          params.companyId = node.id;
+        } else if (node?.type === 'department') {
+          params.departmentId = node.id;
+        }
+        try {
+          const res = await getAccountPageList(params);
+          const list = (res?.records || []).filter((item: any) => item.id !== '1');
+          return {
+            page: { total: res?.total ?? list.length },
+            result: list,
+          };
+        } catch {
+          return { page: { total: 0 }, result: [] };
+        }
       },
     },
   },
 };
 
-const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
+const [BasicTable, tableApi] = useVbenVxeGrid({ gridOptions });
 
-
-/*const [registerTable, { reload, getForm, getSelectRows, setSelectedRows }] = useTable({
-  title: '用户列表',
-  size: 'small',
-  scroll: {y: 350},
-  api: getAccountPageList,
-  columns: accountListColumns,
-  formConfig: {
-    labelWidth: 120,
-    schemas: searchUserFormSchema,
-    showAdvancedButton: false,
-    showResetButton: false,
-    autoSubmitOnEnter: true,
+watch(
+  () => selectRows.value.length,
+  (len) => {
+    modalApi.setState({ confirmDisabled: len === 0 });
   },
-  canColDrag: true,
-  useSearchForm: true,
-  bordered: true,
-  showIndexColumn: false,
-  rowSelection: {
-    type: 'checkbox',
-    onChange: () => {
-      const noAdded = getSelectRows().filter(item => !item.added);
-      setModalProps({
-        okButtonProps: {
-          disabled: noAdded <= 0,
-        }
-      });
-    },
-    getCheckboxProps: (record) => {
-      return {
-        disabled: record.disabled,
-      };
-    }
-  },
-  immediate: false,
-  actionColumn: {
-    width: 160,
-    title: '操作',
-    dataIndex: 'action',
-  },
-  afterFetch: async (data) => {
-    setSelectedRows([]);
-    if(data){
-      const userIdList = [];
-      data.forEach(item => {
-        item.added = true;
-        userIdList.push(item.id);
-      });
-      let addedUsers = [];
-      // 渲染已添加的数据
-      const groupUsers = await getUserGroupByGroupIdAndUserIdList({groupId: currentGroup.value.id, userIdList});
-      if(groupUsers){
-        addedUsers = groupUsers.map(item => item.userId);
-      }
-      data.forEach(item => {
-        const disabled = addedUsers.includes(item.id);
-        item.added = disabled;
-        item.disabled = disabled;
+  { immediate: true },
+);
 
-      });
-    }
-  },
-});*/
-
-function handleCreate() {
-  // openModal(true, {
-  //   isUpdate: false,
-  // });
-}
-
-function handleOpenChange() {
-  emit('success')
-}
-
-const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
-  setModalProps({
-    confirmLoading: false,
-    title: '给组【' + data.record.name + '(' + data.record.sn + ')】添加用户',
-  });
-  currentGroup.value = data.record;
-  reload();
-});
-
-async function handleSubmit() {
-  const selectedRows = getSelectRows();
-  if (selectedRows && selectedRows.length > 0) {
-    try {
-      setModalProps({confirmLoading: true, loading: true});
-      const users = selectedRows.map(item => {
-        return {id: item.id, userNo: item.userNo};
-      })
-      const {success, msg} = await addGroupUsers({groupId: currentGroup.value.id, users});
-      if (success) {
-        selectedRows.forEach(item => {
-          item.added = true;
-        })
-        message.success(msg);
-        setSelectedRows([]);
-      } else {
-        message.error(msg);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setModalProps({confirmLoading: false, loading: false});
-    }
-  } else {
-    message.warning('请选择用户');
-  }
-}
-
-async function handleAdd(record: Recordable) {
-  if (currentGroup.value) {
-    try {
-      setModalProps({confirmLoading: true, loading: true});
-      await addGroupUsers({groupId: currentGroup.value.id, users: [{id: record.id, userNo: record.userNo}]}).then(res => {
-        if (res.success) {
-          record.added = true;
-          message.success(res.msg);
-        } else {
-          message.error(res.msg);
-        }
-      });
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setModalProps({confirmLoading: false, loading: false});
-    }
-  } else {
-    message.error('未知的角色！');
-  }
-}
-defineExpose(modalApi)
+defineExpose(modalApi);
 </script>
+<template>
+  <BasicModal>
+    <div class="set-account-wrapper">
+      <div class="set-account-left">
+        <div class="set-account-title">组织架构</div>
+        <OrgTree :checkable="false" :selectNodes="selectNodes" @select="handleSelect" />
+      </div>
+      <div class="set-account-right">
+        <div class="set-account-title">人员信息</div>
+        <BasicTable @checkbox-change="handleCheckboxChange" @checkbox-all="handleCheckboxChange" />
+      </div>
+    </div>
+  </BasicModal>
+</template>
+<style scoped>
+.set-account-wrapper {
+  display: flex;
+  height: 500px;
+}
+.set-account-left {
+  width: 220px;
+  flex-shrink: 0;
+  border-right: 1px solid #e8e8e8;
+  overflow: auto;
+  padding: 0 8px 8px;
+}
+.set-account-right {
+  flex: 1;
+  overflow: hidden;
+  padding: 0 8px 8px;
+  display: flex;
+  flex-direction: column;
+}
+.set-account-title {
+  font-weight: 600;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 8px;
+}
+</style>

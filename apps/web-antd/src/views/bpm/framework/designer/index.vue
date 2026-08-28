@@ -41,7 +41,7 @@
           </span>
         </Tooltip>
 
-        <BasicForm @register="registerForm" v-show="!collapseBaseInfo" class="!mt-4" />
+        <BasicForm v-show="!collapseBaseInfo" class="!mt-4" />
       </div>
     </div>
   </Page>

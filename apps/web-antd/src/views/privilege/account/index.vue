@@ -173,8 +173,8 @@ function handleSetGroupSuccess() {
       </template>
 
       <template #groups="{ row }">
-        <div class="max-h-50 overflow-y-auto" v-if="row.groups">
-          <Tag class="my-1" color="green" v-for="item in row.groups">
+        <div class="max-h-50 overflow-y-auto flex flex-wrap gap-x-0 gap-y-1.5" v-if="row.groups">
+          <Tag color="green" v-for="item in row.groups">
             {{ item.name }}
           </Tag>
         </div>

@@ -20,7 +20,6 @@ export const columns = [
     title: '性别',
     dataIndex: 'sex',
     width: 50,
-    slots: {default: 'sex'},
     customRender: ({ record }) => {
       const status = record.sex;
       const enable = ~~status === 1;

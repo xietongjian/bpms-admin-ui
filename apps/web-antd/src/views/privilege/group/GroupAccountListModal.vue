@@ -1,6 +1,6 @@
 <template>
   <BasicModal class="w-[800px]">
-    <BasicTable @register="registerTable" class="m-0">
+    <BasicTable class="m-0">
       <template v-if="isUpdate" #toolbar>
         <Authority :value="'Group:' + PerEnum.DELETE">
           <PopConfirmButton :disabled="batchDeleteBtnDisabled" :title="`确定要批量移除已选用户吗？`" @confirm="handleBatchDeleteUser" type="error" >
@@ -11,8 +11,8 @@
           <a-button type="primary" @click="handleAddUser"> 添加 </a-button>
         </Authority>
       </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="isUpdate && column.key === 'action'">
+      <template #action="{ row }">
+        <template v-if="isUpdate">
           <TableAction
               :actions="[
               {
@@ -22,7 +22,7 @@
                 danger: true,
                 popConfirm: {
                   title: '是否确认移除',
-                  confirm: handleDelete.bind(null, record),
+                  confirm: handleDelete.bind(null, row),
                   placement: 'left',
                 },
               },
@@ -31,11 +31,11 @@
         </template>
       </template>
     </BasicTable>
-    <SetAccountModal ref="setAccountModalRef"/>
+    <SetAccountModal ref="setAccountModalRef" @success="reloadTable"/>
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import {ref, computed, unref, defineEmits} from 'vue';
+  import {ref, computed, unref, defineEmits, defineExpose} from 'vue';
   import type {VbenFormProps} from '@vben/common-ui';
   import type { VxeGridProps } from '#/adapter/vxe-table';
   import {message} from 'ant-design-vue';
@@ -44,16 +44,16 @@
     groupUserListColumns,
     searchGroupAccountListFormSchema,
   } from './group.data';
-  import {addUserGroups, delGroupUsers, getGroupListByPage, getUserGroupVoListByPager} from '#/api/privilege/group';
+  import {delGroupUsers, getUserGroupVoListByPager} from '#/api/privilege/group';
   import {PerEnum} from '#/enums/perEnum';
   import SetAccountModal from './SetAccountModal.vue';
   import {useVbenVxeGrid} from "#/adapter/vxe-table";
 
-  const emit = defineEmits(['success', 'register']);
+  const emit = defineEmits(['success']);
 
   const isUpdate = ref(true);
   const currentGroup = ref<any>(null);
-
+  const setAccountModalRef = ref();
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
@@ -62,12 +62,19 @@
     },
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
-        const values = modalApi.getData<Record<string, any>>();
-        currentGroup.value = values;
-        // if (values) {
-        //   formApi.setValues(values);
-        //   modalApi.setState({loading: false, confirmLoading: false});
-        // }
+        const data = modalApi.getData<Record<string, any>>() || {};
+        isUpdate.value = data.isUpdate ?? true;
+        currentGroup.value = data.record;
+
+        if (data.record) {
+          modalApi.setState({
+            title: '查看【' + data.record.name + '(' + data.record.sn + ')】已分配的用户',
+          });
+        }
+        // delay reload to ensure grid is mounted inside modal
+        setTimeout(() => {
+          tableApi.query();
+        }, 100);
       }
     },
     onConfirm() {
@@ -94,6 +101,10 @@
 
   const gridOptions: VxeGridProps = {
     columns: groupUserListColumns,
+    checkboxConfig: {
+      highlight: true,
+      labelField: 'name',
+    },
     columnConfig: {resizable: true},
     showOverflow: false,
     height: 'auto',
@@ -103,13 +114,15 @@
     proxyConfig: {
       ajax: {
         query: async ({page}, formValues) => {
-          formValues.groupId = currentGroup.value.id;
+          if (!currentGroup.value?.id) {
+            return { rows: [], total: 0 };
+          }
           return getUserGroupVoListByPager({
             query: {
               pageNum: page.currentPage,
               pageSize: page.pageSize,
             },
-            entity: formValues || {},
+            entity: { ...formValues, groupId: currentGroup.value.id } || {},
           });
         },
       },
@@ -118,91 +131,41 @@
 
   const [BasicTable, tableApi] = useVbenVxeGrid({formOptions, gridOptions});
 
-  const [registerTable, {reload, getSelectRows, setSelectedRows}] = useTable({
-    title: '列表',
-    size: 'small',
-    scroll: {y: 350},
-    api: getUserGroupVoListByPager,
-    columns: groupUserListColumns,
-    formConfig: {
-      labelWidth: 120,
-      schemas: searchGroupAccountListFormSchema,
-      showAdvancedButton: false,
-      showResetButton: false,
-      autoSubmitOnEnter: true,
-    },
-    canColDrag: true,
-    useSearchForm: true,
-    bordered: true,
-    showIndexColumn: false,
-    rowSelection: {
-      type: 'checkbox',
-    },
-    immediate: false,
-    actionColumn: {
-      width: 160,
-      title: '操作',
-      dataIndex: 'action',
-    },
-    beforeFetch: (values) => {
-      setSelectedRows([]);
-      values.groupId = currentGroup.value.id;
-      return values;
-    },
-  });
-
   const batchDeleteBtnDisabled = computed(() => {
-    return getSelectRows().length <= 0;
+    const rows = tableApi.grid?.getCheckboxRecords?.() || [];
+    return rows.length <= 0;
   });
 
-  function handleAddUser() {
-    openSetAccountModal(true, {
-      isUpdate: false,
-      record: currentGroup.value
-    });
-    setAccountModalProps({
-      width: 900,
-      title: '添加人员',
-      showOkBtn: true,
-      okText: '批量保存',
-      centered: true,
-    });
+  function reloadTable() {
+    tableApi.query();
   }
 
-  const [registerModal, {setModalProps, closeModal}] = useModalInner(async (data) => {
-    setModalProps({
-      confirmLoading: false,
-      title: '查看【' + data.record.name + '(' + data.record.sn + ')】已分配的用户',
+  function handleAddUser() {
+    setAccountModalRef.value.setData({
+      groupId: currentGroup.value.id,
     });
-    isUpdate.value = data.isUpdate;
-
-    currentGroup.value = data.record;
-    reload();
-  });
-
-  let getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
-
-  function handleSetAccountSuccess(){
-    reload();
+    setAccountModalRef.value.open();
   }
 
   function handleDelete(record: any) {
-    delGroupUsers({groupId: record.groupId, idList: [record.id]}).then((res) => {
-      reload();
+    delGroupUsers({groupId: record.groupId, idList: [record.id]}).then(() => {
+      reloadTable();
     });
   }
 
   async function handleBatchDeleteUser() {
-    const selectedRows = getSelectRows();
-    if(selectedRows && selectedRows.length > 0){
-      const idList = selectedRows.map(item => item.id);
-      return delGroupUsers({groupId: currentGroup.value.id, idList}).then((res) => {
-        reload();
+    const selectedRows = tableApi.grid?.getCheckboxRecords?.() || [];
+    if (selectedRows && selectedRows.length > 0) {
+      const idList = selectedRows.map((item: any) => item.id);
+      return delGroupUsers({groupId: currentGroup.value.id, idList}).then(() => {
+        reloadTable();
         return Promise.resolve();
       });
     } else {
-      createMessage.warning('请选择要移除的用户');
+      message.warning('请选择要移除的用户');
       return Promise.resolve();
     }
   }
+
+  defineExpose(modalApi);
 </script>

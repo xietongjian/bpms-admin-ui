@@ -31,7 +31,7 @@ const [BasicModal, modalApi] = useVbenModal({
     }
     modalApi.setState({loading: true, confirmLoading: true});
 
-    const values = modalApi.getData();
+    const values = modalApi.getData() || {};
     await formApi.setValues(values);
     modalApi.setState({loading: false, confirmLoading: false});
   },

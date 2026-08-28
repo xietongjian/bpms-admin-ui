@@ -1,69 +1,63 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal>
+    <BasicForm/>
   </BasicModal>
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref, defineEmits } from 'vue';
-  // import { BasicModal, useModalInner } from '@/components/Modal';
-  // import { BasicForm, useForm } from '@/components/Form/index';
-  import { formSchema } from './module.data';
+  import { useVbenModal } from '@vben/common-ui';
+  import { useVbenForm } from '#/adapter/form';
+
+  import { pValueFormSchema } from './module.data';
   import { saveOrUpdate } from '#/api/privilege/module';
 
   const emit = defineEmits(['success', 'register']);
 
-  const isUpdate = ref(true);
-
-  /*const [registerForm, { resetFields, setFieldsValue, updateSchema, validate }] = useForm({
-    labelWidth: 100,
-    schemas: formSchema,
-    showActionButtonGroup: false,
+  const [BasicModal, modalApi] = useVbenModal({
+    draggable: true,
+    onCancel() {
+      modalApi.close();
+    },
+    onOpenChange(isOpen: boolean) {
+      if (isOpen) {
+        const values = modalApi.getData<Record<string, any>>();
+        if (values) {
+          values.pvs = values.pvs.map((item: any) => item.id);
+          baseFormApi.setValues(values);
+          modalApi.setState({ loading: false, confirmLoading: false });
+        }
+      }
+    },
+    onConfirm() {
+      handleSubmit();
+    },
   });
 
-  const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
-    resetFields();
-    setModalProps({ confirmLoading: false });
-    isUpdate.value = !!data?.isUpdate;
-
-    if (unref(isUpdate)) {
-      setFieldsValue({
-        ...data.record,
-      });
-      updateSchema([
-        {
-          field: 'component',
-          show: false,
-        },
-        {
-          field: 'url',
-          show: false,
-        },
-      ]);
-    } else {
-      updateSchema([
-        {
-          field: 'component',
-          show: true,
-        },
-        {
-          field: 'url',
-          show: true,
-        },
-      ]);
-    }
-  });*/
-
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '修改'));
+  const [BasicForm, baseFormApi] = useVbenForm({
+    commonConfig: {
+      componentProps: {},
+    },
+    showDefaultActions: false,
+    layout: 'horizontal',
+    schema: pValueFormSchema,
+    wrapperClass: 'grid-cols-1',
+  });
 
   async function handleSubmit() {
-    /*try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
+    try {
+      modalApi.setState({ loading: true, confirmLoading: true });
+      const { valid } = await baseFormApi.validate();
+      if (!valid) {
+        return;
+      }
+      const values = await baseFormApi.getValues();
       await saveOrUpdate(values);
-      closeModal();
+      modalApi.close();
       emit('success');
     } finally {
-      setModalProps({ confirmLoading: false });
-    }*/
+      modalApi.setState({ loading: false, confirmLoading: false });
+    }
   }
+
+  defineExpose(modalApi);
 </script>

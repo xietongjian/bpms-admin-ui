@@ -32,7 +32,7 @@
           </Space>
         </div>
       </div>
-      <ApproveHistoryModal ref="approveHistoryModalRef" @register="registerApproveHistoryModal" />
+      <ApproveHistoryModal ref="approveHistoryModalRef" />
     </template>
 
     <div class="flex h-full" style="min-height: inherit">
@@ -158,6 +158,8 @@
   }
 
   const viewerRef = shallowRef<any>();
+  const approveHistoryModalRef = ref();
+
   function loadSvgXml(xml: string) {
     viewerRef.value?.createNewProcess(xml);
   }
@@ -167,19 +169,12 @@
     // go({ name: 'BusinessFlow' });
   }
 
-  //审批记录
+  // 审批记录
   function approvalRecord(record: Recordable<any>) {
-    openApproveHistoryModal(true, {
-      record: { processInstanceId: record.procInstId },
-      isUpdate: true,
+    approveHistoryModalRef.value?.setData({
+      processInstanceId: record.procInstId,
     });
-    setModalProps({
-      width: 800,
-      height: 500,
-      title: `审批记录`,
-      showOkBtn: false,
-      cancelText: '关闭',
-    });
+    approveHistoryModalRef.value?.open();
   }
 </script>
 

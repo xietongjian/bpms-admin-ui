@@ -3,6 +3,9 @@ import { Base64 } from 'js-base64';
 
 enum Api {
   GetCustomPagerModel = '/flow/form/custom/getCustomPagerModel',
+  GetFormInfoDefPagerModel = '/flow/form/custom/getFormInfoDefPagerModel',
+  GetFormInfoByDefId = '/flow/form/custom/getFormInfoByDefId',
+  UpdateCustomFormInfoDef = '/flow/form/custom/updateCustomFormInfoDef',
   GetById = '/flow/flowable/modelInfo/get',
   GetFormInfoById = '/flow/form/custom/getFormInfoById',
   DeployForm = '/flow/form/custom/deployForm',
@@ -29,6 +32,34 @@ export const getCustomPagerModel = (params: any) => {
   const queryParam = { query, entity };
   return requestClient.post<any>( Api.GetCustomPagerModel, params);
 };
+
+export const pageList = (params: any) => {
+  const { query, entity } = params || {};
+  const queryParam = { query: query || {}, entity: entity || {} };
+  return requestClient.post(Api.GetCustomPagerModel, queryParam);
+};
+
+// 加载自定义 - 表单定义数据
+export const getFormInfoDefPagerModel = (params: any) => {
+  const { query, entity } = params || {};
+  const queryParam = { query: query || {}, entity: entity || {} };
+  return requestClient.post(Api.GetFormInfoDefPagerModel, queryParam);
+};
+
+// 根据表单定义id获取数据
+export const getCustomFormInfoDefByDefId = (params: any) => {
+  return requestClient.get(Api.GetFormInfoByDefId + '/' + params.defId);
+};
+
+export const updateCustomFormInfoDef = (params: any) => {
+  const data = {
+    id: params.id,
+    content: Base64.encode(params.content),
+    formJson: Base64.encode(params.formJson),
+  };
+  return requestClient.post(Api.UpdateCustomFormInfoDef, data);
+};
+
 // 加载XML
 export function getBpmnByModelKey(params: any) {
   return requestClient.get(Api.GetBpmnByModelKey + '/' + params.modelKey, {});

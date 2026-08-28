@@ -11,7 +11,7 @@ enum Api {
 }
 
 export const getApps = () => {
-  return requestClient.post(Api.GetApps)
+  return requestClient.post(Api.GetApps, {})
 };
 
 export const getCompanyTree = () => {

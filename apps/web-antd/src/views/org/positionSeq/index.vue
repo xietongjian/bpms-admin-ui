@@ -106,8 +106,7 @@ function handleCreate() {
   positionSeqModalRef.value.open();
 }
 
-function handleEdit(record: Recordable<any>, e) {
-  e.stopPropagation();
+function handleEdit(record: Recordable<any>) {
   positionSeqModalRef.value.setData(record);
   positionSeqModalRef.value.setState({
     title: '修改岗位序列',
@@ -115,8 +114,7 @@ function handleEdit(record: Recordable<any>, e) {
   positionSeqModalRef.value.open();
 }
 
-function handleCreateChild(record: Recordable<any>, e) {
-  e.stopPropagation();
+function handleCreateChild(record: Recordable<any>) {
   debugger;
   const data = {pid: record.id, status: 1};
   positionSeqModalRef.value.setData(data);

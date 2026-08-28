@@ -91,13 +91,17 @@
 */
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
+      modalApi.setState({ loading: true, confirmLoading: true });
+      const { valid } = await baseFormApi.validate();
+      if (!valid) {
+        return;
+      }
+      const values = await baseFormApi.getValues();
       await saveOrUpdate(values);
-      closeModal();
+      modalApi.close();
       emit('success');
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({ loading: false, confirmLoading: false });
     }
   }
 

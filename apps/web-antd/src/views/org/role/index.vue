@@ -128,9 +128,7 @@ function createActions(record: Recordable<any>) {
       tooltip: '删除',
       icon: 'ant-design:delete-outlined',
       danger: true,
-      onClick: (e) => {
-        e.stopPropagation();
-      },
+      onClick: () => {},
       popConfirm: {
         title: '是否确认删除',
         confirm: handleDelete.bind(null, record),

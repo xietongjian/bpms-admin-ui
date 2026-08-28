@@ -1,7 +1,6 @@
 import type {VbenFormSchema as FormSchema} from '@vben/common-ui';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {z} from "@vben/common-ui";
-import { getAllList } from '#/api/privilege/group';
 import {FormValidPatternEnum} from "#/enums/commonEnum";
 import {checkEntityExist} from "#/api/privilege/account";
 
@@ -392,17 +391,10 @@ export const setGroupFormSchema: FormSchema[] = [
   {
     label: '选择组',
     fieldName: 'groups',
-    component: 'ApiSelect',
+    component: 'Select',
     labelWidth: 50,
     componentProps: {
       placeholder: '请选择用户组',
-      allowClear: true,
-      api: getAllList,
-      mode: 'multiple',
-      fieldNames: {
-        value: 'id',
-        label: 'name'
-      },
       class: 'w-full',
     }
   },

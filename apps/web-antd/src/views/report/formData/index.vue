@@ -18,9 +18,9 @@
         </template>
       </template>
     </BasicTable>
-    <BpmnPreviewModal ref="bpmnPreviewModalRef" @register="registerBpmnPreviewModal" />
-    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" @register="registerProcessFormModal" />
-    <LaunchModal ref="launchModalRef" @register="registerLaunchModal" @success="handleSuccess" />
+    <BpmnPreviewModal ref="bpmnPreviewModalRef" />
+    <ProcessFormPreviewDrawer ref="processFormPreviewDrawerRef" />
+    <LaunchModal ref="launchModalRef" @success="handleSuccess" />
 
   </Page>
 </template>

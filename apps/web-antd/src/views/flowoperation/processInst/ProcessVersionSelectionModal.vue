@@ -130,7 +130,7 @@ const [BasicModal, modalApi] = useVbenModal({
 </script>
 
 <template>
-  <BasicModal v-bind="$attrs" @ok="handleSubmit">
+  <BasicModal>
     <BasicForm >
       <template #paramsList>
         <FormItemRest>

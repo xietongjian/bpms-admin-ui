@@ -21,9 +21,9 @@ const [BasicModal, modalApi] = useVbenModal({
   },
   async onOpenChange(isOpen: boolean) {
     if (isOpen) {
-      const values = modalApi.getData<Record<string, any>>();
+      const values = modalApi.getData<Record<string, any>>() || {};
       if (values) {
-        framework.value = values || {};
+        framework.value = values;
         modalApi.setState({loading: false, confirmLoading: false});
       }
     }

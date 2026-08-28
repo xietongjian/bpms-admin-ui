@@ -3,7 +3,10 @@ import { Base64 } from 'js-base64';
 
 enum Api {
   GetPagerModel = '/flow/form/biz/getPagerModel',
+  GetBizFormInfoDefPagerModel = '/flow/form/biz/getBizFormInfoDefPagerModel',
+  UpdateBizFormInfoDef = '/flow/form/biz/updateBizFormInfoDef',
   GetById = '/flow/flowable/modelInfo/get',
+  GetBizInfoByDefId = '/flow/form/biz/getBizInfoByDefId',
   GetFormInfoById = '/flow/form/custom/getFormInfoById',
   DeployForm = '/flow/form/biz/deployForm',
   StopForm = '/flow/form/biz/stopForm',
@@ -21,6 +24,34 @@ enum Api {
 export const getPagerModel = (params: any) => {
   return requestClient.post<any>(Api.GetPagerModel, params);
 };
+
+export const pageList = (params: any) => {
+  const { query, entity } = params || {};
+  const queryParam = { query: query || {}, entity: entity || {} };
+  return requestClient.post(Api.GetPagerModel, queryParam);
+};
+
+// 加载业务 - 表单定义数据
+export const getBizFormInfoDefPagerModel = (params: any) => {
+  const { query, entity } = params || {};
+  const queryParam = { query: query || {}, entity: entity || {} };
+  return requestClient.post(Api.GetBizFormInfoDefPagerModel, queryParam);
+};
+
+// 根据表单定义ID获取表单结构数据
+export function getBizFormInfoDefByDefId(params: any) {
+  return requestClient.get(Api.GetBizInfoByDefId + '/' + params.defId);
+}
+
+export const updateBizFormInfoDef = (params: any) => {
+  const data = {
+    id: params.id,
+    content: Base64.encode(params.content),
+    formJson: Base64.encode(params.formJson),
+  };
+  return requestClient.post(Api.UpdateBizFormInfoDef, data);
+};
+
 // 加载XML
 export function getBpmnByModelKey(params: any) {
   return requestClient.get(Api.GetBpmnByModelKey + '/' + params.modelKey, {});

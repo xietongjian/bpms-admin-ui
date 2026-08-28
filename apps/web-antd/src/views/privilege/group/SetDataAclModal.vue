@@ -69,8 +69,8 @@ const struct: any = reactive({
 const [BasicModal, modalApi] = useVbenModal({
   onOpenChange(isOpen: boolean) {
     if (isOpen) {
-      const data = modalApi.getData<Record<string, any>>();
-      record.value = data.record;
+      const data = modalApi.getData<Record<string, any>>() || {};
+      record.value = data;
       dataAclType.value = 'app';
       getDataAclByGroupId({ groupId: record.value.id }).then((res: any) => {
         const companies = (res.companies || []).map((item: any) => ({

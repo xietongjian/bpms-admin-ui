@@ -87,48 +87,34 @@ const [BasicForm, formApi] = useVbenForm({
     emit('success');
   }
 
+  const syncMap: Record<number, (time: any) => Promise<any>> = {
+    1: syncAll,
+    2: syncHiProcInst,
+    3: syncHiTaskInst,
+    4: syncHiActInst,
+    5: syncHiVarInst,
+    6: syncFlowCommentInfo,
+    7: syncFlowExtendHisprocinst,
+    8: syncHiIdEntityLink,
+  };
+
   async function handleSubmit() {
     try {
-      const {valid} = await formApi.validate();
+      const { valid } = await formApi.validate();
+      if (!valid) {
+        return;
+      }
       const values = await formApi.getValues();
-      setModalProps({ confirmLoading: true });
+      modalApi.setState({ loading: true, confirmLoading: true });
 
       const time = values.date;
-
-      if (urlTarget.value === 1) {
-        await syncAll(time);
-        return emitSuccess();
-      }
-      if (urlTarget.value === 2) {
-        await syncHiProcInst(time);
-        return emitSuccess();
-      }
-      if (urlTarget.value === 3) {
-        await syncHiTaskInst(time);
-        return emitSuccess();
-      }
-      if (urlTarget.value === 4) {
-        await syncHiActInst(time);
-        return emitSuccess();
-      }
-      if (urlTarget.value === 5) {
-        await syncHiVarInst(time);
-        return emitSuccess();
-      }
-      if (urlTarget.value === 6) {
-        await syncFlowCommentInfo(time);
-        return emitSuccess();
-      }
-      if (urlTarget.value === 7) {
-        await syncFlowExtendHisprocinst(time);
-        return emitSuccess();
-      }
-      if (urlTarget.value === 8) {
-        await syncHiIdEntityLink(time);
-        return emitSuccess();
+      const syncFn = syncMap[urlTarget.value];
+      if (syncFn) {
+        await syncFn(time);
+        emitSuccess();
       }
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({ loading: false, confirmLoading: false });
     }
   }
 
@@ -136,8 +122,8 @@ defineExpose(modalApi);
 </script>
 
 <template>
-  <BasicModal v-bind="$attrs" title="日期选择" @register="registerModal" @ok="handleSubmit">
-    <BasicForm @register="registerForm" class="SyncModal" />
+  <BasicModal title="日期选择">
+    <BasicForm class="SyncModal" />
   </BasicModal>
 </template>
 

@@ -6,7 +6,7 @@ import type {
   AclSaveByGroupModuleParam,
   AclSaveByModuleParam,
 } from './model/aclModel';
-import { ModuleInfo, ModuleParams } from './model/moduleModel';
+import type { ModuleInfo, ModuleParams } from './model/moduleModel';
 
 enum Api {
   SetAcl = '/flow/privilege/acl/setAcl',

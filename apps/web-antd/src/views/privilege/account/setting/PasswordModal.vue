@@ -1,6 +1,6 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm"/>
+  <BasicModal :title="getTitle">
+    <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
@@ -9,6 +9,7 @@ import {computed, defineEmits, ref, unref} from 'vue';
 import {passwordFormSchema} from './data';
 import {restSetPassword} from "#/api/sys/user";
 import {useVbenForm, useVbenModal} from '@vben/common-ui'
+import { message } from 'ant-design-vue';
 
 const emit = defineEmits(['success'])
 
@@ -66,23 +67,25 @@ const getTitle = computed(() => (!unref(isUpdate) ? '新增账号' : '设置密�
 
 async function handleSubmit() {
   try {
-    setModalProps({confirmLoading: true});
-    const values = await validate();
+    modalApi.setState({loading: true, confirmLoading: true});
+    const { valid } = await formApi.validate();
+    if (!valid) {
+      return;
+    }
+    const values = await formApi.getValues();
     values.password = values.passwordNew;
     delete values.passwordNew;
     delete values.confirmPassword;
-    const {
-      data: {success, msg},
-    } = await restSetPassword(values);
+    const { success, msg } = await restSetPassword(values);
     if (success) {
-      createMessage.success(msg);
-      closeModal();
+      message.success(msg);
+      modalApi.close();
       emit('success');
     } else {
-      createMessage.error(msg);
+      message.error(msg);
     }
   } finally {
-    setModalProps({confirmLoading: false});
+    modalApi.setState({loading: false, confirmLoading: false});
   }
 }
 </script>

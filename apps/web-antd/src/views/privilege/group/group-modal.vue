@@ -31,7 +31,7 @@ const [BasicModal, modalApi] = useVbenModal({
   async onOpenChange(isOpen: boolean) {
     if (isOpen) {
       const groupTypes = (await getDataPermissionVos()) || [];
-      formApi.setSchema([
+      formApi.updateSchema([
         {
           fieldName: 'type',
           componentProps: {

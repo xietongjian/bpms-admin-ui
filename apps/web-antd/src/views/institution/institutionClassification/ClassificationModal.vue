@@ -30,7 +30,7 @@
         return null;
       }
       modalApi.setState({loading: true, confirmLoading: true});
-      const formData = modalApi.getData();
+      const formData = modalApi.getData() || {};
       try {
         /*await updateSchema([
           {

@@ -154,7 +154,7 @@ export const docManageFormSchema: FormSchema[] = [
     component: 'ApiTreeSelect',
     componentProps: {
       api: getDocCateListData,
-      treeDataSimpleMode: { id: 'id', pId: 'pid', rootPid: null },
+      treeDataSimpleMode: { id: 'value', pId: 'pid', rootPid: null },
       fieldNames: {
         label: 'cateName',
         value: 'id',

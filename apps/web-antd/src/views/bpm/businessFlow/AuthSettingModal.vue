@@ -36,7 +36,7 @@
         return null;
       }
       modalApi.setState({loading: true, confirmLoading: true});
-      const formData = modalApi.getData();
+      const formData = modalApi.getData() || {};
       formData.businessFlowId = formData.id;
       const flowAuthorizes = await getFlowAuthorizeByBusinessFlowId({
         businessFlowId: formData.businessFlowId,

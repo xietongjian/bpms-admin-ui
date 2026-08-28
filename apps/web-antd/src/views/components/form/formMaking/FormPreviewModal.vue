@@ -1,8 +1,6 @@
 <template>
   <BasicModal
     class="w-[800px]"
-    v-bind="$attrs"
-    @register="registerModal"
     :wrapperFooterOffset="0"
     :defaultFullscreen="false"
   >
@@ -32,7 +30,7 @@
     },
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
-        const values = modalApi.getData<Record<string, any>>();
+        const values = modalApi.getData<Record<string, any>>() || {};
         if (values) {
           loadData(values.formJson);
           modalApi.setState({loading: false, confirmLoading: false});

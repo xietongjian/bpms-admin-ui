@@ -89,7 +89,11 @@
 ### 不需要迁移的模块
 - `flowoperation/formDefinition/` - 已由 `form/custom/` 和 `form/biz/` 覆盖
 
-## 常见问题修复 (2026-08-07)
+## 合并记录 (2026-08-07)
+- 从 vben-origin/main (vben5 最新源码) 合并到 main-bpms-admin-ui
+- 合并 commit: `7c1d54212` (Merge main into main-bpms-admin-ui)
+- 修复 commit: `56c6d3119` (补充 54 个 BPMS catalog 条目)
+- 注意事项: 合并后 pnpm-workspace.yaml 需保留所有 BPMS 特有 catalog 条目 (bpmn-js, codemirror, diagram-js 等)，main 分支不包含这些
 
 ### Type-only import 报错
 - 问题: `does not provide an export named 'XXX'` 当 `aclModel.ts` 使用 `export type`

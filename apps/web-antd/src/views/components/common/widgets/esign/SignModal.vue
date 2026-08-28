@@ -43,7 +43,7 @@
     },
     onOpenChange(isOpen: boolean) {
       if (isOpen) {
-        const values = modalApi.getData();
+        const values = modalApi.getData() || {};
         initSignImg.value = values.currentSignImg || '';
       }
     },

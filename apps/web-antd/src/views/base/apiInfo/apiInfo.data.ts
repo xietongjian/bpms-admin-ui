@@ -170,7 +170,7 @@ export const apiInfoFormSchema: FormSchema[] = [
     component: 'ApiTreeSelect',
     componentProps: {
       api: getApiCategoryListData,
-      treeDataSimpleMode: {id: 'id', pId: 'pid', rootPid: null},
+      treeDataSimpleMode: {id: 'value', pId: 'pid', rootPid: null},
       fieldNames: {
         label: 'name',
         value: 'id',

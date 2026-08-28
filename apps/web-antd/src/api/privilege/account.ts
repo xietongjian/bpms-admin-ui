@@ -18,7 +18,7 @@ export const checkEntityExist = (params: any) =>
   requestClient.post<boolean>(Api.CheckEntityExist, params);
 
 export const getAllList = (params?: any) => {
-  return requestClient.post<any>(Api.GetAllList, params);
+  return requestClient.post<any>(Api.GetAllList, params || {});
 };
 
 export const saveOrUpdate = (params?: any) =>

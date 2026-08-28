@@ -72,6 +72,7 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
   import {useVbenVxeGrid} from '#/adapter/vxe-table';
   import {Page} from '@vben/common-ui';
   import { TableAction } from '#/components/table-action';
+  import type { ActionItem } from '#/components/table-action';
 
   import {
     changeProcInstActive,
@@ -417,10 +418,11 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
     ];
   }
   function getTableDownActions(record: Recordable<any>) {
-    let actions = [
+    let actions: ActionItem[] = [
       {
         auth: ['ProcessInst:' + PerEnum.UPDATE],
         icon: 'ant-design:stop-twotone',
+        text: '终止',
         danger: true,
         ifShow: record.processStatus !== 'end' && record.processStatus !== 'zz',
         onClick: () => handleStop(record),
@@ -432,34 +434,39 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
           record.suspensionState === 1
             ? 'ant-design:pause-circle-filled'
             : 'ant-design:play-circle-filled',
+        text: record.suspensionState === 1 ? '挂起' : '激活',
         danger: true,
         onClick: () => handleChangePState(record),
       },
     ];
 
     if (procInstDataType.value === 'running') {
-      const runningActions = [
+      const runningActions: ActionItem[] = [
         {
           auth: [PerPrefix + PerEnum.UPDATE],
           icon: 'clarity:fast-forward-line',
+          text: '执行',
           danger: true,
           onClick: () => execute(record),
         },
         {
           auth: [PerPrefix + PerEnum.UPDATE],
           icon: 'ant-design:rollback-outlined',
+          text: '干预',
           danger: true,
           onClick: () => handleIntervention(record),
         },
         {
           auth: [PerPrefix + PerEnum.UPDATE],
           icon: 'ant-design:branches-outlined',
+          text: '切换版本',
           danger: true,
           onClick: () => handleChangeVersion(record),
         },
         {
           auth: [PerPrefix + PerEnum.UPDATE],
           icon: 'clarity:code-outline-badged',
+          text: '变量补偿',
           danger: true,
           onClick: () => handleChangeVariable(record),
         }
@@ -471,7 +478,7 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
       actions.push({
         auth: [PerPrefix + PerEnum.UPDATE],
         icon: 'ant-design:medicine-box-outlined',
-        tooltip: '复活',
+        text: '复活',
         danger: true,
         onClick: () => handleRevival(record),
       });

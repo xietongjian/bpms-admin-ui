@@ -50,7 +50,6 @@
 
         <BasicForm
           ref="flowInfoFormRef"
-          @register="registerForm"
           v-show="!collapseBaseInfo"
           class="!mt-4"
         />

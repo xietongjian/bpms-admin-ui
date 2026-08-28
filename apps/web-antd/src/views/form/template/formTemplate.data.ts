@@ -163,7 +163,7 @@ export const formSchema: FormSchema[] = [
     componentProps: {
       blockNode: true,
       api: getFormCategoryListData,
-      treeDataSimpleMode: { id: "id", pId: "pid", rootPId: null },
+      treeDataSimpleMode: { id: 'value', pId: 'pid', rootPId: null },
       // 菜单接口转options格式
       labelField: 'name',
       valueField: 'code',

@@ -223,10 +223,7 @@
 
 <template>
   <BasicModal
-    v-bind="$attrs"
     wrapClassName="bpmn-viewer-node-select-container "
-    @register="registerModal"
-    @ok="handleSubmit"
   >
     <Row class="bpmn-container-fill">
       <Col :span="16">
@@ -239,7 +236,7 @@
         />
       </Col>
       <Col :span="8">
-        <BasicForm @register="registerForm" />
+        <BasicForm />
       </Col>
     </Row>
   </BasicModal>

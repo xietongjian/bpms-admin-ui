@@ -91,8 +91,7 @@ function handleCreate() {
   });
 }
 
-function handleEdit(record: Recordable<any>, e) {
-  e.stopPropagation();
+function handleEdit(record: Recordable<any>) {
   companyModalRef.value.setData(record);
   companyModalRef.value.open();
   companyModalRef.value.setState({
@@ -100,8 +99,7 @@ function handleEdit(record: Recordable<any>, e) {
   });
 }
 
-function handleCreateChild(record: Recordable<any>, e) {
-  e.stopPropagation();
+function handleCreateChild(record: Recordable<any>) {
   companyModalRef.value.setData({pid: record.id, status: 1});
   companyModalRef.value.open();
   companyModalRef.value.setState({

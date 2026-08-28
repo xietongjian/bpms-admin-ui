@@ -105,7 +105,7 @@ const [BasicModal, modalApi] = useVbenModal({
       return null;
     }
     changeLoading(true);
-    const values = modalApi.getData();
+    const values = modalApi.getData() || {};
 
     await loadData(values);
     templateId.value = values.id;

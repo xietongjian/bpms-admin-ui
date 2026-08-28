@@ -9,7 +9,7 @@
                 <template >
                   <div style="font-weight: bold; width: 200px">基本信息</div>
                 </template>
-                <Descriptions @register="registerDescription" />
+                <Descriptions />
               </div>
               <CollapseContainer>
                 <template #title>
@@ -129,7 +129,6 @@
       </Dropdown>
     </footer>
     <ApproveSelectorPersonalModal
-      @register="registerApproveSelectorPersonalModal"
       @success="loadCommentList"
     />
   </BasicModal>

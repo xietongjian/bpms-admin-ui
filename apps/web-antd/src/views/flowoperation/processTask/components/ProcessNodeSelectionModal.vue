@@ -214,9 +214,7 @@
 
 <template>
   <BasicModal
-    v-bind="$attrs"
     wrapClassName="bpmn-viewer-node-select-container "
-    @ok="handleSubmit"
   >
     <Row class="bpmn-container-fill">
       <Col :span="16">

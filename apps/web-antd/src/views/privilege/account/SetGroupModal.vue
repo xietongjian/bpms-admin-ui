@@ -1,87 +1,92 @@
 <template>
-  <BasicModal v-bind="$attrs" >
+  <BasicModal v-bind="$attrs">
     <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
-  import {defineEmits, defineExpose, nextTick } from 'vue';
-  import {useVbenModal} from '@vben/common-ui';
-  import { setGroupFormSchema } from './account.data';
-  import { allocationRoles } from '#/api/privilege/account';
-  import {useVbenForm} from "#/adapter/form";
-  import {message} from 'ant-design-vue';
+import { defineEmits, defineExpose, nextTick } from 'vue';
+import { useVbenModal } from '@vben/common-ui';
+import { useVbenForm } from '#/adapter/form';
+import { message } from 'ant-design-vue';
+import { setGroupFormSchema } from './account.data';
+import { allocationRoles } from '#/api/privilege/account';
+import { getAllList } from '#/api/privilege/group';
 
-  const emit = defineEmits(['success']);
+const emit = defineEmits(['success']);
 
-  const [BasicModal, modalApi] = useVbenModal({
-    draggable: true,
-    onCancel() {
-      modalApi.close();
-    },
-    async onOpenChange(isOpen: boolean) {
-      if (isOpen) {
-        const values = modalApi.getData<Record<string, any>>();
+const [BasicForm, baseFormApi] = useVbenForm({
+  commonConfig: {
+    componentProps: {},
+  },
+  showDefaultActions: false,
+  layout: 'horizontal',
+  schema: setGroupFormSchema,
+  wrapperClass: 'grid-cols-1',
+});
+
+const [BasicModal, modalApi] = useVbenModal({
+  draggable: true,
+  async onOpenChange(isOpen: boolean) {
+    if (isOpen) {
+      modalApi.setState({ confirmLoading: true });
+      try {
+        // 获取组列表
+        const groupList = (await getAllList()) as any[];
+        const options = (groupList || []).map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+        // 动态注入 options 和 mode
+        baseFormApi.updateSchema([
+          {
+            fieldName: 'groups',
+            componentProps: {
+              mode: 'multiple',
+              options,
+            },
+          },
+        ]);
+
+        const values = modalApi.getData<Record<string, any>>() || {};
         if (values) {
-          const groups = values.groups.map(item => item.id);
+          const groups = (values.groups || []).map((item: any) => item.id);
           await nextTick();
-          baseFormApi.setValues({...values, groups: groups});
-          modalApi.setState({loading: false, confirmLoading: false});
+          baseFormApi.setValues({ ...values, groups });
         }
+      } finally {
+        modalApi.setState({ confirmLoading: false });
       }
-    },
-    onConfirm() {
-      // await baseFormApi.submitForm();
-      handleSubmit();
-    },
-  });
-
-  const [BasicForm, baseFormApi] = useVbenForm({
-    // 所有表单项共用，可单独在表单内覆盖
-    commonConfig: {
-      // 所有表单项
-      componentProps: {
-        // class: 'w-full',
-      },
-    },
-    showDefaultActions: false,
-    // 提交函数
-    // handleSubmit: onSubmit,
-    // 垂直布局，label和input在不同行，值为vertical
-    // 水平布局，label和input在同一行
-    layout: 'horizontal',
-    schema: setGroupFormSchema,
-    // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个
-    wrapperClass: 'grid-cols-1',
-  });
-
-  async function handleSubmit() {
-    try {
-      modalApi.setState({confirmLoading: true});
-      const {valid} = await baseFormApi.validate();
-      if(!valid){
-        return;
-      }
-      const values = await baseFormApi.getValues();
-      values.groups = values.groups.map((item) => {
-        return { id: item };
-      });
-      values.userId = values.id;
-      delete values.id;
-
-      const {success, msg} = await allocationRoles(values);
-      if(success){
-        message.success(msg);
-        await modalApi.close();
-        emit('success');
-      } else {
-        message.error(msg);
-      }
-    } catch (e){
-      console.error(e);
-    } finally {
-      modalApi.setState({confirmLoading: false});
     }
-  }
+  },
+  onConfirm() {
+    handleSubmit();
+  },
+});
 
-  defineExpose(modalApi)
+async function handleSubmit() {
+  try {
+    modalApi.setState({ confirmLoading: true });
+    const { valid } = await baseFormApi.validate();
+    if (!valid) {
+      modalApi.setState({ confirmLoading: false });
+      return;
+    }
+    const values = await baseFormApi.getValues();
+    const groups = (values.groups || []).map((item: any) => ({ id: item }));
+    const { success, msg } = await allocationRoles({ userId: values.id, groups });
+    if (success) {
+      message.success(msg);
+      await modalApi.close();
+      emit('success');
+    } else {
+      message.error(msg);
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+    modalApi.setState({ confirmLoading: false });
+  }
+}
+
+defineExpose(modalApi);
 </script>

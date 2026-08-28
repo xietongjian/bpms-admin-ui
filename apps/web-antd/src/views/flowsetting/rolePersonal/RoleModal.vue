@@ -1,6 +1,6 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal :title="getTitle">
+    <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
@@ -147,17 +147,17 @@
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
+      modalApi.setState({ loading: true, confirmLoading: true });
       const {valid} = await formApi.validate();
       if(!valid){
         return;
       }
       const values = await formApi.getValues();
       await saveOrUpdate(values);
-      closeModal();
+      modalApi.close();
       emit('success');
     } finally {
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({ loading: false, confirmLoading: false });
     }
   }
   defineExpose(modalApi);

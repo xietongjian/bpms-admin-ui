@@ -1,12 +1,10 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :title="getTitle" @ok="handleSubmit">
-    <BasicForm @register="registerForm" />
+  <BasicModal v-bind="$attrs" :title="getTitle">
+    <BasicForm />
   </BasicModal>
 </template>
 <script lang="ts" setup>
   import { ref, computed, unref, defineEmits } from 'vue';
-  // import { BasicModal, useModalInner } from '@/components/Modal';
-  // import { BasicForm, Rule, useForm } from '@/components/Form/index';
   import {useVbenModal} from '@vben/common-ui';
   import {useVbenForm} from '#/adapter/form';
   import {message} from 'ant-design-vue';
@@ -14,14 +12,10 @@
   import { modelInfoFormSchema } from './modelInfo.data';
   import { saveOrUpdate, checkEntityExist } from '#/api/flowable/bpmn/modelInfo';
   import { getAll } from '#/api/base/app';
-  import {formSchema} from "#/views/org/jobGrade/jobGrade.data";
-  // import { useGo } from '@/hooks/web/usePage';
-  // import { CheckExistParams } from '#/api/model/baseModel';
 
   const emit = defineEmits(['success', 'register']);
 
   const isUpdate = ref(true);
-
 
   const [BasicModal, modalApi] = useVbenModal({
     draggable: true,
@@ -32,141 +26,47 @@
       if (isOpen) {
         const values = modalApi.getData<Record<string, any>>();
         if (values) {
-          formApi.setValues(values);
+          isUpdate.value = !!values?.isUpdate;
+          const formData = values.record;
+          if (unref(isUpdate)) {
+            formApi.setValues({
+              ...formData,
+            });
+          }
           modalApi.setState({loading: false, confirmLoading: false});
         }
       }
     },
     onConfirm() {
-      // await formApi.submitForm();
       handleSubmit();
     },
   });
 
   const [BasicForm, formApi] = useVbenForm({
     commonConfig: {
-      componentProps: {
-        // class: 'w-full',
-      },
+      componentProps: {},
     },
     showDefaultActions: false,
     layout: 'horizontal',
     schema: modelInfoFormSchema,
     wrapperClass: 'grid-cols-1',
   });
-  /*
-  const [registerForm, { setFieldsValue, updateSchema, resetFields, validate }] = useForm({
-    labelWidth: 100,
-    schemas: modelInfoFormSchema,
-    showActionButtonGroup: false,
-    actionColOptions: {
-      span: 23,
-    },
-  });*/
-
-  /*const getBaseDynamicRules = (params: CheckExistParams) => {
-    return [
-      {
-        trigger: 'blur',
-        validator: (_, value) => {
-          if (value) {
-            return checkEntityExist({
-              id: params.id,
-              field: params.field,
-              fieldValue: value,
-              fieldName: params.fieldName,
-            })
-              .then((res) => {
-                if (res) {
-                  return Promise.resolve();
-                } else {
-                  return Promise.reject(params.fieldName + '已存在，请修改！');
-                }
-              })
-              .catch((res) => {
-                return Promise.reject(res);
-              });
-          } else {
-            return Promise.resolve();
-          }
-        },
-      },
-    ] as Rule[];
-  };*/
-
-  /*const [registerModal, { setModalProps, changeLoading, closeModal }] = useModalInner(
-    async (data) => {
-      resetFields();
-      setModalProps({ confirmLoading: false });
-      isUpdate.value = !!data?.isUpdate;
-      changeLoading(true);
-      let appList = null;
-
-      try {
-        appList = await getAll();
-      } finally {
-        changeLoading(false);
-      }
-
-      let formData = data.record;
-
-      await updateSchema([
-        {
-          field: 'appSn',
-          componentProps: { options: appList, labelField: 'id' },
-        },
-        {
-          field: 'modelKey',
-          dynamicRules: () => {
-            return [
-              {
-                required: true,
-                whitespace: true,
-                message: '编码不能为空！',
-              },
-              {
-                pattern: new RegExp('^[a-zA-Z_]{1,}[0-9a-zA-Z_]{1,}$'),
-                type: 'string',
-                message: '请输入英文或数字且以英文或下划线开头！',
-              },
-              {
-                max: 150,
-                message: '字符长度不能大于150！',
-              },
-              ...getBaseDynamicRules({
-                id: (unref(isUpdate) && formData && formData.id) || '',
-                field: 'modelKey',
-                fieldValue: '',
-                fieldName: '编码',
-              }),
-            ];
-          },
-        },
-      ]);
-
-      if (unref(isUpdate)) {
-        setFieldsValue({
-          ...data.record,
-        });
-      }
-    },
-  );*/
 
   const getTitle = computed(() => (!unref(isUpdate) ? '新增' : '编辑'));
 
   async function handleSubmit() {
     try {
-      setModalProps({ confirmLoading: true });
-      const values = await validate();
+      modalApi.setState({loading: true, confirmLoading: true});
+      const {valid} = await formApi.validate();
+      if (!valid) {
+        return;
+      }
+      const values = await formApi.getValues();
       const result = await saveOrUpdate(values);
-      // go("/flowable/bpmn/designer?modelId=" + result.modelId);
-      go({ name: 'BpmnDesigner', query: { modelId: result.modelId } });
-
-      closeModal();
+      modalApi.close();
       emit('success');
     } finally {
-      changeLoading(false);
-      setModalProps({ confirmLoading: false });
+      modalApi.setState({loading: false, confirmLoading: false});
     }
   }
 </script>

@@ -18,7 +18,7 @@ export const getGroupListByPage = (params: any) => {
 };
 
 export const getAllList = (params?: any) => {
-  return requestClient.post<any>(Api.GetAllList, params);
+  return requestClient.post<any>(Api.GetAllList, params || {});
 };
 
 export const saveOrUpdate = (params: any) =>

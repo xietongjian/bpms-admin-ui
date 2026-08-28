@@ -1,10 +1,6 @@
 <template>
   <BasicModal
-    v-bind="$attrs"
-    @register="registerModal"
-    @ok="handleSubmit"
     :wrapperFooterOffset="50"
-    @visible-change="handleVisibleChange"
     :defaultFullscreen="false"
   >
     <MakingForm ref="makingFormRef" preview style="height: 100%; min-height: 500px">
@@ -69,14 +65,14 @@
 
   function loadData(id) {
     if (id) {
-      changeLoading(true);
+      modalApi.setState({ loading: true });
       getTaskFormMakInfoById({ formId: id })
         .then((res) => {
           unref(makingFormRef).setJSON(res.formJson);
           formName.value = res.title;
         })
         .finally(() => {
-          changeLoading(false);
+          modalApi.setState({ loading: false });
         });
     } else {
       formName.value = '';
@@ -85,12 +81,13 @@
   }
 
   async function handleSubmit() {
-    setModalProps({ confirmLoading: true });
+    modalApi.setState({ loading: true, confirmLoading: true });
     const json = unref(makingFormRef).getJSON();
     const html = unref(makingFormRef).getHtml();
     if (!unref(formName)) {
       createMessage.warning('请输入表单名称！');
       unref(formNameRef).focus();
+      modalApi.setState({ loading: false, confirmLoading: false });
       return;
     }
 
@@ -106,14 +103,13 @@
       title: unref(formName),
       version: '1.0',
     };
-    changeLoading(true);
     saveTaskFormInfo(params)
       .then((res) => {
         formInfoId.value = res;
         createMessage.success('保存成功！');
       })
       .finally(() => {
-        changeLoading(false);
+        modalApi.setState({ loading: false, confirmLoading: false });
       });
   }
 

@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white overflow-hidden" style="height: 100%" v-loading="loading">
     <div style="width: 500px; margin: 50px auto">
-      <BasicForm @register="registerFormBaseInfoForm" class="bpmn-base-info" />
+      <BasicForm class="bpmn-base-info" />
     </div>
   </div>
 </template>
